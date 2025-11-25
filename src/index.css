@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* Tailwind directives above are recognized by Stylelint via project config */
+
+/* Custom utility to hide scrollbars for the Services reel */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+}
+
+/* Only apply Firefox-only property when supported */
+@supports (scrollbar-width: none) {
+  .scrollbar-hide {
+    scrollbar-width: none;  /* Firefox */
+  }
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari, and Opera */
+}
