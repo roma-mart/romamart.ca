@@ -4,6 +4,52 @@
 
 /* Tailwind directives above are recognized by Stylelint via project config */
 
+/* WCAG 2.2 AA: Keyboard Focus Visible (Operable 2.4.7) */
+/* High contrast focus outline for keyboard navigation */
+:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Fallback for browsers that don't support :focus-visible */
+:focus {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Remove outline for mouse users (optional refinement) */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Accessible skip link (Operable 2.4.1) */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--color-primary);
+  color: white;
+  padding: 8px 16px;
+  text-decoration: none;
+  z-index: 100;
+  font-weight: 600;
+}
+
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* WCAG 2.2: Respect reduced motion preferences (Operable 2.2) */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
 
 /* Begin brand variables */
 

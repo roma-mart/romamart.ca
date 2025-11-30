@@ -399,6 +399,7 @@ const Locations = () => {
 
           <div className="lg:col-span-2 bg-gray-100 rounded-3xl overflow-hidden min-h-[400px] relative shadow-inner">
              <iframe 
+               title="Google Maps - Roma Mart Wellington Street Location"
                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2938.868770732483!2d-82.40458892398539!3d42.97038897114251!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8825838570075305%3A0x6641775e744d0810!2s189%20Wellington%20St%2C%20Sarnia%2C%20ON%20N7T%201G6%2C%20Canada!5e0!3m2!1sen!2sus!4v1709669042595!5m2!1sen!2sus"
                width="100%"
                height="100%"
@@ -581,9 +582,9 @@ const Footer = () => {
         <div>
           <h4 className="font-coco text-lg mb-6 text-gray-200">Legal</h4>
           <ul className="space-y-2 font-inter text-gray-400">
-            <li><a href="#" className="hover:text-yellow-400 transition-colors">Privacy Policy</a></li>
-            <li><a href="#" className="hover:text-yellow-400 transition-colors">Terms of Service</a></li>
-            <li><a href="#" className="hover:text-yellow-400 transition-colors">Cookie Policy</a></li>
+            <li><a href="/privacy" className="hover:text-yellow-400 transition-colors">Privacy Policy</a></li>
+            <li><a href="/terms" className="hover:text-yellow-400 transition-colors">Terms of Service</a></li>
+            <li><a href="/cookies" className="hover:text-yellow-400 transition-colors">Cookie Policy</a></li>
           </ul>
         </div>
       </div>
@@ -599,12 +600,16 @@ const Footer = () => {
 function App() {
   return (
     <div className="min-h-screen bg-white">
+      {/* WCAG 2.2 AA: Skip Navigation Link (Operable 2.4.1) */}
+      <a href="#main-content" className="skip-link">Skip to main content</a>
       <Navbar />
       <Hero />
-      <ServicesScroll />
-      <RoCafeSection />
-      <Locations />
-      <ContactSection />
+      <div id="main-content">
+        <ServicesScroll />
+        <RoCafeSection />
+        <Locations />
+        <ContactSection />
+      </div>
       <Footer />
     </div>
   );
