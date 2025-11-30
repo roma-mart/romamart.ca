@@ -27,6 +27,17 @@ const PrivacyPage = lazy(() => import('./pages/PrivacyPage'));
 const TermsPage = lazy(() => import('./pages/TermsPage'));
 const CookiesPage = lazy(() => import('./pages/CookiesPage'));
 
+// GTM tracking utility
+const trackOrderClick = (location) => {
+  if (window.dataLayer) {
+    window.dataLayer.push({
+      event: 'order_cta_click',
+      cta_location: location,
+      cta_text: 'Order Online'
+    });
+  }
+};
+
 // --- BRAND GUIDELINES & DATA ---
 
 // Colors from your guide
@@ -162,6 +173,7 @@ const Navbar = () => {
                 href={STORE_DATA.onlineStoreUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackOrderClick('header_desktop')}
                 className="px-6 py-2 rounded-full font-bold font-inter text-sm transition-transform hover:scale-105 shadow-lg flex items-center gap-2"
                 style={{ backgroundColor: COLORS.yellow, color: COLORS.navy }}
               >
@@ -189,7 +201,8 @@ const Navbar = () => {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="md:hidden border-t absolute w-full bg-white shadow-xl"
+              className="md:hidden border-t absolute w-full shadow-xl"
+              style={{ backgroundColor: 'var(--color-bg)', borderColor: 'var(--color-surface)' }}
             >
               <div className="px-4 pt-2 pb-6 space-y-1">
                 {['Services', 'RoCafe', 'Locations', 'Contact'].map((item) => (
@@ -197,8 +210,8 @@ const Navbar = () => {
                     key={item}
                     href={`${BASE_URL}#${item.toLowerCase()}`}
                     onClick={() => setIsOpen(false)}
-                    className="block px-3 py-4 text-lg font-bold font-coco uppercase border-b border-gray-100"
-                    style={{ color: COLORS.navy }}
+                    className="block px-3 py-4 text-lg font-bold font-coco uppercase border-b"
+                    style={{ color: COLORS.navy, borderColor: 'var(--color-surface)' }}
                   >
                     {item}
                   </a>
@@ -208,6 +221,7 @@ const Navbar = () => {
                     href={STORE_DATA.onlineStoreUrl}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => trackOrderClick('mobile_menu')}
                     className="block w-full text-center px-6 py-4 rounded-xl font-bold font-inter text-lg shadow-lg"
                     style={{ backgroundColor: COLORS.yellow, color: COLORS.navy }}
                   >
@@ -258,6 +272,7 @@ const Hero = () => {
                 href={STORE_DATA.onlineStoreUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackOrderClick('hero_section')}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="px-8 py-4 rounded-xl font-bold font-inter text-lg flex items-center justify-center gap-2 shadow-xl shadow-yellow-500/20"
@@ -306,7 +321,7 @@ const Hero = () => {
 
 const ServicesScroll = () => {
   return (
-    <section id="services" className="py-20 bg-gray-50 overflow-hidden">
+    <section id="services" className="py-20 overflow-hidden" style={{ backgroundColor: 'var(--color-surface)' }}>
       <div className="max-w-7xl mx-auto px-4 mb-10">
         <h2 className="text-3xl md:text-4xl font-coco uppercase text-center" style={{ color: COLORS.navy }}>
           Our <span style={{ color: COLORS.yellow }}>Services</span>
@@ -318,13 +333,14 @@ const ServicesScroll = () => {
           <motion.div 
             key={item.id}
             whileHover={{ y: -5 }}
-            className="flex-shrink-0 w-72 md:w-80 bg-white p-8 rounded-2xl shadow-sm border border-gray-100 snap-center flex flex-col items-start hover:shadow-md transition-shadow"
+            className="flex-shrink-0 w-72 md:w-80 p-8 rounded-2xl shadow-sm border snap-center flex flex-col items-start hover:shadow-md transition-shadow"
+            style={{ backgroundColor: 'var(--color-bg)', borderColor: 'var(--color-surface)' }}
           >
             <div className="p-4 rounded-xl mb-6" style={{ backgroundColor: COLORS.navy + '10', color: COLORS.navy }}>
               {React.cloneElement(item.icon, { size: 32 })}
             </div>
             <h3 className="font-coco text-xl mb-3" style={{ color: COLORS.navy }}>{item.title}</h3>
-            <p className="font-inter text-gray-500 leading-relaxed">{item.desc}</p>
+            <p className="font-inter leading-relaxed" style={{ color: 'var(--color-text)', opacity: 0.7 }}>{item.desc}</p>
           </motion.div>
         ))}
       </div>
@@ -387,7 +403,7 @@ const Locations = () => {
   const [activeLoc, setActiveLoc] = useState(STORE_DATA.locations[0]);
 
   return (
-    <section id="locations" className="py-24 bg-white">
+    <section id="locations" className="py-24" style={{ backgroundColor: 'var(--color-bg)' }}>
       <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
           <span className="text-yellow-500 font-bold uppercase tracking-widest text-sm">Find Us</span>
@@ -400,11 +416,14 @@ const Locations = () => {
               <button
                 key={loc.id}
                 onClick={() => setActiveLoc(loc)}
-                className={`w-full text-left p-6 rounded-xl border-2 transition-all ${activeLoc.id === loc.id ? 'border-navy-600 bg-blue-50' : 'border-gray-100 hover:border-gray-200'}`}
-                style={{ borderColor: activeLoc.id === loc.id ? COLORS.navy : '' }}
+                className="w-full text-left p-6 rounded-xl border-2 transition-all"
+                style={{ 
+                  borderColor: activeLoc.id === loc.id ? COLORS.navy : 'var(--color-surface)',
+                  backgroundColor: activeLoc.id === loc.id ? COLORS.navy + '10' : 'transparent'
+                }}
               >
                 <h3 className="font-coco text-lg mb-1" style={{ color: COLORS.navy }}>{loc.name}</h3>
-                <p className="text-gray-500 text-sm font-inter mb-4">{loc.address}</p>
+                <p className="text-sm font-inter mb-4" style={{ color: 'var(--color-text)', opacity: 0.7 }}>{loc.address}</p>
                 <div className="flex items-center gap-2 text-sm font-semibold" style={{ color: COLORS.yellow }}>
                   <div className={`w-2 h-2 rounded-full ${loc.isOpen ? 'bg-green-500' : 'bg-red-500'}`}></div>
                   {loc.isOpen ? 'Open Now' : 'Closed'}
@@ -413,7 +432,7 @@ const Locations = () => {
             ))}
           </div>
 
-          <div className="lg:col-span-2 bg-gray-100 rounded-3xl overflow-hidden min-h-[400px] relative shadow-inner">
+          <div className="lg:col-span-2 rounded-3xl overflow-hidden min-h-[400px] relative shadow-inner" style={{ backgroundColor: 'var(--color-surface)' }}>
              <iframe 
                title="Google Maps - Roma Mart Wellington Street Location"
                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2938.868770732483!2d-82.40458892398539!3d42.97038897114251!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8825838570075305%3A0x6641775e744d0810!2s189%20Wellington%20St%2C%20Sarnia%2C%20ON%20N7T%201G6%2C%20Canada!5e0!3m2!1sen!2sus!4v1709669042595!5m2!1sen!2sus"
@@ -445,8 +464,11 @@ const Locations = () => {
 
 // --- CONTACT SECTION ---
 const ContactSection = () => {
+  const textColor = { color: 'var(--color-text)' };
+  const mutedTextColor = { color: 'var(--color-text)', opacity: 0.7 };
+  
   return (
-    <section id="contact" className="py-24 bg-gray-50">
+    <section id="contact" className="py-24" style={{ backgroundColor: 'var(--color-surface)' }}>
       <div className="max-w-7xl mx-auto px-4">
         <div className="grid md:grid-cols-2 gap-16">
           
@@ -454,7 +476,7 @@ const ContactSection = () => {
           <div>
             <span className="text-yellow-500 font-bold uppercase tracking-widest text-sm">Get in Touch</span>
             <h2 className="text-4xl font-coco mt-2 mb-6" style={{ color: COLORS.navy }}>Contact Us</h2>
-            <p className="text-gray-600 mb-10 font-inter leading-relaxed">
+            <p className="mb-10 font-inter leading-relaxed" style={mutedTextColor}>
               Have a question about our products, want to suggest a new snack, or interested in a partnership? We'd love to hear from you.
             </p>
 
@@ -465,7 +487,7 @@ const ContactSection = () => {
                 </div>
                 <div>
                   <h4 className="font-bold text-lg" style={{ color: COLORS.navy }}>Visit Us</h4>
-                  <p className="text-gray-600">{STORE_DATA.locations[0].address}</p>
+                  <p style={textColor}>{STORE_DATA.locations[0].address}</p>
                 </div>
               </div>
 
@@ -475,7 +497,7 @@ const ContactSection = () => {
                 </div>
                 <div>
                   <h4 className="font-bold text-lg" style={{ color: COLORS.navy }}>Call Us</h4>
-                  <p className="text-gray-600">{STORE_DATA.contact.phone}</p>
+                  <p style={textColor}>{STORE_DATA.contact.phone}</p>
                 </div>
               </div>
 
@@ -485,15 +507,15 @@ const ContactSection = () => {
                 </div>
                 <div>
                   <h4 className="font-bold text-lg" style={{ color: COLORS.navy }}>Hours</h4>
-                  <p className="text-gray-600">Mon-Fri: {STORE_DATA.locations[0].hours.weekdays}</p>
-                  <p className="text-gray-600">Sat-Sun: {STORE_DATA.locations[0].hours.weekends}</p>
+                  <p style={textColor}>Mon-Fri: {STORE_DATA.locations[0].hours.weekdays}</p>
+                  <p style={textColor}>Sat-Sun: {STORE_DATA.locations[0].hours.weekends}</p>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Web3Forms Contact Form */}
-          <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
+          <div className="p-8 rounded-2xl shadow-lg border" style={{ backgroundColor: 'var(--color-bg)', borderColor: 'var(--color-surface)' }}>
             <h3 className="font-coco text-2xl mb-6" style={{ color: COLORS.navy }}>Send a Message</h3>
             
             <form 
@@ -515,37 +537,40 @@ const ContactSection = () => {
               <input type="hidden" name="from_name" value="Roma Mart Website" />
 
               <div>
-                <label htmlFor="name" className="block text-sm font-bold text-gray-700 mb-2">Full Name</label>
+                <label htmlFor="name" className="block text-sm font-bold mb-2" style={textColor}>Full Name</label>
                 <input 
                   type="text" 
                   name="name" 
                   id="name"
                   required 
-                  className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:border-navy-500 focus:ring-2 focus:ring-navy-200 outline-none transition-all"
+                  className="w-full px-4 py-3 rounded-lg border focus:border-navy-500 focus:ring-2 focus:ring-navy-200 outline-none transition-all"
+                  style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-surface)', color: 'var(--color-text)' }}
                   placeholder="John Doe"
                 />
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-bold text-gray-700 mb-2">Email Address</label>
+                <label htmlFor="email" className="block text-sm font-bold mb-2" style={textColor}>Email Address</label>
                 <input 
                   type="email" 
                   name="email" 
                   id="email"
                   required 
-                  className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:border-navy-500 focus:ring-2 focus:ring-navy-200 outline-none transition-all"
+                  className="w-full px-4 py-3 rounded-lg border focus:border-navy-500 focus:ring-2 focus:ring-navy-200 outline-none transition-all"
+                  style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-surface)', color: 'var(--color-text)' }}
                   placeholder="john@example.com"
                 />
               </div>
 
               <div>
-                <label htmlFor="message" className="block text-sm font-bold text-gray-700 mb-2">Message</label>
+                <label htmlFor="message" className="block text-sm font-bold mb-2" style={textColor}>Message</label>
                 <textarea 
                   name="message" 
                   id="message"
                   required 
                   rows="4"
-                  className="w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:border-navy-500 focus:ring-2 focus:ring-navy-200 outline-none transition-all"
+                  className="w-full px-4 py-3 rounded-lg border focus:border-navy-500 focus:ring-2 focus:ring-navy-200 outline-none transition-all"
+                  style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-surface)', color: 'var(--color-text)' }}
                   placeholder="How can we help you?"
                 ></textarea>
               </div>
@@ -668,7 +693,7 @@ const Footer = () => {
 
 // Loading fallback component (defined outside App to prevent recreation)
 const LoadingFallback = () => (
-  <div className="min-h-screen bg-white flex items-center justify-center">
+  <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--color-bg)' }}>
     <div className="text-center">
       <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: COLORS.yellow }}></div>
       <p className="mt-4 font-inter" style={{ color: COLORS.navy }}>Loading...</p>
@@ -692,7 +717,7 @@ function App() {
   const currentPage = getPage();
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--color-bg)' }}>
       {currentPage !== 'home' ? (
         <Suspense fallback={<LoadingFallback />}>
           <a href="#main-content" className="skip-link">Skip to main content</a>

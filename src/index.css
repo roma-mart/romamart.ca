@@ -52,6 +52,32 @@
   }
 }
 
+/* High Contrast Mode Support (WCAG 2.2 AA: Perceivable 1.4.11) */
+@media (prefers-contrast: high) {
+  :root {
+    --color-text: #000;
+    --color-bg: #fff;
+    --color-primary: #000080;
+    --color-accent: #FFD700;
+  }
+  
+  * {
+    border-width: 2px !important;
+    outline-width: 3px !important;
+  }
+}
+
+/* Windows High Contrast Mode (forced-colors) */
+@media (forced-colors: active) {
+  * {
+    forced-color-adjust: auto;
+  }
+  
+  :focus-visible {
+    outline: 3px solid CanvasText;
+  }
+}
+
 /* Begin brand variables */
 
 /* Brand CSS variables and color-mode support */
