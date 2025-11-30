@@ -174,6 +174,8 @@ const Navbar = () => {
               onClick={() => setIsOpen(!isOpen)}
               className="md:hidden p-2 rounded-md"
               style={{ color: scrolled ? COLORS.navy : COLORS.white }}
+              aria-label={isOpen ? "Close menu" : "Open menu"}
+              aria-expanded={isOpen}
             >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -282,7 +284,7 @@ const Hero = () => {
           >
             <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl border-4 border-white/10 rotate-3 hover:rotate-0 transition-transform duration-500">
                <img 
-                 src="https://images.unsplash.com/photo-1604719312566-b7cb0463ab18?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
+                 src="https://images.unsplash.com/photo-1555636222-cae831e670b3?w=1000&h=500&fit=crop" 
                  alt="Roma Mart Storefront"
                  className="w-full h-[500px] object-cover"
                  loading="lazy"
