@@ -35,7 +35,7 @@ const TermsPage = () => {
       </nav>
 
       <div className="max-w-4xl mx-auto px-4">
-        <h1 className="text-4xl font-coco uppercase mb-8" style={{ color: COLORS.navy }}>
+        <h1 className="text-4xl font-coco uppercase mb-8" style={{ color: 'var(--color-heading)' }}>
           Terms of Service
         </h1>
 
@@ -45,7 +45,7 @@ const TermsPage = () => {
           </p>
 
           <section className="mb-8">
-            <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: COLORS.navy }}>
+            <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
               1. Acceptance of Terms
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
@@ -54,7 +54,7 @@ const TermsPage = () => {
           </section>
 
           <section className="mb-8">
-            <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: COLORS.navy }}>
+            <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
               2. Products and Services
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
@@ -69,7 +69,7 @@ const TermsPage = () => {
           </section>
 
           <section className="mb-8">
-            <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: COLORS.navy }}>
+            <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
               3. Age Restrictions
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
@@ -78,7 +78,7 @@ const TermsPage = () => {
           </section>
 
           <section className="mb-8">
-            <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: COLORS.navy }}>
+            <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
               4. Payment Terms
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
@@ -87,7 +87,7 @@ const TermsPage = () => {
           </section>
 
           <section className="mb-8">
-            <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: COLORS.navy }}>
+            <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
               5. Intellectual Property
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
@@ -96,7 +96,7 @@ const TermsPage = () => {
           </section>
 
           <section className="mb-8">
-            <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: COLORS.navy }}>
+            <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
               6. Limitation of Liability
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
@@ -105,7 +105,7 @@ const TermsPage = () => {
           </section>
 
           <section className="mb-8">
-            <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: COLORS.navy }}>
+            <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
               7. Governing Law
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
@@ -114,7 +114,7 @@ const TermsPage = () => {
           </section>
 
           <section className="mb-8">
-            <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: COLORS.navy }}>
+            <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
               8. Contact Information
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>

@@ -55,10 +55,16 @@
 /* High Contrast Mode Support (WCAG 2.2 AA: Perceivable 1.4.11) */
 @media (prefers-contrast: high) {
   :root {
-    --color-text: #000;
+    /* Maximum contrast colors */
     --color-bg: #fff;
-    --color-primary: #000080;
-    --color-accent: #FFD700;
+    --color-surface: #f0f0f0;
+    --color-border: #000;
+    --color-text: #000;
+    --color-text-muted: #333;
+    --color-primary: #000080; /* Navy blue with high contrast */
+    --color-accent: #B8860B; /* Dark goldenrod - more contrast than yellow */
+    --color-heading: #000080;
+    --color-icon: #000080;
   }
   
   * {
@@ -82,20 +88,42 @@
 
 /* Brand CSS variables and color-mode support */
 :root {
+  /* Backgrounds */
   --color-bg: #fff;
-  --color-surface: #fff;
+  --color-surface: #f8f8f8;
+  --color-border: #e5e5e5;
+  
+  /* Text */
   --color-text: #151515;
-  --color-primary: #020178; /* navy */
-  --color-accent: #E4B340; /* tulip tree yellow */
+  --color-text-muted: #5a5a5a;
+  
+  /* Brand colors - semantic usage */
+  --color-primary: #020178; /* Navy - headings, primary elements */
+  --color-accent: #E4B340; /* Yellow - CTAs, highlights */
+  
+  /* Specific use cases */
+  --color-heading: #020178; /* Navy for headings in light mode */
+  --color-icon: #020178; /* Navy for icons in light mode */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
+    /* Backgrounds */
     --color-bg: #0b0b0b;
-    --color-surface: #151515;
+    --color-surface: #1a1a1a;
+    --color-border: #2a2a2a;
+    
+    /* Text */
     --color-text: #f4f4f4;
-    --color-primary: #020178;
-    --color-accent: #E4B340;
+    --color-text-muted: #a8a8a8;
+    
+    /* Brand colors - adapted for dark mode visibility */
+    --color-primary: #E4B340; /* Yellow for visibility */
+    --color-accent: #E4B340; /* Yellow for CTAs */
+    
+    /* Specific use cases */
+    --color-heading: #E4B340; /* Yellow for headings in dark mode */
+    --color-icon: #E4B340; /* Yellow for icons in dark mode */
   }
 }
 

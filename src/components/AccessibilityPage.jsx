@@ -47,7 +47,7 @@ const AccessibilityPage = () => {
       <section className="max-w-4xl mx-auto px-4 mb-16">
         <h1 
           className="text-4xl md:text-5xl font-coco uppercase mb-6"
-          style={{ color: COLORS.navy }}
+          style={{ color: 'var(--color-heading)' }}
         >
           Accessibility Statement
         </h1>
@@ -65,7 +65,7 @@ const AccessibilityPage = () => {
       <section className="max-w-4xl mx-auto px-4 mb-20">
         <h2 
           className="text-3xl font-coco uppercase mb-12"
-          style={{ color: COLORS.navy }}
+          style={{ color: 'var(--color-heading)' }}
         >
           Standards & Certifications
         </h2>
@@ -76,7 +76,7 @@ const AccessibilityPage = () => {
             <div className="flex items-start gap-4 mb-4">
               <CheckCircle size={32} style={{ color: COLORS.yellow }} className="flex-shrink-0 mt-1" />
               <div>
-                <h3 className="text-xl font-bold" style={{ color: COLORS.navy }}>WCAG 2.2 Level AA</h3>
+                <h3 className="text-xl font-bold" style={{ color: 'var(--color-heading)' }}>WCAG 2.2 Level AA</h3>
                 <p className="text-sm text-gray-600">Web Content Accessibility Guidelines</p>
               </div>
             </div>
@@ -99,7 +99,7 @@ const AccessibilityPage = () => {
             <div className="flex items-start gap-4 mb-4">
               <CheckCircle size={32} style={{ color: COLORS.yellow }} className="flex-shrink-0 mt-1" />
               <div>
-                <h3 className="text-xl font-bold" style={{ color: COLORS.navy }}>AODA Compliant</h3>
+                <h3 className="text-xl font-bold" style={{ color: 'var(--color-heading)' }}>AODA Compliant</h3>
                 <p className="text-sm text-gray-600">Ontario Accessibility Requirements</p>
               </div>
             </div>
@@ -122,8 +122,8 @@ const AccessibilityPage = () => {
             <div className="flex items-start gap-4 mb-4">
               <CheckCircle size={32} style={{ color: COLORS.yellow }} className="flex-shrink-0 mt-1" />
               <div>
-                <h3 className="text-xl font-bold" style={{ color: COLORS.navy }}>ISO/IEC 40500:2025</h3>
-                <p className="text-sm text-gray-600">International Standard</p>
+                <h3 className="text-xl font-bold" style={{ color: 'var(--color-heading)' }}>ISO/IEC 40500:2025</h3>
+                <p className="text-sm text-gray-600">International Accessibility Standard</p>
               </div>
             </div>
             <p className="mb-4 leading-relaxed" style={textColor}>
@@ -145,7 +145,7 @@ const AccessibilityPage = () => {
             <div className="flex items-start gap-4 mb-4">
               <CheckCircle size={32} style={{ color: COLORS.yellow }} className="flex-shrink-0 mt-1" />
               <div>
-                <h3 className="text-xl font-bold" style={{ color: COLORS.navy }}>EN 301 549 (EAA)</h3>
+                <h3 className="text-xl font-bold" style={{ color: 'var(--color-heading)' }}>EN 301 549 (EAA)</h3>
                 <p className="text-sm text-gray-600">European Accessibility Act</p>
               </div>
             </div>
@@ -166,7 +166,7 @@ const AccessibilityPage = () => {
 
         {/* WCAG 3.0 Ready */}
         <div className="mt-8 p-6 bg-yellow-50 rounded-lg border-2 border-yellow-200">
-          <h3 className="text-lg font-bold mb-2" style={{ color: COLORS.navy }}>🚀 WCAG 3.0 Ready</h3>
+          <h3 className="text-lg font-bold mb-2" style={{ color: 'var(--color-heading)' }}>🚀 WCAG 3.0 Ready</h3>
           <p style={textColor}>
             Our website is designed with outcome-based accessibility principles, ensuring readiness for WCAG 3.0 
             as it becomes the official standard.
@@ -178,7 +178,7 @@ const AccessibilityPage = () => {
       <section className="max-w-4xl mx-auto px-4 mb-20">
         <h2 
           className="text-3xl font-coco uppercase mb-8"
-          style={{ color: COLORS.navy }}
+          style={{ color: 'var(--color-heading)' }}
         >
           Accessibility Features
         </h2>
@@ -275,7 +275,7 @@ const AccessibilityPage = () => {
       <section className="max-w-4xl mx-auto px-4 mb-20">
         <h2 
           className="text-3xl font-coco uppercase mb-8"
-          style={{ color: COLORS.navy }}
+          style={{ color: 'var(--color-heading)' }}
         >
           Report an Accessibility Issue
         </h2>
@@ -287,7 +287,7 @@ const AccessibilityPage = () => {
 
         <div className="grid md:grid-cols-3 gap-6">
           <div className="p-6 rounded-lg border" style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
-            <Mail size={32} className="mb-4" style={{ color: COLORS.navy }} />
+            <Mail size={32} className="mb-4" style={{ color: 'var(--color-icon)' }} />
             <h3 className="font-bold text-lg mb-2" style={textColor}>Email</h3>
             <a 
               href="mailto:accessibility@romamart.ca" 
@@ -298,7 +298,7 @@ const AccessibilityPage = () => {
           </div>
 
           <div className="p-6 rounded-lg border" style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
-            <Phone size={32} className="mb-4" style={{ color: COLORS.navy }} />
+            <Phone size={32} className="mb-4" style={{ color: 'var(--color-icon)' }} />
             <h3 className="font-bold text-lg mb-2" style={textColor}>Phone</h3>
             <a 
               href="tel:+13823422000" 
@@ -309,7 +309,7 @@ const AccessibilityPage = () => {
           </div>
 
           <div className="p-6 rounded-lg border" style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
-            <MapPin size={32} className="mb-4" style={{ color: COLORS.navy }} />
+            <MapPin size={32} className="mb-4" style={{ color: 'var(--color-icon)' }} />
             <h3 className="font-bold text-lg mb-2" style={textColor}>Visit Us</h3>
             <p className="text-sm" style={textColor}>
               189-3 Wellington Street<br />
@@ -328,7 +328,7 @@ const AccessibilityPage = () => {
       <section className="max-w-4xl mx-auto px-4 mb-20">
         <h2 
           className="text-3xl font-coco uppercase mb-8"
-          style={{ color: COLORS.navy }}
+          style={{ color: 'var(--color-heading)' }}
         >
           Documentation & Testing
         </h2>
@@ -393,12 +393,12 @@ const AccessibilityPage = () => {
       <section className="max-w-4xl mx-auto px-4">
         <h2 
           className="text-3xl font-coco uppercase mb-8"
-          style={{ color: COLORS.navy }}
+          style={{ color: 'var(--color-heading)' }}
         >
           Our Commitment to Accessibility
         </h2>
 
-        <div className="bg-navy-900 rounded-lg p-8" style={{ backgroundColor: COLORS.navy }}>
+        <div className="bg-navy-900 rounded-lg p-8" style={{ backgroundColor: '#020178' }}>
           <p className="text-white text-lg leading-relaxed mb-6">
             Accessibility is not a feature—it's a fundamental right. We are committed to:
           </p>

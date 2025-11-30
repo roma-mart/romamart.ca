@@ -35,7 +35,7 @@ const CookiesPage = () => {
       </nav>
 
       <div className="max-w-4xl mx-auto px-4">
-        <h1 className="text-4xl font-coco uppercase mb-8" style={{ color: COLORS.navy }}>
+        <h1 className="text-4xl font-coco uppercase mb-8" style={{ color: 'var(--color-heading)' }}>
           Cookie Policy
         </h1>
 
@@ -45,7 +45,7 @@ const CookiesPage = () => {
           </p>
 
           <section className="mb-8">
-            <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: COLORS.navy }}>
+            <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
               What Are Cookies?
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
@@ -54,13 +54,13 @@ const CookiesPage = () => {
           </section>
 
           <section className="mb-8">
-            <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: COLORS.navy }}>
+            <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
               Types of Cookies We Use
             </h2>
             
             <div className="space-y-6">
               <div className="border-l-4 border-yellow-400 pl-4">
-                <h3 className="text-xl font-coco uppercase mb-2" style={{ color: COLORS.navy }}>
+                <h3 className="text-xl font-coco uppercase mb-2" style={{ color: 'var(--color-heading)' }}>
                   Necessary Cookies
                 </h3>
                 <p className="leading-relaxed" style={textColor}>
@@ -69,7 +69,7 @@ const CookiesPage = () => {
               </div>
 
               <div className="border-l-4 border-blue-400 pl-4">
-                <h3 className="text-xl font-coco uppercase mb-2" style={{ color: COLORS.navy }}>
+                <h3 className="text-xl font-coco uppercase mb-2" style={{ color: 'var(--color-heading)' }}>
                   Analytics Cookies
                 </h3>
                 <p className="leading-relaxed mb-2" style={textColor}>
@@ -84,7 +84,7 @@ const CookiesPage = () => {
               </div>
 
               <div className="border-l-4 border-pink-400 pl-4">
-                <h3 className="text-xl font-coco uppercase mb-2" style={{ color: COLORS.navy }}>
+                <h3 className="text-xl font-coco uppercase mb-2" style={{ color: 'var(--color-heading)' }}>
                   Marketing Cookies
                 </h3>
                 <p className="leading-relaxed mb-2" style={textColor}>
@@ -99,7 +99,7 @@ const CookiesPage = () => {
           </section>
 
           <section className="mb-8">
-            <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: COLORS.navy }}>
+            <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
               Managing Your Cookie Preferences
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
@@ -117,7 +117,7 @@ const CookiesPage = () => {
           </section>
 
           <section className="mb-8">
-            <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: COLORS.navy }}>
+            <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
               Third-Party Cookies
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
@@ -135,7 +135,7 @@ const CookiesPage = () => {
           </section>
 
           <section className="mb-8">
-            <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: COLORS.navy }}>
+            <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
               Browser Settings
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
@@ -153,7 +153,7 @@ const CookiesPage = () => {
           </section>
 
           <section className="mb-8">
-            <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: COLORS.navy }}>
+            <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
               Contact Us
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>

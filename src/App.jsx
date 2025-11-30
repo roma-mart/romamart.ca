@@ -144,7 +144,11 @@ const Navbar = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
             {/* Logo Area */}
-            <div className="flex items-center space-x-2">
+            <a 
+              href={`${BASE_URL}`}
+              className="flex items-center space-x-2 hover:opacity-80 transition-opacity cursor-pointer"
+              aria-label="Roma Mart - Go to homepage"
+            >
               <div 
                 className="w-12 h-12 rounded-lg flex items-center justify-center font-bold text-xl shadow-lg"
                 style={{ backgroundColor: COLORS.navy, color: COLORS.white }}
@@ -155,7 +159,7 @@ const Navbar = () => {
                 <span className="block font-coco text-xl uppercase" style={{ color: scrolled ? COLORS.navy : COLORS.white }}>Roma Mart</span>
                 <span className="block text-xs font-inter font-semibold tracking-wider" style={{ color: COLORS.yellow }}>CONVENIENCE</span>
               </div>
-            </div>
+            </a>
             
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center space-x-8">
@@ -211,7 +215,7 @@ const Navbar = () => {
                     href={`${BASE_URL}#${item.toLowerCase()}`}
                     onClick={() => setIsOpen(false)}
                     className="block px-3 py-4 text-lg font-bold font-coco uppercase border-b"
-                    style={{ color: COLORS.navy, borderColor: 'var(--color-surface)' }}
+                    style={{ color: 'var(--color-heading)', borderColor: 'var(--color-surface)' }}
                   >
                     {item}
                   </a>
@@ -307,7 +311,7 @@ const Hero = () => {
                
                <div className="absolute top-6 right-6 w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-lg rotate-12">
                  <div className="text-center">
-                   <span className="block font-coco text-xl leading-none" style={{ color: COLORS.navy }}>2.5%</span>
+                   <span className="block font-coco text-xl leading-none" style={{ color: '#020178' }}>2.5%</span>
                    <span className="block text-xs font-bold uppercase" style={{ color: COLORS.darkGrey }}>OFF CASH</span>
                  </div>
                </div>
@@ -323,7 +327,7 @@ const ServicesScroll = () => {
   return (
     <section id="services" className="py-20 overflow-hidden" style={{ backgroundColor: 'var(--color-surface)' }}>
       <div className="max-w-7xl mx-auto px-4 mb-10">
-        <h2 className="text-3xl md:text-4xl font-coco uppercase text-center" style={{ color: COLORS.navy }}>
+        <h2 className="text-3xl md:text-4xl font-coco uppercase text-center" style={{ color: 'var(--color-heading)' }}>
           Our <span style={{ color: COLORS.yellow }}>Services</span>
         </h2>
       </div>
@@ -336,10 +340,10 @@ const ServicesScroll = () => {
             className="flex-shrink-0 w-72 md:w-80 p-8 rounded-2xl shadow-sm border snap-center flex flex-col items-start hover:shadow-md transition-shadow"
             style={{ backgroundColor: 'var(--color-bg)', borderColor: 'var(--color-surface)' }}
           >
-            <div className="p-4 rounded-xl mb-6" style={{ backgroundColor: COLORS.navy + '10', color: COLORS.navy }}>
-              {React.cloneElement(item.icon, { size: 32 })}
+            <div className="p-4 rounded-xl mb-6" style={{ backgroundColor: 'var(--color-surface)' }}>
+              {React.cloneElement(item.icon, { size: 32, style: { color: 'var(--color-icon)' } })}
             </div>
-            <h3 className="font-coco text-xl mb-3" style={{ color: COLORS.navy }}>{item.title}</h3>
+            <h3 className="font-coco text-xl mb-3" style={{ color: 'var(--color-heading)' }}>{item.title}</h3>
             <p className="font-inter leading-relaxed" style={{ color: 'var(--color-text)', opacity: 0.7 }}>{item.desc}</p>
           </motion.div>
         ))}
@@ -407,7 +411,7 @@ const Locations = () => {
       <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
           <span className="text-yellow-500 font-bold uppercase tracking-widest text-sm">Find Us</span>
-          <h2 className="text-4xl font-coco mt-2" style={{ color: COLORS.navy }}>Our Locations</h2>
+          <h2 className="text-4xl font-coco mt-2" style={{ color: 'var(--color-heading)' }}>Our Locations</h2>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
@@ -418,11 +422,11 @@ const Locations = () => {
                 onClick={() => setActiveLoc(loc)}
                 className="w-full text-left p-6 rounded-xl border-2 transition-all"
                 style={{ 
-                  borderColor: activeLoc.id === loc.id ? COLORS.navy : 'var(--color-surface)',
-                  backgroundColor: activeLoc.id === loc.id ? COLORS.navy + '10' : 'transparent'
+                  borderColor: activeLoc.id === loc.id ? 'var(--color-primary)' : 'var(--color-surface)',
+                  backgroundColor: activeLoc.id === loc.id ? 'var(--color-surface)' : 'transparent'
                 }}
               >
-                <h3 className="font-coco text-lg mb-1" style={{ color: COLORS.navy }}>{loc.name}</h3>
+                <h3 className="font-coco text-lg mb-1" style={{ color: 'var(--color-heading)' }}>{loc.name}</h3>
                 <p className="text-sm font-inter mb-4" style={{ color: 'var(--color-text)', opacity: 0.7 }}>{loc.address}</p>
                 <div className="flex items-center gap-2 text-sm font-semibold" style={{ color: COLORS.yellow }}>
                   <div className={`w-2 h-2 rounded-full ${loc.isOpen ? 'bg-green-500' : 'bg-red-500'}`}></div>
@@ -475,38 +479,38 @@ const ContactSection = () => {
           {/* Contact Info Side */}
           <div>
             <span className="text-yellow-500 font-bold uppercase tracking-widest text-sm">Get in Touch</span>
-            <h2 className="text-4xl font-coco mt-2 mb-6" style={{ color: COLORS.navy }}>Contact Us</h2>
+            <h2 className="text-4xl font-coco mt-2 mb-6" style={{ color: 'var(--color-primary)' }}>Contact Us</h2>
             <p className="mb-10 font-inter leading-relaxed" style={mutedTextColor}>
               Have a question about our products, want to suggest a new snack, or interested in a partnership? We'd love to hear from you.
             </p>
 
             <div className="space-y-8">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: COLORS.navy + '10' }}>
-                  <MapPin className="text-navy-900" style={{ color: COLORS.navy }} />
+                <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'var(--color-surface)' }}>
+                  <MapPin className="text-navy-900" style={{ color: 'var(--color-icon)' }} />
                 </div>
                 <div>
-                  <h4 className="font-bold text-lg" style={{ color: COLORS.navy }}>Visit Us</h4>
+                  <h4 className="font-bold text-lg" style={{ color: 'var(--color-primary)' }}>Visit Us</h4>
                   <p style={textColor}>{STORE_DATA.locations[0].address}</p>
                 </div>
               </div>
 
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: COLORS.navy + '10' }}>
-                  <Phone className="text-navy-900" style={{ color: COLORS.navy }} />
+                <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'var(--color-surface)' }}>
+                  <Phone className="text-navy-900" style={{ color: 'var(--color-icon)' }} />
                 </div>
                 <div>
-                  <h4 className="font-bold text-lg" style={{ color: COLORS.navy }}>Call Us</h4>
+                  <h4 className="font-bold text-lg" style={{ color: 'var(--color-primary)' }}>Call Us</h4>
                   <p style={textColor}>{STORE_DATA.contact.phone}</p>
                 </div>
               </div>
 
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: COLORS.navy + '10' }}>
-                  <Clock className="text-navy-900" style={{ color: COLORS.navy }} />
+                <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'var(--color-surface)' }}>
+                  <Clock className="text-navy-900" style={{ color: 'var(--color-icon)' }} />
                 </div>
                 <div>
-                  <h4 className="font-bold text-lg" style={{ color: COLORS.navy }}>Hours</h4>
+                  <h4 className="font-bold text-lg" style={{ color: 'var(--color-primary)' }}>Hours</h4>
                   <p style={textColor}>Mon-Fri: {STORE_DATA.locations[0].hours.weekdays}</p>
                   <p style={textColor}>Sat-Sun: {STORE_DATA.locations[0].hours.weekends}</p>
                 </div>
@@ -515,8 +519,8 @@ const ContactSection = () => {
           </div>
 
           {/* Web3Forms Contact Form */}
-          <div className="p-8 rounded-2xl shadow-lg border" style={{ backgroundColor: 'var(--color-bg)', borderColor: 'var(--color-surface)' }}>
-            <h3 className="font-coco text-2xl mb-6" style={{ color: COLORS.navy }}>Send a Message</h3>
+          <div className="p-8 rounded-2xl shadow-lg border" style={{ backgroundColor: 'var(--color-bg)', borderColor: 'var(--color-border)' }}>
+            <h3 className="font-coco text-2xl mb-6" style={{ color: 'var(--color-primary)' }}>Send a Message</h3>
             
             <form 
               action="https://api.web3forms.com/submit" 
@@ -597,7 +601,7 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto px-4 grid md:grid-cols-4 gap-12 mb-12">
         <div className="col-span-1 md:col-span-2">
            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-white rounded flex items-center justify-center font-coco text-xl" style={{ color: COLORS.navy }}>RM</div>
+              <div className="w-10 h-10 bg-white rounded flex items-center justify-center font-coco text-xl" style={{ color: '#020178' }}>RM</div>
               <span className="font-coco text-2xl uppercase">Roma Mart</span>
            </div>
            <p className="text-gray-400 font-inter max-w-sm mb-6">
@@ -696,7 +700,7 @@ const LoadingFallback = () => (
   <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--color-bg)' }}>
     <div className="text-center">
       <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: COLORS.yellow }}></div>
-      <p className="mt-4 font-inter" style={{ color: COLORS.navy }}>Loading...</p>
+      <p className="mt-4 font-inter" style={{ color: 'var(--color-text)' }}>Loading...</p>
     </div>
   </div>
 );
