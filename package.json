@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build --mode production && node scripts/prerender.js",
+    "build:ssg": "vite-ssg build",
     "lint": "eslint .",
     "lint:css": "stylelint \"src/**/*.css\"",
     "preview": "vite preview",
@@ -18,7 +19,10 @@
     "framer-motion": "^12.23.24",
     "lucide-react": "^0.554.0",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react-dom": "^19.2.0",
+    "react-helmet-async": "^2.0.5",
+    "vite-plugin-pages": "^0.33.1",
+    "vite-ssg": "^28.2.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",

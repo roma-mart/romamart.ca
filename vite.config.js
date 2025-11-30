@@ -6,9 +6,22 @@ import react from '@vitejs/plugin-react';
 const REPO_NAME = 'romamart.ca'; 
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+  ],
   // ----------------------------------------------------
   // IMPORTANT: This sets the correct base path for assets
   // ----------------------------------------------------
   base: `/${REPO_NAME}/`, 
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom'],
+          'icons': ['lucide-react', '@fortawesome/react-fontawesome'],
+          'motion': ['framer-motion'],
+        },
+      },
+    },
+  },
 });

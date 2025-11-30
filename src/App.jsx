@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { 
   MapPin, 
   Clock, 
@@ -11,13 +11,21 @@ import {
   ArrowRight,
   Send,
   ExternalLink,
-  Star
+  Star,
+  X
 } from 'lucide-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFacebook, faInstagram, faTiktok, faXTwitter, faSnapchat } from '@fortawesome/free-brands-svg-icons';
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
-import AccessibilityPage from './components/AccessibilityPage';
+import TrustpilotWidget from './components/TrustpilotWidget';
+import OrderCTA from './components/OrderCTA';
+
+// Code splitting: Lazy load page components
+const AccessibilityPage = lazy(() => import('./components/AccessibilityPage'));
+const PrivacyPage = lazy(() => import('./pages/PrivacyPage'));
+const TermsPage = lazy(() => import('./pages/TermsPage'));
+const CookiesPage = lazy(() => import('./pages/CookiesPage'));
 
 // --- BRAND GUIDELINES & DATA ---
 
@@ -79,6 +87,9 @@ const ROCAFE_MENU = [
   { name: "Matcha Latte", price: "$4.99", popular: true },
   { name: "Fruit Slush", price: "$5.50", popular: false },
 ];
+
+// Use Vite's base URL so links work both at root and when hosted under a subpath (e.g. /romamart.ca/)
+const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
 
 // --- CUSTOM COMPONENTS ---
 
@@ -274,6 +285,7 @@ const Hero = () => {
                  src="https://images.unsplash.com/photo-1604719312566-b7cb0463ab18?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
                  alt="Roma Mart Storefront"
                  className="w-full h-[500px] object-cover"
+                 loading="lazy"
                />
                
                <div className="absolute top-6 right-6 w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-lg rotate-12">
@@ -359,6 +371,7 @@ const RoCafeSection = () => {
                  src="https://images.unsplash.com/photo-1558507304-7c2a5d911139?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
                  alt="Bubble Tea and Coffee"
                  className="w-full h-full object-cover hover:scale-110 transition-transform duration-700"
+                 loading="lazy"
                />
             </div>
           </div>
@@ -481,7 +494,19 @@ const ContactSection = () => {
           <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
             <h3 className="font-coco text-2xl mb-6" style={{ color: COLORS.navy }}>Send a Message</h3>
             
-            <form action="https://api.web3forms.com/submit" method="POST" className="space-y-6">
+            <form 
+              action="https://api.web3forms.com/submit" 
+              method="POST" 
+              className="space-y-6"
+              onSubmit={() => {
+                if (window.dataLayer) {
+                  window.dataLayer.push({
+                    event: 'contact_form_submit',
+                    form_location: 'contact_section'
+                  });
+                }
+              }}
+            >
               {/* Web3Forms Access Key is set in STORE_DATA */}
               <input type="hidden" name="access_key" value={STORE_DATA.contact.web3FormsAccessKey} />
               <input type="hidden" name="subject" value="New Contact from Roma Mart Website" />
@@ -552,19 +577,54 @@ const Footer = () => {
              Your local one-stop shop for everything from daily groceries to premium café drinks. Proudly serving the Sarnia community.
            </p>
            <div className="flex gap-4">
-              <a href={STORE_DATA.socialLinks.facebook} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-yellow-500 transition-colors" title="Facebook">
+              <a 
+                href={STORE_DATA.socialLinks.facebook} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-yellow-500 transition-colors" 
+                title="Facebook"
+                onClick={() => window.dataLayer?.push({ event: 'social_click', platform: 'facebook' })}
+              >
                 <FontAwesomeIcon icon={faFacebook} size="lg" style={{ color: COLORS.yellow }} />
               </a>
-              <a href={STORE_DATA.socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-yellow-500 transition-colors" title="Instagram">
+              <a 
+                href={STORE_DATA.socialLinks.instagram} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-yellow-500 transition-colors" 
+                title="Instagram"
+                onClick={() => window.dataLayer?.push({ event: 'social_click', platform: 'instagram' })}
+              >
                 <FontAwesomeIcon icon={faInstagram} size="lg" style={{ color: COLORS.yellow }} />
               </a>
-              <a href={STORE_DATA.socialLinks.tiktok} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-yellow-500 transition-colors" title="TikTok">
+              <a 
+                href={STORE_DATA.socialLinks.tiktok} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-yellow-500 transition-colors" 
+                title="TikTok"
+                onClick={() => window.dataLayer?.push({ event: 'social_click', platform: 'tiktok' })}
+              >
                 <FontAwesomeIcon icon={faTiktok} size="lg" style={{ color: COLORS.yellow }} />
               </a>
-              <a href={STORE_DATA.socialLinks.x} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-yellow-500 transition-colors" title="X (Twitter)">
+              <a 
+                href={STORE_DATA.socialLinks.x} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-yellow-500 transition-colors" 
+                title="X (Twitter)"
+                onClick={() => window.dataLayer?.push({ event: 'social_click', platform: 'x' })}
+              >
                 <FontAwesomeIcon icon={faXTwitter} size="lg" style={{ color: COLORS.yellow }} />
               </a>
-              <a href={STORE_DATA.socialLinks.snapchat} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-yellow-500 transition-colors" title="Snapchat">
+              <a 
+                href={STORE_DATA.socialLinks.snapchat} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-yellow-500 transition-colors" 
+                title="Snapchat"
+                onClick={() => window.dataLayer?.push({ event: 'social_click', platform: 'snapchat' })}
+              >
                 <FontAwesomeIcon icon={faSnapchat} size="lg" style={{ color: COLORS.yellow }} />
               </a>
            </div>
@@ -583,35 +643,67 @@ const Footer = () => {
         <div>
           <h4 className="font-coco text-lg mb-6 text-gray-200">Legal & Accessibility</h4>
           <ul className="space-y-2 font-inter text-gray-400">
-            <li><a href="/privacy" className="hover:text-yellow-400 transition-colors">Privacy Policy</a></li>
-            <li><a href="/terms" className="hover:text-yellow-400 transition-colors">Terms of Service</a></li>
-            <li><a href="/cookies" className="hover:text-yellow-400 transition-colors">Cookie Policy</a></li>
-            <li><a href="/accessibility" className="hover:text-yellow-400 transition-colors font-bold text-yellow-500">Accessibility</a></li>
+            <li><a href={`${BASE_URL}privacy`} className="hover:text-yellow-400 transition-colors">Privacy Policy</a></li>
+            <li><a href={`${BASE_URL}terms`} className="hover:text-yellow-400 transition-colors">Terms of Service</a></li>
+            <li><a href={`${BASE_URL}cookies`} className="hover:text-yellow-400 transition-colors">Cookie Policy</a></li>
+            <li><a href={`${BASE_URL}accessibility`} className="hover:text-yellow-400 transition-colors font-bold text-yellow-500">Accessibility</a></li>
           </ul>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 pt-8 border-t border-white/10 text-center text-gray-500 font-inter text-sm">
-        <p>&copy; {new Date().getFullYear()} {STORE_DATA.legalName} All rights reserved.</p>
+      <div className="max-w-7xl mx-auto px-4 pt-8 border-t border-white/10">
+        {/* Trustpilot Widget - loads async via component */}
+        <div className="mb-8">
+          <TrustpilotWidget />
+        </div>
+        <div className="text-center text-gray-500 font-inter text-sm">
+          <p>&copy; {new Date().getFullYear()} {STORE_DATA.legalName} All rights reserved.</p>
+        </div>
       </div>
     </footer>
   );
 };
 
+// Loading fallback component (defined outside App to prevent recreation)
+const LoadingFallback = () => (
+  <div className="min-h-screen bg-white flex items-center justify-center">
+    <div className="text-center">
+      <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: COLORS.yellow }}></div>
+      <p className="mt-4 font-inter" style={{ color: COLORS.navy }}>Loading...</p>
+    </div>
+  </div>
+);
+
 // --- MAIN APP ---
 function App() {
-  // Simple client-side routing based on current path
-  const isAccessibilityPage = typeof window !== 'undefined' && window.location.pathname.includes('/accessibility');
+  // Simple client-side routing
+  const pathname = typeof window !== 'undefined' ? window.location.pathname.replace(BASE_URL, '/') : '/';
+  
+  const getPage = () => {
+    if (pathname.includes('/accessibility')) return 'accessibility';
+    if (pathname.includes('/privacy')) return 'privacy';
+    if (pathname.includes('/terms')) return 'terms';
+    if (pathname.includes('/cookies')) return 'cookies';
+    return 'home';
+  };
+
+  const currentPage = getPage();
 
   return (
     <div className="min-h-screen bg-white">
-      {isAccessibilityPage ? (
-        <>
-          <a href="#accessibility-content" className="skip-link">Skip to accessibility content</a>
+      {currentPage !== 'home' ? (
+        <Suspense fallback={<LoadingFallback />}>
+          <a href="#main-content" className="skip-link">Skip to main content</a>
           <Navbar />
-          <AccessibilityPage />
+          <div id="main-content">
+            {currentPage === 'accessibility' && <AccessibilityPage />}
+            {currentPage === 'privacy' && <PrivacyPage />}
+            {currentPage === 'terms' && <TermsPage />}
+            {currentPage === 'cookies' && <CookiesPage />}
+          </div>
           <Footer />
-        </>
+          <OrderCTA orderUrl={STORE_DATA.onlineStoreUrl} />
+        </Suspense>
       ) : (
         <>
           {/* WCAG 2.2 AA: Skip Navigation Link (Operable 2.4.1) */}
@@ -625,6 +717,7 @@ function App() {
             <ContactSection />
           </div>
           <Footer />
+          <OrderCTA orderUrl={STORE_DATA.onlineStoreUrl} />
         </>
       )}
     </div>

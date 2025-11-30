@@ -1,5 +1,6 @@
 import React from 'react';
-import { ExternalLink, Mail, Phone, MapPin, CheckCircle } from 'lucide-react';
+import { Helmet } from 'react-helmet-async';
+import { ExternalLink, Mail, Phone, MapPin, CheckCircle, ChevronRight } from 'lucide-react';
 
 const AccessibilityPage = () => {
   const COLORS = {
@@ -8,8 +9,31 @@ const AccessibilityPage = () => {
     black: '#151515',
   };
 
+  const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
+
   return (
     <div className="min-h-screen bg-white pt-32 pb-16">
+      <Helmet>
+        <title>Accessibility Statement | Roma Mart Convenience</title>
+        <meta name="description" content="Roma Mart Convenience is committed to digital accessibility. WCAG 2.2 Level AA compliant. Learn about our accessibility features and report issues." />
+        <link rel="canonical" href="https://romamart.ca/accessibility" />
+      </Helmet>
+
+      {/* Breadcrumb Navigation */}
+      <nav aria-label="Breadcrumb" className="max-w-4xl mx-auto px-4 mb-8">
+        <ol className="flex items-center gap-2 text-sm font-inter">
+          <li>
+            <a 
+              href={`${BASE_URL}`} 
+              className="text-gray-600 hover:text-yellow-500 transition-colors"
+            >
+              Home
+            </a>
+          </li>
+          <li aria-hidden="true"><ChevronRight size={16} className="text-gray-400" /></li>
+          <li aria-current="page" className="text-gray-900 font-semibold">Accessibility</li>
+        </ol>
+      </nav>
       {/* Skip link target */}
       <a id="accessibility-content" className="sr-only" href="#accessibility-content">
         Skip to accessibility content

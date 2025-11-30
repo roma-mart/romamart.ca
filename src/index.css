@@ -5,6 +5,7 @@
 /* Tailwind directives above are recognized by Stylelint via project config */
 
 /* WCAG 2.2 AA: Keyboard Focus Visible (Operable 2.4.7) */
+
 /* High contrast focus outline for keyboard navigation */
 :focus-visible {
   outline: 3px solid var(--color-accent);
@@ -103,4 +104,21 @@ body {
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;  /* Chrome, Safari, and Opera */
+}
+
+/* Fade-in animation for Order CTA button */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.5s ease-out 1s forwards;
+  opacity: 0;
 }
