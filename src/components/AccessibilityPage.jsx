@@ -11,8 +11,11 @@ const AccessibilityPage = () => {
 
   const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
 
+  const textColor = { color: 'var(--color-text)' };
+  const mutedTextColor = { color: 'var(--color-text)', opacity: 0.7 };
+  
   return (
-    <div className="min-h-screen bg-white pt-32 pb-16">
+    <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>
       <Helmet>
         <title>Accessibility Statement | Roma Mart Convenience</title>
         <meta name="description" content="Roma Mart Convenience is committed to digital accessibility. WCAG 2.2 Level AA compliant. Learn about our accessibility features and report issues." />
@@ -25,13 +28,14 @@ const AccessibilityPage = () => {
           <li>
             <a 
               href={`${BASE_URL}`} 
-              className="text-gray-600 hover:text-yellow-500 transition-colors"
+              className="hover:text-yellow-500 transition-colors"
+              style={mutedTextColor}
             >
               Home
             </a>
           </li>
-          <li aria-hidden="true"><ChevronRight size={16} className="text-gray-400" /></li>
-          <li aria-current="page" className="text-gray-900 font-semibold">Accessibility</li>
+          <li aria-hidden="true"><ChevronRight size={16} style={mutedTextColor} /></li>
+          <li aria-current="page" className="font-semibold" style={textColor}>Accessibility</li>
         </ol>
       </nav>
       {/* Skip link target */}
@@ -47,12 +51,12 @@ const AccessibilityPage = () => {
         >
           Accessibility Statement
         </h1>
-        <p className="text-lg font-inter text-gray-900 leading-relaxed mb-4">
+        <p className="text-lg font-inter leading-relaxed mb-4" style={textColor}>
           Roma Mart Convenience is committed to ensuring digital accessibility for people with disabilities. 
           We strive to maintain and continually improve the accessibility of our website to conform to the 
           Web Content Accessibility Guidelines (WCAG) 2.2 Level AA.
         </p>
-        <p className="text-lg font-inter text-gray-900 leading-relaxed">
+        <p className="text-lg font-inter leading-relaxed" style={textColor}>
           This page outlines our accessibility compliance, standards met, and how to report accessibility issues.
         </p>
       </section>
@@ -76,7 +80,7 @@ const AccessibilityPage = () => {
                 <p className="text-sm text-gray-600">Web Content Accessibility Guidelines</p>
               </div>
             </div>
-            <p className="text-gray-900 mb-4 leading-relaxed">
+            <p className="mb-4 leading-relaxed" style={textColor}>
               Our website fully conforms to WCAG 2.2 Level AA, the latest international standard for web accessibility 
               published by the World Wide Web Consortium (W3C).
             </p>
@@ -99,7 +103,7 @@ const AccessibilityPage = () => {
                 <p className="text-sm text-gray-600">Ontario Accessibility Requirements</p>
               </div>
             </div>
-            <p className="text-gray-700 mb-4 leading-relaxed">
+            <p className="mb-4 leading-relaxed" style={textColor}>
               We exceed the Accessibility for Ontarians with Disabilities Act (AODA) requirement of WCAG 2.0 AA 
               by implementing WCAG 2.2 AA.
             </p>
@@ -122,7 +126,7 @@ const AccessibilityPage = () => {
                 <p className="text-sm text-gray-600">International Standard</p>
               </div>
             </div>
-            <p className="text-gray-700 mb-4 leading-relaxed">
+            <p className="mb-4 leading-relaxed" style={textColor}>
               Our website complies with the ISO/IEC 40500:2025 international standard for web accessibility, 
               which aligns with WCAG 2.2 Level AA.
             </p>
@@ -145,7 +149,7 @@ const AccessibilityPage = () => {
                 <p className="text-sm text-gray-600">European Accessibility Act</p>
               </div>
             </div>
-            <p className="text-gray-700 mb-4 leading-relaxed">
+            <p className="mb-4 leading-relaxed" style={textColor}>
               We exceed EN 301 549 requirements for the European Accessibility Act by implementing WCAG 2.2 AA 
               instead of the required WCAG 2.1 AA.
             </p>
@@ -163,7 +167,7 @@ const AccessibilityPage = () => {
         {/* WCAG 3.0 Ready */}
         <div className="mt-8 p-6 bg-yellow-50 rounded-lg border-2 border-yellow-200">
           <h3 className="text-lg font-bold mb-2" style={{ color: COLORS.navy }}>🚀 WCAG 3.0 Ready</h3>
-          <p className="text-gray-700">
+          <p style={textColor}>
             Our website is designed with outcome-based accessibility principles, ensuring readiness for WCAG 3.0 
             as it becomes the official standard.
           </p>
@@ -183,8 +187,8 @@ const AccessibilityPage = () => {
           <div className="flex gap-4">
             <CheckCircle size={24} style={{ color: COLORS.yellow }} className="flex-shrink-0 mt-1" />
             <div>
-              <h3 className="font-bold text-lg mb-1">Keyboard Navigation</h3>
-              <p className="text-gray-900">
+              <h3 className="font-bold text-lg mb-1" style={textColor}>Keyboard Navigation</h3>
+              <p style={textColor}>
                 All functionality is accessible via keyboard. Navigate with Tab, activate with Enter/Space, 
                 and close menus with Escape.
               </p>
@@ -194,8 +198,8 @@ const AccessibilityPage = () => {
           <div className="flex gap-4">
             <CheckCircle size={24} style={{ color: COLORS.yellow }} className="flex-shrink-0 mt-1" />
             <div>
-              <h3 className="font-bold text-lg mb-1">Visible Focus Indicators</h3>
-              <p className="text-gray-900">
+              <h3 className="font-bold text-lg mb-1" style={textColor}>Visible Focus Indicators</h3>
+              <p style={textColor}>
                 High-contrast yellow outline (3px, 13.8:1 contrast ratio) shows keyboard focus on all interactive elements.
               </p>
             </div>
@@ -204,8 +208,8 @@ const AccessibilityPage = () => {
           <div className="flex gap-4">
             <CheckCircle size={24} style={{ color: COLORS.yellow }} className="flex-shrink-0 mt-1" />
             <div>
-              <h3 className="font-bold text-lg mb-1">Screen Reader Support</h3>
-              <p className="text-gray-900">
+              <h3 className="font-bold text-lg mb-1" style={textColor}>Screen Reader Support</h3>
+              <p style={textColor}>
                 Semantic HTML, ARIA labels, and descriptive link text make our site fully compatible with 
                 NVDA, JAWS, and VoiceOver screen readers.
               </p>
@@ -215,8 +219,8 @@ const AccessibilityPage = () => {
           <div className="flex gap-4">
             <CheckCircle size={24} style={{ color: COLORS.yellow }} className="flex-shrink-0 mt-1" />
             <div>
-              <h3 className="font-bold text-lg mb-1">Skip Navigation</h3>
-              <p className="text-gray-900">
+              <h3 className="font-bold text-lg mb-1" style={textColor}>Skip Navigation</h3>
+              <p style={textColor}>
                 Press Tab to see the "Skip to main content" link, allowing you to bypass repetitive navigation elements.
               </p>
             </div>
@@ -225,8 +229,8 @@ const AccessibilityPage = () => {
           <div className="flex gap-4">
             <CheckCircle size={24} style={{ color: COLORS.yellow }} className="flex-shrink-0 mt-1" />
             <div>
-              <h3 className="font-bold text-lg mb-1">Enhanced Color Contrast</h3>
-              <p className="text-gray-900">
+              <h3 className="font-bold text-lg mb-1" style={textColor}>Enhanced Color Contrast</h3>
+              <p style={textColor}>
                 All text and UI components meet or exceed WCAG AA contrast requirements. Our brand colors 
                 exceed AAA standards (12.6:1 navy, 8.4:1 yellow).
               </p>
@@ -236,8 +240,8 @@ const AccessibilityPage = () => {
           <div className="flex gap-4">
             <CheckCircle size={24} style={{ color: COLORS.yellow }} className="flex-shrink-0 mt-1" />
             <div>
-              <h3 className="font-bold text-lg mb-1">Reduced Motion Support</h3>
-              <p className="text-gray-900">
+              <h3 className="font-bold text-lg mb-1" style={textColor}>Reduced Motion Support</h3>
+              <p style={textColor}>
                 If you enable "Reduce motion" in your operating system preferences, animations and transitions 
                 on our site will be disabled.
               </p>
@@ -247,8 +251,8 @@ const AccessibilityPage = () => {
           <div className="flex gap-4">
             <CheckCircle size={24} style={{ color: COLORS.yellow }} className="flex-shrink-0 mt-1" />
             <div>
-              <h3 className="font-bold text-lg mb-1">Resizable Text & Zoom</h3>
-              <p className="text-gray-900">
+              <h3 className="font-bold text-lg mb-1" style={textColor}>Resizable Text & Zoom</h3>
+              <p style={textColor}>
                 Text can be resized up to 200% without loss of content or functionality. Content reflows properly 
                 on all zoom levels.
               </p>
@@ -258,8 +262,8 @@ const AccessibilityPage = () => {
           <div className="flex gap-4">
             <CheckCircle size={24} style={{ color: COLORS.yellow }} className="flex-shrink-0 mt-1" />
             <div>
-              <h3 className="font-bold text-lg mb-1">Touch-Friendly Targets</h3>
-              <p className="text-gray-700">
+              <h3 className="font-bold text-lg mb-1" style={textColor}>Touch-Friendly Targets</h3>
+              <p style={textColor}>
                 All buttons, links, and form inputs are at least 44×44 CSS pixels, meeting mobile accessibility standards.
               </p>
             </div>
@@ -276,15 +280,15 @@ const AccessibilityPage = () => {
           Report an Accessibility Issue
         </h2>
 
-        <p className="text-gray-700 mb-8 leading-relaxed">
+        <p className="mb-8 leading-relaxed" style={textColor}>
           If you encounter any accessibility barriers or have suggestions for improvement, we'd like to hear from you. 
           Please contact us using any of the methods below:
         </p>
 
         <div className="grid md:grid-cols-3 gap-6">
-          <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+          <div className="p-6 rounded-lg border" style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
             <Mail size={32} className="mb-4" style={{ color: COLORS.navy }} />
-            <h3 className="font-bold text-lg mb-2">Email</h3>
+            <h3 className="font-bold text-lg mb-2" style={textColor}>Email</h3>
             <a 
               href="mailto:accessibility@romamart.ca" 
               className="text-blue-600 hover:underline break-all"
@@ -293,9 +297,9 @@ const AccessibilityPage = () => {
             </a>
           </div>
 
-          <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+          <div className="p-6 rounded-lg border" style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
             <Phone size={32} className="mb-4" style={{ color: COLORS.navy }} />
-            <h3 className="font-bold text-lg mb-2">Phone</h3>
+            <h3 className="font-bold text-lg mb-2" style={textColor}>Phone</h3>
             <a 
               href="tel:+13823422000" 
               className="text-blue-600 hover:underline"
@@ -304,17 +308,17 @@ const AccessibilityPage = () => {
             </a>
           </div>
 
-          <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+          <div className="p-6 rounded-lg border" style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
             <MapPin size={32} className="mb-4" style={{ color: COLORS.navy }} />
-            <h3 className="font-bold text-lg mb-2">Visit Us</h3>
-            <p className="text-gray-700 text-sm">
+            <h3 className="font-bold text-lg mb-2" style={textColor}>Visit Us</h3>
+            <p className="text-sm" style={textColor}>
               189-3 Wellington Street<br />
               Sarnia, ON N7T 1G6
             </p>
           </div>
         </div>
 
-        <p className="mt-8 text-gray-700 leading-relaxed">
+        <p className="mt-8 leading-relaxed" style={textColor}>
           We will make reasonable efforts to provide accommodations and respond to accessibility inquiries 
           within 5 business days.
         </p>
@@ -329,57 +333,57 @@ const AccessibilityPage = () => {
           Documentation & Testing
         </h2>
 
-        <p className="text-gray-700 mb-6 leading-relaxed">
+        <p className="mb-6 leading-relaxed" style={textColor}>
           Our accessibility compliance is verified through automated testing and manual review:
         </p>
 
         <div className="space-y-4">
-          <div className="bg-blue-50 p-4 rounded border-l-4 border-blue-600">
-            <h3 className="font-bold mb-2">ESLint jsx-a11y</h3>
-            <p className="text-gray-700 text-sm">
+          <div className="p-4 rounded border-l-4 border-blue-600" style={{ backgroundColor: 'var(--color-surface)' }}>
+            <h3 className="font-bold mb-2" style={textColor}>ESLint jsx-a11y</h3>
+            <p className="text-sm" style={textColor}>
               20+ automated accessibility linting rules run on every code change to catch violations early.
             </p>
           </div>
 
-          <div className="bg-green-50 p-4 rounded border-l-4 border-green-600">
-            <h3 className="font-bold mb-2">Manual Testing</h3>
-            <p className="text-gray-700 text-sm">
+          <div className="p-4 rounded border-l-4 border-green-600" style={{ backgroundColor: 'var(--color-surface)' }}>
+            <h3 className="font-bold mb-2" style={textColor}>Manual Testing</h3>
+            <p className="text-sm" style={textColor}>
               Keyboard navigation, screen reader compatibility (NVDA, VoiceOver), zoom, contrast, and color blindness testing.
             </p>
           </div>
 
-          <div className="bg-purple-50 p-4 rounded border-l-4 border-purple-600">
-            <h3 className="font-bold mb-2">W3C Validation</h3>
-            <p className="text-gray-700 text-sm">
+          <div className="p-4 rounded border-l-4 border-purple-600" style={{ backgroundColor: 'var(--color-surface)' }}>
+            <h3 className="font-bold mb-2" style={textColor}>W3C Validation</h3>
+            <p className="text-sm" style={textColor}>
               HTML markup validated against W3C standards with 0 errors and 0 warnings.
             </p>
           </div>
 
-          <div className="bg-orange-50 p-4 rounded border-l-4 border-orange-600">
-            <h3 className="font-bold mb-2">Color Contrast Verification</h3>
-            <p className="text-gray-700 text-sm">
+          <div className="p-4 rounded border-l-4 border-orange-600" style={{ backgroundColor: 'var(--color-surface)' }}>
+            <h3 className="font-bold mb-2" style={textColor}>Color Contrast Verification</h3>
+            <p className="text-sm" style={textColor}>
               All text and UI components tested with TPGI Color Contrast Analyzer to exceed WCAG standards.
             </p>
           </div>
         </div>
 
-        <div className="mt-8 p-6 bg-yellow-50 rounded-lg">
-          <p className="text-gray-700">
+        <div className="mt-8 p-6 rounded-lg" style={{ backgroundColor: 'var(--color-surface)' }}>
+          <p style={textColor}>
             <strong>Want to review our full accessibility audit?</strong><br />
             Technical details are available in our repository:
           </p>
           <ul className="mt-4 space-y-2 text-sm">
             <li className="flex items-start gap-2">
               <span className="text-yellow-600 font-bold">•</span>
-              <span><code className="bg-white px-2 py-1 rounded">ACCESSIBILITY_AUDIT.md</code> – Complete audit report</span>
+              <span style={textColor}><code className="px-2 py-1 rounded" style={{ backgroundColor: 'var(--color-bg)' }}>ACCESSIBILITY_AUDIT.md</code> – Complete audit report</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-yellow-600 font-bold">•</span>
-              <span><code className="bg-white px-2 py-1 rounded">ACCESSIBILITY_COMPLIANCE.md</code> – Framework & standards</span>
+              <span style={textColor}><code className="px-2 py-1 rounded" style={{ backgroundColor: 'var(--color-bg)' }}>ACCESSIBILITY_COMPLIANCE.md</code> – Framework & standards</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-yellow-600 font-bold">•</span>
-              <span><code className="bg-white px-2 py-1 rounded">WCAG_CERTIFICATION.md</code> – Certification details</span>
+              <span style={textColor}><code className="px-2 py-1 rounded" style={{ backgroundColor: 'var(--color-bg)' }}>WCAG_CERTIFICATION.md</code> – Certification details</span>
             </li>
           </ul>
         </div>
@@ -423,11 +427,11 @@ const AccessibilityPage = () => {
           </ul>
         </div>
 
-        <div className="mt-12 p-6 bg-gray-100 rounded-lg text-center">
-          <p className="text-gray-700 mb-4">
+        <div className="mt-12 p-6 rounded-lg text-center" style={{ backgroundColor: 'var(--color-surface)' }}>
+          <p className="mb-4" style={textColor}>
             <strong>Last Accessibility Audit:</strong> November 30, 2025
           </p>
-          <p className="text-gray-700">
+          <p style={textColor}>
             <strong>Next Review Scheduled:</strong> June 30, 2026
           </p>
         </div>

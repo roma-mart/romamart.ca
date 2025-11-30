@@ -8,10 +8,13 @@ const PrivacyPage = () => {
     yellow: '#E4B340',
   };
 
+  const textColor = { color: 'var(--color-text)' };
+  const mutedTextColor = { color: 'var(--color-text)', opacity: 0.7 };
+
   const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
 
   return (
-    <div className="min-h-screen bg-white pt-32 pb-16">
+    <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>
       <Helmet>
         <title>Privacy Policy | Roma Mart Convenience</title>
         <meta name="description" content="Learn how Roma Mart Convenience collects, uses, and protects your personal information. PIPEDA compliant privacy policy." />
@@ -22,12 +25,12 @@ const PrivacyPage = () => {
       <nav aria-label="Breadcrumb" className="max-w-4xl mx-auto px-4 mb-8">
         <ol className="flex items-center gap-2 text-sm font-inter">
           <li>
-            <a href={`${BASE_URL}`} className="text-gray-600 hover:text-yellow-500 transition-colors">
+            <a href={`${BASE_URL}`} className="hover:text-yellow-500 transition-colors" style={mutedTextColor}>
               Home
             </a>
           </li>
-          <li aria-hidden="true"><ChevronRight size={16} className="text-gray-400" /></li>
-          <li aria-current="page" className="text-gray-900 font-semibold">Privacy Policy</li>
+          <li aria-hidden="true"><ChevronRight size={16} style={mutedTextColor} /></li>
+          <li aria-current="page" className="font-semibold" style={textColor}>Privacy Policy</li>
         </ol>
       </nav>
 
@@ -37,7 +40,7 @@ const PrivacyPage = () => {
         </h1>
 
         <div className="prose max-w-none font-inter">
-          <p className="text-gray-700 mb-6">
+          <p className="mb-6" style={textColor}>
             <strong>Effective Date:</strong> November 30, 2025
           </p>
 
@@ -45,7 +48,7 @@ const PrivacyPage = () => {
             <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: COLORS.navy }}>
               1. Introduction
             </h2>
-            <p className="text-gray-700 leading-relaxed mb-4">
+            <p className="leading-relaxed mb-4" style={textColor}>
               Roma Mart Corp. ("we," "us," or "our") operates the website romamart.ca and the retail store at 189-3 Wellington Street, Sarnia, ON N7T 1G6. We are committed to protecting your personal information and your right to privacy in accordance with Canadian privacy laws, including the Personal Information Protection and Electronic Documents Act (PIPEDA).
             </p>
           </section>
@@ -54,10 +57,10 @@ const PrivacyPage = () => {
             <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: COLORS.navy }}>
               2. Information We Collect
             </h2>
-            <p className="text-gray-700 leading-relaxed mb-4">
+            <p className="leading-relaxed mb-4" style={textColor}>
               We collect information that you provide directly to us, including:
             </p>
-            <ul className="list-disc pl-6 text-gray-700 space-y-2 mb-4">
+            <ul className="list-disc pl-6 space-y-2 mb-4" style={textColor}>
               <li>Name and contact information (email, phone number)</li>
               <li>Messages sent via our contact form</li>
               <li>Payment information (processed securely by our payment processor)</li>
@@ -69,10 +72,10 @@ const PrivacyPage = () => {
             <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: COLORS.navy }}>
               3. How We Use Your Information
             </h2>
-            <p className="text-gray-700 leading-relaxed mb-4">
+            <p className="leading-relaxed mb-4" style={textColor}>
               We use the information we collect to:
             </p>
-            <ul className="list-disc pl-6 text-gray-700 space-y-2 mb-4">
+            <ul className="list-disc pl-6 space-y-2 mb-4" style={textColor}>
               <li>Process transactions and orders</li>
               <li>Respond to customer inquiries and provide support</li>
               <li>Send marketing communications (with your consent)</li>
@@ -85,7 +88,7 @@ const PrivacyPage = () => {
             <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: COLORS.navy }}>
               4. Cookies and Tracking
             </h2>
-            <p className="text-gray-700 leading-relaxed mb-4">
+            <p className="leading-relaxed mb-4" style={textColor}>
               We use cookies and similar tracking technologies to enhance your experience. For detailed information, please see our{' '}
               <a href={`${BASE_URL}cookies`} className="text-yellow-500 hover:text-yellow-600 underline">
                 Cookie Policy
@@ -97,7 +100,7 @@ const PrivacyPage = () => {
             <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: COLORS.navy }}>
               5. Data Retention
             </h2>
-            <p className="text-gray-700 leading-relaxed mb-4">
+            <p className="leading-relaxed mb-4" style={textColor}>
               We retain your personal information only for as long as necessary to fulfill the purposes outlined in this policy, unless a longer retention period is required by law.
             </p>
           </section>
@@ -106,10 +109,10 @@ const PrivacyPage = () => {
             <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: COLORS.navy }}>
               6. Your Rights
             </h2>
-            <p className="text-gray-700 leading-relaxed mb-4">
+            <p className="leading-relaxed mb-4" style={textColor}>
               Under PIPEDA, you have the right to:
             </p>
-            <ul className="list-disc pl-6 text-gray-700 space-y-2 mb-4">
+            <ul className="list-disc pl-6 space-y-2 mb-4" style={textColor}>
               <li>Access your personal information</li>
               <li>Correct inaccurate information</li>
               <li>Request deletion of your information (subject to legal requirements)</li>
@@ -122,16 +125,16 @@ const PrivacyPage = () => {
             <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: COLORS.navy }}>
               7. Contact Us
             </h2>
-            <p className="text-gray-700 leading-relaxed mb-4">
+            <p className="leading-relaxed mb-4" style={textColor}>
               If you have questions about this Privacy Policy or wish to exercise your rights, please contact us:
             </p>
-            <div className="bg-gray-50 p-6 rounded-lg">
-              <p className="text-gray-700"><strong>Roma Mart Corp.</strong></p>
-              <p className="text-gray-700">189-3 Wellington Street</p>
-              <p className="text-gray-700">Sarnia, ON N7T 1G6</p>
-              <p className="text-gray-700">Email: <a href="mailto:contact@romamart.ca" className="text-yellow-500 hover:text-yellow-600">contact@romamart.ca</a></p>
-              <p className="text-gray-700">Phone: <a href="tel:+13823422000" className="text-yellow-500 hover:text-yellow-600">+1 (382) 342-2000</a></p>
-              <p className="text-gray-600 text-sm mt-4">GST/HST#: 780971768</p>
+            <div className="p-6 rounded-lg" style={{ backgroundColor: 'var(--color-surface)' }}>
+              <p style={textColor}><strong>Roma Mart Corp.</strong></p>
+              <p style={textColor}>189-3 Wellington Street</p>
+              <p style={textColor}>Sarnia, ON N7T 1G6</p>
+              <p style={textColor}>Email: <a href="mailto:contact@romamart.ca" className="text-yellow-500 hover:text-yellow-600">contact@romamart.ca</a></p>
+              <p style={textColor}>Phone: <a href="tel:+13823422000" className="text-yellow-500 hover:text-yellow-600">+1 (382) 342-2000</a></p>
+              <p className="text-sm mt-4" style={mutedTextColor}>GST/HST#: 780971768</p>
             </div>
           </section>
         </div>
