@@ -17,6 +17,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFacebook, faInstagram, faTiktok, faXTwitter, faSnapchat } from '@fortawesome/free-brands-svg-icons';
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
+import AccessibilityPage from './components/AccessibilityPage';
 
 // --- BRAND GUIDELINES & DATA ---
 
@@ -580,11 +581,12 @@ const Footer = () => {
         </div>
 
         <div>
-          <h4 className="font-coco text-lg mb-6 text-gray-200">Legal</h4>
+          <h4 className="font-coco text-lg mb-6 text-gray-200">Legal & Accessibility</h4>
           <ul className="space-y-2 font-inter text-gray-400">
             <li><a href="/privacy" className="hover:text-yellow-400 transition-colors">Privacy Policy</a></li>
             <li><a href="/terms" className="hover:text-yellow-400 transition-colors">Terms of Service</a></li>
             <li><a href="/cookies" className="hover:text-yellow-400 transition-colors">Cookie Policy</a></li>
+            <li><a href="/accessibility" className="hover:text-yellow-400 transition-colors font-bold text-yellow-500">Accessibility</a></li>
           </ul>
         </div>
       </div>
@@ -598,19 +600,33 @@ const Footer = () => {
 
 // --- MAIN APP ---
 function App() {
+  // Simple client-side routing based on current path
+  const isAccessibilityPage = typeof window !== 'undefined' && window.location.pathname.includes('/accessibility');
+
   return (
     <div className="min-h-screen bg-white">
-      {/* WCAG 2.2 AA: Skip Navigation Link (Operable 2.4.1) */}
-      <a href="#main-content" className="skip-link">Skip to main content</a>
-      <Navbar />
-      <Hero />
-      <div id="main-content">
-        <ServicesScroll />
-        <RoCafeSection />
-        <Locations />
-        <ContactSection />
-      </div>
-      <Footer />
+      {isAccessibilityPage ? (
+        <>
+          <a href="#accessibility-content" className="skip-link">Skip to accessibility content</a>
+          <Navbar />
+          <AccessibilityPage />
+          <Footer />
+        </>
+      ) : (
+        <>
+          {/* WCAG 2.2 AA: Skip Navigation Link (Operable 2.4.1) */}
+          <a href="#main-content" className="skip-link">Skip to main content</a>
+          <Navbar />
+          <Hero />
+          <div id="main-content">
+            <ServicesScroll />
+            <RoCafeSection />
+            <Locations />
+            <ContactSection />
+          </div>
+          <Footer />
+        </>
+      )}
     </div>
   );
 }

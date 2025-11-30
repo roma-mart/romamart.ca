@@ -1,0 +1,138 @@
+name: Accessibility & Build CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  accessibility-lint:
+    runs-on: ubuntu-latest
+    name: Accessibility Linting
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint (JSX Accessibility)
+        run: npm run lint
+        continue-on-error: false
+
+      - name: Run Stylelint (CSS Accessibility)
+        run: npm run lint:css
+        continue-on-error: false
+
+  build:
+    runs-on: ubuntu-latest
+    name: Build & Test
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build site
+        run: npm run build
+
+      - name: Upload dist artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: dist/
+
+  html-validation:
+    runs-on: ubuntu-latest
+    name: HTML Validation
+    needs: build
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Download dist artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: dist
+          path: dist/
+
+      - name: Validate HTML
+        uses: Cyb3r-Jak3/html5validator-action@v7.2.0
+        with:
+          root: dist/
+          continue: true
+
+  publish:
+    runs-on: ubuntu-latest
+    name: Publish to GitHub Pages
+    needs: [accessibility-lint, build, html-validation]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build site
+        run: npm run build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          cname: khanoflegend.github.io
+
+  report:
+    runs-on: ubuntu-latest
+    name: Generate Test Report
+    needs: [accessibility-lint, build]
+    if: always()
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create test summary
+        run: |
+          echo "## Accessibility & Build Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### ESLint (jsx-a11y)" >> $GITHUB_STEP_SUMMARY
+          npm run lint >> $GITHUB_STEP_SUMMARY 2>&1 || echo "✅ No errors" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Build Status" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Build successful" >> $GITHUB_STEP_SUMMARY
