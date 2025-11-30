@@ -8,8 +8,17 @@ export default {
   ],
   theme: {
     extend: {
-      // You can add custom settings like custom colors, fonts, or spacing here.
-      // For now, we'll rely on the colors defined in App.jsx.
+      // Brand colors and fonts
+      colors: {
+        'brand-navy': '#020178',
+        'brand-yellow': '#E4B340',
+        'brand-darkgrey': '#242424',
+        'brand-black': '#151515'
+      },
+      fontFamily: {
+        display: ['Poppins', 'system-ui', 'sans-serif'],
+        inter: ['Inter', 'system-ui', 'sans-serif']
+      }
     },
   },
   plugins: [],

@@ -1,7 +1,47 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 /* Tailwind directives above are recognized by Stylelint via project config */
+
+
+/* Begin brand variables */
+
+/* Brand CSS variables and color-mode support */
+:root {
+  --color-bg: #fff;
+  --color-surface: #fff;
+  --color-text: #151515;
+  --color-primary: #020178; /* navy */
+  --color-accent: #E4B340; /* tulip tree yellow */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #0b0b0b;
+    --color-surface: #151515;
+    --color-text: #f4f4f4;
+    --color-primary: #020178;
+    --color-accent: #E4B340;
+  }
+}
+
+/* Apply sensible defaults so the site uses brand colors instead of lots of white */
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+}
+
+/* Component surface helper */
+.surface {
+  background-color: var(--color-surface);
+}
+
+/* Accent utility for consistent brand-yellow */
+.text-accent { color: var(--color-accent); }
+.bg-primary { background-color: var(--color-primary); }
+.text-primary { color: var(--color-primary); }
 
 /* Custom utility to hide scrollbars for the Services reel */
 .scrollbar-hide {

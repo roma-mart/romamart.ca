@@ -8,14 +8,14 @@ import {
   Bitcoin, 
   Utensils, 
   Menu, 
-  X, 
   ArrowRight,
-  Instagram,
-  Facebook,
   Send,
   ExternalLink,
   Star
 } from 'lucide-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFacebook, faInstagram, faTiktok, faXTwitter, faSnapchat } from '@fortawesome/free-brands-svg-icons';
+// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
 
 // --- BRAND GUIDELINES & DATA ---
@@ -33,7 +33,15 @@ const STORE_DATA = {
   legalName: "Roma Mart Corp.",
   dba: "Roma Mart Convenience",
   // 1. PASTE YOUR NRS ONLINE STORE LINK HERE
-  onlineStoreUrl: "https://nrsplus.com/orders/your-store-link", 
+  onlineStoreUrl: "https://nrsplus.com/orders/your-store-link",
+  // Social media links
+  socialLinks: {
+    facebook: "https://www.facebook.com/romamartca",
+    instagram: "https://www.instagram.com/romamartca/",
+    tiktok: "https://www.tiktok.com/@romamartca/",
+    snapchat: "https://www.snapchat.com/@romamartca/",
+    x: "https://www.x.com/romamartca/"
+  },
   contact: {
     phone: "+1 (382) 342-2000",
     email: "contact@romamart.ca",
@@ -99,9 +107,10 @@ const Navbar = () => {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Montserrat:wght@800;900&display=swap');
-        
-        .font-coco { font-family: 'Montserrat', sans-serif; font-weight: 900; letter-spacing: -0.02em; }
+        /* Use client-side free fonts: Poppins for display, Inter for UI */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@600;700;800&display=swap');
+
+        .font-coco { font-family: 'Poppins', sans-serif; font-weight: 700; letter-spacing: -0.02em; }
         .font-inter { font-family: 'Inter', sans-serif; }
       `}</style>
       
@@ -541,11 +550,20 @@ const Footer = () => {
              Your local one-stop shop for everything from daily groceries to premium café drinks. Proudly serving the Sarnia community.
            </p>
            <div className="flex gap-4">
-              <a href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-yellow-500 hover:text-navy-900 transition-colors">
-                <Instagram size={20} />
+              <a href={STORE_DATA.socialLinks.facebook} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-yellow-500 transition-colors" title="Facebook">
+                <FontAwesomeIcon icon={faFacebook} size="lg" style={{ color: COLORS.yellow }} />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-yellow-500 hover:text-navy-900 transition-colors">
-                <Facebook size={20} />
+              <a href={STORE_DATA.socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-yellow-500 transition-colors" title="Instagram">
+                <FontAwesomeIcon icon={faInstagram} size="lg" style={{ color: COLORS.yellow }} />
+              </a>
+              <a href={STORE_DATA.socialLinks.tiktok} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-yellow-500 transition-colors" title="TikTok">
+                <FontAwesomeIcon icon={faTiktok} size="lg" style={{ color: COLORS.yellow }} />
+              </a>
+              <a href={STORE_DATA.socialLinks.x} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-yellow-500 transition-colors" title="X (Twitter)">
+                <FontAwesomeIcon icon={faXTwitter} size="lg" style={{ color: COLORS.yellow }} />
+              </a>
+              <a href={STORE_DATA.socialLinks.snapchat} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-yellow-500 transition-colors" title="Snapchat">
+                <FontAwesomeIcon icon={faSnapchat} size="lg" style={{ color: COLORS.yellow }} />
               </a>
            </div>
         </div>
