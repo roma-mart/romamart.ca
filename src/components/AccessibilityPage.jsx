@@ -47,12 +47,12 @@ const AccessibilityPage = () => {
         >
           Accessibility Statement
         </h1>
-        <p className="text-lg font-inter text-gray-700 leading-relaxed mb-4">
+        <p className="text-lg font-inter text-gray-900 leading-relaxed mb-4">
           Roma Mart Convenience is committed to ensuring digital accessibility for people with disabilities. 
           We strive to maintain and continually improve the accessibility of our website to conform to the 
           Web Content Accessibility Guidelines (WCAG) 2.2 Level AA.
         </p>
-        <p className="text-lg font-inter text-gray-700 leading-relaxed">
+        <p className="text-lg font-inter text-gray-900 leading-relaxed">
           This page outlines our accessibility compliance, standards met, and how to report accessibility issues.
         </p>
       </section>
@@ -76,7 +76,7 @@ const AccessibilityPage = () => {
                 <p className="text-sm text-gray-600">Web Content Accessibility Guidelines</p>
               </div>
             </div>
-            <p className="text-gray-700 mb-4 leading-relaxed">
+            <p className="text-gray-900 mb-4 leading-relaxed">
               Our website fully conforms to WCAG 2.2 Level AA, the latest international standard for web accessibility 
               published by the World Wide Web Consortium (W3C).
             </p>
@@ -184,7 +184,7 @@ const AccessibilityPage = () => {
             <CheckCircle size={24} style={{ color: COLORS.yellow }} className="flex-shrink-0 mt-1" />
             <div>
               <h3 className="font-bold text-lg mb-1">Keyboard Navigation</h3>
-              <p className="text-gray-700">
+              <p className="text-gray-900">
                 All functionality is accessible via keyboard. Navigate with Tab, activate with Enter/Space, 
                 and close menus with Escape.
               </p>
@@ -195,7 +195,7 @@ const AccessibilityPage = () => {
             <CheckCircle size={24} style={{ color: COLORS.yellow }} className="flex-shrink-0 mt-1" />
             <div>
               <h3 className="font-bold text-lg mb-1">Visible Focus Indicators</h3>
-              <p className="text-gray-700">
+              <p className="text-gray-900">
                 High-contrast yellow outline (3px, 13.8:1 contrast ratio) shows keyboard focus on all interactive elements.
               </p>
             </div>
@@ -205,7 +205,7 @@ const AccessibilityPage = () => {
             <CheckCircle size={24} style={{ color: COLORS.yellow }} className="flex-shrink-0 mt-1" />
             <div>
               <h3 className="font-bold text-lg mb-1">Screen Reader Support</h3>
-              <p className="text-gray-700">
+              <p className="text-gray-900">
                 Semantic HTML, ARIA labels, and descriptive link text make our site fully compatible with 
                 NVDA, JAWS, and VoiceOver screen readers.
               </p>
@@ -216,7 +216,7 @@ const AccessibilityPage = () => {
             <CheckCircle size={24} style={{ color: COLORS.yellow }} className="flex-shrink-0 mt-1" />
             <div>
               <h3 className="font-bold text-lg mb-1">Skip Navigation</h3>
-              <p className="text-gray-700">
+              <p className="text-gray-900">
                 Press Tab to see the "Skip to main content" link, allowing you to bypass repetitive navigation elements.
               </p>
             </div>
@@ -226,7 +226,7 @@ const AccessibilityPage = () => {
             <CheckCircle size={24} style={{ color: COLORS.yellow }} className="flex-shrink-0 mt-1" />
             <div>
               <h3 className="font-bold text-lg mb-1">Enhanced Color Contrast</h3>
-              <p className="text-gray-700">
+              <p className="text-gray-900">
                 All text and UI components meet or exceed WCAG AA contrast requirements. Our brand colors 
                 exceed AAA standards (12.6:1 navy, 8.4:1 yellow).
               </p>
@@ -237,7 +237,7 @@ const AccessibilityPage = () => {
             <CheckCircle size={24} style={{ color: COLORS.yellow }} className="flex-shrink-0 mt-1" />
             <div>
               <h3 className="font-bold text-lg mb-1">Reduced Motion Support</h3>
-              <p className="text-gray-700">
+              <p className="text-gray-900">
                 If you enable "Reduce motion" in your operating system preferences, animations and transitions 
                 on our site will be disabled.
               </p>
@@ -248,7 +248,7 @@ const AccessibilityPage = () => {
             <CheckCircle size={24} style={{ color: COLORS.yellow }} className="flex-shrink-0 mt-1" />
             <div>
               <h3 className="font-bold text-lg mb-1">Resizable Text & Zoom</h3>
-              <p className="text-gray-700">
+              <p className="text-gray-900">
                 Text can be resized up to 200% without loss of content or functionality. Content reflows properly 
                 on all zoom levels.
               </p>

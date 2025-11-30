@@ -151,7 +151,7 @@ const Navbar = () => {
               {['Services', 'RoCafe', 'Locations', 'Contact'].map((item) => (
                 <a 
                   key={item} 
-                  href={`#${item.toLowerCase()}`}
+                  href={`${BASE_URL}#${item.toLowerCase()}`}
                   className="font-inter font-medium hover:opacity-80 transition-opacity"
                   style={{ color: scrolled ? COLORS.darkGrey : COLORS.white }}
                 >
@@ -195,7 +195,7 @@ const Navbar = () => {
                 {['Services', 'RoCafe', 'Locations', 'Contact'].map((item) => (
                   <a
                     key={item}
-                    href={`#${item.toLowerCase()}`}
+                    href={`${BASE_URL}#${item.toLowerCase()}`}
                     onClick={() => setIsOpen(false)}
                     className="block px-3 py-4 text-lg font-bold font-coco uppercase border-b border-gray-100"
                     style={{ color: COLORS.navy }}
