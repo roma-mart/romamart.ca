@@ -85,7 +85,7 @@ const AccessibilityPage = () => {
               <CheckCircle size={32} style={{ color: COLORS.yellow }} className="flex-shrink-0 mt-1" />
               <div>
                 <h3 className="text-xl font-bold" style={{ color: 'var(--color-heading)' }}>WCAG 2.2 Level AA</h3>
-                <p className="text-sm text-gray-600">Web Content Accessibility Guidelines</p>
+                <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>Web Content Accessibility Guidelines</p>
               </div>
             </div>
             <p className="mb-4 leading-relaxed" style={textColor}>
@@ -108,7 +108,7 @@ const AccessibilityPage = () => {
               <CheckCircle size={32} style={{ color: COLORS.yellow }} className="flex-shrink-0 mt-1" />
               <div>
                 <h3 className="text-xl font-bold" style={{ color: 'var(--color-heading)' }}>AODA Compliant</h3>
-                <p className="text-sm text-gray-600">Ontario Accessibility Requirements</p>
+                <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>Ontario Accessibility Requirements</p>
               </div>
             </div>
             <p className="mb-4 leading-relaxed" style={textColor}>
@@ -131,7 +131,7 @@ const AccessibilityPage = () => {
               <CheckCircle size={32} style={{ color: COLORS.yellow }} className="flex-shrink-0 mt-1" />
               <div>
                 <h3 className="text-xl font-bold" style={{ color: 'var(--color-heading)' }}>ISO/IEC 40500:2025</h3>
-                <p className="text-sm text-gray-600">International Accessibility Standard</p>
+                <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>International Accessibility Standard</p>
               </div>
             </div>
             <p className="mb-4 leading-relaxed" style={textColor}>
@@ -154,7 +154,7 @@ const AccessibilityPage = () => {
               <CheckCircle size={32} style={{ color: COLORS.yellow }} className="flex-shrink-0 mt-1" />
               <div>
                 <h3 className="text-xl font-bold" style={{ color: 'var(--color-heading)' }}>EN 301 549 (EAA)</h3>
-                <p className="text-sm text-gray-600">European Accessibility Act</p>
+                <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>European Accessibility Act</p>
               </div>
             </div>
             <p className="mb-4 leading-relaxed" style={textColor}>

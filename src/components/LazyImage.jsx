@@ -20,11 +20,11 @@ const LazyImage = ({
     return (
       <div
         ref={elementRef}
-        className={`flex items-center justify-center bg-gray-200 ${className}`}
-        style={style}
+        className={`flex items-center justify-center ${className}`}
+        style={{ backgroundColor: 'var(--color-surface)', ...style }}
         {...props}
       >
-        <span className="text-gray-500 text-sm">Failed to load image</span>
+        <span className="text-sm" style={{ color: 'var(--color-text-muted)' }}>Failed to load image</span>
       </div>
     );
   }

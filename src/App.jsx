@@ -529,7 +529,7 @@ const RoCafeSection = () => {
               </div>
             </div>
             
-            <p className="text-gray-400 font-inter text-lg mb-8">
+            <p className="font-inter text-lg mb-8" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
               Step into our dedicated café corner. Whether you need a morning espresso kick or a refreshing afternoon bubble tea, RoCafé is brewing specifically for you.
             </p>
 
@@ -792,7 +792,7 @@ const Footer = () => {
               <div className="w-10 h-10 bg-white rounded flex items-center justify-center font-coco text-xl" style={{ color: '#020178' }}>RM</div>
               <span className="font-coco text-2xl uppercase">Roma Mart</span>
            </a>
-           <p className="text-gray-400 font-inter max-w-sm mb-6">
+           <p className="font-inter max-w-sm mb-6" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
              Your local one-stop shop for everything from daily groceries to premium café drinks. Proudly serving the Sarnia community.
            </p>
            <div className="flex gap-4">
@@ -851,7 +851,7 @@ const Footer = () => {
 
         <div>
           <h4 className="font-coco text-lg mb-6 text-gray-200">Pages</h4>
-          <ul className="space-y-3 font-inter text-gray-400">
+          <ul className="space-y-3 font-inter" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
             <li><a href={`${BASE_URL}services`} className="hover:text-yellow-400 transition-colors">Services</a></li>
             <li><a href={`${BASE_URL}rocafe`} className="hover:text-yellow-400 transition-colors">RoCafé Menu</a></li>
             <li><a href={`${BASE_URL}locations`} className="hover:text-yellow-400 transition-colors">Locations</a></li>
@@ -863,7 +863,7 @@ const Footer = () => {
 
         <div>
           <h4 className="font-coco text-lg mb-6 text-gray-200">Legal & Accessibility</h4>
-          <ul className="space-y-2 font-inter text-gray-400">
+          <ul className="space-y-2 font-inter" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
             <li><a href={`${BASE_URL}privacy`} className="hover:text-yellow-400 transition-colors">Privacy Policy</a></li>
             <li><a href={`${BASE_URL}terms`} className="hover:text-yellow-400 transition-colors">Terms of Service</a></li>
             <li><a href={`${BASE_URL}cookies`} className="hover:text-yellow-400 transition-colors">Cookie Policy</a></li>
@@ -877,7 +877,7 @@ const Footer = () => {
         <div className="mb-8">
           <TrustpilotWidget />
         </div>
-        <div className="text-center text-gray-500 font-inter text-sm">
+        <div className="text-center font-inter text-sm" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
           <p>&copy; {new Date().getFullYear()} {STORE_DATA.legalName} All rights reserved.</p>
         </div>
       </div>
