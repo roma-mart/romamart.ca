@@ -43,13 +43,13 @@ export const LocationProvider = ({ children }) => {
   const { getCurrentLocation, location, loading, error, canUseGeolocation } = useGeolocation();
 
   // Derive current location from hook location or cached location
-  const userLocation = location 
+  const userLocation = location && location.latitude && location.longitude
     ? { latitude: location.latitude, longitude: location.longitude }
     : cachedLocation;
 
   // Store location when received (only updates external systems, no setState)
   useEffect(() => {
-    if (!location) return;
+    if (!location || !location.latitude || !location.longitude) return;
     
     const coords = {
       latitude: location.latitude,

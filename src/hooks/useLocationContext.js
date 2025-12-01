@@ -30,9 +30,14 @@ export const useLocationAware = (onLocationFound) => {
   }, [registerLocationAwareComponent]);
 
   useEffect(() => {
-    if (userLocation && onLocationFound) {
+    // Only call callback if we have valid location data and a callback function
+    if (userLocation && userLocation.latitude && userLocation.longitude && onLocationFound) {
+      // Match the structure expected by callbacks (position.coords.latitude/longitude)
       onLocationFound({
-        coords: userLocation
+        coords: {
+          latitude: userLocation.latitude,
+          longitude: userLocation.longitude
+        }
       });
     }
   }, [userLocation, onLocationFound]);
