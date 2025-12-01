@@ -1,0 +1,11 @@
+# Robots.txt for Roma Mart Convenience
+# Allows search engines to crawl and index the site
+
+User-agent: *
+Allow: /
+
+# Point to sitemap
+Sitemap: https://romamart.ca/sitemap.xml
+
+# Crawl delay (optional, prevents server overload)
+Crawl-delay: 1
