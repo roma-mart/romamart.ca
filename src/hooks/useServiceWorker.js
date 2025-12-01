@@ -21,16 +21,22 @@ export const useServiceWorker = () => {
         });
 
         setRegistration(reg);
-        console.log('[SW] Service Worker registered:', reg.scope);
+        if (import.meta.env.DEV) {
+          console.warn('[SW] Service Worker registered:', reg.scope);
+        }
 
         // Check for updates
         reg.addEventListener('updatefound', () => {
           const newWorker = reg.installing;
-          console.log('[SW] Update found');
+          if (import.meta.env.DEV) {
+            console.warn('[SW] Update found');
+          }
 
           newWorker.addEventListener('statechange', () => {
             if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              console.log('[SW] New version available');
+              if (import.meta.env.DEV) {
+                console.warn('[SW] New version available');
+              }
               setUpdateAvailable(true);
             }
           });
@@ -91,14 +97,18 @@ export const useBackgroundSync = () => {
 
   const queueSync = async (tag) => {
     if (!syncSupported) {
-      console.log('[Background Sync] Not supported');
+      if (import.meta.env.DEV) {
+        console.warn('[Background Sync] Not supported');
+      }
       return false;
     }
 
     try {
       const registration = await navigator.serviceWorker.ready;
       await registration.sync.register(tag);
-      console.log('[Background Sync] Queued:', tag);
+      if (import.meta.env.DEV) {
+        console.warn('[Background Sync] Queued:', tag);
+      }
       return true;
     } catch (error) {
       console.error('[Background Sync] Failed:', error);

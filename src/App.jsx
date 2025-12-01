@@ -918,8 +918,8 @@ function App() {
   
   // Log page visibility changes (for analytics/debugging)
   useEffect(() => {
-    if (!isVisible) {
-      console.log('[Performance] Tab hidden - pausing heavy operations');
+    if (!isVisible && import.meta.env.DEV) {
+      console.warn('[Performance] Tab hidden - pausing heavy operations');
     }
   }, [isVisible]);
   

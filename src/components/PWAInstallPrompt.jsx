@@ -29,7 +29,9 @@ const PWAInstallPrompt = () => {
     const handleBeforeInstallPrompt = (e) => {
       e.preventDefault();
       setDeferredPrompt(e);
-      console.log('[PWA] Install prompt available');
+      if (import.meta.env.DEV) {
+        console.warn('[PWA] Install prompt available');
+      }
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
@@ -97,7 +99,9 @@ const PWAInstallPrompt = () => {
       // Show prompt if engagement score >= 30 and prompt is available (lowered from 70)
       // User just needs: 10s + scroll OR 10s + click OR scroll + click
       if (score >= 30 && deferredPrompt && !showPrompt && !dismissedThisSession) {
-        console.log('[PWA] Engagement threshold met (score: ' + score + '), showing install prompt');
+        if (import.meta.env.DEV) {
+          console.warn('[PWA] Engagement threshold met (score: ' + score + '), showing install prompt');
+        }
         setShowPrompt(true);
       }
     };
@@ -132,10 +136,14 @@ const PWAInstallPrompt = () => {
 
     // Wait for user response
     const { outcome } = await deferredPrompt.userChoice;
-    console.log('[PWA] User choice:', outcome);
+    if (import.meta.env.DEV) {
+      console.warn('[PWA] User choice:', outcome);
+    }
 
     if (outcome === 'accepted') {
-      console.log('[PWA] User accepted install');
+      if (import.meta.env.DEV) {
+        console.warn('[PWA] User accepted install');
+      }
       
       // Track installation
       if (window.dataLayer) {

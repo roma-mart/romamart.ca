@@ -6,9 +6,40 @@ import jsxA11y from 'eslint-plugin-jsx-a11y'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist', 'scripts/**']),
+  globalIgnores(['dist']),
+  {
+    files: ['scripts/**/*.js'],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: {
+        ...globals.node,
+        process: 'readonly',
+      },
+      sourceType: 'module',
+    },
+    rules: {
+      'no-console': 'off', // Scripts are CLI tools, console is expected
+      'no-undef': 'error',
+    },
+  },
+  {
+    files: ['public/sw.js'],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: {
+        ...globals.serviceworker,
+        self: 'readonly',
+        caches: 'readonly',
+      },
+    },
+    rules: {
+      'no-console': 'off', // Service Worker needs logging for debugging
+      'no-undef': 'error',
+    },
+  },
   {
     files: ['**/*.{js,jsx}'],
+    ignores: ['scripts/**', 'public/sw.js'],
     extends: [
       js.configs.recommended,
       reactHooks.configs.flat.recommended,
@@ -46,13 +77,24 @@ export default defineConfig([
       'jsx-a11y/role-supports-aria-props': 'error',
       'jsx-a11y/tabindex-no-positive': 'warn',
       
-      // Dark Mode Compatibility - Now handled by check-quality.js with smart filtering
-      // ESLint rule disabled in favor of comprehensive quality checker that understands:
-      // - Intentional high-contrast patterns (text-gray-900 on bg-yellow for WCAG AAA)
-      // - Documentation examples (utils/theme.js)
-      // - Context-aware false positive filtering
-      // Run: npm run check:quality for comprehensive dark mode validation
-      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      // Dark Mode Compatibility - Prevent hardcoded Tailwind gray classes
+      // Note: text-gray-900 on bg-yellow is allowed (WCAG AAA contrast 8.4:1)
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'JSXAttribute[name.name="className"] > Literal[value=/text-gray-[0-8]/]',
+          message: 'Avoid hardcoded Tailwind gray text classes (text-gray-100 through text-gray-800). Use CSS variables: var(--color-text) or var(--color-text-muted). Note: text-gray-900 on bg-yellow is allowed for high contrast.',
+        },
+        {
+          selector: 'JSXAttribute[name.name="className"] > Literal[value=/bg-gray-[0-9]/]',
+          message: 'Avoid hardcoded Tailwind gray backgrounds. Use CSS variables: var(--color-bg), var(--color-surface), or import { useThemeColors } from utils/theme.',
+        },
+        {
+          selector: 'JSXAttribute[name.name="className"] > Literal[value=/border-gray-[0-9]/]',
+          message: 'Avoid hardcoded Tailwind gray borders. Use CSS variable: var(--color-border) or import { useThemeColors } from utils/theme.',
+        },
+      ],
+      'no-console': ['error', { allow: ['warn', 'error'] }],
       'no-eval': 'error',
       'no-implied-eval': 'error',
       'eqeqeq': ['error', 'always'],

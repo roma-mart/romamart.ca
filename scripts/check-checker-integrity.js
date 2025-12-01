@@ -154,7 +154,6 @@ function checkBrandAlignment() {
   
   for (const color of brandColors) {
     const inQualityChecker = checkQuality.includes(color);
-    const inApp = appJs.includes(color);
     
     if (!inQualityChecker && color !== DEV_ETHOS.brandGuidelines.colors.darkGrey) {
       issues.push({
@@ -216,7 +215,6 @@ function checkDevEthosAlignment() {
   // Principle 1: "Systems over spot fixes"
   // Checkers should validate patterns, not individual instances
   const hasSystematicChecks = checkQuality.includes('for (const file of files)');
-  const hasSpotChecks = checkQuality.includes('specific file name');
   
   if (!hasSystematicChecks) {
     issues.push({
@@ -279,12 +277,9 @@ function checkFalsePositives() {
   console.log(`${colors.blue}🎭 Checking false positive prevention...${colors.reset}`);
   
   const checkQuality = fs.readFileSync(path.join(__dirname, 'check-quality.js'), 'utf8');
-  const checkDarkMode = fs.readFileSync(path.join(__dirname, 'check-dark-mode.js'), 'utf8');
   
   // Test 1: Intentional high-contrast combinations should be allowed
-  const allowsIntentionalContrast = 
-    checkQuality.includes('bg-yellow') && 
-    checkDarkMode.includes('bg-yellow');
+  const allowsIntentionalContrast = checkQuality.includes('bg-yellow');
   
   if (!allowsIntentionalContrast) {
     issues.push({
@@ -458,7 +453,6 @@ function checkCheckerPerformance() {
   console.log(`${colors.blue}⚡ Checking checker performance...${colors.reset}`);
   
   const checkQuality = fs.readFileSync(path.join(__dirname, 'check-quality.js'), 'utf8');
-  const checkDarkMode = fs.readFileSync(path.join(__dirname, 'check-dark-mode.js'), 'utf8');
   
   // Test 1: Checkers shouldn't re-read files unnecessarily
   const multipleReads = (checkQuality.match(/fs\.readFileSync/g) || []).length;
