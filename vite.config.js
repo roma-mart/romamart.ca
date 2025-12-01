@@ -14,6 +14,7 @@ export default defineConfig({
   // ----------------------------------------------------
   base: `/${REPO_NAME}/`, 
   build: {
+    sourcemap: false, // Disable source maps to avoid lucide-react corruption issues
     rollupOptions: {
       output: {
         manualChunks: {

@@ -23,6 +23,11 @@ import TrustpilotWidget from './components/TrustpilotWidget';
 import OrderCTA from './components/OrderCTA';
 import ShareButton from './components/ShareButton';
 import CopyButton from './components/CopyButton';
+import PWAInstallPrompt from './components/PWAInstallPrompt';
+import NetworkStatus from './components/NetworkStatus';
+
+// PWA Hooks
+import { useServiceWorker } from './hooks/useServiceWorker';
 
 // Code splitting: Lazy load page components
 const AccessibilityPage = lazy(() => import('./components/AccessibilityPage'));
@@ -893,6 +898,9 @@ function App() {
   // Simple client-side routing
   const pathname = typeof window !== 'undefined' ? window.location.pathname.replace(BASE_URL, '/') : '/';
   
+  // Initialize PWA Service Worker
+  useServiceWorker();
+  
   const getPage = () => {
     if (pathname.includes('/services')) return 'services';
     if (pathname.includes('/rocafe')) return 'rocafe';
@@ -944,6 +952,10 @@ function App() {
           <OrderCTA orderUrl={STORE_DATA.onlineStoreUrl} />
         </>
       )}
+      
+      {/* PWA Components */}
+      <PWAInstallPrompt />
+      <NetworkStatus />
     </div>
   );
 }
