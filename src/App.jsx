@@ -347,7 +347,7 @@ const Navbar = () => {
 
 const Hero = () => {
   return (
-    <div className="relative min-h-[90vh] flex items-center overflow-hidden" style={{ backgroundColor: COLORS.navy }}>
+    <div id="hero-section" className="relative min-h-[90vh] flex items-center overflow-hidden" style={{ backgroundColor: COLORS.navy }}>
       <BrandPattern />
       
       <div className="absolute inset-0 bg-gradient-to-r from-blue-950 via-blue-900 to-transparent opacity-90 z-0" />

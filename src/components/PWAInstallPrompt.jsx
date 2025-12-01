@@ -14,11 +14,15 @@ const PWAInstallPrompt = () => {
   const [engagementScore, setEngagementScore] = useState(0);
   const [lastDismissed, setLastDismissed] = useLocalStorage('pwa-install-dismissed', null);
   const [isInstalled] = useLocalStorage('pwa-installed', false);
+  const [dismissedThisSession, setDismissedThisSession] = useState(
+    sessionStorage.getItem('pwa-dismissed-session') === 'true'
+  );
   const { vibrate, canVibrate } = useVibration();
 
   useEffect(() => {
-    // Don't show if already installed or dismissed recently
+    // Don't show if already installed, dismissed this session, or dismissed recently
     if (isInstalled) return;
+    if (dismissedThisSession) return;
     if (lastDismissed && Date.now() - lastDismissed < 7 * 24 * 60 * 60 * 1000) return; // 7 days
 
     // Listen for beforeinstallprompt event
@@ -33,7 +37,7 @@ const PWAInstallPrompt = () => {
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     };
-  }, [isInstalled, lastDismissed]);
+  }, [isInstalled, lastDismissed, dismissedThisSession]);
 
   useEffect(() => {
     // Track user engagement
@@ -92,7 +96,7 @@ const PWAInstallPrompt = () => {
       
       // Show prompt if engagement score >= 30 and prompt is available (lowered from 70)
       // User just needs: 10s + scroll OR 10s + click OR scroll + click
-      if (score >= 30 && deferredPrompt && !showPrompt) {
+      if (score >= 30 && deferredPrompt && !showPrompt && !dismissedThisSession) {
         console.log('[PWA] Engagement threshold met (score: ' + score + '), showing install prompt');
         setShowPrompt(true);
       }
@@ -113,7 +117,7 @@ const PWAInstallPrompt = () => {
       window.removeEventListener('click', handleInteraction);
       window.removeEventListener('touchstart', handleInteraction);
     };
-  }, [deferredPrompt, showPrompt]);
+  }, [deferredPrompt, showPrompt, dismissedThisSession]);
 
   const handleInstall = async () => {
     if (!deferredPrompt) return;
@@ -149,6 +153,8 @@ const PWAInstallPrompt = () => {
 
   const handleDismiss = () => {
     setShowPrompt(false);
+    setDismissedThisSession(true);
+    sessionStorage.setItem('pwa-dismissed-session', 'true');
     setLastDismissed(Date.now());
     
     // Track dismissal

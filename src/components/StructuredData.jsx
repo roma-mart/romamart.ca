@@ -59,31 +59,108 @@ const StructuredData = ({ type = 'LocalBusiness', data }) => {
           ],
           hasOfferCatalog: {
             '@type': 'OfferCatalog',
-            name: 'Services',
+            name: 'Services & Products',
             itemListElement: [
               {
                 '@type': 'Offer',
                 itemOffered: {
                   '@type': 'Service',
-                  name: 'ATM Services'
+                  name: 'RoCafé Coffee & Bubble Tea',
+                  description: 'Fresh brewed coffee, signature bubble tea, matcha lattes, and fruit slushes'
                 }
               },
               {
                 '@type': 'Offer',
                 itemOffered: {
                   '@type': 'Service',
-                  name: 'Bitcoin ATM'
+                  name: 'ATM Services',
+                  description: 'Cash withdrawal and banking services available 24/7'
                 }
               },
               {
                 '@type': 'Offer',
                 itemOffered: {
                   '@type': 'Service',
-                  name: 'RoCafé Coffee Shop'
+                  name: 'Bitcoin ATM',
+                  description: 'Cryptocurrency buying and selling services'
+                }
+              },
+              {
+                '@type': 'Offer',
+                itemOffered: {
+                  '@type': 'Product',
+                  name: 'Grocery Essentials',
+                  description: 'Daily staples, milk, bread, and pantry needs'
+                }
+              },
+              {
+                '@type': 'Offer',
+                itemOffered: {
+                  '@type': 'Product',
+                  name: 'Halal Meat',
+                  description: 'Certified Zabiha Halal meats'
+                }
+              },
+              {
+                '@type': 'Offer',
+                itemOffered: {
+                  '@type': 'Product',
+                  name: 'Global Snacks',
+                  description: 'Imported flavors and unique treats from around the world'
+                }
+              },
+              {
+                '@type': 'Offer',
+                itemOffered: {
+                  '@type': 'Product',
+                  name: 'Tobacco & Vape Products',
+                  description: 'Wide selection for adult customers (19+)'
+                }
+              },
+              {
+                '@type': 'Offer',
+                itemOffered: {
+                  '@type': 'Service',
+                  name: 'OLG Lottery',
+                  description: 'Lottery tickets and scratch cards'
+                }
+              },
+              {
+                '@type': 'Offer',
+                itemOffered: {
+                  '@type': 'Service',
+                  name: 'Package Services',
+                  description: 'Shipping and package handling'
+                }
+              },
+              {
+                '@type': 'Offer',
+                itemOffered: {
+                  '@type': 'Service',
+                  name: 'Printing Services',
+                  description: 'Document printing and copying'
                 }
               }
             ]
-          }
+          },
+          amenityFeature: [
+            {
+              '@type': 'LocationFeatureSpecification',
+              name: 'Free WiFi',
+              value: true
+            },
+            {
+              '@type': 'LocationFeatureSpecification',
+              name: 'Parking',
+              value: true
+            },
+            {
+              '@type': 'LocationFeatureSpecification',
+              name: 'Wheelchair Accessible',
+              value: true
+            }
+          ],
+          paymentAccepted: ['Cash', 'Credit Card', 'Debit Card', 'Interac', 'Visa', 'Mastercard', 'American Express', 'Bitcoin']
         };
 
       case 'BreadcrumbList':
