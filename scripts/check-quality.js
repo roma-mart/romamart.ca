@@ -140,7 +140,18 @@ function checkAccessibility() {
       }
       
       // onClick without onKeyPress (keyboard accessibility)
-      if (/onClick=/.test(line) && !/onKeyDown|onKeyPress|onKeyUp|button|a href/.test(line) && !/role="button"/.test(line)) {
+      // Skip if it's on an anchor tag, button, or element with button role
+      // Check surrounding lines for multiline JSX elements (look further back/forward)
+      const prevLines = lines.slice(Math.max(0, idx - 10), idx).join(' ');
+      const nextLines = lines.slice(idx + 1, Math.min(lines.length, idx + 10)).join(' ');
+      const context = prevLines + line + nextLines;
+      
+      if (/onClick=/.test(line) && 
+          !/onKeyDown|onKeyPress|onKeyUp/.test(context) && 
+          !/role="button"/.test(context) &&
+          !/<button[\s>]/.test(context) &&
+          !/<a\s[^>]*href/.test(context) &&
+          !/href=/.test(context)) {
         issues[SEVERITY.MEDIUM].push({
           category: CHECKS.ACCESSIBILITY,
           file: relativePath,
