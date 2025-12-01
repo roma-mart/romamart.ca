@@ -192,7 +192,7 @@ const PWAInstallPrompt = () => {
               <h3 id="pwa-install-title" className="font-bold text-white text-lg">
                 Install Roma Mart
               </h3>
-              <p className="text-sm text-gray-300">Quick access anytime</p>
+              <p className="text-sm" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>Quick access anytime</p>
             </div>
           </div>
           <button
@@ -244,8 +244,10 @@ const PWAInstallPrompt = () => {
             </button>
             <button
               onClick={handleDismiss}
-              className="px-4 py-3 rounded-xl font-semibold transition-colors hover:bg-gray-100"
+              className="px-4 py-3 rounded-xl font-semibold transition-colors"
               style={{ color: 'var(--color-text)' }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--color-surface)'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
             >
               Not Now
             </button>

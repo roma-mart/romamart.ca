@@ -113,7 +113,8 @@ const LocationsPage = () => {
                         <CopyButton 
                           text={location.address}
                           label="Address"
-                          className="bg-gray-200 text-gray-700 hover:bg-gray-300 text-xs"
+                          className="text-xs"
+                          style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)' }}
                         />
                       </div>
                     </div>
@@ -136,11 +137,11 @@ const LocationsPage = () => {
                         <a href={`tel:${location.phone}`} className="font-inter hover:underline" style={{ color: COLORS.yellow }}>
                           {location.phone}
                         </a>
-                        <CopyButton 
-                          text={location.phone}
-                          label="Phone number"
-                          className="bg-gray-200 text-gray-700 hover:bg-gray-300"
-                        />
+                      <CopyButton 
+                        text={location.phone}
+                        label="Phone number"
+                        style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)' }}
+                      />
                       </div>
                     </div>
                   </div>

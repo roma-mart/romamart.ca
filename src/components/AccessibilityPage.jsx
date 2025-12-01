@@ -56,7 +56,8 @@ const AccessibilityPage = () => {
           <ShareButton 
             title="Roma Mart Accessibility"
             text="Learn about Roma Mart's accessibility commitment"
-            className="bg-yellow-500 text-gray-900 hover:bg-yellow-600"
+            style={{ backgroundColor: COLORS.yellow, color: COLORS.navy }}
+            className="hover:opacity-90"
           />
         </div>
         <p className="text-lg font-inter leading-relaxed mb-4" style={textColor}>
@@ -80,7 +81,7 @@ const AccessibilityPage = () => {
 
         <div className="grid md:grid-cols-2 gap-8">
           {/* WCAG 2.2 AA */}
-          <div className="border-2 border-gray-200 rounded-lg p-8 hover:border-yellow-400 transition-colors">
+          <div className="rounded-lg p-8 transition-colors" style={{ border: '2px solid var(--color-border)' }} onMouseEnter={(e) => e.currentTarget.style.borderColor = COLORS.yellow} onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--color-border)'}>
             <div className="flex items-start gap-4 mb-4">
               <CheckCircle size={32} style={{ color: COLORS.yellow }} className="flex-shrink-0 mt-1" />
               <div>
@@ -103,7 +104,7 @@ const AccessibilityPage = () => {
           </div>
 
           {/* AODA */}
-          <div className="border-2 border-gray-200 rounded-lg p-8 hover:border-yellow-400 transition-colors">
+          <div className="rounded-lg p-8 transition-colors" style={{ border: '2px solid var(--color-border)' }} onMouseEnter={(e) => e.currentTarget.style.borderColor = COLORS.yellow} onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--color-border)'}>
             <div className="flex items-start gap-4 mb-4">
               <CheckCircle size={32} style={{ color: COLORS.yellow }} className="flex-shrink-0 mt-1" />
               <div>
@@ -126,7 +127,7 @@ const AccessibilityPage = () => {
           </div>
 
           {/* ISO/IEC 40500:2025 */}
-          <div className="border-2 border-gray-200 rounded-lg p-8 hover:border-yellow-400 transition-colors">
+          <div className="rounded-lg p-8 transition-colors" style={{ border: '2px solid var(--color-border)' }} onMouseEnter={(e) => e.currentTarget.style.borderColor = COLORS.yellow} onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--color-border)'}>
             <div className="flex items-start gap-4 mb-4">
               <CheckCircle size={32} style={{ color: COLORS.yellow }} className="flex-shrink-0 mt-1" />
               <div>
@@ -149,7 +150,7 @@ const AccessibilityPage = () => {
           </div>
 
           {/* EN 301 549 */}
-          <div className="border-2 border-gray-200 rounded-lg p-8 hover:border-yellow-400 transition-colors">
+          <div className="rounded-lg p-8 transition-colors" style={{ border: '2px solid var(--color-border)' }} onMouseEnter={(e) => e.currentTarget.style.borderColor = COLORS.yellow} onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--color-border)'}>
             <div className="flex items-start gap-4 mb-4">
               <CheckCircle size={32} style={{ color: COLORS.yellow }} className="flex-shrink-0 mt-1" />
               <div>

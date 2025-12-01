@@ -370,7 +370,7 @@ const Hero = () => {
               <span style={{ color: COLORS.yellow }}>Stop & Go</span>
             </h1>
             
-            <p className="text-lg md:text-xl font-inter text-gray-300 mb-6 max-w-lg leading-relaxed">
+            <p className="text-lg md:text-xl font-inter mb-6 max-w-lg leading-relaxed" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
               Experience Sarnia's newest convenience destination. From daily essentials to bubble tea, we have what you need.
             </p>
             
@@ -665,7 +665,8 @@ const ContactSection = () => {
                   <CopyButton 
                     text={STORE_DATA.locations[0].address}
                     label="Address"
-                    className="bg-gray-200 text-gray-700 hover:bg-gray-300 text-xs"
+                    className="text-xs"
+                    style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)' }}
                   />
                 </div>
               </div>
@@ -683,7 +684,7 @@ const ContactSection = () => {
                     <CopyButton 
                       text={STORE_DATA.contact.phone}
                       label="Phone number"
-                      className="bg-gray-200 text-gray-700 hover:bg-gray-300"
+                      style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)' }}
                     />
                   </div>
                 </div>
@@ -850,7 +851,7 @@ const Footer = () => {
         </div>
 
         <div>
-          <h4 className="font-coco text-lg mb-6 text-gray-200">Pages</h4>
+          <h4 className="font-coco text-lg mb-6" style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Pages</h4>
           <ul className="space-y-3 font-inter" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
             <li><a href={`${BASE_URL}services`} className="hover:text-yellow-400 transition-colors">Services</a></li>
             <li><a href={`${BASE_URL}rocafe`} className="hover:text-yellow-400 transition-colors">RoCafé Menu</a></li>
@@ -862,7 +863,7 @@ const Footer = () => {
         </div>
 
         <div>
-          <h4 className="font-coco text-lg mb-6 text-gray-200">Legal & Accessibility</h4>
+          <h4 className="font-coco text-lg mb-6" style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Legal & Accessibility</h4>
           <ul className="space-y-2 font-inter" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
             <li><a href={`${BASE_URL}privacy`} className="hover:text-yellow-400 transition-colors">Privacy Policy</a></li>
             <li><a href={`${BASE_URL}terms`} className="hover:text-yellow-400 transition-colors">Terms of Service</a></li>

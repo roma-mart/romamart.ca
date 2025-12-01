@@ -47,6 +47,7 @@ const CHECKS = {
   CODE_QUALITY: 'code_quality',
   RESPONSIVE: 'responsive',
   BROWSER_COMPAT: 'browser_compat',
+  BRAND_CONSISTENCY: 'brand_consistency',
 };
 
 // Issue severity levels
@@ -178,8 +179,8 @@ function checkDarkMode() {
       // Hardcoded gray colors in className
       const grayClassMatch = line.match(/className="[^"]*(?:text-gray-|bg-gray-|border-gray-)[0-9]/);
       if (grayClassMatch) {
-        // Exception: text-gray-900 on bg-yellow is intentional for contrast
-        if (grayClassMatch[0].includes('text-gray-900') && line.includes('bg-yellow')) return;
+        // Exception: text-gray-900 (near-black) on bg-yellow-500 is intentional for high contrast
+        if (grayClassMatch[0].includes('text-gray-9') && line.includes('bg-yellow')) return;
         
         issues[SEVERITY.MEDIUM].push({
           category: CHECKS.DARK_MODE,
@@ -540,7 +541,104 @@ function checkResponsive() {
 }
 
 /**
- * Check 8: Browser Compatibility
+ * Check 8: Brand Consistency
+ */
+function checkBrandConsistency() {
+  console.log(`${colors.blue}🎨 Checking brand consistency...${colors.reset}`);
+  const files = getAllFiles(SRC_DIR, ['.jsx', '.js']);
+  
+  // Brand guidelines from attachments
+  const BRAND = {
+    colors: {
+      navy: '#020178',
+      yellow: '#E4B340',
+      darkGrey: '#242424',
+      black: '#151515',
+      white: '#FFFFFF',
+    },
+    fonts: {
+      heading: ['Poppins', 'font-coco'], // Poppins for headings
+      body: ['Inter', 'font-inter'],    // Inter for body text
+    },
+  };
+  
+  for (const file of files) {
+    const content = fs.readFileSync(file, 'utf8');
+    const relativePath = path.relative(process.cwd(), file);
+    const lines = content.split('\n');
+    
+    lines.forEach((line, idx) => {
+      const lineNum = idx + 1;
+      
+      // Skip comments and theme.js (documentation)
+      if (line.trim().startsWith('//') || line.trim().startsWith('*') || relativePath.includes('utils/theme.js')) {
+        return;
+      }
+      
+      // Check for non-brand color hex codes
+      const hexMatch = line.match(/#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})/g);
+      if (hexMatch) {
+        for (const hex of hexMatch) {
+          const normalized = hex.toUpperCase();
+          const isBrandColor = Object.values(BRAND.colors).map(c => c.toUpperCase()).includes(normalized);
+          const isGradient = line.includes('gradient');
+          const isOpacity = line.includes('rgba') || line.includes('opacity');
+          
+          // Allow brand colors, gradients, and opacity variations
+          if (!isBrandColor && !isGradient && !isOpacity) {
+            issues[SEVERITY.LOW].push({
+              category: CHECKS.BRAND_CONSISTENCY,
+              file: relativePath,
+              line: lineNum,
+              message: `Non-brand color ${hex} - should use Navy (#020178), Yellow (#E4B340), or CSS variables`,
+              code: line.trim().substring(0, 80),
+              fix: 'Use COLORS.navy, COLORS.yellow, or var(--color-*) variables',
+            });
+          }
+        }
+      }
+      
+      // Check for incorrect font usage
+      // Headings (h1-h6) should use Poppins/font-coco
+      if (/<h[1-6][^>]*>/.test(line)) {
+        if (!line.includes('font-coco') && !line.includes('Poppins')) {
+          // Only flag if explicitly using wrong font
+          if (line.includes('font-inter') || line.includes('Inter')) {
+            issues[SEVERITY.MEDIUM].push({
+              category: CHECKS.BRAND_CONSISTENCY,
+              file: relativePath,
+              line: lineNum,
+              message: 'Headings should use Poppins (font-coco), not Inter',
+              code: line.trim().substring(0, 80),
+              fix: 'Add className="font-coco" to heading elements',
+            });
+          }
+        }
+      }
+      
+      // Check for non-standard font families
+      if (/fontFamily\s*:\s*['"][^'"]*['"]/.test(line)) {
+        const fontMatch = line.match(/fontFamily\s*:\s*['"]([^'"]*)['"]/);
+        if (fontMatch) {
+          const font = fontMatch[1];
+          if (!font.includes('Poppins') && !font.includes('Inter') && !font.includes('system')) {
+            issues[SEVERITY.MEDIUM].push({
+              category: CHECKS.BRAND_CONSISTENCY,
+              file: relativePath,
+              line: lineNum,
+              message: `Non-brand font family: ${font}`,
+              code: line.trim().substring(0, 80),
+              fix: 'Use Poppins for headings or Inter for body text',
+            });
+          }
+        }
+      }
+    });
+  }
+}
+
+/**
+ * Check 9: Browser Compatibility
  */
 function checkBrowserCompat() {
   console.log(`${colors.blue}🌐 Checking browser compatibility...${colors.reset}`);
@@ -688,7 +786,7 @@ function main() {
   console.log(`${colors.bold}${colors.cyan}`);
   console.log(`╔════════════════════════════════════════════════════════════════════╗`);
   console.log(`║          🔍 UNIVERSAL CODE QUALITY CHECKER                         ║`);
-  console.log(`║          Comprehensive validation across 8 dimensions              ║`);
+  console.log(`║          Comprehensive validation across 9 dimensions              ║`);
   console.log(`╚════════════════════════════════════════════════════════════════════╝`);
   console.log(`${colors.reset}\n`);
   
@@ -700,6 +798,7 @@ function main() {
     checkSEO();
     checkCodeQuality();
     checkResponsive();
+    checkBrandConsistency();
     checkBrowserCompat();
     
     return displayResults();

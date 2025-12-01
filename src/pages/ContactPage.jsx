@@ -191,7 +191,7 @@ const ContactPage = () => {
                     <CopyButton 
                       text={STORE_DATA.contact.phone}
                       label="Phone number"
-                      className="bg-gray-200 text-gray-700 hover:bg-gray-300"
+                      style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)' }}
                     />
                   </div>
                 </div>
@@ -210,7 +210,7 @@ const ContactPage = () => {
                     <CopyButton 
                       text={STORE_DATA.contact.email}
                       label="Email address"
-                      className="bg-gray-200 text-gray-700 hover:bg-gray-300"
+                      style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)' }}
                     />
                   </div>
                 </div>

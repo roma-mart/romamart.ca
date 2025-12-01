@@ -99,7 +99,7 @@ function checkFile(filePath) {
         line.trim().startsWith('//') ||
         // Intentional high-contrast text on colored backgrounds
         // text-gray-900 (near-black) on bg-yellow-500 = good contrast
-        (match[0].includes('text-gray-900') && (line.includes('bg-yellow') || line.includes('bg-blue') || line.includes('bg-green'))) ||
+        (match[0].includes('text-gray-9') && (line.includes('bg-yellow') || line.includes('bg-blue') || line.includes('bg-green'))) ||
         // text-gray-200/300 (light) on dark branded backgrounds is OK
         ((match[0].includes('text-gray-200') || match[0].includes('text-gray-300')) && line.includes('text-lg mb-6'));
       
