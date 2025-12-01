@@ -62,6 +62,12 @@ export default defineConfig([
           message: 'Avoid hardcoded Tailwind gray borders. Use CSS variable: var(--color-border) or import { useThemeColors } from utils/theme',
         },
       ],
+      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'no-eval': 'error',
+      'no-implied-eval': 'error',
+      'eqeqeq': ['error', 'always'],
+      'prefer-const': 'warn',
+      'no-var': 'error',
     },
   },
 ])

@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔍 Running pre-push checks..."
+
+# Run comprehensive quality checks
+npm run check:quality
+
+# If quality check fails, block push
+if [ $? -ne 0 ]; then
+  echo "❌ Quality checks failed. Please fix issues before pushing."
+  echo "To bypass: git push --no-verify (not recommended)"
+  exit 1
+fi
+
+echo "✅ All quality checks passed!"

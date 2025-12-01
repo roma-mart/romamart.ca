@@ -10,7 +10,10 @@
     "lint": "eslint .",
     "lint:css": "stylelint \"src/**/*.css\"",
     "check:dark-mode": "node scripts/check-dark-mode.js",
-    "check:all": "npm run lint && npm run lint:css && npm run check:dark-mode",
+    "check:quality": "node scripts/check-quality.js",
+    "check:all": "npm run lint && npm run lint:css && npm run check:quality",
+    "precommit": "npm run lint && npm run check:quality",
+    "prepush": "npm run check:all && npm run build",
     "preview": "vite preview",
     "deploy": "npm run build && gh-pages -d dist"
   },
