@@ -45,6 +45,23 @@ export default defineConfig([
       'jsx-a11y/role-has-required-aria-props': 'error',
       'jsx-a11y/role-supports-aria-props': 'error',
       'jsx-a11y/tabindex-no-positive': 'warn',
+      
+      // Dark Mode Compatibility - Prevent hardcoded Tailwind gray classes
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'JSXAttribute[name.name="className"][value.value=/text-gray-[0-9]/]',
+          message: 'Avoid hardcoded Tailwind gray text classes. Use CSS variables: var(--color-text) or var(--color-text-muted), or import { useThemeColors } from utils/theme',
+        },
+        {
+          selector: 'JSXAttribute[name.name="className"][value.value=/bg-gray-[0-9]/]',
+          message: 'Avoid hardcoded Tailwind gray backgrounds. Use CSS variables: var(--color-bg), var(--color-surface), or import { useThemeColors } from utils/theme',
+        },
+        {
+          selector: 'JSXAttribute[name.name="className"][value.value=/border-gray-[0-9]/]',
+          message: 'Avoid hardcoded Tailwind gray borders. Use CSS variable: var(--color-border) or import { useThemeColors } from utils/theme',
+        },
+      ],
     },
   },
 ])
