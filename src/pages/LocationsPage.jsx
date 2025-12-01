@@ -1,6 +1,8 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ChevronRight, MapPin, Clock, Phone, ExternalLink } from 'lucide-react';
+import ShareButton from '../components/ShareButton';
+import CopyButton from '../components/CopyButton';
 
 const LocationsPage = () => {
   const COLORS = {
@@ -48,12 +50,21 @@ const LocationsPage = () => {
       </nav>
 
       <section className="max-w-7xl mx-auto px-4 mb-16">
-        <h1 className="text-4xl md:text-5xl font-coco uppercase mb-6" style={{ color: 'var(--color-heading)' }}>
-          Our <span style={{ color: COLORS.yellow }}>Locations</span>
-        </h1>
-        <p className="text-lg font-inter leading-relaxed max-w-3xl" style={textColor}>
-          Visit us at any of our convenient locations. We're here to serve you with quality products and exceptional service.
-        </p>
+        <div className="flex flex-wrap items-start justify-between gap-4 mb-6">
+          <div>
+            <h1 className="text-4xl md:text-5xl font-coco uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
+              Our <span style={{ color: COLORS.yellow }}>Locations</span>
+            </h1>
+            <p className="text-lg font-inter leading-relaxed max-w-3xl" style={textColor}>
+              Visit us at any of our convenient locations. We're here to serve you with quality products and exceptional service.
+            </p>
+          </div>
+          <ShareButton 
+            title="Roma Mart Locations"
+            text="Find Roma Mart convenience stores near you in Sarnia!"
+            className="bg-yellow-500 text-gray-900 hover:bg-yellow-600"
+          />
+        </div>
       </section>
 
       <section className="max-w-7xl mx-auto px-4">
@@ -73,18 +84,25 @@ const LocationsPage = () => {
                 <div className="space-y-6">
                   <div className="flex gap-4">
                     <MapPin size={24} style={{ color: 'var(--color-icon)' }} className="flex-shrink-0 mt-1" />
-                    <div>
+                    <div className="flex-1">
                       <h3 className="font-bold mb-1" style={textColor}>Address</h3>
-                      <p className="font-inter" style={mutedTextColor}>{location.address}</p>
-                      <a 
-                        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location.address)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 mt-2 font-inter text-sm font-semibold hover:underline"
-                        style={{ color: COLORS.yellow }}
-                      >
-                        Get Directions <ExternalLink size={14} />
-                      </a>
+                      <p className="font-inter mb-2" style={mutedTextColor}>{location.address}</p>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <a 
+                          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location.address)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 font-inter text-sm font-semibold hover:underline"
+                          style={{ color: COLORS.yellow }}
+                        >
+                          Get Directions <ExternalLink size={14} />
+                        </a>
+                        <CopyButton 
+                          text={location.address}
+                          label="Address"
+                          className="bg-gray-200 text-gray-700 hover:bg-gray-300 text-xs"
+                        />
+                      </div>
                     </div>
                   </div>
 
@@ -99,11 +117,18 @@ const LocationsPage = () => {
 
                   <div className="flex gap-4">
                     <Phone size={24} style={{ color: 'var(--color-icon)' }} className="flex-shrink-0 mt-1" />
-                    <div>
+                    <div className="flex-1">
                       <h3 className="font-bold mb-1" style={textColor}>Phone</h3>
-                      <a href={`tel:${location.phone}`} className="font-inter hover:underline" style={{ color: COLORS.yellow }}>
-                        {location.phone}
-                      </a>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <a href={`tel:${location.phone}`} className="font-inter hover:underline" style={{ color: COLORS.yellow }}>
+                          {location.phone}
+                        </a>
+                        <CopyButton 
+                          text={location.phone}
+                          label="Phone number"
+                          className="bg-gray-200 text-gray-700 hover:bg-gray-300"
+                        />
+                      </div>
                     </div>
                   </div>
 

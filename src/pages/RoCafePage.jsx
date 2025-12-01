@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ChevronRight, ChevronDown, Coffee, Wine, UtensilsCrossed, IceCream, Sparkles } from 'lucide-react';
+import ShareButton from '../components/ShareButton';
 
 const RoCafePage = () => {
   const COLORS = {
@@ -123,10 +124,17 @@ const RoCafePage = () => {
           >
             RoCafé <span style={{ color: COLORS.yellow }}>Menu</span>
           </h1>
-          <p className="text-lg font-inter leading-relaxed max-w-3xl mx-auto mb-8" style={textColor}>
+          <p className="text-lg font-inter leading-relaxed max-w-3xl mx-auto mb-6" style={textColor}>
             Welcome to RoCafé, where quality meets convenience. Enjoy our premium selection of beverages and food, 
             crafted fresh daily with the finest ingredients.
           </p>
+          <div className="flex justify-center">
+            <ShareButton 
+              title="RoCafé Menu"
+              text="Check out the delicious RoCafé menu at Roma Mart!"
+              className="bg-yellow-500 text-gray-900 hover:bg-yellow-600"
+            />
+          </div>
           
           {/* Quick stats */}
           <div className="flex flex-wrap justify-center gap-8 mt-12">

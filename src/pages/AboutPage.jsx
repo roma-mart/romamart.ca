@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ChevronRight, Heart, Users, Award, MapPin } from 'lucide-react';
+import ShareButton from '../components/ShareButton';
 
 const AboutPage = () => {
   const COLORS = {
@@ -100,10 +101,15 @@ const AboutPage = () => {
               Roma Mart is your trusted neighborhood convenience store, proudly serving the Sarnia community. 
               We're more than just a store – we're your local partners in convenience, quality, and service.
             </p>
-            <p className="text-lg font-inter leading-relaxed" style={mutedTextColor}>
+            <p className="text-lg font-inter leading-relaxed mb-6" style={mutedTextColor}>
               From our fresh RoCafé offerings to our comprehensive range of services, we strive to be your 
               one-stop destination for everything you need, delivered with a smile.
             </p>
+            <ShareButton 
+              title="About Roma Mart"
+              text="Learn about Roma Mart - your trusted convenience store in Sarnia!"
+              className="bg-yellow-500 text-gray-900 hover:bg-yellow-600"
+            />
           </div>
 
           {/* Image Carousel */}

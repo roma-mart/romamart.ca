@@ -1,6 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ChevronRight, Banknote, Bitcoin, Printer, Package, UtensilsCrossed, Send, CreditCard, Sparkles, Ticket, AlertCircle } from 'lucide-react';
+import ShareButton from '../components/ShareButton';
 
 const ServicesPage = () => {
   const COLORS = {
@@ -116,16 +117,25 @@ const ServicesPage = () => {
 
       {/* Hero Section */}
       <section className="max-w-7xl mx-auto px-4 mb-16">
-        <h1 
-          className="text-4xl md:text-5xl font-coco uppercase mb-6"
-          style={{ color: 'var(--color-heading)' }}
-        >
-          Our <span style={{ color: COLORS.yellow }}>Services</span>
-        </h1>
-        <p className="text-lg font-inter leading-relaxed max-w-3xl" style={textColor}>
-          Roma Mart is your one-stop convenience store offering a wide range of services to make your life easier. 
-          From financial services to everyday essentials, we've got you covered.
-        </p>
+        <div className="flex flex-wrap items-start justify-between gap-4 mb-6">
+          <div>
+            <h1 
+              className="text-4xl md:text-5xl font-coco uppercase mb-4"
+              style={{ color: 'var(--color-heading)' }}
+            >
+              Our <span style={{ color: COLORS.yellow }}>Services</span>
+            </h1>
+            <p className="text-lg font-inter leading-relaxed max-w-3xl" style={textColor}>
+              Roma Mart is your one-stop convenience store offering a wide range of services to make your life easier. 
+              From financial services to everyday essentials, we've got you covered.
+            </p>
+          </div>
+          <ShareButton 
+            title="Roma Mart Services"
+            text="Check out all the amazing services at Roma Mart in Sarnia!"
+            className="bg-yellow-500 text-gray-900 hover:bg-yellow-600"
+          />
+        </div>
       </section>
 
       {/* Services Grid */}

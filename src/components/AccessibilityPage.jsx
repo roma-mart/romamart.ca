@@ -1,6 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ExternalLink, Mail, Phone, MapPin, CheckCircle, ChevronRight } from 'lucide-react';
+import ShareButton from './ShareButton';
 
 const AccessibilityPage = () => {
   const COLORS = {
@@ -45,12 +46,19 @@ const AccessibilityPage = () => {
 
       {/* Hero Section */}
       <section className="max-w-4xl mx-auto px-4 mb-16">
-        <h1 
-          className="text-4xl md:text-5xl font-coco uppercase mb-6"
-          style={{ color: 'var(--color-heading)' }}
-        >
-          Accessibility Statement
-        </h1>
+        <div className="flex flex-wrap items-start justify-between gap-4 mb-6">
+          <h1 
+            className="text-4xl md:text-5xl font-coco uppercase"
+            style={{ color: 'var(--color-heading)' }}
+          >
+            Accessibility Statement
+          </h1>
+          <ShareButton 
+            title="Roma Mart Accessibility"
+            text="Learn about Roma Mart's accessibility commitment"
+            className="bg-yellow-500 text-gray-900 hover:bg-yellow-600"
+          />
+        </div>
         <p className="text-lg font-inter leading-relaxed mb-4" style={textColor}>
           Roma Mart Convenience is committed to ensuring digital accessibility for people with disabilities. 
           We strive to maintain and continually improve the accessibility of our website to conform to the 

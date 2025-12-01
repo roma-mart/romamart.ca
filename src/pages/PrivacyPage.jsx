@@ -1,6 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ChevronRight } from 'lucide-react';
+import ShareButton from '../components/ShareButton';
 
 const PrivacyPage = () => {
   const COLORS = {
@@ -35,9 +36,16 @@ const PrivacyPage = () => {
       </nav>
 
       <div className="max-w-4xl mx-auto px-4">
-        <h1 className="text-4xl font-coco uppercase mb-8" style={{ color: 'var(--color-heading)' }}>
-          Privacy Policy
-        </h1>
+        <div className="flex flex-wrap items-start justify-between gap-4 mb-8">
+          <h1 className="text-4xl font-coco uppercase" style={{ color: 'var(--color-heading)' }}>
+            Privacy Policy
+          </h1>
+          <ShareButton 
+            title="Roma Mart Privacy Policy"
+            text="Read Roma Mart's privacy policy"
+            className="bg-yellow-500 text-gray-900 hover:bg-yellow-600"
+          />
+        </div>
 
         <div className="prose max-w-none font-inter">
           <p className="mb-6" style={textColor}>

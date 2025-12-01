@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ChevronRight, MapPin, Phone, Clock, Mail, Send } from 'lucide-react';
+import ShareButton from '../components/ShareButton';
+import CopyButton from '../components/CopyButton';
 
 const ContactPage = () => {
   const COLORS = {
@@ -69,12 +71,21 @@ const ContactPage = () => {
       </nav>
 
       <section className="max-w-7xl mx-auto px-4 mb-16">
-        <h1 className="text-4xl md:text-5xl font-coco uppercase mb-6" style={{ color: 'var(--color-heading)' }}>
-          Contact <span style={{ color: COLORS.yellow }}>Us</span>
-        </h1>
-        <p className="text-lg font-inter leading-relaxed max-w-3xl" style={textColor}>
-          Have a question or feedback? We'd love to hear from you! Reach out through any of the methods below.
-        </p>
+        <div className="flex flex-wrap items-start justify-between gap-4 mb-6">
+          <div>
+            <h1 className="text-4xl md:text-5xl font-coco uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
+              Contact <span style={{ color: COLORS.yellow }}>Us</span>
+            </h1>
+            <p className="text-lg font-inter leading-relaxed max-w-3xl" style={textColor}>
+              Have a question or feedback? We'd love to hear from you! Reach out through any of the methods below.
+            </p>
+          </div>
+          <ShareButton 
+            title="Contact Roma Mart"
+            text="Get in touch with Roma Mart - Sarnia's premier convenience store!"
+            className="bg-yellow-500 text-gray-900 hover:bg-yellow-600"
+          />
+        </div>
       </section>
 
       <section className="max-w-7xl mx-auto px-4">
@@ -109,11 +120,18 @@ const ContactPage = () => {
                 <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'var(--color-surface)' }}>
                   <Phone style={{ color: 'var(--color-icon)' }} />
                 </div>
-                <div>
+                <div className="flex-1">
                   <h4 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Call Us</h4>
-                  <a href={`tel:${STORE_DATA.contact.phone}`} className="hover:underline" style={{ color: COLORS.yellow }}>
-                    {STORE_DATA.contact.phone}
-                  </a>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <a href={`tel:${STORE_DATA.contact.phone}`} className="hover:underline" style={{ color: COLORS.yellow }}>
+                      {STORE_DATA.contact.phone}
+                    </a>
+                    <CopyButton 
+                      text={STORE_DATA.contact.phone}
+                      label="Phone number"
+                      className="bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -121,11 +139,18 @@ const ContactPage = () => {
                 <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'var(--color-surface)' }}>
                   <Mail style={{ color: 'var(--color-icon)' }} />
                 </div>
-                <div>
+                <div className="flex-1">
                   <h4 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Email Us</h4>
-                  <a href={`mailto:${STORE_DATA.contact.email}`} className="hover:underline" style={{ color: COLORS.yellow }}>
-                    {STORE_DATA.contact.email}
-                  </a>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <a href={`mailto:${STORE_DATA.contact.email}`} className="hover:underline" style={{ color: COLORS.yellow }}>
+                      {STORE_DATA.contact.email}
+                    </a>
+                    <CopyButton 
+                      text={STORE_DATA.contact.email}
+                      label="Email address"
+                      className="bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    />
+                  </div>
                 </div>
               </div>
 

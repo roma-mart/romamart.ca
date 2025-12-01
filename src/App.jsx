@@ -21,6 +21,8 @@ import { faFacebook, faInstagram, faTiktok, faXTwitter, faSnapchat } from '@fort
 import { motion, AnimatePresence } from 'framer-motion';
 import TrustpilotWidget from './components/TrustpilotWidget';
 import OrderCTA from './components/OrderCTA';
+import ShareButton from './components/ShareButton';
+import CopyButton from './components/CopyButton';
 
 // Code splitting: Lazy load page components
 const AccessibilityPage = lazy(() => import('./components/AccessibilityPage'));
@@ -361,9 +363,17 @@ const Hero = () => {
               <span style={{ color: COLORS.yellow }}>Stop & Go</span>
             </h1>
             
-            <p className="text-lg md:text-xl font-inter text-gray-300 mb-8 max-w-lg leading-relaxed">
+            <p className="text-lg md:text-xl font-inter text-gray-300 mb-6 max-w-lg leading-relaxed">
               Experience Sarnia's newest convenience destination. From daily essentials to bubble tea, we have what you need.
             </p>
+            
+            <div className="mb-6">
+              <ShareButton 
+                title="Roma Mart"
+                text="Check out Roma Mart - Sarnia's newest convenience store!"
+                className="bg-white/10 text-white hover:bg-white/20 border border-white/30"
+              />
+            </div>
             
             <div className="flex flex-col sm:flex-row gap-4">
               {/* PRIMARY CTA - ORDER NOW */}
@@ -642,9 +652,14 @@ const ContactSection = () => {
                 <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'var(--color-surface)' }}>
                   <MapPin className="text-navy-900" style={{ color: 'var(--color-icon)' }} />
                 </div>
-                <div>
-                  <h4 className="font-bold text-lg" style={{ color: 'var(--color-primary)' }}>Visit Us</h4>
-                  <p style={textColor}>{STORE_DATA.locations[0].address}</p>
+                <div className="flex-1">
+                  <h4 className="font-bold text-lg mb-1" style={{ color: 'var(--color-primary)' }}>Visit Us</h4>
+                  <p className="mb-2" style={textColor}>{STORE_DATA.locations[0].address}</p>
+                  <CopyButton 
+                    text={STORE_DATA.locations[0].address}
+                    label="Address"
+                    className="bg-gray-200 text-gray-700 hover:bg-gray-300 text-xs"
+                  />
                 </div>
               </div>
 
@@ -652,9 +667,18 @@ const ContactSection = () => {
                 <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'var(--color-surface)' }}>
                   <Phone className="text-navy-900" style={{ color: 'var(--color-icon)' }} />
                 </div>
-                <div>
-                  <h4 className="font-bold text-lg" style={{ color: 'var(--color-primary)' }}>Call Us</h4>
-                  <p style={textColor}>{STORE_DATA.contact.phone}</p>
+                <div className="flex-1">
+                  <h4 className="font-bold text-lg mb-1" style={{ color: 'var(--color-primary)' }}>Call Us</h4>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <a href={`tel:${STORE_DATA.contact.phone}`} className="hover:underline" style={{ color: COLORS.yellow }}>
+                      {STORE_DATA.contact.phone}
+                    </a>
+                    <CopyButton 
+                      text={STORE_DATA.contact.phone}
+                      label="Phone number"
+                      className="bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    />
+                  </div>
                 </div>
               </div>
 
