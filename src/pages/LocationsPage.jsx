@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { ChevronRight, MapPin, Clock, Phone, ExternalLink } from 'lucide-react';
+import { ChevronRight, MapPin, Clock, Phone, ExternalLink, Building2 } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
 import CopyButton from '../components/CopyButton';
 import NearestStoreButton from '../components/NearestStoreButton';
+import { useLocationAware } from '../hooks/useLocationContext';
+import { getActiveLocations, getLocationsByDistance, formatDistance } from '../data/locations';
 
 const LocationsPage = () => {
   const COLORS = {
@@ -16,21 +18,34 @@ const LocationsPage = () => {
 
   const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
 
-  const locations = [
-    {
-      id: 1,
-      name: 'Roma Mart Wellington',
-      address: '189-3 Wellington Street, Sarnia, ON N7T 1G6',
-      phone: '+1 (382) 342-2000',
-      hours: {
-        weekdays: '7:00 AM - 11:00 PM',
-        weekends: '8:00 AM - 11:00 PM'
-      },
-      isOpen: true,
-      mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2938.868770732483!2d-82.40458892398539!3d42.97038897114251!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8825838570075305%3A0x6641775e744d0810!2s189%20Wellington%20St%2C%20Sarnia%2C%20ON%20N7T%201G6%2C%20Canada!5e0!3m2!1sen!2sus!4v1709669042595!5m2!1sen!2sus',
-      features: ['ATM', 'Bitcoin ATM', 'RoCafé', 'Halal Meat', 'Package Services']
-    }
-  ];
+  const [sortedLocations, setSortedLocations] = useState(() => {
+    // Default sort: HQ first, then rest
+    const locs = getActiveLocations();
+    return locs.sort((a, b) => {
+      if (a.isPrimary) return -1;
+      if (b.isPrimary) return 1;
+      return 0;
+    });
+  });
+
+  // Auto-request location when component mounts
+  useLocationAware((position) => {
+    const sorted = getLocationsByDistance(position.coords.latitude, position.coords.longitude);
+    setSortedLocations(sorted);
+  });
+
+  const locations = sortedLocations.map(loc => ({
+    ...loc,
+    id: loc.id,
+    name: loc.name,
+    address: loc.address.formatted,
+    phone: loc.contact.phone,
+    hours: loc.hours,
+    isOpen: loc.status === 'open',
+    mapUrl: loc.google.embedUrl,
+    features: loc.services.map(s => s.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())),
+    distanceText: loc.distance ? formatDistance(loc.distance) : null
+  }));
 
   return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>
@@ -67,12 +82,20 @@ const LocationsPage = () => {
               className="bg-yellow-500 text-gray-900 hover:bg-yellow-600"
             />
             <NearestStoreButton 
-              locations={locations}
-              onNearestFound={(nearest) => {
-                // Scroll to the nearest store card
-                const element = document.getElementById(`location-${nearest.id}`);
-                if (element) {
-                  element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              onLocationFound={(position) => {
+                // Sort locations by distance from user
+                const sorted = getLocationsByDistance(position.coords.latitude, position.coords.longitude);
+                setSortedLocations(sorted);
+                
+                // Scroll to nearest location
+                const nearest = sorted[0];
+                if (nearest) {
+                  const element = document.getElementById(`location-${nearest.id}`);
+                  if (element) {
+                    setTimeout(() => {
+                      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 100);
+                  }
                 }
               }}
             />
@@ -83,13 +106,52 @@ const LocationsPage = () => {
       <section className="max-w-7xl mx-auto px-4">
         <div className="space-y-12">
           {locations.map((location) => (
-            <div key={location.id} id={`location-${location.id}`} className="grid lg:grid-cols-2 gap-8">
+            <div 
+              key={location.id} 
+              id={`location-${location.id}`} 
+              className="grid lg:grid-cols-2 gap-8"
+              style={{
+                border: location.isPrimary ? `3px solid ${COLORS.yellow}` : 'none',
+                borderRadius: '1rem',
+                padding: location.isPrimary ? '0.5rem' : '0'
+              }}
+            >
               <div className="p-8 rounded-2xl" style={{ backgroundColor: 'var(--color-surface)' }}>
+                {/* HQ Badge + Distance */}
+                {(location.isPrimary || location.distanceText) && (
+                  <div className="flex items-center gap-2 mb-4 flex-wrap">
+                    {location.isPrimary && (
+                      <span 
+                        className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold"
+                        style={{ backgroundColor: COLORS.yellow, color: COLORS.navy }}
+                      >
+                        <Building2 size={14} />
+                        HEADQUARTERS
+                      </span>
+                    )}
+                    {location.distanceText && (
+                      <span 
+                        className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold"
+                        style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)' }}
+                      >
+                        <MapPin size={14} />
+                        {location.distanceText}
+                      </span>
+                    )}
+                  </div>
+                )}
+
                 <div className="flex items-start justify-between mb-6">
                   <h2 className="text-3xl font-coco" style={{ color: 'var(--color-heading)' }}>
                     {location.name}
                   </h2>
-                  <div className={`px-3 py-1 rounded-full text-sm font-bold ${location.isOpen ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                  <div 
+                    className="px-3 py-1 rounded-full text-sm font-bold"
+                    style={{
+                      backgroundColor: location.isOpen ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                      color: location.isOpen ? '#059669' : '#DC2626'
+                    }}
+                  >
                     {location.isOpen ? 'Open Now' : 'Closed'}
                   </div>
                 </div>
@@ -166,7 +228,7 @@ const LocationsPage = () => {
               <div className="rounded-3xl overflow-hidden shadow-2xl h-96">
                 <iframe 
                   title={`Google Maps - ${location.name}`}
-                  src={location.mapUrl}
+                  src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=place_id:ChIJCfo3t6SdJYgRIQVbpCppKmY&zoom=15"
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}

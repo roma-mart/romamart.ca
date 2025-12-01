@@ -1,7 +1,12 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
-import { ChevronRight, Banknote, Bitcoin, Printer, Package, UtensilsCrossed, Send, CreditCard, Sparkles, Ticket, AlertCircle } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
+import NearestStoreButton from '../components/NearestStoreButton';
+import StandardizedItem from '../components/StandardizedItem';
+import { useLocationAware } from '../hooks/useLocationContext';
+import { SERVICES } from '../data/services';
+import { getPrimaryLocation } from '../data/locations';
 
 const ServicesPage = () => {
   const COLORS = {
@@ -13,82 +18,13 @@ const ServicesPage = () => {
   const mutedTextColor = { color: 'var(--color-text)', opacity: 0.7 };
 
   const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
-
-  const services = [
-    {
-      id: 1,
-      icon: <Banknote size={40} />,
-      title: 'ATM',
-      description: 'Convenient 24/7 ATM access with competitive fees. Withdraw cash anytime you need it.',
-      features: ['24/7 Access', 'Low Fees', 'Major Bank Support', 'Secure Transactions']
-    },
-    {
-      id: 2,
-      icon: <Bitcoin size={40} />,
-      title: 'Bitcoin ATM',
-      description: 'Buy and sell cryptocurrency with ease. Our Bitcoin ATM supports multiple digital currencies.',
-      features: ['Buy & Sell Crypto', 'Multiple Coins', 'Instant Transactions', 'Secure & Private']
-    },
-    {
-      id: 3,
-      icon: <Printer size={40} />,
-      title: 'Printing Services',
-      description: 'Professional printing services for documents, photos, and more. Black & white or color printing available.',
-      features: ['Document Printing', 'Photo Printing', 'Color & B/W', 'Multiple Sizes']
-    },
-    {
-      id: 4,
-      icon: <Package size={40} />,
-      title: 'Package Pickup & Dropoff',
-      description: 'Convenient package handling services. Drop off your shipments or pick up deliveries at your convenience.',
-      features: ['Multiple Carriers', 'Secure Storage', 'Extended Hours', 'Package Tracking']
-    },
-    {
-      id: 5,
-      icon: <UtensilsCrossed size={40} />,
-      title: 'Halal Meat',
-      description: 'Premium quality halal-certified meat products. Fresh cuts available daily.',
-      features: ['100% Halal Certified', 'Fresh Daily', 'Multiple Cuts', 'Quality Guaranteed']
-    },
-    {
-      id: 6,
-      icon: <Send size={40} />,
-      title: 'Money Transfer',
-      description: 'Fast and secure money transfer services to send funds domestically and internationally.',
-      features: ['Domestic & International', 'Competitive Rates', 'Fast Processing', 'Secure Transfers']
-    },
-    {
-      id: 7,
-      icon: <CreditCard size={40} />,
-      title: 'Gift & Prepaid Cards',
-      description: 'Wide selection of gift cards and prepaid cards for all occasions. Popular brands available.',
-      features: ['Major Retailers', 'Multiple Denominations', 'Perfect for Gifting', 'No Expiry']
-    },
-    {
-      id: 8,
-      icon: <Sparkles size={40} />,
-      title: 'Perfumes & Fragrances',
-      description: 'Curated collection of premium perfumes and fragrances. Find your signature scent.',
-      features: ['Designer Brands', 'Variety of Scents', 'Unisex Options', 'Gift Sets Available']
-    },
-    {
-      id: 9,
-      icon: <AlertCircle size={40} />,
-      title: 'Tobacco & Vapes',
-      description: 'Age-restricted tobacco products and vaping supplies. Valid government-issued photo ID required.',
-      features: ['19+ Only (Ontario Law)', 'Photo ID Required', 'Cigarettes & Cigars', 'Vaping Supplies'],
-      restricted: true
-    },
-    {
-      id: 10,
-      icon: <Ticket size={40} />,
-      title: 'Lottery',
-      description: 'Provincial lottery tickets coming soon! Play your favorite games.',
-      features: ['Coming Soon', '19+ Only (Ontario Law)', 'Instant Tickets', 'Draw Games'],
-      comingSoon: true,
-      restricted: true
-    }
-  ];
+  const primaryLocation = getPrimaryLocation();
+  const locationIsOpen = primaryLocation.status === 'open';
+  
+  // Auto-request location when StandardizedItem components mount
+  useLocationAware(() => {
+    // Location stored for StandardizedItem availability states
+  });
 
   return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>
@@ -130,79 +66,50 @@ const ServicesPage = () => {
               From financial services to everyday essentials, we've got you covered.
             </p>
           </div>
-          <ShareButton 
-            title="Roma Mart Services"
-            text="Check out all the amazing services at Roma Mart in Sarnia!"
-            className="bg-yellow-500 text-gray-900 hover:bg-yellow-600"
-          />
+          <div className="flex flex-wrap gap-3">
+            <ShareButton 
+              title="Roma Mart Services"
+              text="Check out all the amazing services at Roma Mart in Sarnia!"
+              className="bg-yellow-500 text-gray-900 hover:bg-yellow-600"
+            />
+            <NearestStoreButton 
+              onLocationFound={() => {
+                // User location found - services now show based on availability
+              }}
+            />
+          </div>
         </div>
       </section>
 
       {/* Services Grid */}
       <section className="max-w-7xl mx-auto px-4">
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {services.map((service) => (
-            <div 
+        <div className="grid md:grid-cols-2 gap-6">
+          {SERVICES.map((service, index) => (
+            <StandardizedItem
               key={service.id}
-              className="p-8 rounded-2xl shadow-sm border hover:shadow-lg transition-all"
-              style={{ 
-                backgroundColor: 'var(--color-bg)', 
-                borderColor: service.comingSoon ? COLORS.yellow : 'var(--color-border)',
-                borderWidth: service.comingSoon ? '2px' : '1px'
+              item={{
+                id: service.id,
+                name: service.name,
+                tagline: service.tagline,
+                description: service.description,
+                icon: service.icon,
+                badge: service.badge,
+                features: service.features,
+                action: service.action,
+                availability: service.availability,
+                isAvailable: service.availableAt.includes(primaryLocation.id),
+                locationStatus: locationIsOpen ? 'Open Now' : 'Closed',
+                ageRestricted: service.ageRestricted,
+                legalNotice: service.legalNotice
               }}
-            >
-              <div 
-                className="w-16 h-16 rounded-xl flex items-center justify-center mb-6"
-                style={{ 
-                  backgroundColor: service.restricted ? 'var(--color-error-light)' : service.comingSoon ? COLORS.yellow + '20' : 'var(--color-surface)',
-                  color: service.restricted ? 'var(--color-error)' : 'var(--color-icon)'
-                }}
-              >
-                {service.icon}
-              </div>
-              
-              <h3 className="font-coco text-2xl mb-3 flex items-center gap-2" style={{ color: 'var(--color-heading)' }}>
-                {service.title}
-                {service.comingSoon && (
-                  <span className="text-xs font-inter font-bold px-2 py-1 rounded-full" style={{ backgroundColor: COLORS.yellow, color: COLORS.navy }}>
-                    SOON
-                  </span>
-                )}
-              </h3>
-              
-              <p className="font-inter leading-relaxed mb-6" style={mutedTextColor}>
-                {service.description}
-              </p>
-              
-              <ul className="space-y-2">
-                {service.features.map((feature, index) => (
-                  <li key={index} className="flex items-start gap-2 font-inter text-sm" style={textColor}>
-                    <span style={{ color: COLORS.yellow }}>✓</span>
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-
-              {service.restricted && (
-                <div className="mt-6 p-4 rounded-lg border-2" style={{ backgroundColor: 'var(--color-error-bg)', borderColor: 'var(--color-error)' }}>
-                  <p className="text-sm font-inter font-bold mb-2" style={{ color: 'var(--color-error)' }}>
-                    ⚠️ AGE RESTRICTED - ONTARIO LAW
-                  </p>
-                  <p className="text-xs font-inter leading-relaxed" style={{ color: 'var(--color-error-dark)' }}>
-                    {service.comingSoon ? 'Must be 19 or older to purchase lottery tickets. ' : 'Must be 19 or older to purchase tobacco or vapour products. '}
-                    Government-issued photo ID with birth date must be shown when requested.
-                  </p>
-                  <p className="text-xs font-inter mt-2" style={{ color: 'var(--color-error-darker)' }}>
-                    Under the <a href="https://www.ontario.ca/laws/statute/17s26" target="_blank" rel="noopener noreferrer" className="underline hover:opacity-80">Smoke-Free Ontario Act, 2017</a>
-                  </p>
-                </div>
-              )}
-            </div>
+              defaultExpanded={index === 0}
+              variant="service"
+            />
           ))}
         </div>
       </section>
 
-      {/* Compliance Notice with SFOA Signage */}
+      {/* Compliance Notice with SFOA Signage - Keep existing */}
       <section className="max-w-7xl mx-auto px-4 mt-16">
         <div className="p-8 rounded-xl border" style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
           <h3 className="font-coco text-2xl mb-6" style={{ color: 'var(--color-heading)' }}>Age-Restricted Products Compliance</h3>

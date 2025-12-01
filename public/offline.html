@@ -135,14 +135,14 @@
     </p>
     
     <div class="info-box">
-      <h3 style="color: #E4B340; margin-bottom: 20px;">Roma Mart Convenience</h3>
+      <h3 style="color: #E4B340; margin-bottom: 20px;" id="location-name">Roma Mart Convenience</h3>
       
       <div class="contact-item">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
         </svg>
-        <span>189-3 Wellington Street, Sarnia, ON</span>
+        <span id="location-address">189-3 Wellington Street, Sarnia, ON</span>
       </div>
       
       <div class="contact-item">
@@ -162,9 +162,83 @@
     
     <a href="javascript:window.location.reload()" class="button">Try Again</a>
     
-    <p style="margin-top: 30px; font-size: 0.9rem; opacity: 0.6;">
+    <p style="margin-top: 30px; font-size: 0.9rem; opacity: 0.6;" id="location-distance">
       This page works offline. Once you're back online, you'll have full access to our website.
     </p>
   </div>
+  
+  <script>
+    // Display nearest location based on stored user location
+    (function() {
+      // Location data (embedded from locations.js)
+      const LOCATIONS = [
+        {
+          id: 'wellington',
+          name: 'Roma Mart - Wellington',
+          address: '189-3 Wellington Street, Sarnia, ON N7T 1G6',
+          phone: '+1 (382) 342-2000',
+          coordinates: { lat: 42.970389, lng: -82.404589 },
+          isPrimary: true
+        }
+        // Add more locations as they open
+      ];
+      
+      // Haversine distance calculation
+      function calculateDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371; // Earth's radius in km
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        
+        const a = 
+          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+          Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+          Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+      }
+      
+      // Get stored user location
+      try {
+        const userLat = localStorage.getItem('roma_mart_user_lat');
+        const userLng = localStorage.getItem('roma_mart_user_lng');
+        
+        if (userLat && userLng) {
+          const lat = parseFloat(userLat);
+          const lng = parseFloat(userLng);
+          
+          // Find nearest location
+          let nearest = LOCATIONS[0];
+          let minDistance = Infinity;
+          
+          LOCATIONS.forEach(loc => {
+            const dist = calculateDistance(lat, lng, loc.coordinates.lat, loc.coordinates.lng);
+            if (dist < minDistance) {
+              minDistance = dist;
+              nearest = loc;
+            }
+          });
+          
+          // Update UI with nearest location
+          document.getElementById('location-name').textContent = nearest.name;
+          document.getElementById('location-address').textContent = nearest.address;
+          
+          // Show distance
+          const distanceText = minDistance < 1 
+            ? Math.round(minDistance * 1000) + 'm away'
+            : minDistance.toFixed(1) + 'km away';
+          document.getElementById('location-distance').textContent = 
+            'Nearest store: ' + distanceText + ' • This page works offline';
+        } else {
+          // No location stored, show HQ by default
+          const hq = LOCATIONS.find(loc => loc.isPrimary) || LOCATIONS[0];
+          document.getElementById('location-name').textContent = hq.name + ' (Headquarters)';
+          document.getElementById('location-address').textContent = hq.address;
+        }
+      } catch (e) {
+        console.error('Error loading stored location:', e);
+      }
+    })();
+  </script>
 </body>
 </html>

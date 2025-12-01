@@ -32,11 +32,22 @@ const Toast = ({ message, type = 'info', duration = 3000, onClose }) => {
     const base = 'flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg border-2 backdrop-blur-sm';
     switch (type) {
       case 'success':
-        return `${base} bg-green-50 border-green-500 text-green-900`;
+        return `${base} border-green-500`;
       case 'error':
-        return `${base} bg-red-50 border-red-500 text-red-900`;
+        return `${base} border-red-500`;
       default:
-        return `${base} bg-blue-50 border-blue-500 text-blue-900`;
+        return `${base} border-yellow-500`;
+    }
+  };
+  
+  const getColors = () => {
+    switch (type) {
+      case 'success':
+        return { backgroundColor: 'rgba(34, 197, 94, 0.1)', color: '#059669' };
+      case 'error':
+        return { backgroundColor: 'rgba(239, 68, 68, 0.1)', color: '#DC2626' };
+      default:
+        return { backgroundColor: 'rgba(228, 179, 64, 0.1)', color: '#E4B340' };
     }
   };
 
@@ -45,6 +56,7 @@ const Toast = ({ message, type = 'info', duration = 3000, onClose }) => {
       role="alert"
       aria-live="polite"
       className={getStyles()}
+      style={getColors()}
     >
       {getIcon()}
       <span className="flex-1 font-inter text-sm font-medium">{message}</span>

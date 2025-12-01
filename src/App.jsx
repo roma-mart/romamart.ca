@@ -26,6 +26,8 @@ import CopyButton from './components/CopyButton';
 import PWAInstallPrompt from './components/PWAInstallPrompt';
 import NetworkStatus from './components/NetworkStatus';
 import StructuredData from './components/StructuredData';
+import { LocationProvider } from './components/LocationProvider';
+import { getPrimaryLocation, getActiveLocationCount } from './data/locations';
 
 // PWA Hooks
 import { useServiceWorker } from './hooks/useServiceWorker';
@@ -41,6 +43,7 @@ const RoCafePage = lazy(() => import('./pages/RoCafePage'));
 const LocationsPage = lazy(() => import('./pages/LocationsPage'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
+const StandardizedItemDemo = lazy(() => import('./components/StandardizedItemDemo'));
 
 // GTM tracking utility
 const trackOrderClick = (location) => {
@@ -80,22 +83,11 @@ const STORE_DATA = {
   contact: {
     phone: "+1 (382) 342-2000",
     email: "contact@romamart.ca",
-    // 2. GET YOUR FREE ACCESS KEY FROM WEB3FORMS.COM
-    web3FormsAccessKey: "YOUe4a0fd98-2ea3-4d6c-8449-346b6097c7dc" 
-  },
-  locations: [
-    {
-      id: 1,
-      name: "Wellington St. (Flagship)",
-      address: "189-3 Wellington Street, Sarnia, ON N7T 1G6",
-      mapLink: "https://maps.google.com/?q=189+Wellington+St+Sarnia+ON",
-      hours: {
-        weekdays: "8:00 AM - 10:00 PM",
-        weekends: "9:00 AM - 11:00 PM"
-      },
-      isOpen: true
-    },
-  ]
+    // Web3Forms Access Key (contact form backend)
+    web3FormsAccessKey: "e4a0fd98-2ea3-4d6c-8449-346b6097c7dc" 
+  }
+  // NOTE: Location data moved to src/data/locations.js
+  // Use getPrimaryLocation() to get featured location
 };
 
 const SERVICES = [
@@ -583,19 +575,31 @@ const RoCafeSection = () => {
 };
 
 const Locations = () => {
-  const [activeLoc, setActiveLoc] = useState(STORE_DATA.locations[0]);
+  const primaryLocation = getPrimaryLocation();
+  const locationCount = getActiveLocationCount();
+  
+  // Transform to match old format for compatibility
+  const displayLocation = {
+    id: primaryLocation.id,
+    name: primaryLocation.name,
+    address: primaryLocation.address.formatted,
+    mapLink: primaryLocation.google.mapLink,
+    isOpen: primaryLocation.status === 'open'
+  };
+  
+  const [activeLoc, setActiveLoc] = useState(displayLocation);
 
   return (
     <section id="locations" className="py-24" style={{ backgroundColor: 'var(--color-bg)' }}>
       <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
           <span className="text-yellow-500 font-bold uppercase tracking-widest text-sm">Find Us</span>
-          <h2 className="text-4xl font-coco mt-2" style={{ color: 'var(--color-heading)' }}>Our Locations</h2>
+          <h2 className="text-4xl font-coco mt-2" style={{ color: 'var(--color-heading)' }}>Our Location{locationCount > 1 ? 's' : ''}</h2>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-1 space-y-4">
-            {STORE_DATA.locations.map(loc => (
+            {[displayLocation].map(loc => (
               <button
                 key={loc.id}
                 onClick={() => setActiveLoc(loc)}
@@ -617,8 +621,8 @@ const Locations = () => {
 
           <div className="lg:col-span-2 rounded-3xl overflow-hidden min-h-[400px] relative shadow-inner" style={{ backgroundColor: 'var(--color-surface)' }}>
              <iframe 
-               title="Google Maps - Roma Mart Wellington Street Location"
-               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2938.868770732483!2d-82.40458892398539!3d42.97038897114251!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8825838570075305%3A0x6641775e744d0810!2s189%20Wellington%20St%2C%20Sarnia%2C%20ON%20N7T%201G6%2C%20Canada!5e0!3m2!1sen!2sus!4v1709669042595!5m2!1sen!2sus"
+               title={`Google Maps - ${primaryLocation.name}`}
+               src={primaryLocation.google.embedUrl}
                width="100%"
                height="100%"
                style={{ border: 0 }}
@@ -649,6 +653,7 @@ const Locations = () => {
 const ContactSection = () => {
   const textColor = { color: 'var(--color-text)' };
   const mutedTextColor = { color: 'var(--color-text)', opacity: 0.7 };
+  const primaryLocation = getPrimaryLocation();
   
   return (
     <section id="contact" className="py-24" style={{ backgroundColor: 'var(--color-surface)' }}>
@@ -670,9 +675,9 @@ const ContactSection = () => {
                 </div>
                 <div className="flex-1">
                   <h4 className="font-bold text-lg mb-1" style={{ color: 'var(--color-primary)' }}>Visit Us</h4>
-                  <p className="mb-2" style={textColor}>{STORE_DATA.locations[0].address}</p>
+                  <p className="mb-2" style={textColor}>{primaryLocation.address.formatted}</p>
                   <CopyButton 
-                    text={STORE_DATA.locations[0].address}
+                    text={primaryLocation.address.formatted}
                     label="Address"
                     className="text-xs"
                     style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)' }}
@@ -948,21 +953,23 @@ function App() {
   const currentPage = getPage();
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--color-bg)' }}>
-      {currentPage !== 'home' ? (
-        <Suspense fallback={<LoadingFallback />}>
-          <a href="#main-content" className="skip-link">Skip to main content</a>
-          <Navbar />
-          <div id="main-content">
-            {currentPage === 'services' && <ServicesPage />}
-            {currentPage === 'rocafe' && <RoCafePage />}
-            {currentPage === 'locations' && <LocationsPage />}
+    <LocationProvider>
+      <div className="min-h-screen" style={{ backgroundColor: 'var(--color-bg)' }}>
+        {currentPage !== 'home' ? (
+          <Suspense fallback={<LoadingFallback />}>
+            <a href="#main-content" className="skip-link">Skip to main content</a>
+            <Navbar />
+            <div id="main-content">
+              {currentPage === 'services' && <ServicesPage />}
+              {currentPage === 'rocafe' && <RoCafePage />}
+              {currentPage === 'locations' && <LocationsPage />}
             {currentPage === 'contact' && <ContactPage />}
             {currentPage === 'about' && <AboutPage />}
             {currentPage === 'accessibility' && <AccessibilityPage />}
             {currentPage === 'privacy' && <PrivacyPage />}
             {currentPage === 'terms' && <TermsPage />}
             {currentPage === 'cookies' && <CookiesPage />}
+            {currentPage === 'demo' && <StandardizedItemDemo />}
           </div>
           <Footer />
           <OrderCTA orderUrl={STORE_DATA.onlineStoreUrl} />
@@ -1016,7 +1023,8 @@ function App() {
           description: "Your daily stop & go convenience store in Sarnia, Ontario."
         }}
       />
-    </div>
+      </div>
+    </LocationProvider>
   );
 }
 

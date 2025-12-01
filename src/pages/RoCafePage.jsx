@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ChevronRight, ChevronDown, Coffee, Wine, UtensilsCrossed, IceCream, Sparkles } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
+import StandardizedItem from '../components/StandardizedItem';
+import { useLocationAware } from '../hooks/useLocationContext';
 
 const RoCafePage = () => {
   const COLORS = {
@@ -15,6 +17,11 @@ const RoCafePage = () => {
   const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
 
   const [expandedCategory, setExpandedCategory] = useState(null);
+  
+  // Auto-request location since StandardizedItem components need it
+  useLocationAware(() => {
+    // Location stored and available for StandardizedItem availability states
+  });
 
   // Menu structure - ready for full data
   const menuCategories = [

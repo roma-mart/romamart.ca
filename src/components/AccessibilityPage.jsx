@@ -97,7 +97,8 @@ const AccessibilityPage = () => {
               href="https://www.w3.org/WAI/WCAG22/quickref/" 
               target="_blank" 
               rel="noreferrer"
-              className="inline-flex items-center gap-2 text-blue-600 hover:underline font-medium"
+              className="inline-flex items-center gap-2 hover:underline font-medium"
+              style={{ color: COLORS.yellow }}
             >
               Learn more <ExternalLink size={16} />
             </a>
@@ -120,7 +121,8 @@ const AccessibilityPage = () => {
               href="https://www.ontario.ca/laws/regulation/070191" 
               target="_blank" 
               rel="noreferrer"
-              className="inline-flex items-center gap-2 text-blue-600 hover:underline font-medium"
+              className="inline-flex items-center gap-2 hover:underline font-medium"
+              style={{ color: COLORS.yellow }}
             >
               View AODA regulations <ExternalLink size={16} />
             </a>
@@ -143,7 +145,8 @@ const AccessibilityPage = () => {
               href="https://www.iso.org/standard/80369.html" 
               target="_blank" 
               rel="noreferrer"
-              className="inline-flex items-center gap-2 text-blue-600 hover:underline font-medium"
+              className="inline-flex items-center gap-2 hover:underline font-medium"
+              style={{ color: COLORS.yellow }}
             >
               Learn about ISO 40500 <ExternalLink size={16} />
             </a>
@@ -166,7 +169,8 @@ const AccessibilityPage = () => {
               href="https://www.etsi.org/deliver/etsi_en/301500_301599/301549/" 
               target="_blank" 
               rel="noreferrer"
-              className="inline-flex items-center gap-2 text-blue-600 hover:underline font-medium"
+              className="inline-flex items-center gap-2 hover:underline font-medium"
+              style={{ color: COLORS.yellow }}
             >
               View EN 301 549 <ExternalLink size={16} />
             </a>
@@ -300,7 +304,8 @@ const AccessibilityPage = () => {
             <h3 className="font-bold text-lg mb-2" style={textColor}>Email</h3>
             <a 
               href="mailto:accessibility@romamart.ca" 
-              className="text-blue-600 hover:underline break-all"
+              className="hover:underline break-all"
+              style={{ color: COLORS.yellow }}
             >
               accessibility@romamart.ca
             </a>
@@ -311,7 +316,8 @@ const AccessibilityPage = () => {
             <h3 className="font-bold text-lg mb-2" style={textColor}>Phone</h3>
             <a 
               href="tel:+13823422000" 
-              className="text-blue-600 hover:underline"
+              className="hover:underline"
+              style={{ color: COLORS.yellow }}
             >
               +1 (382) 342-2000
             </a>
@@ -347,28 +353,28 @@ const AccessibilityPage = () => {
         </p>
 
         <div className="space-y-4">
-          <div className="p-4 rounded border-l-4 border-blue-600" style={{ backgroundColor: 'var(--color-surface)' }}>
+          <div className="p-4 rounded border-l-4" style={{ backgroundColor: 'var(--color-surface)', borderLeftColor: COLORS.yellow }}>
             <h3 className="font-bold mb-2" style={textColor}>ESLint jsx-a11y</h3>
             <p className="text-sm" style={textColor}>
               20+ automated accessibility linting rules run on every code change to catch violations early.
             </p>
           </div>
 
-          <div className="p-4 rounded border-l-4 border-green-600" style={{ backgroundColor: 'var(--color-surface)' }}>
+          <div className="p-4 rounded border-l-4" style={{ backgroundColor: 'var(--color-surface)', borderLeftColor: '#059669' }}>
             <h3 className="font-bold mb-2" style={textColor}>Manual Testing</h3>
             <p className="text-sm" style={textColor}>
               Keyboard navigation, screen reader compatibility (NVDA, VoiceOver), zoom, contrast, and color blindness testing.
             </p>
           </div>
 
-          <div className="p-4 rounded border-l-4 border-purple-600" style={{ backgroundColor: 'var(--color-surface)' }}>
+          <div className="p-4 rounded border-l-4" style={{ backgroundColor: 'var(--color-surface)', borderLeftColor: '#7C3AED' }}>
             <h3 className="font-bold mb-2" style={textColor}>W3C Validation</h3>
             <p className="text-sm" style={textColor}>
               HTML markup validated against W3C standards with 0 errors and 0 warnings.
             </p>
           </div>
 
-          <div className="p-4 rounded border-l-4 border-orange-600" style={{ backgroundColor: 'var(--color-surface)' }}>
+          <div className="p-4 rounded border-l-4" style={{ backgroundColor: 'var(--color-surface)', borderLeftColor: '#EA580C' }}>
             <h3 className="font-bold mb-2" style={textColor}>Color Contrast Verification</h3>
             <p className="text-sm" style={textColor}>
               All text and UI components tested with TPGI Color Contrast Analyzer to exceed WCAG standards.

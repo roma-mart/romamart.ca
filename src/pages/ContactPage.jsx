@@ -236,20 +236,20 @@ const ContactPage = () => {
             </h3>
 
             {formStatus === 'success' && (
-              <div className="mb-6 p-4 rounded-lg bg-green-50 border border-green-200">
-                <p className="text-green-700 font-inter">✓ Message sent successfully! We'll get back to you soon.</p>
+              <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'rgba(34, 197, 94, 0.1)', borderColor: '#059669' }}>
+                <p className="font-inter" style={{ color: '#059669' }}>✓ Message sent successfully! We'll get back to you soon.</p>
               </div>
             )}
 
             {formStatus === 'queued' && (
-              <div className="mb-6 p-4 rounded-lg bg-blue-50 border border-blue-200">
-                <p className="text-blue-700 font-inter">📥 Message saved! Will be sent automatically when connection is restored.</p>
+              <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'rgba(228, 179, 64, 0.1)', borderColor: '#E4B340' }}>
+                <p className="font-inter" style={{ color: '#E4B340' }}>📥 Message saved! Will be sent automatically when connection is restored.</p>
               </div>
             )}
 
             {formStatus === 'error' && (
-              <div className="mb-6 p-4 rounded-lg bg-red-50 border border-red-200">
-                <p className="text-red-700 font-inter">✗ Something went wrong. Please try again.</p>
+              <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', borderColor: '#DC2626' }}>
+                <p className="font-inter" style={{ color: '#DC2626' }}>✗ Something went wrong. Please try again.</p>
               </div>
             )}
 

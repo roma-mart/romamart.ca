@@ -76,7 +76,7 @@ const CookiesPage = () => {
                 </p>
               </div>
 
-              <div className="border-l-4 border-blue-400 pl-4">
+              <div className="border-l-4 pl-4" style={{ borderLeftColor: '#E4B340' }}>
                 <h3 className="text-xl font-coco uppercase mb-2" style={{ color: 'var(--color-heading)' }}>
                   Analytics Cookies
                 </h3>

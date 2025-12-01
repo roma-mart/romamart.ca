@@ -221,14 +221,14 @@ const PWAInstallPrompt = () => {
           {/* Features */}
           <div className="space-y-3 mb-6">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                <span className="text-green-600 text-lg">⚡</span>
+              <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(34, 197, 94, 0.2)' }}>
+                <span className="text-lg" style={{ color: '#059669' }}>⚡</span>
               </div>
               <span className="text-sm" style={{ color: 'var(--color-text)' }}>Faster loading times</span>
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                <span className="text-blue-600 text-lg">📱</span>
+              <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(228, 179, 64, 0.2)' }}>
+                <span className="text-lg" style={{ color: '#E4B340' }}>📱</span>
               </div>
               <span className="text-sm" style={{ color: 'var(--color-text)' }}>Works offline</span>
             </div>
