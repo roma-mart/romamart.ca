@@ -35,7 +35,7 @@ const ContactPage = () => {
   const [formStatus, setFormStatus] = useState('');
   const [pendingSubmissions, setPendingSubmissions] = useState(0);
   const { syncSupported, queueSync } = useBackgroundSync();
-  const { showToast } = useToast();
+  const { showInfo, showSuccess, showError } = useToast();
 
   // Check for pending submissions on mount
   useEffect(() => {
@@ -44,14 +44,14 @@ const ContactPage = () => {
         const count = await getPendingCount();
         setPendingSubmissions(count);
         if (count > 0) {
-          showToast(`You have ${count} pending form submission(s) that will sync when online`, 'info');
+          showInfo(`You have ${count} pending form submission(s) that will sync when online`);
         }
       } catch (error) {
         console.error('Error checking pending submissions:', error);
       }
     };
     checkPending();
-  }, [showToast]);
+  }, [showInfo]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -67,13 +67,13 @@ const ContactPage = () => {
         await queueFormSubmission(formObject);
         await queueSync('contact-form-sync');
         setFormStatus('queued');
-        showToast('Form saved! Will submit when connection restored.', 'info');
+        showInfo('Form saved! Will submit when connection restored.');
         e.target.reset();
         setPendingSubmissions(prev => prev + 1);
       } catch (error) {
         console.error('Error queuing form:', error);
         setFormStatus('error');
-        showToast('Failed to save form. Please try again when online.', 'error');
+        showError('Failed to save form. Please try again when online.');
       }
       return;
     }
@@ -87,11 +87,11 @@ const ContactPage = () => {
 
       if (response.ok) {
         setFormStatus('success');
-        showToast('Message sent successfully!', 'success');
+        showSuccess('Message sent successfully!');
         e.target.reset();
       } else {
         setFormStatus('error');
-        showToast('Failed to send message. Please try again.', 'error');
+        showError('Failed to send message. Please try again.');
       }
     } catch {
       // If fetch fails while "online", try to queue
@@ -100,16 +100,16 @@ const ContactPage = () => {
           await queueFormSubmission(formObject);
           await queueSync('contact-form-sync');
           setFormStatus('queued');
-          showToast('Connection issue. Form saved and will submit when restored.', 'info');
+          showInfo('Connection issue. Form saved and will submit when restored.');
           e.target.reset();
           setPendingSubmissions(prev => prev + 1);
         } catch {
           setFormStatus('error');
-          showToast('Failed to send message. Please try again.', 'error');
+          showError('Failed to send message. Please try again.');
         }
       } else {
         setFormStatus('error');
-        showToast('Failed to send message. Please try again.', 'error');
+        showError('Failed to send message. Please try again.');
       }
     }
   };

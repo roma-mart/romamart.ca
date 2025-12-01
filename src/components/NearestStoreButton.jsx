@@ -10,7 +10,7 @@ import { useToast } from './ToastContainer';
 
 const NearestStoreButton = ({ onLocationFound, className = '' }) => {
   const { getCurrentLocation, location, loading, error, canUseGeolocation } = useGeolocation();
-  const { showToast } = useToast();
+  const { showSuccess, showError } = useToast();
 
   useEffect(() => {
     if (location) {
@@ -24,15 +24,15 @@ const NearestStoreButton = ({ onLocationFound, className = '' }) => {
         });
       }
       
-      showToast(`Location found! Sorting stores by distance...`, 'success');
+      showSuccess(`Location found! Sorting stores by distance...`);
     }
-  }, [location, onLocationFound, showToast]);
+  }, [location, onLocationFound, showSuccess]);
 
   useEffect(() => {
     if (error) {
-      showToast(`Location error: ${error}`, 'error');
+      showError(`Location error: ${error}`);
     }
-  }, [error, showToast]);
+  }, [error, showError]);
 
   if (!canUseGeolocation) {
     return null; // Don't show button if geolocation not supported
