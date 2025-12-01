@@ -804,13 +804,11 @@ const Footer = () => {
     // Check if user has manually selected a location
     return localStorage.getItem('roma_mart_selected_location') || 'auto';
   });
-  const [nearestLocationId, setNearestLocationId] = useState(null);
 
-  // Calculate nearest location when user location changes
-  useEffect(() => {
+  // Calculate nearest location using useMemo (derived state, not effect)
+  const nearestLocationId = React.useMemo(() => {
     if (!userLocation || !userLocation.latitude || !userLocation.longitude) {
-      setNearestLocationId(null);
-      return;
+      return null;
     }
 
     // Haversine distance calculation
@@ -845,7 +843,7 @@ const Footer = () => {
       }
     });
 
-    setNearestLocationId(nearest);
+    return nearest;
   }, [userLocation]);
 
   // Handle location selection change
