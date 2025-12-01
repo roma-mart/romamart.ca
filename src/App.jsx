@@ -27,7 +27,8 @@ import PWAInstallPrompt from './components/PWAInstallPrompt';
 import NetworkStatus from './components/NetworkStatus';
 import StructuredData from './components/StructuredData';
 import { LocationProvider } from './components/LocationProvider';
-import { getPrimaryLocation, getActiveLocationCount } from './data/locations';
+import { getPrimaryLocation, getActiveLocationCount, LOCATIONS, getActiveLocations } from './data/locations';
+import { useLocationContext } from './hooks/useLocationContext';
 
 // PWA Hooks
 import { useServiceWorker } from './hooks/useServiceWorker';
@@ -798,6 +799,85 @@ const ContactSection = () => {
 };
 
 const Footer = () => {
+  const { userLocation } = useLocationContext();
+  const [selectedLocationId, setSelectedLocationId] = useState(() => {
+    // Check if user has manually selected a location
+    return localStorage.getItem('roma_mart_selected_location') || 'auto';
+  });
+  const [nearestLocationId, setNearestLocationId] = useState(null);
+
+  // Calculate nearest location when user location changes
+  useEffect(() => {
+    if (!userLocation || !userLocation.latitude || !userLocation.longitude) {
+      setNearestLocationId(null);
+      return;
+    }
+
+    // Haversine distance calculation
+    const calculateDistance = (lat1, lon1, lat2, lon2) => {
+      const R = 6371; // Earth radius in km
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    };
+
+    // Find nearest active location
+    const activeLocations = getActiveLocations();
+    let nearest = null;
+    let minDistance = Infinity;
+
+    activeLocations.forEach(loc => {
+      if (loc.google?.coordinates) {
+        const distance = calculateDistance(
+          userLocation.latitude,
+          userLocation.longitude,
+          loc.google.coordinates.lat,
+          loc.google.coordinates.lng
+        );
+        if (distance < minDistance) {
+          minDistance = distance;
+          nearest = loc.id;
+        }
+      }
+    });
+
+    setNearestLocationId(nearest);
+  }, [userLocation]);
+
+  // Handle location selection change
+  const handleLocationChange = (e) => {
+    const newLocationId = e.target.value;
+    setSelectedLocationId(newLocationId);
+    
+    // Persist user's choice
+    if (newLocationId === 'auto') {
+      localStorage.removeItem('roma_mart_selected_location');
+    } else {
+      localStorage.setItem('roma_mart_selected_location', newLocationId);
+    }
+  };
+
+  // Determine which location to display
+  const getCurrentLocation = () => {
+    if (selectedLocationId === 'auto') {
+      // Auto mode: use nearest if available, otherwise HQ
+      return nearestLocationId 
+        ? LOCATIONS.find(loc => loc.id === nearestLocationId)
+        : getPrimaryLocation();
+    } else {
+      // Manual selection
+      return LOCATIONS.find(loc => loc.id === selectedLocationId) || getPrimaryLocation();
+    }
+  };
+
+  const currentLocation = getCurrentLocation();
+  const isAutoMode = selectedLocationId === 'auto';
+  const activeLocations = getActiveLocations();
+
   return (
     <footer className="text-white pt-16 pb-8" style={{ backgroundColor: COLORS.black }}>
       <div className="max-w-7xl mx-auto px-4 grid md:grid-cols-4 gap-12 mb-12">
@@ -895,6 +975,56 @@ const Footer = () => {
         <div className="mb-8">
           <TrustpilotWidget />
         </div>
+
+        {/* Location Selector */}
+        <div className="mb-8 max-w-md mx-auto">
+          <div className="bg-white/5 rounded-lg p-4 border border-white/10">
+            <label 
+              htmlFor="location-selector" 
+              className="block font-coco text-sm mb-3"
+              style={{ color: COLORS.yellow }}
+            >
+              <MapPin className="inline-block mr-2" size={16} />
+              Your Current Store
+            </label>
+            
+            <select
+              id="location-selector"
+              value={selectedLocationId}
+              onChange={handleLocationChange}
+              className="w-full px-4 py-3 rounded-lg font-inter bg-white/10 border border-white/20 text-white focus:outline-none focus:border-yellow-500 transition-colors"
+              style={{ cursor: 'pointer' }}
+            >
+              <option value="auto" style={{ backgroundColor: COLORS.black, color: 'white' }}>
+                {isAutoMode && nearestLocationId
+                  ? `🎯 Auto-Detected: ${currentLocation.name}`
+                  : '🏢 Auto (HQ - Wellington St.)'}
+              </option>
+              {activeLocations.map(loc => (
+                <option 
+                  key={loc.id} 
+                  value={loc.id}
+                  style={{ backgroundColor: COLORS.black, color: 'white' }}
+                >
+                  {loc.name} {loc.isPrimary ? '(HQ)' : ''}
+                </option>
+              ))}
+            </select>
+
+            <div className="mt-3 text-xs font-inter" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+              {isAutoMode ? (
+                nearestLocationId ? (
+                  <span>✓ Using nearest location based on your current position</span>
+                ) : (
+                  <span>Using headquarters as default • Grant location access for nearest store</span>
+                )
+              ) : (
+                <span>✓ Manually selected: {currentLocation.name}</span>
+              )}
+            </div>
+          </div>
+        </div>
+
         <div className="text-center font-inter text-sm" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
           <p>&copy; {new Date().getFullYear()} {STORE_DATA.legalName} All rights reserved.</p>
         </div>

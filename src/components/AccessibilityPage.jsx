@@ -178,7 +178,13 @@ const AccessibilityPage = () => {
         </div>
 
         {/* WCAG 3.0 Ready */}
-        <div className="mt-8 p-6 bg-yellow-50 rounded-lg border-2 border-yellow-200">
+        <div 
+          className="mt-8 p-6 rounded-lg border-2" 
+          style={{
+            backgroundColor: 'var(--color-surface)',
+            borderColor: COLORS.yellow
+          }}
+        >
           <h3 className="text-lg font-bold mb-2" style={{ color: 'var(--color-heading)' }}>🚀 WCAG 3.0 Ready</h3>
           <p style={textColor}>
             Our website is designed with outcome-based accessibility principles, ensuring readiness for WCAG 3.0 

@@ -208,7 +208,11 @@ const StandardizedItem = ({
                     opacity: isComingSoon ? 0.8 : 1
                   }}
                 >
-                  {icon && <span className="flex-shrink-0">{icon}</span>}
+                  {icon && (
+                    <span className="flex-shrink-0">
+                      {typeof icon === 'function' ? React.createElement(icon, { size: 20 }) : icon}
+                    </span>
+                  )}
                   {name}
                   {isUnavailable && (
                     <span className="text-xs font-inter font-normal" style={{ color: '#9CA3AF' }}>
@@ -510,8 +514,8 @@ const StandardizedItem = ({
               onClick={(e) => e.stopPropagation()}
               className="block w-full py-3 px-4 rounded-lg font-bold font-inter text-center transition-transform hover:scale-105"
               style={{
-                backgroundColor: 'var(--color-accent)',
-                color: 'var(--color-primary)',
+                backgroundColor: '#020178',
+                color: '#E4B340',
                 textDecoration: 'none'
               }}
             >
