@@ -156,10 +156,33 @@ function checkAccessibility() {
 
 /**
  * Check 2: Dark Mode Compatibility
+ * Comprehensive dark mode validation - replaces standalone check-dark-mode.js
  */
 function checkDarkMode() {
   console.log(`${colors.blue}🌙 Checking dark mode compatibility...${colors.reset}`);
   const files = getAllFiles(SRC_DIR, ['.jsx', '.js']);
+  
+  // Patterns to detect with specific severity
+  const violations = [
+    {
+      pattern: /className="[^"]*text-gray-[0-9]/g,
+      severity: SEVERITY.HIGH,
+      message: 'Hardcoded Tailwind gray text class breaks dark mode',
+      fix: 'Use var(--color-text) or var(--color-text-muted)',
+    },
+    {
+      pattern: /className="[^"]*bg-gray-[0-9]/g,
+      severity: SEVERITY.HIGH,
+      message: 'Hardcoded Tailwind gray background class breaks dark mode',
+      fix: 'Use var(--color-bg) or var(--color-surface)',
+    },
+    {
+      pattern: /className="[^"]*border-gray-[0-9]/g,
+      severity: SEVERITY.HIGH,
+      message: 'Hardcoded Tailwind gray border class breaks dark mode',
+      fix: 'Use var(--color-border)',
+    },
+  ];
   
   for (const file of files) {
     const content = fs.readFileSync(file, 'utf8');
@@ -170,29 +193,47 @@ function checkDarkMode() {
     
     const lines = content.split('\n');
     
+    // Check each violation pattern
+    for (const { pattern, severity, message, fix } of violations) {
+      const matches = content.matchAll(pattern);
+      
+      for (const match of matches) {
+        const lineNum = content.substring(0, match.index).split('\n').length;
+        const line = lines[lineNum - 1];
+        
+        // Skip false positives
+        const isFalsePositive = 
+          // JSDoc comment examples
+          line.trim().startsWith('*') ||
+          line.trim().startsWith('//') ||
+          // Intentional high-contrast text on colored backgrounds
+          // text-gray-900 (near-black) on bg-yellow-500 = 8.4:1 contrast (WCAG AAA)
+          (match[0].includes('text-gray-9') && (
+            line.includes('bg-yellow') || 
+            line.includes('bg-blue') || 
+            line.includes('bg-green')
+          ));
+        
+        if (!isFalsePositive) {
+          issues[severity].push({
+            category: CHECKS.DARK_MODE,
+            file: relativePath,
+            line: lineNum,
+            message: message,
+            code: line.trim().substring(0, 80),
+            fix: fix,
+          });
+        }
+      }
+    }
+    
+    // Also check for hardcoded hex colors (lower severity)
     lines.forEach((line, idx) => {
       const lineNum = idx + 1;
       
       // Skip comments
       if (line.trim().startsWith('//') || line.trim().startsWith('*')) return;
       
-      // Hardcoded gray colors in className
-      const grayClassMatch = line.match(/className="[^"]*(?:text-gray-|bg-gray-|border-gray-)[0-9]/);
-      if (grayClassMatch) {
-        // Exception: text-gray-900 (near-black) on bg-yellow-500 is intentional for high contrast
-        if (grayClassMatch[0].includes('text-gray-9') && line.includes('bg-yellow')) return;
-        
-        issues[SEVERITY.MEDIUM].push({
-          category: CHECKS.DARK_MODE,
-          file: relativePath,
-          line: lineNum,
-          message: 'Hardcoded Tailwind gray class breaks dark mode',
-          code: line.trim().substring(0, 80),
-          fix: 'Use CSS variables: var(--color-text-muted) or import { useThemeColors }',
-        });
-      }
-      
-      // Hardcoded hex colors
       const hexColorMatch = line.match(/(?:color|backgroundColor):\s*['"]#[0-9a-fA-F]{3,6}['"]/);
       if (hexColorMatch && !line.includes('COLORS.') && !line.includes('BRAND_COLORS')) {
         issues[SEVERITY.LOW].push({

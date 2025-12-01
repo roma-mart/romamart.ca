@@ -67,47 +67,71 @@ function checkRuleConflicts() {
   console.log(`${colors.blue}🔍 Checking for rule conflicts...${colors.reset}`);
   
   const checkQuality = fs.readFileSync(path.join(__dirname, 'check-quality.js'), 'utf8');
-  const checkDarkMode = fs.readFileSync(path.join(__dirname, 'check-dark-mode.js'), 'utf8');
   
-  // Test 1: Both checkers should agree on what's a dark mode violation
-  const qualityDarkModePattern = /text-gray-|bg-gray-|border-gray-/g;
-  const dedicatedDarkModePattern = /text-gray-|bg-gray-|border-gray-/g;
+  // Test 1: Dark mode checks should be comprehensive
+  const hasDarkModePatterns = checkQuality.includes('text-gray-') && 
+                              checkQuality.includes('bg-gray-') && 
+                              checkQuality.includes('border-gray-');
   
-  if (!checkQuality.includes('text-gray-9') || !checkDarkMode.includes('text-gray-9')) {
+  if (!hasDarkModePatterns) {
     issues.push({
-      severity: 'HIGH',
-      checker: 'check-quality.js & check-dark-mode.js',
-      issue: 'Inconsistent dark mode pattern detection',
-      impact: 'One checker may flag issues the other ignores',
-      fix: 'Align regex patterns and exception logic across both checkers',
+      severity: 'CRITICAL',
+      checker: 'check-quality.js',
+      issue: 'Missing comprehensive dark mode pattern detection',
+      impact: 'Dark mode violations may slip through',
+      fix: 'Ensure all gray class patterns are checked (text/bg/border)',
     });
   }
   
-  // Test 2: Exception lists should match
-  const qualityExceptions = checkQuality.match(/text-gray-9.*bg-yellow/g) || [];
-  const darkModeExceptions = checkDarkMode.match(/text-gray-9.*bg-yellow/g) || [];
+  // Test 2: Exception logic should be present
+  const hasExceptionLogic = checkQuality.includes('isFalsePositive') || 
+                           checkQuality.includes('bg-yellow');
   
-  if (qualityExceptions.length > 0 && darkModeExceptions.length === 0) {
+  if (!hasExceptionLogic) {
     issues.push({
       severity: 'MEDIUM',
       checker: 'Exception Lists',
-      issue: 'check-quality.js has exceptions that check-dark-mode.js lacks',
-      impact: 'Inconsistent results between checkers',
-      fix: 'Synchronize exception logic across both files',
+      issue: 'check-quality.js missing false positive filtering',
+      impact: 'Valid high-contrast patterns may be flagged',
+      fix: 'Add exception logic for intentional patterns (text-gray-900 on bg-yellow)',
     });
   }
   
-  // Test 3: Both should skip the same files (theme.js)
+  // Test 3: Should skip documentation files (theme.js)
   const qualitySkips = checkQuality.includes('utils/theme.js');
-  const darkModeSkips = checkDarkMode.includes('utils/theme.js');
   
-  if (qualitySkips !== darkModeSkips) {
+  if (!qualitySkips) {
     issues.push({
       severity: 'HIGH',
       checker: 'File Exclusions',
-      issue: 'Checkers skip different files',
-      impact: 'One checker may scan documentation examples as violations',
-      fix: 'Ensure both skip utils/theme.js and any other doc files',
+      issue: 'Checker may scan documentation examples as violations',
+      impact: 'False positives from theme.js documentation',
+      fix: 'Skip utils/theme.js and other doc files',
+    });
+  }
+  
+  // Test 4: All 9 dimensions should be present
+  const dimensions = [
+    'ACCESSIBILITY',
+    'DARK_MODE',
+    'PERFORMANCE',
+    'SECURITY',
+    'SEO',
+    'CODE_QUALITY',
+    'RESPONSIVE',
+    'BROWSER_COMPAT',
+    'BRAND_CONSISTENCY',
+  ];
+  
+  const missingDimensions = dimensions.filter(dim => !checkQuality.includes(dim));
+  
+  if (missingDimensions.length > 0) {
+    issues.push({
+      severity: 'HIGH',
+      checker: 'Quality Dimensions',
+      issue: `Missing dimensions: ${missingDimensions.join(', ')}`,
+      impact: 'Incomplete quality coverage',
+      fix: 'Implement all 9 quality dimensions',
     });
   }
   
