@@ -12,9 +12,9 @@ This system ensures all components automatically adapt to light/dark mode using 
 
 ### The Problem
 ```jsx
-// ❌ BAD - Invisible in dark mode
-<p className="text-gray-600">Text</p>
-<div className="bg-gray-200">Card</div>
+// ❌ BAD - Invisible in dark mode (DO NOT COPY)
+// <p className="text-gray-600">Text</p>
+// <div className="bg-gray-200">Card</div>
 ```
 
 ### The Solution

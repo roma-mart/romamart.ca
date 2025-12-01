@@ -11,6 +11,7 @@
     "lint:css": "stylelint \"src/**/*.css\"",
     "check:dark-mode": "node scripts/check-dark-mode.js",
     "check:quality": "node scripts/check-quality.js",
+    "check:integrity": "node scripts/check-checker-integrity.js",
     "check:all": "npm run lint && npm run lint:css && npm run check:quality",
     "precommit": "npm run lint && npm run check:quality",
     "prepush": "npm run check:all && npm run build",

@@ -507,7 +507,7 @@ Total Issues: 15
 ```bash
 # Runs automatically on git push
 # Full quality check + build
-# Catches all 8 dimensions
+# Catches all 9 dimensions
 # ~2 minutes execution time
 ```
 
