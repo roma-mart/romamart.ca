@@ -52,6 +52,7 @@ const ShareButton = ({ title, text, url, className = '' }) => {
 
   return (
     <button
+      type="button"
       onClick={handleShare}
       className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-inter font-semibold transition-all hover:scale-105 ${className}`}
       aria-label={`Share ${title || 'this page'}`}

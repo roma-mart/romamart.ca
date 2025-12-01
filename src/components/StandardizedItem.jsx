@@ -251,6 +251,7 @@ const StandardizedItem = ({
 
               {/* Expand/Collapse Icon */}
               <button
+                type="button"
                 className="flex-shrink-0 p-1 rounded-full transition-colors"
                 style={{ color: 'var(--color-heading)' }}
                 aria-label={isExpanded ? "Collapse details" : "Expand details"}
@@ -314,6 +315,7 @@ const StandardizedItem = ({
               <div className="flex gap-2 flex-wrap">
                 {sizes.map((size, idx) => (
                   <button
+                    type="button"
                     key={idx}
                     onClick={(e) => {
                       e.stopPropagation();

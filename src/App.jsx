@@ -261,6 +261,7 @@ const Navbar = () => {
 
             {/* Mobile Menu Button */}
             <button 
+              type="button"
               onClick={toggleMenu}
               className="md:hidden p-2 rounded-md"
               style={{ color: scrolled ? COLORS.navy : COLORS.white }}
@@ -460,6 +461,7 @@ const ServicesScroll = () => {
       <div className="relative max-w-7xl mx-auto px-4">
         {/* Scroll buttons for desktop */}
         <button
+          type="button"
           onClick={() => scroll('left')}
           className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full items-center justify-center shadow-lg hover:scale-110 transition-transform"
           style={{ backgroundColor: COLORS.yellow, color: COLORS.navy }}
@@ -468,6 +470,7 @@ const ServicesScroll = () => {
           <ArrowRight size={24} className="rotate-180" />
         </button>
         <button
+          type="button"
           onClick={() => scroll('right')}
           className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full items-center justify-center shadow-lg hover:scale-110 transition-transform"
           style={{ backgroundColor: COLORS.yellow, color: COLORS.navy }}
@@ -601,6 +604,7 @@ const Locations = () => {
           <div className="lg:col-span-1 space-y-4">
             {[displayLocation].map(loc => (
               <button
+                type="button"
                 key={loc.id}
                 onClick={() => setActiveLoc(loc)}
                 className="w-full text-left p-6 rounded-xl border-2 transition-all"

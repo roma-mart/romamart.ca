@@ -176,6 +176,7 @@ const RoCafePage = () => {
             >
               {/* Category Header */}
               <button
+                type="button"
                 onClick={() => toggleCategory(category.id)}
                 className="w-full p-6 flex items-center justify-between hover:opacity-80 transition-opacity"
               >

@@ -204,6 +204,7 @@ const PWAInstallPrompt = () => {
             </div>
           </div>
           <button
+            type="button"
             onClick={handleDismiss}
             className="text-white hover:text-yellow-400 transition-colors p-1"
             aria-label="Dismiss install prompt"
@@ -243,6 +244,7 @@ const PWAInstallPrompt = () => {
           {/* Actions */}
           <div className="flex gap-3">
             <button
+              type="button"
               onClick={handleInstall}
               className="flex-1 py-3 px-4 rounded-xl font-bold text-white flex items-center justify-center gap-2 transition-transform hover:scale-105 shadow-lg"
               style={{ backgroundColor: '#E4B340', color: '#020178' }}
@@ -251,6 +253,7 @@ const PWAInstallPrompt = () => {
               Install App
             </button>
             <button
+              type="button"
               onClick={handleDismiss}
               className="px-4 py-3 rounded-xl font-semibold transition-colors"
               style={{ color: 'var(--color-text)' }}

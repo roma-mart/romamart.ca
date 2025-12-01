@@ -37,6 +37,7 @@ const CopyButton = ({ text, label, className = '', showIcon = true }) => {
 
   return (
     <button
+      type="button"
       onClick={handleCopy}
       className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-md font-inter text-sm font-medium transition-all hover:opacity-80 ${className}`}
       aria-label={`Copy ${label || text}`}

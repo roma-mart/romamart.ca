@@ -30,6 +30,7 @@ const HapticButton = ({
 
   return (
     <button
+      type="button"
       onClick={handleClick}
       disabled={disabled}
       className={className}

@@ -40,6 +40,7 @@ const NearestStoreButton = ({ onLocationFound, className = '' }) => {
 
   return (
     <button
+      type="button"
       onClick={getCurrentLocation}
       disabled={loading}
       className={`inline-flex items-center gap-2 px-6 py-3 rounded-full font-bold font-inter transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed ${className}`}

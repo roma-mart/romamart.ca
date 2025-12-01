@@ -133,6 +133,7 @@ const AboutPage = () => {
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
               {heroImages.map((_, index) => (
                 <button
+                  type="button"
                   key={index}
                   onClick={() => setCurrentImageIndex(index)}
                   className={`w-2 h-2 rounded-full transition-all ${

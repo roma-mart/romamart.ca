@@ -61,6 +61,7 @@ const Toast = ({ message, type = 'info', duration = 3000, onClose }) => {
       {getIcon()}
       <span className="flex-1 font-inter text-sm font-medium">{message}</span>
       <button
+        type="button"
         onClick={onClose}
         className="hover:opacity-70 transition-opacity"
         aria-label="Close notification"
