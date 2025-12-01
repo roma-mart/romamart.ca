@@ -10,6 +10,11 @@ const __dirname = path.dirname(__filename);
 // Routes to prerender
 const routes = [
   { path: '/', title: 'Home' },
+  { path: '/services', title: 'Services' },
+  { path: '/rocafe', title: 'RoCafé Menu' },
+  { path: '/locations', title: 'Locations' },
+  { path: '/contact', title: 'Contact' },
+  { path: '/about', title: 'About Us' },
   { path: '/accessibility', title: 'Accessibility' },
   { path: '/privacy', title: 'Privacy' },
   { path: '/terms', title: 'Terms' },

@@ -12,7 +12,8 @@ import {
   Send,
   ExternalLink,
   Star,
-  X
+  X,
+  Home
 } from 'lucide-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFacebook, faInstagram, faTiktok, faXTwitter, faSnapchat } from '@fortawesome/free-brands-svg-icons';
@@ -26,6 +27,11 @@ const AccessibilityPage = lazy(() => import('./components/AccessibilityPage'));
 const PrivacyPage = lazy(() => import('./pages/PrivacyPage'));
 const TermsPage = lazy(() => import('./pages/TermsPage'));
 const CookiesPage = lazy(() => import('./pages/CookiesPage'));
+const ServicesPage = lazy(() => import('./pages/ServicesPage'));
+const RoCafePage = lazy(() => import('./pages/RoCafePage'));
+const LocationsPage = lazy(() => import('./pages/LocationsPage'));
+const ContactPage = lazy(() => import('./pages/ContactPage'));
+const AboutPage = lazy(() => import('./pages/AboutPage'));
 
 // GTM tracking utility
 const trackOrderClick = (location) => {
@@ -120,12 +126,37 @@ const BrandPattern = () => (
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [isHomePage, setIsHomePage] = useState(true);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    const checkPath = () => {
+      const path = window.location.pathname;
+      setIsHomePage(path === '/' || path === BASE_URL || path === BASE_URL + '/');
+    };
+    checkPath();
+    window.addEventListener('popstate', checkPath);
+    return () => window.removeEventListener('popstate', checkPath);
+  }, []);
+
+  const handleNavClick = (e, sectionId, subpageUrl) => {
+    setIsOpen(false);
+    if (isHomePage && sectionId) {
+      e.preventDefault();
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else if (subpageUrl) {
+      e.preventDefault();
+      window.location.href = subpageUrl;
+    }
+  };
 
   return (
     <>
@@ -163,16 +194,49 @@ const Navbar = () => {
             
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center space-x-8">
-              {['Services', 'RoCafe', 'Locations', 'Contact'].map((item) => (
+              {!isHomePage && (
                 <a 
-                  key={item} 
-                  href={`${BASE_URL}#${item.toLowerCase()}`}
-                  className="font-inter font-medium hover:opacity-80 transition-opacity"
+                  href={`${BASE_URL}`}
+                  className="font-inter font-medium hover:opacity-80 transition-opacity flex items-center gap-1.5"
                   style={{ color: scrolled ? COLORS.darkGrey : COLORS.white }}
+                  aria-label="Go to home"
+                  title="Home"
                 >
-                  {item}
+                  <Home size={18} />
                 </a>
-              ))}
+              )}
+              <a 
+                href={isHomePage ? `${BASE_URL}#services` : `${BASE_URL}services`}
+                onClick={(e) => handleNavClick(e, 'services', `${BASE_URL}services`)}
+                className="font-inter font-medium hover:opacity-80 transition-opacity"
+                style={{ color: scrolled ? COLORS.darkGrey : COLORS.white }}
+              >
+                Services
+              </a>
+              <a 
+                href={isHomePage ? `${BASE_URL}#rocafe` : `${BASE_URL}rocafe`}
+                onClick={(e) => handleNavClick(e, 'rocafe', `${BASE_URL}rocafe`)}
+                className="font-inter font-medium hover:opacity-80 transition-opacity"
+                style={{ color: scrolled ? COLORS.darkGrey : COLORS.white }}
+              >
+                RoCafe
+              </a>
+              <a 
+                href={isHomePage ? `${BASE_URL}#locations` : `${BASE_URL}locations`}
+                onClick={(e) => handleNavClick(e, 'locations', `${BASE_URL}locations`)}
+                className="font-inter font-medium hover:opacity-80 transition-opacity"
+                style={{ color: scrolled ? COLORS.darkGrey : COLORS.white }}
+              >
+                Locations
+              </a>
+              <a 
+                href={isHomePage ? `${BASE_URL}#contact` : `${BASE_URL}contact`}
+                onClick={(e) => handleNavClick(e, 'contact', `${BASE_URL}contact`)}
+                className="font-inter font-medium hover:opacity-80 transition-opacity"
+                style={{ color: scrolled ? COLORS.darkGrey : COLORS.white }}
+              >
+                Contact
+              </a>
               <a 
                 href={STORE_DATA.onlineStoreUrl}
                 target="_blank"
@@ -209,17 +273,48 @@ const Navbar = () => {
               style={{ backgroundColor: 'var(--color-bg)', borderColor: 'var(--color-surface)' }}
             >
               <div className="px-4 pt-2 pb-6 space-y-1">
-                {['Services', 'RoCafe', 'Locations', 'Contact'].map((item) => (
+                {!isHomePage && (
                   <a
-                    key={item}
-                    href={`${BASE_URL}#${item.toLowerCase()}`}
+                    href={`${BASE_URL}`}
                     onClick={() => setIsOpen(false)}
-                    className="block px-3 py-4 text-lg font-bold font-coco uppercase border-b"
+                    className="block px-3 py-4 text-lg font-bold font-coco uppercase border-b flex items-center gap-2"
                     style={{ color: 'var(--color-heading)', borderColor: 'var(--color-surface)' }}
                   >
-                    {item}
+                    <Home size={20} /> Home
                   </a>
-                ))}
+                )}
+                <a
+                  href={isHomePage ? `${BASE_URL}#services` : `${BASE_URL}services`}
+                  onClick={(e) => handleNavClick(e, 'services', `${BASE_URL}services`)}
+                  className="block px-3 py-4 text-lg font-bold font-coco uppercase border-b"
+                  style={{ color: 'var(--color-heading)', borderColor: 'var(--color-surface)' }}
+                >
+                  Services
+                </a>
+                <a
+                  href={isHomePage ? `${BASE_URL}#rocafe` : `${BASE_URL}rocafe`}
+                  onClick={(e) => handleNavClick(e, 'rocafe', `${BASE_URL}rocafe`)}
+                  className="block px-3 py-4 text-lg font-bold font-coco uppercase border-b"
+                  style={{ color: 'var(--color-heading)', borderColor: 'var(--color-surface)' }}
+                >
+                  RoCafe
+                </a>
+                <a
+                  href={isHomePage ? `${BASE_URL}#locations` : `${BASE_URL}locations`}
+                  onClick={(e) => handleNavClick(e, 'locations', `${BASE_URL}locations`)}
+                  className="block px-3 py-4 text-lg font-bold font-coco uppercase border-b"
+                  style={{ color: 'var(--color-heading)', borderColor: 'var(--color-surface)' }}
+                >
+                  Locations
+                </a>
+                <a
+                  href={isHomePage ? `${BASE_URL}#contact` : `${BASE_URL}contact`}
+                  onClick={(e) => handleNavClick(e, 'contact', `${BASE_URL}contact`)}
+                  className="block px-3 py-4 text-lg font-bold font-coco uppercase border-b"
+                  style={{ color: 'var(--color-heading)', borderColor: 'var(--color-surface)' }}
+                >
+                  Contact
+                </a>
                 <div className="pt-4">
                   <a 
                     href={STORE_DATA.onlineStoreUrl}
@@ -324,6 +419,18 @@ const Hero = () => {
 };
 
 const ServicesScroll = () => {
+  const scrollRef = React.useRef(null);
+
+  const scroll = (direction) => {
+    if (scrollRef.current) {
+      const scrollAmount = 320; // Card width + gap
+      scrollRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   return (
     <section id="services" className="py-20 overflow-hidden" style={{ backgroundColor: 'var(--color-surface)' }}>
       <div className="max-w-7xl mx-auto px-4 mb-10">
@@ -332,8 +439,31 @@ const ServicesScroll = () => {
         </h2>
       </div>
 
-      <div className="flex overflow-x-auto pb-8 pt-2 px-4 gap-6 snap-x snap-mandatory scrollbar-hide max-w-7xl mx-auto">
-        {SERVICES.map((item) => (
+      <div className="relative max-w-7xl mx-auto px-4">
+        {/* Scroll buttons for desktop */}
+        <button
+          onClick={() => scroll('left')}
+          className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full items-center justify-center shadow-lg hover:scale-110 transition-transform"
+          style={{ backgroundColor: COLORS.yellow, color: COLORS.navy }}
+          aria-label="Scroll left"
+        >
+          <ArrowRight size={24} className="rotate-180" />
+        </button>
+        <button
+          onClick={() => scroll('right')}
+          className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full items-center justify-center shadow-lg hover:scale-110 transition-transform"
+          style={{ backgroundColor: COLORS.yellow, color: COLORS.navy }}
+          aria-label="Scroll right"
+        >
+          <ArrowRight size={24} />
+        </button>
+
+        <div 
+          ref={scrollRef}
+          className="flex overflow-x-auto pb-8 pt-2 gap-6 snap-x snap-mandatory scrollbar-hide"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
+          {SERVICES.map((item) => (
           <motion.div 
             key={item.id}
             whileHover={{ y: -5 }}
@@ -347,6 +477,18 @@ const ServicesScroll = () => {
             <p className="font-inter leading-relaxed" style={{ color: 'var(--color-text)', opacity: 0.7 }}>{item.desc}</p>
           </motion.div>
         ))}
+        </div>
+      </div>
+
+      {/* View All Services CTA */}
+      <div className="text-center mt-12">
+        <a
+          href={`${BASE_URL}services`}
+          className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-bold font-inter transition-transform hover:scale-105 shadow-lg"
+          style={{ backgroundColor: COLORS.yellow, color: COLORS.navy }}
+        >
+          View All Services <ArrowRight size={20} />
+        </a>
       </div>
     </section>
   );
@@ -384,6 +526,17 @@ const RoCafeSection = () => {
                    <p className="font-coco text-lg" style={{ color: COLORS.yellow }}>{item.price}</p>
                  </div>
               ))}
+            </div>
+
+            {/* View Full Menu CTA */}
+            <div className="mt-8">
+              <a
+                href={`${BASE_URL}rocafe`}
+                className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-bold font-inter transition-transform hover:scale-105 shadow-lg border-2"
+                style={{ borderColor: COLORS.yellow, color: 'white' }}
+              >
+                View Full Menu <ArrowRight size={20} />
+              </a>
             </div>
           </div>
 
@@ -600,10 +753,14 @@ const Footer = () => {
     <footer className="text-white pt-16 pb-8" style={{ backgroundColor: COLORS.black }}>
       <div className="max-w-7xl mx-auto px-4 grid md:grid-cols-4 gap-12 mb-12">
         <div className="col-span-1 md:col-span-2">
-           <div className="flex items-center gap-3 mb-6">
+           <a 
+             href={`${BASE_URL}`}
+             className="flex items-center gap-3 mb-6 hover:opacity-80 transition-opacity cursor-pointer w-fit"
+             aria-label="Roma Mart - Go to homepage"
+           >
               <div className="w-10 h-10 bg-white rounded flex items-center justify-center font-coco text-xl" style={{ color: '#020178' }}>RM</div>
               <span className="font-coco text-2xl uppercase">Roma Mart</span>
-           </div>
+           </a>
            <p className="text-gray-400 font-inter max-w-sm mb-6">
              Your local one-stop shop for everything from daily groceries to premium café drinks. Proudly serving the Sarnia community.
            </p>
@@ -662,12 +819,14 @@ const Footer = () => {
         </div>
 
         <div>
-          <h4 className="font-coco text-lg mb-6 text-gray-200">Links</h4>
+          <h4 className="font-coco text-lg mb-6 text-gray-200">Pages</h4>
           <ul className="space-y-3 font-inter text-gray-400">
-            <li><a href="#services" className="hover:text-yellow-400 transition-colors">Services</a></li>
-            <li><a href="#rocafe" className="hover:text-yellow-400 transition-colors">RoCafé Menu</a></li>
-            <li><a href="#locations" className="hover:text-yellow-400 transition-colors">Locations</a></li>
-            <li><a href={STORE_DATA.onlineStoreUrl} className="hover:text-yellow-400 transition-colors font-bold text-yellow-500">Order Online</a></li>
+            <li><a href={`${BASE_URL}services`} className="hover:text-yellow-400 transition-colors">Services</a></li>
+            <li><a href={`${BASE_URL}rocafe`} className="hover:text-yellow-400 transition-colors">RoCafé Menu</a></li>
+            <li><a href={`${BASE_URL}locations`} className="hover:text-yellow-400 transition-colors">Locations</a></li>
+            <li><a href={`${BASE_URL}contact`} className="hover:text-yellow-400 transition-colors">Contact</a></li>
+            <li><a href={`${BASE_URL}about`} className="hover:text-yellow-400 transition-colors">About Us</a></li>
+            <li><a href={STORE_DATA.onlineStoreUrl} target="_blank" rel="noopener noreferrer" className="hover:text-yellow-400 transition-colors font-bold text-yellow-500">Order Online</a></li>
           </ul>
         </div>
 
@@ -699,7 +858,7 @@ const Footer = () => {
 const LoadingFallback = () => (
   <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--color-bg)' }}>
     <div className="text-center">
-      <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: COLORS.yellow }}></div>
+      <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: '#E4B340' }}></div>
       <p className="mt-4 font-inter" style={{ color: 'var(--color-text)' }}>Loading...</p>
     </div>
   </div>
@@ -711,6 +870,11 @@ function App() {
   const pathname = typeof window !== 'undefined' ? window.location.pathname.replace(BASE_URL, '/') : '/';
   
   const getPage = () => {
+    if (pathname.includes('/services')) return 'services';
+    if (pathname.includes('/rocafe')) return 'rocafe';
+    if (pathname.includes('/locations')) return 'locations';
+    if (pathname.includes('/contact')) return 'contact';
+    if (pathname.includes('/about')) return 'about';
     if (pathname.includes('/accessibility')) return 'accessibility';
     if (pathname.includes('/privacy')) return 'privacy';
     if (pathname.includes('/terms')) return 'terms';
@@ -727,6 +891,11 @@ function App() {
           <a href="#main-content" className="skip-link">Skip to main content</a>
           <Navbar />
           <div id="main-content">
+            {currentPage === 'services' && <ServicesPage />}
+            {currentPage === 'rocafe' && <RoCafePage />}
+            {currentPage === 'locations' && <LocationsPage />}
+            {currentPage === 'contact' && <ContactPage />}
+            {currentPage === 'about' && <AboutPage />}
             {currentPage === 'accessibility' && <AccessibilityPage />}
             {currentPage === 'privacy' && <PrivacyPage />}
             {currentPage === 'terms' && <TermsPage />}
