@@ -154,8 +154,8 @@ const ServicesPage = () => {
               <div 
                 className="w-16 h-16 rounded-xl flex items-center justify-center mb-6"
                 style={{ 
-                  backgroundColor: service.restricted ? '#FEE2E2' : service.comingSoon ? COLORS.yellow + '20' : 'var(--color-surface)',
-                  color: service.restricted ? '#DC2626' : 'var(--color-icon)'
+                  backgroundColor: service.restricted ? 'var(--color-error-light)' : service.comingSoon ? COLORS.yellow + '20' : 'var(--color-surface)',
+                  color: service.restricted ? 'var(--color-error)' : 'var(--color-icon)'
                 }}
               >
                 {service.icon}
@@ -184,15 +184,15 @@ const ServicesPage = () => {
               </ul>
 
               {service.restricted && (
-                <div className="mt-6 p-4 rounded-lg border-2" style={{ backgroundColor: '#FEF2F2', borderColor: '#DC2626' }}>
-                  <p className="text-sm font-inter font-bold mb-2" style={{ color: '#DC2626' }}>
+                <div className="mt-6 p-4 rounded-lg border-2" style={{ backgroundColor: 'var(--color-error-bg)', borderColor: 'var(--color-error)' }}>
+                  <p className="text-sm font-inter font-bold mb-2" style={{ color: 'var(--color-error)' }}>
                     ⚠️ AGE RESTRICTED - ONTARIO LAW
                   </p>
-                  <p className="text-xs font-inter leading-relaxed" style={{ color: '#991B1B' }}>
+                  <p className="text-xs font-inter leading-relaxed" style={{ color: 'var(--color-error-dark)' }}>
                     {service.comingSoon ? 'Must be 19 or older to purchase lottery tickets. ' : 'Must be 19 or older to purchase tobacco or vapour products. '}
                     Government-issued photo ID with birth date must be shown when requested.
                   </p>
-                  <p className="text-xs font-inter mt-2" style={{ color: '#7F1D1D' }}>
+                  <p className="text-xs font-inter mt-2" style={{ color: 'var(--color-error-darker)' }}>
                     Under the <a href="https://www.ontario.ca/laws/statute/17s26" target="_blank" rel="noopener noreferrer" className="underline hover:opacity-80">Smoke-Free Ontario Act, 2017</a>
                   </p>
                 </div>
@@ -211,10 +211,10 @@ const ServicesPage = () => {
             {/* Tobacco/Vape Section */}
             <div>
               <h4 className="font-coco font-bold text-lg mb-3" style={{ color: 'var(--color-heading)' }}>Tobacco & Vapour Products</h4>
-              <div className="p-4 rounded-lg border-2 mb-4" style={{ backgroundColor: '#FEF2F2', borderColor: '#DC2626' }}>
+              <div className="p-4 rounded-lg border-2 mb-4" style={{ backgroundColor: 'var(--color-error-bg)', borderColor: 'var(--color-error)' }}>
                 <div className="flex items-start gap-3">
                   <div className="text-3xl">🚭</div>
-                  <div className="text-sm font-inter" style={{ color: '#991B1B' }}>
+                  <div className="text-sm font-inter" style={{ color: 'var(--color-error-dark)' }}>
                     <p className="font-bold mb-2">It is illegal to sell or supply tobacco or e-cigarettes to anyone under 19 years of age.</p>
                     <p className="text-xs">Government I.D. with a photo and birth date must be shown when requested.</p>
                   </div>
@@ -228,10 +228,10 @@ const ServicesPage = () => {
             {/* Lottery Section */}
             <div>
               <h4 className="font-coco font-bold text-lg mb-3" style={{ color: 'var(--color-heading)' }}>Lottery Products (Coming Soon)</h4>
-              <div className="p-4 rounded-lg border-2 mb-4" style={{ backgroundColor: '#FFFBEB', borderColor: COLORS.yellow }}>
+              <div className="p-4 rounded-lg border-2 mb-4" style={{ backgroundColor: 'var(--color-warning-bg)', borderColor: COLORS.yellow }}>
                 <div className="flex items-start gap-3">
                   <div className="text-3xl">🎫</div>
-                  <div className="text-sm font-inter" style={{ color: '#78350F' }}>
+                  <div className="text-sm font-inter" style={{ color: 'var(--color-warning)' }}>
                     <p className="font-bold mb-2">Must be 19 or older to purchase lottery tickets in Ontario.</p>
                     <p className="text-xs">Photo identification required. Play responsibly.</p>
                   </div>

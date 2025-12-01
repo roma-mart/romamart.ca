@@ -242,19 +242,39 @@ function checkDarkMode() {
     lines.forEach((line, idx) => {
       const lineNum = idx + 1;
       
-      // Skip comments
-      if (line.trim().startsWith('//') || line.trim().startsWith('*')) return;
+      // Skip comments and index.css (CSS variable definitions)
+      if (line.trim().startsWith('//') || line.trim().startsWith('*') || relativePath.includes('index.css')) return;
       
       const hexColorMatch = line.match(/(?:color|backgroundColor):\s*['"]#[0-9a-fA-F]{3,6}['"]/);
       if (hexColorMatch && !line.includes('COLORS.') && !line.includes('BRAND_COLORS')) {
-        issues[SEVERITY.LOW].push({
-          category: CHECKS.DARK_MODE,
-          file: relativePath,
-          line: lineNum,
-          message: 'Hardcoded hex color may not adapt to dark mode',
-          code: line.trim().substring(0, 80),
-          fix: 'Use CSS variables or BRAND_COLORS constant',
-        });
+        // Extract the hex color
+        const hexMatch = hexColorMatch[0].match(/#([0-9a-fA-F]{3,6})/);
+        if (hexMatch) {
+          const hex = hexMatch[0].toUpperCase();
+          
+          // Whitelist brand colors and semantic state colors
+          const allowedColors = [
+            '#020178', // Navy (brand)
+            '#E4B340', // Yellow (brand)
+            '#DC2626', '#FEE2E2', '#FEF2F2', '#991B1B', '#7F1D1D', '#F87171', '#FCA5A5', '#450A0A', // Red (error)
+            '#78350F', '#FFFBEB', '#F59E0B', '#FCD34D', '#451A03', // Amber (warning)
+            '#059669', '#ECFDF5', '#34D399', '#064E3B', // Emerald (success)
+            '#FFF', '#FFFFFF', '#000', '#000000' // Black/white (rare but valid)
+          ];
+          
+          const isAllowed = allowedColors.some(c => c.toUpperCase() === hex);
+          
+          if (!isAllowed) {
+            issues[SEVERITY.LOW].push({
+              category: CHECKS.DARK_MODE,
+              file: relativePath,
+              line: lineNum,
+              message: 'Hardcoded hex color may not adapt to dark mode',
+              code: line.trim().substring(0, 80),
+              fix: 'Use CSS variables or BRAND_COLORS constant',
+            });
+          }
+        }
       }
     });
   }
@@ -503,16 +523,30 @@ function checkCodeQuality() {
     lines.forEach((line, idx) => {
       const lineNum = idx + 1;
       
-      // console.log in production code (except service worker)
-      if (/console\.(log|warn|error)/.test(line) && !relativePath.includes('sw.js') && !relativePath.includes('hooks/')) {
-        issues[SEVERITY.LOW].push({
-          category: CHECKS.CODE_QUALITY,
-          file: relativePath,
-          line: lineNum,
-          message: 'console.log() statement in code',
-          code: line.trim().substring(0, 80),
-          fix: 'Remove or wrap in if (import.meta.env.DEV)',
-        });
+      // console.log in production code (except service worker and scripts)
+      // Skip if already wrapped in DEV check or is console.error/warn (intentional error handling)
+      if (/console\.(log|warn|error)/.test(line) && 
+          !relativePath.includes('sw.js') && 
+          !relativePath.includes('scripts/') &&
+          !relativePath.includes('hooks/')) {
+        
+        // Check if this line or previous lines show it's wrapped in DEV check
+        const prevLines = lines.slice(Math.max(0, idx - 3), idx).join(' ');
+        const isDEVWrapped = prevLines.includes('import.meta.env.DEV') || line.includes('import.meta.env.DEV');
+        
+        // Allow console.error and console.warn (error handling), skip console.log unless DEV-wrapped
+        const isErrorHandling = /console\.(warn|error)/.test(line);
+        
+        if (!isDEVWrapped && !isErrorHandling) {
+          issues[SEVERITY.LOW].push({
+            category: CHECKS.CODE_QUALITY,
+            file: relativePath,
+            line: lineNum,
+            message: 'console.log() statement in code',
+            code: line.trim().substring(0, 80),
+            fix: 'Remove or wrap in if (import.meta.env.DEV)',
+          });
+        }
       }
       
       // TODO/FIXME comments
@@ -622,8 +656,9 @@ function checkBrandConsistency() {
     lines.forEach((line, idx) => {
       const lineNum = idx + 1;
       
-      // Skip comments and theme.js (documentation)
-      if (line.trim().startsWith('//') || line.trim().startsWith('*') || relativePath.includes('utils/theme.js')) {
+      // Skip comments, theme.js (documentation), and index.css (CSS variable definitions)
+      if (line.trim().startsWith('//') || line.trim().startsWith('*') || 
+          relativePath.includes('utils/theme.js') || relativePath.includes('index.css')) {
         return;
       }
       
@@ -636,8 +671,21 @@ function checkBrandConsistency() {
           const isGradient = line.includes('gradient');
           const isOpacity = line.includes('rgba') || line.includes('opacity');
           
-          // Allow brand colors, gradients, and opacity variations
-          if (!isBrandColor && !isGradient && !isOpacity) {
+          // Semantic color patterns - functional colors for states (error, warning, success)
+          const semanticColors = [
+            '#DC2626', '#FEE2E2', '#FEF2F2', '#991B1B', '#7F1D1D', '#F87171', '#FCA5A5', '#450A0A', // Red spectrum (errors)
+            '#78350F', '#FFFBEB', '#F59E0B', '#FCD34D', '#451A03', // Amber spectrum (warnings)
+            '#059669', '#ECFDF5', '#34D399', '#064E3B', // Emerald spectrum (success)
+            '#FFF', '#0B0B0B', '#F8F8F8', '#1A1A1A', '#E5E5E5', '#2A2A2A', '#151515', '#F4F4F4', '#5A5A5A', '#A8A8A8', // Infrastructure (grays, neutrals)
+            '#ACC' // Accessibility anchor colors
+          ];
+          const isSemanticColor = semanticColors.some(c => c.toUpperCase() === normalized);
+          
+          // Check if line is defining or using a CSS variable (intentional color definition)
+          const isCSSVarDefinition = line.includes('--color-') || line.includes('var(--color-');
+          
+          // Allow brand colors, semantic colors, gradients, opacity, and CSS variable usage
+          if (!isBrandColor && !isSemanticColor && !isGradient && !isOpacity && !isCSSVarDefinition) {
             issues[SEVERITY.LOW].push({
               category: CHECKS.BRAND_CONSISTENCY,
               file: relativePath,

@@ -104,6 +104,20 @@
   /* Specific use cases */
   --color-heading: #020178; /* Navy for headings in light mode */
   --color-icon: #020178; /* Navy for icons in light mode */
+  
+  /* Semantic state colors - functional not brand */
+  --color-error: #DC2626; /* Red-600 for errors, restrictions */
+  --color-error-light: #FEE2E2; /* Red-100 for error backgrounds */
+  --color-error-bg: #FEF2F2; /* Red-50 for error containers */
+  --color-error-dark: #991B1B; /* Red-800 for error text */
+  --color-error-darker: #7F1D1D; /* Red-900 for strong error text */
+  
+  --color-warning: #78350F; /* Amber-900 for warnings */
+  --color-warning-bg: #FFFBEB; /* Amber-50 for warning backgrounds */
+  --color-warning-border: #F59E0B; /* Amber-500 for warning borders */
+  
+  --color-success: #059669; /* Emerald-600 for success states */
+  --color-success-bg: #ECFDF5; /* Emerald-50 for success backgrounds */
 }
 
 @media (prefers-color-scheme: dark) {
@@ -124,6 +138,20 @@
     /* Specific use cases */
     --color-heading: #E4B340; /* Yellow for headings in dark mode */
     --color-icon: #E4B340; /* Yellow for icons in dark mode */
+    
+    /* Semantic state colors - adjusted for dark mode */
+    --color-error: #F87171; /* Red-400 for dark mode visibility */
+    --color-error-light: #7F1D1D; /* Red-900 for dark mode backgrounds */
+    --color-error-bg: #450A0A; /* Red-950 for dark mode containers */
+    --color-error-dark: #FCA5A5; /* Red-300 for dark mode text */
+    --color-error-darker: #FEE2E2; /* Red-100 for strong dark mode text */
+    
+    --color-warning: #FCD34D; /* Amber-300 for dark mode warnings */
+    --color-warning-bg: #451A03; /* Amber-950 for dark mode backgrounds */
+    --color-warning-border: #F59E0B; /* Amber-500 for dark mode borders */
+    
+    --color-success: #34D399; /* Emerald-400 for dark mode success */
+    --color-success-bg: #064E3B; /* Emerald-900 for dark mode backgrounds */
   }
 }
 
