@@ -43,7 +43,6 @@ const RoCafePage = lazy(() => import('./pages/RoCafePage'));
 const LocationsPage = lazy(() => import('./pages/LocationsPage'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
-const StandardizedItemDemo = lazy(() => import('./components/StandardizedItemDemo'));
 
 // GTM tracking utility
 const trackOrderClick = (location) => {
@@ -714,8 +713,8 @@ const ContactSection = () => {
                 </div>
                 <div>
                   <h4 className="font-bold text-lg" style={{ color: 'var(--color-primary)' }}>Hours</h4>
-                  <p style={textColor}>Mon-Fri: {STORE_DATA.locations[0].hours.weekdays}</p>
-                  <p style={textColor}>Sat-Sun: {STORE_DATA.locations[0].hours.weekends}</p>
+                  <p style={textColor}>Mon-Fri: {getPrimaryLocation().hours.weekdays}</p>
+                  <p style={textColor}>Sat-Sun: {getPrimaryLocation().hours.weekends}</p>
                 </div>
               </div>
             </div>
@@ -973,7 +972,6 @@ function App() {
             {currentPage === 'privacy' && <PrivacyPage />}
             {currentPage === 'terms' && <TermsPage />}
             {currentPage === 'cookies' && <CookiesPage />}
-            {currentPage === 'demo' && <StandardizedItemDemo />}
           </div>
           <Footer />
           <OrderCTA orderUrl={STORE_DATA.onlineStoreUrl} />
