@@ -1,5 +1,6 @@
 import React from 'react';
 import StandardizedItem from './StandardizedItem';
+import { useLocationAware } from '../hooks/useLocationContext';
 import { Coffee, ShoppingBasket, Bitcoin, Utensils } from 'lucide-react';
 
 /**
@@ -9,6 +10,10 @@ import { Coffee, ShoppingBasket, Bitcoin, Utensils } from 'lucide-react';
  */
 
 const StandardizedItemDemo = () => {
+  // Auto-request location since StandardizedItem components need it
+  useLocationAware(() => {
+    // Location stored for StandardizedItem availability states
+  });
   // Example RoCafé Menu Items
   const menuItems = [
     {
