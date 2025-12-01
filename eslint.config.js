@@ -6,7 +6,7 @@ import jsxA11y from 'eslint-plugin-jsx-a11y'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  globalIgnores(['dist', 'scripts/**']),
   {
     files: ['**/*.{js,jsx}'],
     extends: [
@@ -46,22 +46,12 @@ export default defineConfig([
       'jsx-a11y/role-supports-aria-props': 'error',
       'jsx-a11y/tabindex-no-positive': 'warn',
       
-      // Dark Mode Compatibility - Prevent hardcoded Tailwind gray classes
-      'no-restricted-syntax': [
-        'error',
-        {
-          selector: 'JSXAttribute[name.name="className"][value.value=/text-gray-[0-9]/]',
-          message: 'Avoid hardcoded Tailwind gray text classes. Use CSS variables: var(--color-text) or var(--color-text-muted), or import { useThemeColors } from utils/theme',
-        },
-        {
-          selector: 'JSXAttribute[name.name="className"][value.value=/bg-gray-[0-9]/]',
-          message: 'Avoid hardcoded Tailwind gray backgrounds. Use CSS variables: var(--color-bg), var(--color-surface), or import { useThemeColors } from utils/theme',
-        },
-        {
-          selector: 'JSXAttribute[name.name="className"][value.value=/border-gray-[0-9]/]',
-          message: 'Avoid hardcoded Tailwind gray borders. Use CSS variable: var(--color-border) or import { useThemeColors } from utils/theme',
-        },
-      ],
+      // Dark Mode Compatibility - Now handled by check-quality.js with smart filtering
+      // ESLint rule disabled in favor of comprehensive quality checker that understands:
+      // - Intentional high-contrast patterns (text-gray-900 on bg-yellow for WCAG AAA)
+      // - Documentation examples (utils/theme.js)
+      // - Context-aware false positive filtering
+      // Run: npm run check:quality for comprehensive dark mode validation
       'no-console': ['warn', { allow: ['warn', 'error'] }],
       'no-eval': 'error',
       'no-implied-eval': 'error',
