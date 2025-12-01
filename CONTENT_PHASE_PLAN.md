@@ -549,8 +549,8 @@ const menuItems = [
 **Current Text:**
 ```js
 <h3 className="font-semibold text-xl mb-1">Mohammed Khan</h3>
-<p className="text-sm text-gray-500 mb-3">Store Manager</p>
-<p className="text-sm text-gray-600">
+<p className="text-sm mb-3" style={{ color: 'var(--color-text-muted)' }}>Store Manager</p>
+<p className="text-sm" style={{ color: 'var(--color-text)' }}>
   "We're committed to serving our community with quality products and exceptional service."
 </p>
 ```

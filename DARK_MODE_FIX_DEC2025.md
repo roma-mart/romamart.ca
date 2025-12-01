@@ -1,5 +1,7 @@
 # Dark Mode Readability Fix - December 1, 2025
 
+> **📝 Documentation Note:** This file contains "before/after" examples. Code blocks marked "❌ Incorrect Pattern" intentionally show the OLD wrong patterns for educational purposes - do not copy these. Use only the patterns marked "✅ Correct Pattern".
+
 ## Issue Report
 
 **Discovered:** Accessibility page had readability issues in dark mode  

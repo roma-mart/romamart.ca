@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense, lazy } from 'react';
+import React, { useState, useEffect, useCallback, Suspense, lazy } from 'react';
 import { 
   MapPin, 
   Clock, 
@@ -153,8 +153,17 @@ const Navbar = () => {
     return () => window.removeEventListener('popstate', checkPath);
   }, []);
 
-  const handleNavClick = (e, sectionId, subpageUrl) => {
+  // Memoize navigation handlers to prevent unnecessary re-renders
+  const toggleMenu = useCallback(() => {
+    setIsOpen(prev => !prev);
+  }, []);
+
+  const closeMenu = useCallback(() => {
     setIsOpen(false);
+  }, []);
+
+  const handleNavClick = useCallback((e, sectionId, subpageUrl) => {
+    closeMenu();
     if (isHomePage && sectionId) {
       e.preventDefault();
       const element = document.getElementById(sectionId);
@@ -165,7 +174,7 @@ const Navbar = () => {
       e.preventDefault();
       window.location.href = subpageUrl;
     }
-  };
+  }, [isHomePage, closeMenu]);
 
   return (
     <>
@@ -260,7 +269,7 @@ const Navbar = () => {
 
             {/* Mobile Menu Button */}
             <button 
-              onClick={() => setIsOpen(!isOpen)}
+              onClick={toggleMenu}
               className="md:hidden p-2 rounded-md"
               style={{ color: scrolled ? COLORS.navy : COLORS.white }}
               aria-label={isOpen ? "Close menu" : "Open menu"}
@@ -285,7 +294,7 @@ const Navbar = () => {
                 {!isHomePage && (
                   <a
                     href={`${BASE_URL}`}
-                    onClick={() => setIsOpen(false)}
+                    onClick={closeMenu}
                     className="block px-3 py-4 text-lg font-bold font-coco uppercase border-b flex items-center gap-2"
                     style={{ color: 'var(--color-heading)', borderColor: 'var(--color-surface)' }}
                   >
