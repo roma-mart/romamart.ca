@@ -366,6 +366,69 @@ export const formatDistance = (distance) => {
   return `${distance.toFixed(1)}km away`;
 };
 
+/**
+ * Check if a location is currently open based on hours
+ * @param {Object} location - Location object with hours property
+ * @returns {boolean} True if currently open, false if closed
+ */
+export const isLocationOpenNow = (location) => {
+  // If location status is not 'open', it's definitely closed
+  if (location.status !== 'open') {
+    return false;
+  }
+
+  // If 24 hours, always open
+  if (location.hours?.is24Hours) {
+    return true;
+  }
+
+  // Get current time in location's timezone
+  const now = new Date();
+  const timeString = location.hours?.timezone 
+    ? now.toLocaleTimeString('en-US', { 
+        timeZone: location.hours.timezone, 
+        hour12: false, 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      })
+    : now.toTimeString().slice(0, 5);
+
+  const [currentHour, currentMinute] = timeString.split(':').map(Number);
+  const currentMinutes = currentHour * 60 + currentMinute;
+
+  // Parse hours (e.g., "7:00 AM - 10:00 PM")
+  const dayOfWeek = now.getDay(); // 0 = Sunday, 6 = Saturday
+  const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+  const hoursString = isWeekend ? location.hours?.weekends : location.hours?.weekdays;
+
+  if (!hoursString) {
+    return false; // No hours defined, assume closed
+  }
+
+  // Parse time range (e.g., "7:00 AM - 10:00 PM")
+  const match = hoursString.match(/(\d+):(\d+)\s*(AM|PM)\s*-\s*(\d+):(\d+)\s*(AM|PM)/i);
+  if (!match) {
+    return false; // Can't parse hours
+  }
+
+  let [, openHour, openMin, openPeriod, closeHour, closeMin, closePeriod] = match;
+  openHour = parseInt(openHour);
+  closeHour = parseInt(closeHour);
+  openMin = parseInt(openMin);
+  closeMin = parseInt(closeMin);
+
+  // Convert to 24-hour format
+  if (openPeriod.toUpperCase() === 'PM' && openHour !== 12) openHour += 12;
+  if (openPeriod.toUpperCase() === 'AM' && openHour === 12) openHour = 0;
+  if (closePeriod.toUpperCase() === 'PM' && closeHour !== 12) closeHour += 12;
+  if (closePeriod.toUpperCase() === 'AM' && closeHour === 12) closeHour = 0;
+
+  const openMinutes = openHour * 60 + openMin;
+  const closeMinutes = closeHour * 60 + closeMin;
+
+  return currentMinutes >= openMinutes && currentMinutes < closeMinutes;
+};
+
 // Export all for easy importing
 export default {
   LOCATIONS,
@@ -388,5 +451,6 @@ export default {
   getFormattedAddress,
   calculateDistance,
   getLocationsByDistance,
-  formatDistance
+  formatDistance,
+  isLocationOpenNow
 };

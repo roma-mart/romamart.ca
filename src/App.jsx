@@ -27,7 +27,7 @@ import PWAInstallPrompt from './components/PWAInstallPrompt';
 import NetworkStatus from './components/NetworkStatus';
 import StructuredData from './components/StructuredData';
 import { LocationProvider } from './components/LocationProvider';
-import { getPrimaryLocation, getActiveLocationCount, LOCATIONS, getActiveLocations } from './data/locations';
+import { getPrimaryLocation, getActiveLocationCount, LOCATIONS, getActiveLocations, isLocationOpenNow } from './data/locations';
 import { useLocationContext } from './hooks/useLocationContext';
 
 // PWA Hooks
@@ -587,7 +587,7 @@ const Locations = () => {
     name: primaryLocation.name,
     address: primaryLocation.address.formatted,
     mapLink: primaryLocation.google.mapLink,
-    isOpen: primaryLocation.status === 'open'
+    isOpen: isLocationOpenNow(primaryLocation)
   };
   
   const [activeLoc, setActiveLoc] = useState(displayLocation);

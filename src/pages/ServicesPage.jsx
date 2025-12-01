@@ -6,7 +6,7 @@ import NearestStoreButton from '../components/NearestStoreButton';
 import StandardizedItem from '../components/StandardizedItem';
 import { useLocationAware } from '../hooks/useLocationContext';
 import { SERVICES } from '../data/services.jsx';
-import { getPrimaryLocation } from '../data/locations';
+import { getPrimaryLocation, isLocationOpenNow } from '../data/locations';
 
 const ServicesPage = () => {
   const COLORS = {
@@ -19,7 +19,7 @@ const ServicesPage = () => {
 
   const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
   const primaryLocation = getPrimaryLocation();
-  const locationIsOpen = primaryLocation.status === 'open';
+  const locationIsOpen = isLocationOpenNow(primaryLocation);
   
   // Auto-request location when StandardizedItem components mount
   useLocationAware(() => {
