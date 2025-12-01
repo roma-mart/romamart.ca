@@ -1,19 +1,25 @@
 /**
  * Share Button Component
  * Uses Web Share API with fallback to copy link
+ * Batch 3: Includes haptic feedback
  */
 
 import React from 'react';
 import { Share2 } from 'lucide-react';
-import { useShare, useClipboard } from '../hooks/useBrowserFeatures';
+import { useShare, useClipboard, useVibration } from '../hooks/useBrowserFeatures';
 import { useToast } from './ToastContainer';
 
 const ShareButton = ({ title, text, url, className = '' }) => {
   const { share, canShare } = useShare();
   const { copyToClipboard } = useClipboard();
   const { showSuccess, showError } = useToast();
+  const { vibrate, canVibrate } = useVibration();
 
   const handleShare = async () => {
+    // Haptic feedback on mobile
+    if (canVibrate) {
+      vibrate(10);
+    }
     const shareData = {
       title: title || 'Roma Mart',
       text: text || 'Check out Roma Mart!',

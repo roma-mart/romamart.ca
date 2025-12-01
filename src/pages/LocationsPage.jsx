@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { ChevronRight, MapPin, Clock, Phone, ExternalLink } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
 import CopyButton from '../components/CopyButton';
+import NearestStoreButton from '../components/NearestStoreButton';
 
 const LocationsPage = () => {
   const COLORS = {
@@ -59,18 +60,30 @@ const LocationsPage = () => {
               Visit us at any of our convenient locations. We're here to serve you with quality products and exceptional service.
             </p>
           </div>
-          <ShareButton 
-            title="Roma Mart Locations"
-            text="Find Roma Mart convenience stores near you in Sarnia!"
-            className="bg-yellow-500 text-gray-900 hover:bg-yellow-600"
-          />
+          <div className="flex flex-wrap gap-3">
+            <ShareButton 
+              title="Roma Mart Locations"
+              text="Find Roma Mart convenience stores near you in Sarnia!"
+              className="bg-yellow-500 text-gray-900 hover:bg-yellow-600"
+            />
+            <NearestStoreButton 
+              locations={locations}
+              onNearestFound={(nearest) => {
+                // Scroll to the nearest store card
+                const element = document.getElementById(`location-${nearest.id}`);
+                if (element) {
+                  element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+              }}
+            />
+          </div>
         </div>
       </section>
 
       <section className="max-w-7xl mx-auto px-4">
         <div className="space-y-12">
           {locations.map((location) => (
-            <div key={location.id} className="grid lg:grid-cols-2 gap-8">
+            <div key={location.id} id={`location-${location.id}`} className="grid lg:grid-cols-2 gap-8">
               <div className="p-8 rounded-2xl" style={{ backgroundColor: 'var(--color-surface)' }}>
                 <div className="flex items-start justify-between mb-6">
                   <h2 className="text-3xl font-coco" style={{ color: 'var(--color-heading)' }}>

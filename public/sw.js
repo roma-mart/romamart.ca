@@ -168,14 +168,117 @@ self.addEventListener('sync', (event) => {
  */
 async function syncContactForms() {
   try {
-    // Get queued forms from IndexedDB (would be implemented in main app)
     console.log('[Service Worker] Syncing contact forms...');
-    // Implementation would retrieve from IndexedDB and POST to server
-    return Promise.resolve();
+    
+    // Open IndexedDB
+    const db = await openDatabase();
+    const pendingForms = await getPendingForms(db);
+    
+    if (pendingForms.length === 0) {
+      console.log('[Service Worker] No pending forms to sync');
+      return;
+    }
+    
+    console.log(`[Service Worker] Found ${pendingForms.length} pending form(s)`);
+    
+    // Submit each form
+    const results = await Promise.allSettled(
+      pendingForms.map(async (form) => {
+        const formData = new FormData();
+        Object.entries(form).forEach(([key, value]) => {
+          if (key !== 'id' && key !== 'timestamp' && key !== 'synced' && key !== 'syncedAt') {
+            formData.append(key, value);
+          }
+        });
+        
+        const response = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          body: formData
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        
+        // Mark as synced
+        await markFormSynced(db, form.id);
+        return form.id;
+      })
+    );
+    
+    // Log results
+    const successful = results.filter(r => r.status === 'fulfilled').length;
+    const failed = results.filter(r => r.status === 'rejected').length;
+    
+    console.log(`[Service Worker] Sync complete: ${successful} successful, ${failed} failed`);
+    
+    // Send notification to client
+    const clients = await self.clients.matchAll();
+    clients.forEach(client => {
+      client.postMessage({
+        type: 'SYNC_COMPLETE',
+        successful,
+        failed
+      });
+    });
+    
+    // If any failed, throw error to retry later
+    if (failed > 0) {
+      throw new Error(`${failed} form(s) failed to sync`);
+    }
   } catch (error) {
     console.error('[Service Worker] Contact form sync failed:', error);
     throw error; // Retry later
   }
+}
+
+/**
+ * Open IndexedDB connection
+ */
+function openDatabase() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open('RomaMartDB', 1);
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+/**
+ * Get all pending forms from IndexedDB
+ */
+function getPendingForms(db) {
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(['contactForms'], 'readonly');
+    const store = transaction.objectStore('contactForms');
+    const index = store.index('synced');
+    const request = index.getAll(false);
+    
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+/**
+ * Mark form as synced in IndexedDB
+ */
+function markFormSynced(db, formId) {
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(['contactForms'], 'readwrite');
+    const store = transaction.objectStore('contactForms');
+    const getRequest = store.get(formId);
+    
+    getRequest.onsuccess = () => {
+      const data = getRequest.result;
+      data.synced = true;
+      data.syncedAt = Date.now();
+      
+      const updateRequest = store.put(data);
+      updateRequest.onsuccess = () => resolve();
+      updateRequest.onerror = () => reject(updateRequest.error);
+    };
+    
+    getRequest.onerror = () => reject(getRequest.error);
+  });
 }
 
 /**

@@ -25,9 +25,11 @@ import ShareButton from './components/ShareButton';
 import CopyButton from './components/CopyButton';
 import PWAInstallPrompt from './components/PWAInstallPrompt';
 import NetworkStatus from './components/NetworkStatus';
+import StructuredData from './components/StructuredData';
 
 // PWA Hooks
 import { useServiceWorker } from './hooks/useServiceWorker';
+import { usePageVisibility, useBatteryStatus } from './hooks/useBrowserFeatures';
 
 // Code splitting: Lazy load page components
 const AccessibilityPage = lazy(() => import('./components/AccessibilityPage'));
@@ -901,6 +903,25 @@ function App() {
   // Initialize PWA Service Worker
   useServiceWorker();
   
+  // Batch 3: Performance optimizations
+  const { isVisible } = usePageVisibility();
+  const { batteryLevel, isCharging } = useBatteryStatus();
+  
+  // Disable heavy animations when battery low or user prefers reduced motion
+  // eslint-disable-next-line no-unused-vars
+  const shouldReduceMotion = React.useMemo(() => {
+    const lowBattery = batteryLevel !== null && batteryLevel < 0.2 && !isCharging;
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    return lowBattery || prefersReduced;
+  }, [batteryLevel, isCharging]);
+  
+  // Log page visibility changes (for analytics/debugging)
+  useEffect(() => {
+    if (!isVisible) {
+      console.log('[Performance] Tab hidden - pausing heavy operations');
+    }
+  }, [isVisible]);
+  
   const getPage = () => {
     if (pathname.includes('/services')) return 'services';
     if (pathname.includes('/rocafe')) return 'rocafe';
@@ -956,6 +977,35 @@ function App() {
       {/* PWA Components */}
       <PWAInstallPrompt />
       <NetworkStatus />
+      
+      {/* Batch 3: Structured Data for SEO */}
+      <StructuredData 
+        type="LocalBusiness" 
+        data={{
+          name: STORE_DATA.dba,
+          alternateName: "Roma Mart",
+          description: "Your daily stop & go convenience store in Sarnia, Ontario. Fresh RoCafé beverages, ATM, Bitcoin ATM, printing, and more.",
+          telephone: STORE_DATA.contact.phone,
+          email: STORE_DATA.contact.email,
+          address: {
+            street: "189-3 Wellington Street",
+            city: "Sarnia",
+            region: "ON",
+            postal: "N7T 1G6"
+          },
+          geo: {
+            latitude: 42.970389,
+            longitude: -82.404589
+          },
+          socialLinks: Object.values(STORE_DATA.socialLinks)
+        }}
+      />
+      <StructuredData 
+        type="WebSite" 
+        data={{
+          description: "Your daily stop & go convenience store in Sarnia, Ontario."
+        }}
+      />
     </div>
   );
 }

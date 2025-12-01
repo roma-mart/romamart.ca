@@ -1,11 +1,12 @@
 /**
  * PWA Install Prompt Component
  * Smart install prompt based on user engagement
+ * Batch 3: Includes haptic feedback
  */
 
 import React, { useState, useEffect } from 'react';
 import { X, Download, Smartphone } from 'lucide-react';
-import { useLocalStorage } from '../hooks/useBrowserFeatures';
+import { useLocalStorage, useVibration } from '../hooks/useBrowserFeatures';
 
 const PWAInstallPrompt = () => {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
@@ -13,6 +14,7 @@ const PWAInstallPrompt = () => {
   const [engagementScore, setEngagementScore] = useState(0);
   const [lastDismissed, setLastDismissed] = useLocalStorage('pwa-install-dismissed', null);
   const [isInstalled] = useLocalStorage('pwa-installed', false);
+  const { vibrate, canVibrate } = useVibration();
 
   useEffect(() => {
     // Don't show if already installed or dismissed recently
@@ -115,6 +117,11 @@ const PWAInstallPrompt = () => {
 
   const handleInstall = async () => {
     if (!deferredPrompt) return;
+
+    // Haptic feedback for install action
+    if (canVibrate) {
+      vibrate([10, 50, 10]); // Double tap pattern
+    }
 
     // Show native install prompt
     deferredPrompt.prompt();

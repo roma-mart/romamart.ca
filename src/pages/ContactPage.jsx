@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ChevronRight, MapPin, Phone, Clock, Mail, Send } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
 import CopyButton from '../components/CopyButton';
+import { useBackgroundSync } from '../hooks/useServiceWorker';
+import { useToast } from '../components/ToastContainer';
+import { queueFormSubmission, getPendingCount } from '../utils/indexedDB';
 
 const ContactPage = () => {
   const COLORS = {
@@ -30,11 +33,52 @@ const ContactPage = () => {
   };
 
   const [formStatus, setFormStatus] = useState('');
+  const [pendingSubmissions, setPendingSubmissions] = useState(0);
+  const { syncSupported, queueSync } = useBackgroundSync();
+  const { showToast } = useToast();
+
+  // Check for pending submissions on mount
+  useEffect(() => {
+    const checkPending = async () => {
+      try {
+        const count = await getPendingCount();
+        setPendingSubmissions(count);
+        if (count > 0) {
+          showToast(`You have ${count} pending form submission(s) that will sync when online`, 'info');
+        }
+      } catch (error) {
+        console.error('Error checking pending submissions:', error);
+      }
+    };
+    checkPending();
+  }, [showToast]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
+    const formObject = Object.fromEntries(formData.entries());
     
+    // Check if online
+    const isOnline = navigator.onLine;
+    
+    if (!isOnline && syncSupported) {
+      // Queue for background sync
+      try {
+        await queueFormSubmission(formObject);
+        await queueSync('contact-form-sync');
+        setFormStatus('queued');
+        showToast('Form saved! Will submit when connection restored.', 'info');
+        e.target.reset();
+        setPendingSubmissions(prev => prev + 1);
+      } catch (error) {
+        console.error('Error queuing form:', error);
+        setFormStatus('error');
+        showToast('Failed to save form. Please try again when online.', 'error');
+      }
+      return;
+    }
+    
+    // Online - submit immediately
     try {
       const response = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
@@ -43,12 +87,30 @@ const ContactPage = () => {
 
       if (response.ok) {
         setFormStatus('success');
+        showToast('Message sent successfully!', 'success');
         e.target.reset();
       } else {
         setFormStatus('error');
+        showToast('Failed to send message. Please try again.', 'error');
       }
     } catch {
-      setFormStatus('error');
+      // If fetch fails while "online", try to queue
+      if (syncSupported) {
+        try {
+          await queueFormSubmission(formObject);
+          await queueSync('contact-form-sync');
+          setFormStatus('queued');
+          showToast('Connection issue. Form saved and will submit when restored.', 'info');
+          e.target.reset();
+          setPendingSubmissions(prev => prev + 1);
+        } catch {
+          setFormStatus('error');
+          showToast('Failed to send message. Please try again.', 'error');
+        }
+      } else {
+        setFormStatus('error');
+        showToast('Failed to send message. Please try again.', 'error');
+      }
     }
   };
 
@@ -179,9 +241,21 @@ const ContactPage = () => {
               </div>
             )}
 
+            {formStatus === 'queued' && (
+              <div className="mb-6 p-4 rounded-lg bg-blue-50 border border-blue-200">
+                <p className="text-blue-700 font-inter">📥 Message saved! Will be sent automatically when connection is restored.</p>
+              </div>
+            )}
+
             {formStatus === 'error' && (
               <div className="mb-6 p-4 rounded-lg bg-red-50 border border-red-200">
                 <p className="text-red-700 font-inter">✗ Something went wrong. Please try again.</p>
+              </div>
+            )}
+
+            {pendingSubmissions > 0 && (
+              <div className="mb-6 p-4 rounded-lg bg-yellow-50 border border-yellow-200">
+                <p className="text-yellow-800 font-inter">⏳ You have {pendingSubmissions} pending submission(s) waiting to sync.</p>
               </div>
             )}
 
