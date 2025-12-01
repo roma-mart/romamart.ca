@@ -7,24 +7,6 @@
 
 import { Banknote, Bitcoin, Printer, Package, UtensilsCrossed, Send, CreditCard, Sparkles, Ticket, AlertCircle, ShoppingBag, Globe, ShoppingBasket, Candy } from 'lucide-react';
 
-// Icon mapper - converts icon names to React components
-const ICON_MAP = {
-  Banknote,
-  Bitcoin,
-  Printer,
-  Package,
-  UtensilsCrossed,
-  Send,
-  CreditCard,
-  Sparkles,
-  Ticket,
-  AlertCircle,
-  ShoppingBag,
-  Globe,
-  ShoppingBasket,
-  Candy
-};
-
 // Service categories
 export const SERVICE_CATEGORIES = {
   FINANCIAL: 'financial',
@@ -34,14 +16,14 @@ export const SERVICE_CATEGORIES = {
   AGE_RESTRICTED: 'age_restricted'
 };
 
-// All services data (icons will be rendered via createIcon)
-const SERVICES_RAW = [
+// All services data
+export const SERVICES = [
   {
     id: 'atm',
     name: 'ATM',
     tagline: 'Cash when you need it',
     description: 'Convenient ATM access with competitive fees. Withdraw cash anytime during store hours. Supports all major bank networks with secure transactions.',
-    iconName: 'Banknote',
+    icon: <Banknote size={20} />,
     category: SERVICE_CATEGORIES.FINANCIAL,
     availableAt: ['loc-wellington-001'], // Location IDs where available
     availability: 'store_hours', // store_hours | 24_7 | custom
@@ -62,7 +44,7 @@ const SERVICES_RAW = [
     name: 'Bitcoin ATM',
     tagline: 'Buy & sell crypto instantly',
     description: 'Buy and sell cryptocurrency with ease. Our Bitcoin ATM supports multiple digital currencies with instant transactions and complete privacy. Managed by Bitcoin4U.',
-    iconName: 'Bitcoin',
+    icon: <Bitcoin size={20} />,
     category: SERVICE_CATEGORIES.FINANCIAL,
     availableAt: ['loc-wellington-001'],
     availability: 'store_hours',
@@ -92,7 +74,7 @@ const SERVICES_RAW = [
     name: 'Gift Cards',
     tagline: 'Perfect for any occasion',
     description: 'Wide selection of gift cards for all occasions. Choose from major retailers, restaurants, and entertainment brands. Various denominations available with instant activation.',
-    iconName: 'CreditCard',
+    icon: <CreditCard size={20} />,
     category: SERVICE_CATEGORIES.RETAIL,
     availableAt: ['loc-wellington-001'],
     availability: 'store_hours',
@@ -113,7 +95,7 @@ const SERVICES_RAW = [
     name: 'Printing Services',
     tagline: 'Black & white printing on demand',
     description: 'Professional black & white printing services. Email your document to print@romamart.ca and pay at the counter when you pick up. QR code verification prevents spam orders.',
-    iconName: 'Printer',
+    icon: <Printer size={20} />,
     category: SERVICE_CATEGORIES.CONVENIENCE,
     availableAt: ['loc-wellington-001'],
     availability: 'store_hours',
@@ -140,7 +122,7 @@ const SERVICES_RAW = [
     name: 'Halal Meat',
     tagline: '100% certified halal',
     description: 'Premium quality halal-certified meat products from local suppliers. Fresh cuts available on demand. All meat is Zabiha halal certified.',
-    iconName: 'UtensilsCrossed',
+    icon: <UtensilsCrossed size={20} />,
     category: SERVICE_CATEGORIES.FOOD,
     availableAt: ['loc-wellington-001'],
     availability: 'store_hours',
@@ -161,7 +143,7 @@ const SERVICES_RAW = [
     name: 'Perfumes & Fragrances',
     tagline: 'Find your signature scent',
     description: 'Curated collection of premium perfumes and fragrances. Designer brands with unisex options and gift sets available.',
-    iconName: 'Sparkles',
+    icon: <Sparkles size={20} />,
     category: SERVICE_CATEGORIES.RETAIL,
     availableAt: ['loc-wellington-001'],
     availability: 'store_hours',
@@ -182,7 +164,7 @@ const SERVICES_RAW = [
     name: 'Canadian Products',
     tagline: 'Proudly Canadian',
     description: 'Selection of proudly Canadian-made products. Support local brands and enjoy authentic Canadian flavors and quality.',
-    iconName: 'ShoppingBag',
+    icon: <ShoppingBag size={20} />,
     category: SERVICE_CATEGORIES.RETAIL,
     availableAt: ['loc-wellington-001'],
     availability: 'store_hours',
@@ -203,7 +185,7 @@ const SERVICES_RAW = [
     name: 'International Products',
     tagline: 'Global flavors at home',
     description: 'Imported products from around the world. Discover unique snacks, beverages, and specialty items from Asia, Europe, Middle East, and beyond.',
-    iconName: 'Globe',
+    icon: <Globe size={20} />,
     category: SERVICE_CATEGORIES.RETAIL,
     availableAt: ['loc-wellington-001'],
     availability: 'store_hours',
@@ -224,7 +206,7 @@ const SERVICES_RAW = [
     name: 'Pantry Essentials & Groceries',
     tagline: 'Your daily essentials',
     description: 'Complete selection of pantry staples and grocery essentials. Milk, bread, eggs, canned goods, and everyday items you need.',
-    iconName: 'ShoppingBasket',
+    icon: <ShoppingBasket size={20} />,
     category: SERVICE_CATEGORIES.RETAIL,
     availableAt: ['loc-wellington-001'],
     availability: 'store_hours',
@@ -245,7 +227,7 @@ const SERVICES_RAW = [
     name: 'Snacks & Confectionery',
     tagline: 'Sweet & savory treats',
     description: 'Wide variety of snacks and candy for every craving. Chips, chocolate bars, gummies, nuts, and more.',
-    iconName: 'Candy',
+    icon: <Candy size={20} />,
     category: SERVICE_CATEGORIES.RETAIL,
     availableAt: ['loc-wellington-001'],
     availability: 'store_hours',
@@ -266,7 +248,7 @@ const SERVICES_RAW = [
     name: 'Package Pickup & Dropoff',
     tagline: 'Your package hub',
     description: 'Convenient package handling services. Drop off your shipments or pick up deliveries at your convenience with secure storage.',
-    iconName: 'Package',
+    icon: <Package size={20} />,
     category: SERVICE_CATEGORIES.CONVENIENCE,
     availableAt: ['loc-wellington-001'],
     availability: 'store_hours',
@@ -287,7 +269,7 @@ const SERVICES_RAW = [
     name: 'Money Transfer',
     tagline: 'Send money anywhere',
     description: 'Fast and secure money transfer services to send funds domestically and internationally with competitive rates.',
-    iconName: 'Send',
+    icon: <Send size={20} />,
     category: SERVICE_CATEGORIES.FINANCIAL,
     availableAt: ['loc-wellington-001'],
     availability: 'store_hours',
@@ -308,7 +290,7 @@ const SERVICES_RAW = [
     name: 'Tobacco & Vape',
     tagline: '19+ Only - ID Required',
     description: 'Age-restricted tobacco products and vaping supplies. Valid government-issued photo ID with birth date required under Ontario law (Smoke-Free Ontario Act, 2017).',
-    iconName: 'AlertCircle',
+    icon: <AlertCircle size={20} />,
     category: SERVICE_CATEGORIES.AGE_RESTRICTED,
     availableAt: ['loc-wellington-001'],
     availability: 'store_hours',
@@ -334,7 +316,7 @@ const SERVICES_RAW = [
     name: 'Lottery',
     tagline: 'Coming soon',
     description: 'Provincial lottery tickets coming soon! Play your favorite OLG games including instant tickets and draw games. Must be 19 or older.',
-    iconName: 'Ticket',
+    icon: <Ticket size={20} />,
     category: SERVICE_CATEGORIES.AGE_RESTRICTED,
     availableAt: [], // Empty until live
     availability: 'store_hours',
@@ -355,12 +337,6 @@ const SERVICES_RAW = [
     }
   }
 ];
-
-// Export services with icon components (not elements)
-export const SERVICES = SERVICES_RAW.map(service => ({
-  ...service,
-  icon: service.iconName ? ICON_MAP[service.iconName] : null
-}));
 
 // === HELPER FUNCTIONS ===
 

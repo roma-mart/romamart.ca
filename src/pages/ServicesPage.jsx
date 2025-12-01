@@ -5,7 +5,7 @@ import ShareButton from '../components/ShareButton';
 import NearestStoreButton from '../components/NearestStoreButton';
 import StandardizedItem from '../components/StandardizedItem';
 import { useLocationAware } from '../hooks/useLocationContext';
-import { SERVICES } from '../data/services';
+import { SERVICES } from '../data/services.jsx';
 import { getPrimaryLocation } from '../data/locations';
 
 const ServicesPage = () => {

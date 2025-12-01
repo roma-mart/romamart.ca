@@ -208,11 +208,7 @@ const StandardizedItem = ({
                     opacity: isComingSoon ? 0.8 : 1
                   }}
                 >
-                  {icon && (
-                    <span className="flex-shrink-0">
-                      {typeof icon === 'function' ? React.createElement(icon, { size: 20 }) : icon}
-                    </span>
-                  )}
+                  {icon && <span className="flex-shrink-0">{icon}</span>}
                   {name}
                   {isUnavailable && (
                     <span className="text-xs font-inter font-normal" style={{ color: '#9CA3AF' }}>
