@@ -15,11 +15,13 @@ const AboutPage = () => {
   const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
 
   // Hero images carousel
-  const heroImages = [
+  
+  const heroImages = useMemo(() => [
     '/images/store-front.jpg',
     '/images/store-interior.jpg',
     '/images/team.jpg'
-  ];
+  ], []);
+  
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -36,7 +38,7 @@ const AboutPage = () => {
 
   const heroImageHandlers = useMemo(() => {
     return heroImages.map((_, idx) => () => handleSelectImage(idx));
-  }, [heroImages.length, handleSelectImage]);
+  }, [heroImages, handleSelectImage]);
 
   const team = [
     {

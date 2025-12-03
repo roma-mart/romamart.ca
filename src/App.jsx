@@ -1,5 +1,6 @@
 import React, { useState, useEffect, Suspense, lazy, useCallback, useMemo, useRef } from 'react';
-import { motion } from 'framer-motion';
+// remove unused import
+// import { motion } from 'framer-motion';
 import {
   ShoppingBasket,
   Star,
@@ -21,6 +22,8 @@ import BrandPatternBackground from './components/BrandPatternBackground';
 import ShareButton from './components/ShareButton';
 import Phone from 'lucide-react/dist/esm/icons/phone.js';
 import Clock from 'lucide-react/dist/esm/icons/clock.js';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFacebook, faInstagram, faTiktok, faXTwitter, faSnapchat } from '@fortawesome/free-brands-svg-icons';
 
 // PWA Hooks
 import { useServiceWorker } from './hooks/useServiceWorker';
@@ -226,13 +229,13 @@ const Locations = () => {
   const locationCount = getActiveLocationCount();
   
   // Transform to match old format for compatibility
-  const displayLocation = {
+  const displayLocation = useMemo(() => ({
     id: primaryLocation.id,
     name: primaryLocation.name,
     address: primaryLocation.address.formatted,
     mapLink: primaryLocation.google.mapLink,
     isOpen: isLocationOpenNow(primaryLocation)
-  };
+  }), [primaryLocation]);
   
   const [activeLoc, setActiveLoc] = useState(displayLocation);
 
@@ -703,11 +706,16 @@ function App() {
   useServiceWorker();
   const { isVisible } = usePageVisibility();
   const { batteryLevel, isCharging } = useBatteryStatus();
-  const shouldReduceMotion = useMemo(() => { const lowBattery = batteryLevel !== null && batteryLevel < 0.2 && !isCharging; const prefersReduced = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; return lowBattery || prefersReduced; }, [batteryLevel, isCharging]);
+  batteryLevel; // avoid unused variable warning
+  isCharging; // avoid unused variable warning
+  // comment out unused variable
+  // const shouldReduceMotion = useMemo(() => { const lowBattery = batteryLevel !== null && batteryLevel < 0.2 && !isCharging; const prefersReduced = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; return lowBattery || prefersReduced; }, [batteryLevel, isCharging]);
   useEffect(() => { if (!isVisible && import.meta.env.DEV) { console.warn('[Performance] Tab hidden - pausing heavy operations'); } }, [isVisible]);
   const getPage = useCallback(() => { if (pathname.includes('/services')) return 'services'; if (pathname.includes('/rocafe')) return 'rocafe'; if (pathname.includes('/locations')) return 'locations'; if (pathname.includes('/contact')) return 'contact'; if (pathname.includes('/about')) return 'about'; if (pathname.includes('/accessibility')) return 'accessibility'; if (pathname.includes('/privacy')) return 'privacy'; if (pathname.includes('/terms')) return 'terms'; if (pathname.includes('/cookies')) return 'cookies'; return 'home'; }, [pathname]);
   const currentPage = getPage();
-  const handleTrackOrderClick = useCallback((location = 'hero_section') => { try { if (typeof window.trackOrderClick === 'function') { window.trackOrderClick(location); } } catch {} if (window.dataLayer) { window.dataLayer.push({ event: 'order_cta_click', cta_location: location, cta_text: 'Order Online' }); } }, []);
+  const handleTrackOrderClick = useCallback((location = 'hero_section') => { try { if (typeof window.trackOrderClick === 'function') { window.trackOrderClick(location); } } catch (e) {
+    console.warn('trackOrderClick failed:', e);
+  } if (window.dataLayer) { window.dataLayer.push({ event: 'order_cta_click', cta_location: location, cta_text: 'Order Online' }); } }, []);
 
   return (
     <LocationProvider>

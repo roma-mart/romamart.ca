@@ -28,7 +28,7 @@ const RoCafePage = () => {
   });
 
   // Menu structure - ready for full data
-  const menuCategories = [
+  const menuCategories = useMemo(() => [
     {
       id: 'hot-coffee',
       name: 'Hot Coffee',
@@ -95,7 +95,7 @@ const RoCafePage = () => {
       description: 'Limited time offerings',
       items: []
     }
-  ];
+  ], []);
 
   // create memoized handlers map for categories
   const categoryHandlers = useMemo(() => {
@@ -104,7 +104,7 @@ const RoCafePage = () => {
       map[cat.id] = () => toggleCategory(cat.id);
     }
     return map;
-  }, [toggleCategory]);
+  }, [toggleCategory, menuCategories]);
 
   return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>

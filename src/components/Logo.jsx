@@ -14,7 +14,8 @@ import { tokens } from '../design/tokens';
 export function Logo({
   size = 32,
   scheme = 'navy',
-  layout = 'horizontal',
+  // layout = 'horizontal',
+  // comment out unused var above
   ariaLabel = 'Roma Mart',
   wordmark = true,
   className = '',

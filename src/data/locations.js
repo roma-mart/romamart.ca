@@ -411,7 +411,7 @@ export const isLocationOpenNow = (location) => {
     return false; // Can't parse hours
   }
 
-  let [, openHour, openMin, openPeriod, closeHour, closeMin, closePeriod] = match;
+  let [, openHour, openMin, openPeriod, closeHour, closeMin, closePeriod] = match; // eslint-disable-line prefer-const
   openHour = parseInt(openHour);
   closeHour = parseInt(closeHour);
   openMin = parseInt(openMin);

@@ -51,6 +51,7 @@ const OrderCTA = ({ orderUrl = 'https://nrsplus.com/orders/your-store-link' }) =
       window.open(orderUrl, '_blank', 'noopener,noreferrer');
     } catch (e) {
       // fallback to location assign if window.open blocked
+      console.warn(e)
       window.location.href = orderUrl;
     }
   };

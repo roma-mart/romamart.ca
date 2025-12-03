@@ -17,6 +17,8 @@
  * @since December 1, 2025
  */
 
+/* global checkBrowserCompat, checkEthos */
+
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
