@@ -2,41 +2,105 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/web-demo/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- <meta http-equiv="X-Content-Type-Options" content="nosniff" /> -->
     <!-- only available for server headers - cannot apply in static sites -->
     <meta name="description" content="Roma Mart Convenience - Groceries, Global Snacks, Halal Meat, Coffee & More in Sarnia, ON. ATM, Bitcoin, Lottery, and Tobacco services available." />
+    
+    <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#020178" />
-    <link rel="icon" type="image/svg+xml" href="/romamart.ca/icon-192.svg" />
-    <link rel="apple-touch-icon" href="/romamart.ca/icon-192.svg" />
-    <link rel="manifest" href="/romamart.ca/manifest.webmanifest" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Roma Mart" />
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/web-demo/manifest.webmanifest" />
+    
+    <!-- PWA Icons -->
+    <link rel="icon" type="image/svg+xml" href="/web-demo/icon-192.svg" />
+    <link rel="apple-touch-icon" href="/web-demo/icon-192.svg" />
+    
+    <!-- Canonical URL (update when deploying to romamart.ca) -->
     <link rel="canonical" href="https://romamart.ca/" />
+    
+    <!-- Open Graph / Social Meta Tags -->
     <meta property="og:type" content="business.business" />
     <meta property="og:url" content="https://romamart.ca/romamart.ca/accessibility" />
     <meta property="og:title" content="Roma Mart Convenience | Groceries, Coffee & More in Sarnia, ON" />
-    <meta property="og:description" content="Your local one-stop shop for everything from daily essentials to premium cafe drinks in Sarnia, ON." />
+    <meta property="og:description" content="Your local one-stop shop for everything from daily essentials to premium café drinks in Sarnia, ON." />
     <meta property="og:image" content="https://romamart.ca/og-image.png" />
+    
+    <!-- Twitter Card Meta Tags -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content="https://romamart.ca/" />
     <meta property="twitter:title" content="Roma Mart Convenience | Groceries, Coffee & More" />
-    <meta property="twitter:description" content="Your local one-stop shop for everything from daily essentials to premium cafe drinks." />
+    <meta property="twitter:description" content="Your local one-stop shop for everything from daily essentials to premium café drinks." />
     <meta property="twitter:image" content="https://romamart.ca/og-image.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet" />
-
-    <!-- Dynamically inject Google Tag Manager when VITE_GTM_ID is provided at build time -->
-
+    
+    <!-- Google Fonts: Poppins (display) + Inter (UI/body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+    
     <title>Roma Mart - Accessibility | Groceries, Coffee & More in Sarnia, ON</title>
-    <script type="module" crossorigin src="/romamart.ca/assets/index-PLlgFyTt.js"></script>
-    <link rel="modulepreload" crossorigin href="/romamart.ca/assets/react-vendor-labSKdyf.js">
-    <link rel="modulepreload" crossorigin href="/romamart.ca/assets/icons-DGs5TlbU.js">
-    <link rel="modulepreload" crossorigin href="/romamart.ca/assets/motion-yyXqPgd2.js">
-    <link rel="stylesheet" crossorigin href="/romamart.ca/assets/index-CYNWePAX.css">
+
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?"&l="+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-N4FWPSRF');</script>
+    <!-- End Google Tag Manager -->
+    
+    <!-- JSON-LD Schema: LocalBusiness -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": "Roma Mart Convenience",
+      "image": "https://romamart.ca/logo.png",
+      "description": "Your local one-stop shop for everything from daily essentials to premium café drinks.",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "189-3 Wellington Street",
+        "addressLocality": "Sarnia",
+        "addressRegion": "ON",
+        "postalCode": "N7T 1G6",
+        "addressCountry": "CA"
+      },
+      "telephone": "+1-382-342-2000",
+      "email": "contact@romamart.ca",
+      "url": "https://romamart.ca",
+      "priceRange": "$",
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+          "opens": "08:00",
+          "closes": "22:00"
+        },
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Saturday", "Sunday"],
+          "opens": "09:00",
+          "closes": "23:00"
+        }
+      ]
+    }
+    </script>
+    <script type="module" crossorigin src="/web-demo/assets/index-CGLDfiEm.js"></script>
+    <link rel="modulepreload" crossorigin href="/web-demo/assets/react-vendor-labSKdyf.js">
+    <link rel="modulepreload" crossorigin href="/web-demo/assets/icons-DqenJ-Lh.js">
+    <link rel="modulepreload" crossorigin href="/web-demo/assets/motion-C3MEoEAm.js">
+    <link rel="stylesheet" crossorigin href="/web-demo/assets/index-C0uPHeA5.css">
   </head>
   <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-N4FWPSRF" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
     <div id="root"></div>
   </body>
 </html>
-
 
