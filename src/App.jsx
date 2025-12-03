@@ -19,6 +19,8 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import BrandPatternBackground from './components/BrandPatternBackground';
 import ShareButton from './components/ShareButton';
+import StandardizedItem from './components/StandardizedItem';
+import { ROCAFE_FEATURED } from './data/rocafe-menu';
 import Phone from 'lucide-react/dist/esm/icons/phone.js';
 import Clock from 'lucide-react/dist/esm/icons/clock.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -82,13 +84,6 @@ const SERVICES = [
   { id: 4, title: "TOBACCO & VAPE", desc: "Wide selection for adult customers.", icon: <ShoppingBasket /> },
   { id: 5, title: "HALAL MEAT", desc: "Certified Zabiha Halal meats.", icon: <Utensils /> },
   { id: 6, title: "LOTTERY", desc: "OLG Lottery & Scratch cards.", icon: <Star /> },
-];
-
-const ROCAFE_MENU = [
-  { name: "Signature Bubble Tea", price: "$5.99", popular: true },
-  { name: "Fresh Brewed Coffee", price: "$2.50", popular: false },
-  { name: "Matcha Latte", price: "$4.99", popular: true },
-  { name: "Fruit Slush", price: "$5.50", popular: false },
 ];
 
 const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
@@ -169,7 +164,7 @@ const ServicesScroll = () => {
 
 const RoCafeSection = () => {
   return (
-    <section id="rocafe" className="py-24 relative overflow-hidden text-white" style={{ backgroundColor: BRAND.primary }}>
+    <section id="rocafe" className="py-24 relative overflow-hidden" style={{ backgroundColor: BRAND.primary }}>
       <div className="absolute top-0 right-0 w-1/2 h-full bg-black/20 skew-x-12 transform translate-x-20"></div>
       <div className="max-w-7xl mx-auto px-4 relative z-10">
         <div className="flex flex-col md:flex-row gap-16 items-center">
@@ -186,17 +181,18 @@ const RoCafeSection = () => {
             <p className="font-inter text-lg mb-8" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
               Step into our dedicated café corner. Whether you need a morning espresso kick or a refreshing afternoon bubble tea, RoCafé is brewing specifically for you.
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {ROCAFE_MENU.map((item, idx) => (
-                 <div key={idx} className="bg-white/5 p-4 rounded-lg backdrop-blur-sm border border-white/10 flex justify-between items-center">
-                   <div>
-                     <p className="font-bold text-white">{item.name}</p>
-                     {item.popular && <span className="text-xs text-yellow-400 uppercase font-bold">Best Seller</span>}
-                   </div>
-                   <p className="font-coco text-lg" style={{ color: BRAND.accent }}>{item.price}</p>
-                 </div>
+            
+            {/* Featured Menu Items with StandardizedItem */}
+            <div className="space-y-3 mb-8">
+              {ROCAFE_FEATURED.map((item) => (
+                <StandardizedItem 
+                  key={item.id}
+                  item={item}
+                  defaultExpanded={false}
+                />
               ))}
             </div>
+            
             <div className="mt-8">
               <a
                 href={`${BASE_URL}rocafe`}
