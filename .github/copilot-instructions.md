@@ -243,30 +243,119 @@ Before going live on custom domain:
 - Release checklist: `RELEASE_CHECKLIST.md`
 - Contributing guide: `CONTRIBUTING.md`
 
----
+## External API Integration
 
-## Open Questions for Improvement
+### Web3Forms Contact API
+- **Endpoint:** `https://api.web3forms.com/submit`
+- **Method:** POST with JSON body
+- **Auth:** Access key from environment variable `VITE_WEB3FORMS_KEY`
+- **Implementation:** `src/pages/ContactPage.jsx`
+- **Error Handling:** Falls back to queuing in IndexedDB if offline
+- **Rate Limiting:** None client-side; service handles rate limits
 
-**For Collaborators:** Please review and answer these questions to enhance the instructions:
+**Pattern for API calls:**
+```jsx
+const response = await fetch('https://api.web3forms.com/submit', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ access_key: import.meta.env.VITE_WEB3FORMS_KEY, ...formData })
+});
+```
 
-1. **Deployment workflow**: Should we add more details about the `gh-pages` deployment or CI/CD setup?
-   - *AI Hint: Ask about any GitHub Actions workflows, automated deployment triggers, branch protection rules, or deployment verification steps*
+## Development Tooling & Code Style
 
-2. **Testing strategy**: Should we document manual testing procedures, or is there a test suite to document?
-   - *AI Hint: Check for test files in `src/**/*.test.{js,jsx}` or `__tests__/` directories. Ask about testing libraries (Jest, Vitest, React Testing Library), test coverage requirements, or critical user flows that need manual testing*
+### Code Formatting
+- **No Prettier configured** - Manual formatting following ESLint rules
+- **EditorConfig:** Not configured (consider adding for consistency)
+- **ESLint:** Strict rules enforced via `npm run lint`
+  - React Hooks compliance required
+  - JSX accessibility (a11y) required
+  - No unused variables, no console.log in production code
 
-3. **API/Backend**: Are there backend services or APIs we should document integration patterns for?
-   - *AI Hint: Search for API calls, fetch requests, or backend URLs in the codebase. Ask about authentication patterns, error handling strategies, API versioning, or rate limiting considerations*
+### Git Workflow
+- **Branching strategy:** See [BRANCHING_STRATEGY.md](.github/BRANCHING_STRATEGY.md) for complete guide
+- **Branch naming:**
+  - `feature/*` - New features
+  - `bugfix/*` - Bug fixes
+  - `hotfix/*` - Critical production fixes
+  - `docs/*` - Documentation updates
+  - `chore/*` - Maintenance tasks
+- **Commit conventions:** Follow [Conventional Commits](https://www.conventionalcommits.org/)
+  - Format: `<type>(<scope>): <description>`
+  - Types: feat, fix, docs, style, refactor, perf, test, build, ci, chore
+- **Manual quality checks required** before commit: `npm run check:all`
+- **Git hooks:** Not configured (see [TOOLING_RECOMMENDATIONS.md](.github/TOOLING_RECOMMENDATIONS.md) for Husky setup)
+- **Pull requests:** Required for all changes to `main` (see [PULL_REQUEST_TEMPLATE.md](.github/PULL_REQUEST_TEMPLATE.md))
 
-4. **Additional tools**: Are there other development tools (Prettier, Husky, git hooks, etc.) that should be mentioned?
-   - *AI Hint: Check for `.prettierrc`, `.huskyrc`, or `package.json` git hooks. Ask about code formatting preferences, pre-commit hooks, or editor configurations in `.vscode/` or `.editorconfig`*
+### Testing Strategy
+- **No automated test suite** - Quality enforced via:
+  1. ESLint + Stylelint (syntax & patterns)
+  2. Universal quality checker (`check-quality.js` - 1000+ rules)
+  3. Meta-checker (`check-checker-integrity.js` - validates quality system)
+  4. Manual browser testing (light/dark mode, responsive, keyboard nav)
 
-5. **Team conventions**: Any specific code review practices, branching strategies, or communication patterns to document?
-   - *AI Hint: Ask about PR templates, required reviewers, commit message conventions (Conventional Commits?), branch naming patterns (feature/*, bugfix/*), or merge vs rebase preferences*
+**Critical Manual Test Flows:**
+1. Homepage → Navigate all sections → Order CTA
+2. Locations page → View location details → Get directions
+3. RoCafe menu → Expand items → View full menu
+4. Contact form → Submit (online/offline) → Verify submission
+5. PWA install prompt → Install → Test offline functionality
+6. Dark mode toggle → Verify all pages render correctly
+7. Mobile navigation → Hamburger menu → All links work
 
-**To update this file:** Edit `.github/copilot-instructions.md` and remove answered questions from this section.
+## Deployment Workflow
+
+### GitHub Pages (Staging)
+1. Run `npm run deploy` (builds + pushes to `gh-pages` branch)
+2. Vite builds with `base: /romamart.ca/` for correct asset paths
+3. `scripts/prerender.js` generates static HTML for each route
+4. GitHub Actions automatically deploys `gh-pages` branch
+5. Live at: `https://roma-mart.github.io/romamart.ca/`
+
+### Production (Custom Domain)
+1. Update `vite.config.js`: Change `base: '/'` (remove repo name)
+2. Update Clickio CMP policy links to production URLs
+3. Update GTM container for production environment
+4. Build: `npm run build`
+5. Deploy `dist/` folder to hosting (manual or CI/CD)
+6. Verify GTM + analytics with Tag Assistant Preview
+7. Test all routes with new base path
+
+**Deployment Checklist:**
+- [ ] `npm run check:all` passes with 0 critical/high issues
+- [ ] Build completes without errors
+- [ ] All routes prerendered (check `dist/` for HTML files)
+- [ ] Assets load correctly (check base path)
+- [ ] Service worker registers successfully
+- [ ] PWA manifest valid
+- [ ] Analytics firing correctly
+- [ ] Dark mode works on all pages
+
+## Performance Considerations
+
+### Bundle Optimization
+- **Manual chunks configured** in `vite.config.js`:
+  - `react-vendor`: React + ReactDOM
+  - `icons`: Lucide React + Font Awesome
+  - `motion`: Framer Motion
+- **Code splitting:** All pages lazy loaded via `React.lazy()`
+- **Source maps disabled** to avoid Lucide React corruption issues
+- **Bundle size targets** enforced by quality checker
+
+### Image Optimization
+- Use `loading="lazy"` on all non-critical images
+- Prefer WebP format with fallbacks
+- Serve responsive images via `srcset` when applicable
+- Placeholder images for development (replace with real assets)
+
+### Critical Rendering Path
+1. Inline critical CSS in `src/index.css`
+2. Defer non-critical scripts
+3. Preconnect to external domains (Google Maps, GTM)
+4. Service worker caches assets for repeat visits
 
 ---
 
 **Last Updated:** December 3, 2025  
-**Maintained by:** GitHub Copilot
+**Maintained by:** GitHub Copilot  
+**Codebase Version:** React 19 + Vite 7 (ESM)
