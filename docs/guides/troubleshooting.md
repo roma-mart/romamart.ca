@@ -74,8 +74,13 @@ npm run lint:css
 
 **Solution:**
 ```bash
-# Find and kill process on port 5173
+# Find process on port 5173
 lsof -i :5173
+
+# Try graceful termination first
+kill <PID>
+
+# If that doesn't work, force kill
 kill -9 <PID>
 ```
 

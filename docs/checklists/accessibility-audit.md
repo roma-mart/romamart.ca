@@ -100,7 +100,7 @@
 
 | Tester | Date | Result |
 |--------|------|--------|
-| | | ☐ Pass ☐ Fail |
+| | | Pass / Fail |
 
 ---
 

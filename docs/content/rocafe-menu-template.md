@@ -108,9 +108,9 @@ This template defines the structure for adding menu items to the RoCafé section
 
 ## Data Location
 
-Menu data is stored in:
+Menu data is stored in the data directory. Check the current codebase for the exact file location:
 ```
-src/data/menu.js
+src/data/menu.js     # or similar location
 ```
 
 ## Adding New Items
