@@ -14,10 +14,12 @@ Before merging to `main` and publishing:
 
 3. Secrets
 - [ ] `WEB3FORMS_KEY` set in repository secrets
+- [ ] `GTM_ID` set in repository secrets (for analytics in CI builds)
 
 4. CI
 - [ ] Open PR and wait for `accessibility-ci` to complete
 - [ ] Download `dist` artifact and spot-check pages locally
+- [ ] Verify GTM loaded in built `dist/index.html` (search for `gtm.js?id=` or the container ID)
 
 5. Deploy
 - [ ] Merge PR to `main`
@@ -26,8 +28,9 @@ Before merging to `main` and publishing:
 
 6. Post-Deploy
 - [ ] Verify contact form submits
-- [ ] Verify GTM if configured
+- [ ] Verify GTM events (order_cta_click/contact_form_submit) in analytics
 - [ ] Run rich results test for structured data
+- [ ] Ensure documentation files are up to date on GitHub (DEPLOYMENT_GUIDE.md, CONTENT_GUIDE.md, RELEASE_CHECKLIST.md)
 
 Sign-off
 - Deployer:
