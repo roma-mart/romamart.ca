@@ -12,13 +12,27 @@ dist
 dist-ssr
 *.local
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
+# Node
+node_modules/
+dist/
+.env
+.env.local
+.env.*.local
+
+# OS
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+Thumbs.db
+
+# IDE / Editor
+.vs/
+.vscode/
+.idea/
+
+# Build artifacts
+/build/
+
+# Misc
+public/README.md
+full_index_dump.txt
+index.b64.txt
+temp_index_copy.txt

@@ -44,7 +44,7 @@ const NearestStoreButton = ({ onLocationFound, className = '' }) => {
       onClick={getCurrentLocation}
       disabled={loading}
       className={`inline-flex items-center gap-2 px-6 py-3 rounded-full font-bold font-inter transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
-      style={{ backgroundColor: '#E4B340', color: '#020178' }}
+      style={{ backgroundColor: 'var(--color-primary)', color: 'var(--color-accent)' }}
     >
       {loading ? (
         <>
