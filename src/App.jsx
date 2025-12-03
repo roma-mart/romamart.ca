@@ -85,6 +85,10 @@ const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import
 
 // --- CUSTOM COMPONENTS ---
 function Hero({ onTrackOrder }) {
+  const handleOrderClick = useCallback(() => {
+    if (onTrackOrder) onTrackOrder('hero_section');
+  }, [onTrackOrder]);
+
   return (
     <div id="hero-section" className="relative min-h-[90vh] flex items-center overflow-hidden" style={{ backgroundColor: BRAND.primary }}>
       <BrandPatternBackground className="absolute inset-0" opacity={0.12} />
@@ -99,7 +103,7 @@ function Hero({ onTrackOrder }) {
             <p className="text-lg md:text-xl font-inter mb-6 max-w-lg leading-relaxed" style={{ color: 'rgba(255,255,255,0.8)' }}>Experience Sarnia's newest convenience destination. From daily essentials to bubble tea, we have what you need.</p>
             <div className="mb-6"><ShareButton title="Roma Mart" text="Check out Roma Mart - Sarnia's newest convenience store!" className="bg-white/10 text-white hover:bg-white/20 border border-white/30" /></div>
             <div className="flex flex-col sm:flex-row gap-4">
-              <motion.a href={STORE_DATA.onlineStoreUrl} target="_blank" rel="noopener noreferrer" onClick={() => onTrackOrder && onTrackOrder('hero_section')} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="px-8 py-4 rounded-xl font-bold font-inter text-lg flex items-center justify-center gap-2 shadow-xl shadow-yellow-500/20" style={{ backgroundColor: BRAND.accent, color: BRAND.primary }}>
+              <motion.a href={STORE_DATA.onlineStoreUrl} target="_blank" rel="noopener noreferrer" onClick={handleOrderClick} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="px-8 py-4 rounded-xl font-bold font-inter text-lg flex items-center justify-center gap-2 shadow-xl shadow-yellow-500/20" style={{ backgroundColor: BRAND.accent, color: BRAND.primary }}>
                 ORDER ONLINE NOW <ExternalLink size={20} />
               </motion.a>
               <a href="#locations" className="px-8 py-4 rounded-xl font-bold font-inter text-lg border-2 flex items-center justify-center gap-2 hover:bg-white/5 transition-colors" style={{ borderColor: '#FFFFFF', color: '#FFFFFF' }}>Visit In Store <ArrowRight size={20} /></a>
