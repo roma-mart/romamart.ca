@@ -1,6 +1,5 @@
 import React, { useState, useEffect, Suspense, lazy, useCallback, useMemo, useRef } from 'react';
-// remove unused import
-// import { motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
   ShoppingBasket,
   Star,
@@ -170,7 +169,7 @@ const ServicesScroll = () => {
 
 const RoCafeSection = () => {
   return (
-    <section id="rocafe" className="py-24 relative overflow-hidden text-white" style={{ backgroundColor: 'var(--color-text)' }}>
+    <section id="rocafe" className="py-24 relative overflow-hidden text-white" style={{ backgroundColor: BRAND.primary }}>
       <div className="absolute top-0 right-0 w-1/2 h-full bg-black/20 skew-x-12 transform translate-x-20"></div>
       <div className="max-w-7xl mx-auto px-4 relative z-10">
         <div className="flex flex-col md:flex-row gap-16 items-center">
@@ -537,7 +536,7 @@ const SiteFooter = () => {
   }), []);
 
   return (
-    <footer className="text-white pt-16 pb-8" style={{ backgroundColor: 'var(--color-text)' }}>
+    <footer className="text-white pt-16 pb-8" style={{ backgroundColor: BRAND.primary }}>
       <div className="max-w-7xl mx-auto px-4 grid md:grid-cols-4 gap-12 mb-12">
         <div className="col-span-1 md:col-span-2">
            <a 
@@ -652,16 +651,16 @@ const SiteFooter = () => {
               className="w-full px-4 py-3 rounded-lg font-inter bg-white/10 border border-white/20 text-white focus:outline-none focus:border-yellow-500 transition-colors"
               style={{ cursor: 'pointer' }}
             >
-              <option value="auto" style={{ backgroundColor: 'var(--color-text)', color: 'white' }}>
+              <option value="auto" style={{ backgroundColor: BRAND.primary, color: 'white' }}>
                 {isAutoMode && nearestLocationId
                   ? `🎯 Auto-Detected: ${currentLocation.name}`
                   : '🏢 Auto (HQ - Wellington St.)'}
               </option>
               {activeLocations.map(loc => (
                 <option 
-                  key={loc.id} 
+                  key={loc.id}
                   value={loc.id}
-                  style={{ backgroundColor: 'var(--color-text)', color: 'white' }}
+                  style={{ backgroundColor: BRAND.primary, color: 'white' }}
                 >
                   {loc.name} {loc.isPrimary ? '(HQ)' : ''}
                 </option>
