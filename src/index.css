@@ -111,11 +111,9 @@
   --color-error-bg: #FEF2F2; /* Red-50 for error containers */
   --color-error-dark: #991B1B; /* Red-800 for error text */
   --color-error-darker: #7F1D1D; /* Red-900 for strong error text */
-  
   --color-warning: #78350F; /* Amber-900 for warnings */
   --color-warning-bg: #FFFBEB; /* Amber-50 for warning backgrounds */
   --color-warning-border: #F59E0B; /* Amber-500 for warning borders */
-  
   --color-success: #059669; /* Emerald-600 for success states */
   --color-success-bg: #ECFDF5; /* Emerald-50 for success backgrounds */
 }
@@ -145,11 +143,9 @@
     --color-error-bg: #450A0A; /* Red-950 for dark mode containers */
     --color-error-dark: #FCA5A5; /* Red-300 for dark mode text */
     --color-error-darker: #FEE2E2; /* Red-100 for strong dark mode text */
-    
     --color-warning: #FCD34D; /* Amber-300 for dark mode warnings */
     --color-warning-bg: #451A03; /* Amber-950 for dark mode backgrounds */
     --color-warning-border: #F59E0B; /* Amber-500 for dark mode borders */
-    
     --color-success: #34D399; /* Emerald-400 for dark mode success */
     --color-success-bg: #064E3B; /* Emerald-900 for dark mode backgrounds */
   }
@@ -194,6 +190,7 @@ body {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
