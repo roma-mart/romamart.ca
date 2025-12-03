@@ -18,10 +18,14 @@ import { Logo } from './components/Logo';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import BrandPatternBackground from './components/BrandPatternBackground';
+import ShareButton from './components/ShareButton';
+import Phone from 'lucide-react/dist/esm/icons/phone.js';
+import Clock from 'lucide-react/dist/esm/icons/clock.js';
 
 // PWA Hooks
 import { useServiceWorker } from './hooks/useServiceWorker';
 import { usePageVisibility, useBatteryStatus } from './hooks/useBrowserFeatures';
+import PWAInstallPrompt from './components/PWAInstallPrompt';
 
 // Code splitting: Lazy load page components
 const AccessibilityPage = lazy(() => import('./components/AccessibilityPage'));
@@ -33,6 +37,10 @@ const RoCafePage = lazy(() => import('./pages/RoCafePage'));
 const LocationsPage = lazy(() => import('./pages/LocationsPage'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
+
+// component imports
+import NetworkStatus from  './components/NetworkStatus';
+import CopyButton from './components/CopyButton';
 
 // --- BRAND GUIDELINES & DATA ---
 const BRAND = {
