@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ChevronRight, Heart, Users, Award, MapPin } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
@@ -33,6 +33,10 @@ const AboutPage = () => {
   const handleSelectImage = useCallback((index) => {
     setCurrentImageIndex(index);
   }, []);
+
+  const heroImageHandlers = useMemo(() => {
+    return heroImages.map((_, idx) => () => handleSelectImage(idx));
+  }, [heroImages.length, handleSelectImage]);
 
   const team = [
     {
@@ -139,7 +143,7 @@ const AboutPage = () => {
                 <button
                   type="button"
                   key={index}
-                  onClick={() => handleSelectImage(index)}
+                  onClick={heroImageHandlers[index]}
                   className={`w-2 h-2 rounded-full transition-all ${
                     index === currentImageIndex ? 'w-8' : 'w-2'
                   }`}
