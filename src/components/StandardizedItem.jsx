@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import { getRoleColors } from '../design/tokens';
 
 /**
  * StandardizedItem Component
@@ -53,6 +54,11 @@ const StandardizedItem = ({
 
   const [selectedSize, setSelectedSize] = useState(defaultSize);
 
+  // Toggle handler memoized
+  const toggleExpanded = useCallback(() => {
+    setIsExpanded(prev => !prev);
+  }, []);
+
   // Badge configurations
   const badgeStyles = {
     bestseller: {
@@ -88,18 +94,18 @@ const StandardizedItem = ({
   // 4-state availability system for services
   const getAvailabilityColor = () => {
     if (isAvailable === 'coming-soon') {
-      return '#E4B340'; // Yellow for coming soon
+      return 'var(--color-accent)';
     }
     if (isAvailable === false) {
-      return '#9CA3AF'; // Grey for unavailable at this location
+      return 'var(--color-text-muted)';
     }
     if (locationStatus === 'Open Now') {
-      return '#059669'; // Green for open and available
+      return getRoleColors('open').bg;
     }
     if (locationStatus === 'Closed') {
-      return '#DC2626'; // Red for closed but available
+      return getRoleColors('closed').bg;
     }
-    return 'var(--color-border)'; // Default
+    return 'var(--color-border)';
   };
 
   const isUnavailable = isAvailable === false;
@@ -125,7 +131,7 @@ const StandardizedItem = ({
             left: '50%',
             transform: 'translate(-50%, -50%)',
             fontSize: '6rem',
-            color: '#9CA3AF',
+            color: 'var(--color-text-muted)',
             fontWeight: 'bold',
             opacity: 0.15,
             pointerEvents: 'none',
@@ -146,7 +152,7 @@ const StandardizedItem = ({
             transform: 'translate(-50%, -50%)',
             fontSize: '2rem',
             fontWeight: 'bold',
-            color: '#E4B340',
+            color: 'var(--color-accent)',
             opacity: 0.2,
             textTransform: 'uppercase',
             letterSpacing: '0.1em',
@@ -161,11 +167,11 @@ const StandardizedItem = ({
       {/* BASIC VIEW (Always Visible) */}
       <div 
         className="p-4 cursor-pointer"
-        onClick={() => setIsExpanded(!isExpanded)}
+        onClick={toggleExpanded}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
-            setIsExpanded(!isExpanded);
+            toggleExpanded();
           }
         }}
         role="button"
@@ -211,12 +217,12 @@ const StandardizedItem = ({
                   {icon && <span className="flex-shrink-0">{icon}</span>}
                   {name}
                   {isUnavailable && (
-                    <span className="text-xs font-inter font-normal" style={{ color: '#9CA3AF' }}>
+                    <span className="text-xs font-inter font-normal" style={{ color: 'var(--color-text-muted)' }}>
                       (Not Available)
                     </span>
                   )}
                   {isComingSoon && (
-                    <span className="text-xs font-inter font-bold" style={{ color: '#E4B340' }}>
+                    <span className="text-xs font-inter font-bold" style={{ color: 'var(--color-accent)' }}>
                       (Coming Soon)
                     </span>
                   )}
@@ -226,10 +232,10 @@ const StandardizedItem = ({
                 <div className="flex gap-2 mt-1 flex-wrap">
                   {badgeStyle && (
                     <span 
-                      className="inline-block text-xs font-bold px-2 py-1 rounded-full"
+                      className="badge"
                       style={{ 
-                        backgroundColor: badgeStyle.bg,
-                        color: badgeStyle.text
+                        backgroundColor: getRoleColors(badgeStyle.name || 'bestSeller').bg,
+                        color: getRoleColors(badgeStyle.name || 'bestSeller').text
                       }}
                     >
                       {badgeStyle.label}
@@ -237,10 +243,10 @@ const StandardizedItem = ({
                   )}
                   {ageRestrictedBadge && (
                     <span 
-                      className="inline-block text-xs font-bold px-2 py-1 rounded-full"
+                      className="badge"
                       style={{ 
-                        backgroundColor: ageRestrictedBadge.bg,
-                        color: ageRestrictedBadge.text
+                        backgroundColor: getRoleColors('ageRestricted').bg,
+                        color: getRoleColors('ageRestricted').text
                       }}
                     >
                       {ageRestrictedBadge.label}
@@ -255,6 +261,8 @@ const StandardizedItem = ({
                 className="flex-shrink-0 p-1 rounded-full transition-colors"
                 style={{ color: 'var(--color-heading)' }}
                 aria-label={isExpanded ? "Collapse details" : "Expand details"}
+                onClick={toggleExpanded}
+                aria-expanded={isExpanded}
               >
                 {isExpanded ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
               </button>
@@ -365,21 +373,21 @@ const StandardizedItem = ({
             <div 
               className="p-3 rounded-lg mb-4"
               style={{ 
-                backgroundColor: (isUnavailable || isComingSoon) ? '#F3F4F6' : 'var(--color-bg)',
+                backgroundColor: 'var(--color-bg)',
                 borderLeft: `4px solid ${getAvailabilityColor()}`
               }}
             >
               {isComingSoon ? (
                 <p 
                   className="text-sm font-inter font-bold"
-                  style={{ color: '#E4B340' }}
+                  style={{ color: 'var(--color-accent)' }}
                 >
                   ⏳ Coming Soon to This Location
                 </p>
               ) : isUnavailable ? (
                 <p 
                   className="text-sm font-inter font-bold"
-                  style={{ color: '#9CA3AF' }}
+                  style={{ color: 'var(--color-text-muted)' }}
                 >
                   ✕ Not Available at This Location
                 </p>
@@ -388,9 +396,9 @@ const StandardizedItem = ({
                   {locationStatus && (
                     <p 
                       className="text-sm font-inter font-bold mb-1"
-                      style={{ color: locationStatus === 'Open Now' ? '#059669' : '#DC2626' }}
+                      style={{ color: locationStatus === 'Open Now' ? getRoleColors('open').text : getRoleColors('closed').text }}
                     >
-                      {locationStatus === 'Open Now' ? '● ' : '● '}{locationStatus}
+                      {locationStatus}
                     </p>
                   )}
                   {availability && (
@@ -445,19 +453,19 @@ const StandardizedItem = ({
             <div 
               className="p-3 rounded-lg mb-4 border-2"
               style={{ 
-                backgroundColor: '#FEF2F2',
-                borderColor: '#DC2626'
+                backgroundColor: 'var(--color-error-bg)',
+                borderColor: 'var(--color-error)',
               }}
             >
               <p 
                 className="text-xs font-inter font-bold mb-1"
-                style={{ color: '#DC2626' }}
+                style={{ color: 'var(--color-error)' }}
               >
                 ⚠️ Legal Notice
               </p>
               <p 
                 className="text-xs font-inter mb-2"
-                style={{ color: '#7F1D1D' }}
+                style={{ color: 'var(--color-error-dark)' }}
               >
                 {legalNotice.text}
               </p>
@@ -467,7 +475,7 @@ const StandardizedItem = ({
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-xs font-inter font-bold hover:underline"
-                  style={{ color: '#DC2626' }}
+                  style={{ color: 'var(--color-error)' }}
                   onClick={(e) => e.stopPropagation()}
                 >
                   Learn more: {legalNotice.law}
@@ -510,8 +518,8 @@ const StandardizedItem = ({
               onClick={(e) => e.stopPropagation()}
               className="block w-full py-3 px-4 rounded-lg font-bold font-inter text-center transition-transform hover:scale-105"
               style={{
-                backgroundColor: '#020178',
-                color: '#E4B340',
+                backgroundColor: 'var(--color-primary)',
+                color: 'var(--color-accent)',
                 textDecoration: 'none'
               }}
             >

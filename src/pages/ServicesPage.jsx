@@ -10,8 +10,8 @@ import { getPrimaryLocation, isLocationOpenNow } from '../data/locations';
 
 const ServicesPage = () => {
   const COLORS = {
-    navy: '#020178',
-    yellow: '#E4B340',
+    navy: 'var(--color-primary)',
+    yellow: 'var(--color-accent)',
   };
 
   const textColor = { color: 'var(--color-text)' };

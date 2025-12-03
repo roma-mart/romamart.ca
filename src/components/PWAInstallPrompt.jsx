@@ -184,20 +184,20 @@ const PWAInstallPrompt = () => {
       aria-describedby="pwa-install-description"
     >
       <div
-        className="bg-white rounded-2xl shadow-2xl border-2 border-yellow-400 overflow-hidden"
-        style={{ backgroundColor: 'var(--color-surface)' }}
+        className="rounded-2xl shadow-2xl border-2 overflow-hidden"
+        style={{ backgroundColor: 'var(--color_surface)', borderColor: 'var(--color-accent)' }}
       >
         {/* Header */}
         <div
           className="p-4 flex items-center justify-between"
-          style={{ backgroundColor: '#020178' }}
+          style={{ backgroundColor: 'var(--color-primary)' }}
         >
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-yellow-400 flex items-center justify-center font-bold text-lg" style={{ color: '#020178' }}>
+            <div className="w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg" style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)' }}>
               RM
             </div>
             <div>
-              <h3 id="pwa-install-title" className="font-bold text-white text-lg">
+              <h3 id="pwa-install-title" className="font-bold text-lg" style={{ color: 'white' }}>
                 Install Roma Mart
               </h3>
               <p className="text-sm" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>Quick access anytime</p>
@@ -206,7 +206,8 @@ const PWAInstallPrompt = () => {
           <button
             type="button"
             onClick={handleDismiss}
-            className="text-white hover:text-yellow-400 transition-colors p-1"
+            className="transition-colors p-1"
+            style={{ color: 'white' }}
             aria-label="Dismiss install prompt"
           >
             <X size={24} />
@@ -222,20 +223,20 @@ const PWAInstallPrompt = () => {
           {/* Features */}
           <div className="space-y-3 mb-6">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(34, 197, 94, 0.2)' }}>
-                <span className="text-lg" style={{ color: '#059669' }}>⚡</span>
+              <div className="w-8 h-8 rounded-full flex items_center justify-center flex-shrink-0" style={{ backgroundColor: 'var(--color-success_bg)' }}>
+                <span className="text-lg" style={{ color: 'var(--color-success)' }}>⚡</span>
               </div>
               <span className="text-sm" style={{ color: 'var(--color-text)' }}>Faster loading times</span>
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(228, 179, 64, 0.2)' }}>
-                <span className="text-lg" style={{ color: '#E4B340' }}>📱</span>
+              <div className="w-8 h-8 rounded-full flex items_center justify-center flex-shrink-0" style={{ backgroundColor: 'var(--color-warning_bg)' }}>
+                <span className="text-lg" style={{ color: 'var(--color-accent)' }}>📱</span>
               </div>
               <span className="text-sm" style={{ color: 'var(--color-text)' }}>Works offline</span>
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
-                <span className="text-purple-600 text-lg">🏠</span>
+              <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'var(--color_surface)' }}>
+                <span className="text-lg" style={{ color: 'var(--color-heading)' }}>🏠</span>
               </div>
               <span className="text-sm" style={{ color: 'var(--color-text)' }}>Add to home screen</span>
             </div>
@@ -246,8 +247,8 @@ const PWAInstallPrompt = () => {
             <button
               type="button"
               onClick={handleInstall}
-              className="flex-1 py-3 px-4 rounded-xl font-bold text-white flex items-center justify-center gap-2 transition-transform hover:scale-105 shadow-lg"
-              style={{ backgroundColor: '#E4B340', color: '#020178' }}
+              className="flex-1 py-3 px-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-transform hover:scale-105 shadow-lg"
+              style={{ backgroundColor: 'var(--color-primary)', color: 'var(--color-accent)' }}
             >
               <Download size={20} />
               Install App

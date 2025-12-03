@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ChevronRight, ChevronDown, Coffee, Wine, UtensilsCrossed, IceCream, Sparkles } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
@@ -7,8 +7,8 @@ import { useLocationAware } from '../hooks/useLocationContext';
 
 const RoCafePage = () => {
   const COLORS = {
-    navy: '#020178',
-    yellow: '#E4B340',
+    navy: 'var(--color-primary)',
+    yellow: 'var(--color-accent)',
   };
 
   const textColor = { color: 'var(--color-text)' };
@@ -17,7 +17,11 @@ const RoCafePage = () => {
   const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
 
   const [expandedCategory, setExpandedCategory] = useState(null);
-  
+
+  const toggleCategory = useCallback((categoryId) => {
+    setExpandedCategory(prev => prev === categoryId ? null : categoryId);
+  }, []);
+
   // Auto-request location since StandardizedItem components need it
   useLocationAware(() => {
     // Location stored and available for StandardizedItem availability states
@@ -92,10 +96,6 @@ const RoCafePage = () => {
       items: []
     }
   ];
-
-  const toggleCategory = (categoryId) => {
-    setExpandedCategory(expandedCategory === categoryId ? null : categoryId);
-  };
 
   return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>

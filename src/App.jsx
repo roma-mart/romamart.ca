@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense, lazy } from 'react';
+import React, { useState, useEffect, Suspense, lazy, useCallback, useMemo } from 'react';
 import { LocationProvider } from './components/LocationProvider';
 import { getPrimaryLocation, getActiveLocationCount, LOCATIONS, getActiveLocations, isLocationOpenNow } from './data/locations';
 import { useLocationContext } from './hooks/useLocationContext';
@@ -81,7 +81,7 @@ const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import
 
 // --- CUSTOM COMPONENTS ---
 
-function Hero() {
+function Hero({ onTrackOrder }) {
   return (
     <div id="hero-section" className="relative min-h-[90vh] flex items-center overflow-hidden" style={{ backgroundColor: BRAND.primary }}>
       {/* Add BrandPatternBackground overlay */}
@@ -125,7 +125,7 @@ function Hero() {
                 href={STORE_DATA.onlineStoreUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={() => trackOrderClick('hero_section')}
+                onClick={onTrackOrder}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="px-8 py-4 rounded-xl font-bold font-inter text-lg flex items-center justify-center gap-2 shadow-xl shadow-yellow-500/20"
@@ -175,7 +175,7 @@ function Hero() {
 const ServicesScroll = () => {
   const scrollRef = React.useRef(null);
 
-  const scroll = (direction) => {
+  const scrollByAmount = useCallback((direction) => {
     if (scrollRef.current) {
       const scrollAmount = 320; // Card width + gap
       scrollRef.current.scrollBy({
@@ -183,7 +183,10 @@ const ServicesScroll = () => {
         behavior: 'smooth'
       });
     }
-  };
+  }, []);
+
+  const scrollLeft = useCallback(() => scrollByAmount('left'), [scrollByAmount]);
+  const scrollRight = useCallback(() => scrollByAmount('right'), [scrollByAmount]);
 
   return (
     <section id="services" className="py-20 overflow-hidden" style={{ backgroundColor: BRAND.surface }}>
@@ -197,7 +200,7 @@ const ServicesScroll = () => {
         {/* Scroll buttons for desktop */}
         <button
           type="button"
-          onClick={() => scroll('left')}
+          onClick={scrollLeft}
           className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full items-center justify-center shadow-lg hover:scale-110 transition-transform"
           style={{ backgroundColor: BRAND.accent, color: BRAND.primary }}
           aria-label="Scroll left"
@@ -206,7 +209,7 @@ const ServicesScroll = () => {
         </button>
         <button
           type="button"
-          onClick={() => scroll('right')}
+          onClick={scrollRight}
           className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full items-center justify-center shadow-lg hover:scale-110 transition-transform"
           style={{ backgroundColor: BRAND.accent, color: BRAND.primary }}
           aria-label="Scroll right"
@@ -327,6 +330,13 @@ const Locations = () => {
   
   const [activeLoc, setActiveLoc] = useState(displayLocation);
 
+  // create memoized handlers for each location to avoid inline closures
+  const locationHandlers = React.useMemo(() => {
+    const map = {};
+    [displayLocation].forEach(loc => { map[loc.id] = () => setActiveLoc(loc); });
+    return map;
+  }, [displayLocation]);
+
   return (
     <section id="locations" className="py-24" style={{ backgroundColor: BRAND.bg }}>
       <div className="max-w-7xl mx-auto px-4">
@@ -341,7 +351,7 @@ const Locations = () => {
               <button
                 type="button"
                 key={loc.id}
-                onClick={() => setActiveLoc(loc)}
+                onClick={locationHandlers[loc.id]}
                 className="w-full text-left p-6 rounded-xl border-2 transition-all"
                 style={{ 
                   borderColor: activeLoc.id === loc.id ? BRAND.primary : BRAND.surface,
@@ -394,6 +404,13 @@ const ContactSection = () => {
   const mutedTextColor = { color: BRAND.text, opacity: 0.7 };
   const primaryLocation = getPrimaryLocation();
   
+  const handleContactSubmit = useCallback(() => {
+    if (window.dataLayer) {
+      window.dataLayer.push({ event: 'contact_form_submit', form_location: 'contact_section' });
+    }
+    // allow normal form submission to proceed
+  }, []);
+
   return (
     <section id="contact" className="py-24" style={{ backgroundColor: BRAND.surface }}>
       <div className="max-w-7xl mx-auto px-4">
@@ -464,14 +481,7 @@ const ContactSection = () => {
               action="https://api.web3forms.com/submit" 
               method="POST" 
               className="space-y-6"
-              onSubmit={() => {
-                if (window.dataLayer) {
-                  window.dataLayer.push({
-                    event: 'contact_form_submit',
-                    form_location: 'contact_section'
-                  });
-                }
-              }}
+              onSubmit={handleContactSubmit}
             >
               {/* Web3Forms Access Key is set in STORE_DATA */}
               <input type="hidden" name="access_key" value={STORE_DATA.contact.web3FormsAccessKey} />
@@ -611,6 +621,15 @@ const SiteFooter = () => {
   const isAutoMode = selectedLocationId === 'auto';
   const activeLocations = getActiveLocations();
 
+  // memoize social handlers map
+  const socialHandlers = useMemo(() => ({
+    facebook: () => window.dataLayer?.push({ event: 'social_click', platform: 'facebook' }),
+    instagram: () => window.dataLayer?.push({ event: 'social_click', platform: 'instagram' }),
+    tiktok: () => window.dataLayer?.push({ event: 'social_click', platform: 'tiktok' }),
+    x: () => window.dataLayer?.push({ event: 'social_click', platform: 'x' }),
+    snapchat: () => window.dataLayer?.push({ event: 'social_click', platform: 'snapchat' })
+  }), []);
+
   return (
     <footer className="text-white pt-16 pb-8" style={{ backgroundColor: 'var(--color-text)' }}>
       <div className="max-w-7xl mx-auto px-4 grid md:grid-cols-4 gap-12 mb-12">
@@ -632,7 +651,7 @@ const SiteFooter = () => {
                 rel="noopener noreferrer" 
                 className="w-10 h-10 rounded-full bg_white/10 flex items_center justify_center hover:bg-yellow-500 transition-colors" 
                 title="Facebook"
-                onClick={() => window.dataLayer?.push({ event: 'social_click', platform: 'facebook' })}
+                onClick={socialHandlers.facebook}
               >
                 <FontAwesomeIcon icon={faFacebook} size="lg" style={{ color: BRAND.accent }} />
               </a>
@@ -642,7 +661,7 @@ const SiteFooter = () => {
                 rel="noopener noreferrer" 
                 className="w-10 h-10 rounded-full bg_white/10 flex items_center justify_center hover:bg-yellow-500 transition-colors" 
                 title="Instagram"
-                onClick={() => window.dataLayer?.push({ event: 'social_click', platform: 'instagram' })}
+                onClick={socialHandlers.instagram}
               >
                 <FontAwesomeIcon icon={faInstagram} size="lg" style={{ color: BRAND.accent }} />
               </a>
@@ -652,7 +671,7 @@ const SiteFooter = () => {
                 rel="noopener noreferrer" 
                 className="w-10 h-10 rounded-full bg_white/10 flex items_center justify_center hover:bg-yellow-500 transition-colors" 
                 title="TikTok"
-                onClick={() => window.dataLayer?.push({ event: 'social_click', platform: 'tiktok' })}
+                onClick={socialHandlers.tiktok}
               >
                 <FontAwesomeIcon icon={faTiktok} size="lg" style={{ color: BRAND.accent }} />
               </a>
@@ -662,7 +681,7 @@ const SiteFooter = () => {
                 rel="noopener noreferrer" 
                 className="w-10 h-10 rounded-full bg_white/10 flex items_center justify_center hover:bg-yellow-500 transition-colors" 
                 title="X (Twitter)"
-                onClick={() => window.dataLayer?.push({ event: 'social_click', platform: 'x' })}
+                onClick={socialHandlers.x}
               >
                 <FontAwesomeIcon icon={faXTwitter} size="lg" style={{ color: BRAND.accent }} />
               </a>
@@ -672,7 +691,7 @@ const SiteFooter = () => {
                 rel="noopener noreferrer" 
                 className="w-10 h-10 rounded-full bg_white/10 flex items_center justify_center hover:bg-yellow-500 transition-colors" 
                 title="Snapchat"
-                onClick={() => window.dataLayer?.push({ event: 'social_click', platform: 'snapchat' })}
+                onClick={socialHandlers.snapchat}
               >
                 <FontAwesomeIcon icon={faSnapchat} size="lg" style={{ color: BRAND.accent }} />
               </a>
@@ -817,6 +836,18 @@ function App() {
 
   const currentPage = getPage();
 
+  const handleTrackOrderClick = useCallback((location = 'hero_section') => {
+    try {
+      if (typeof window.trackOrderClick === 'function') {
+        window.trackOrderClick(location);
+      }
+    } catch {}
+
+    if (window.dataLayer) {
+      window.dataLayer.push({ event: 'order_cta_click', cta_location: location, cta_text: 'Order Online' });
+    }
+  }, []);
+
   return (
     <LocationProvider>
       <div className="min-h-screen flex flex-col" style={{ backgroundColor: BRAND.bg }}>
@@ -840,7 +871,7 @@ function App() {
             <>
               {/* WCAG 2.2 AA: Skip Navigation Link (Operable 2.4.1) */}
               <a href="#main-content" className="skip-link">Skip to main content</a>
-              <Hero />
+              <Hero onTrackOrder={() => handleTrackOrderClick('hero_section')} />
               <div id="main-content">
                 <ServicesScroll />
                 <RoCafeSection />

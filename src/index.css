@@ -204,3 +204,28 @@ body {
   animation: fade-in-up 0.5s ease-out 1s forwards;
   opacity: 0;
 }
+
+:root {
+  /* Font fallback stacks */
+  --font-body: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-heading: Poppins, Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+body { font-family: var(--font-body); }
+
+.h1, h1 { font-family: var(--font-heading); font-weight: 700; }
+.h2, h2 { font-family: var(--font-heading); font-weight: 600; }
+.h3, h3 { font-family: var(--font-heading); font-weight: 600; }
+
+/* Typography utilities for consistency */
+.text-body { font-family: var(--font-body); }
+.text-heading { font-family: var(--font-heading); }
+
+/* Role badge helpers */
+.badge { display:inline-flex; align-items:center; gap:6px; padding:4px 8px; border-radius:999px; font-weight:600; font-size:0.75rem; }
+.badge-icon { width:14px; height:14px; }
+
+/* Placeholder image frame for content phase */
+.placeholder-frame { background: var(--color-surface); border: 1px dashed var(--color-border); color: var(--color-text-muted); display:flex; align-items:center; justify-content:center; }
+.placeholder-frame.square { aspect-ratio: 1 / 1; }
+.placeholder-frame.rect { aspect-ratio: 4 / 3; }

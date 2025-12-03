@@ -18,30 +18,27 @@
  */
 export const CSS_VARS = {
   // Backgrounds
-  bg: 'var(--color-bg)',           // #fff (light) / #0b0b0b (dark)
-  surface: 'var(--color-surface)', // #f8f8f8 (light) / #1a1a1a (dark)
-  border: 'var(--color-border)',   // #e5e5e5 (light) / #2a2a2a (dark)
+  bg: 'var(--color-bg)',
+  surface: 'var(--color-surface)',
+  border: 'var(--color-border)',
   
   // Text
-  text: 'var(--color-text)',             // #151515 (light) / #f4f4f4 (dark)
-  textMuted: 'var(--color-text-muted)',  // #5a5a5a (light) / #a8a8a8 (dark)
+  text: 'var(--color-text)',
+  textMuted: 'var(--color-text-muted)',
   
   // Brand
-  primary: 'var(--color-primary)',   // #020178 (light) / #E4B340 (dark)
-  accent: 'var(--color-accent)',     // #E4B340 (both modes)
-  heading: 'var(--color-heading)',   // #020178 (light) / #E4B340 (dark)
-  icon: 'var(--color-icon)',         // #020178 (light) / #E4B340 (dark)
+  primary: 'var(--color-primary)',
+  accent: 'var(--color-accent)',
+  heading: 'var(--color-heading)',
+  icon: 'var(--color-icon)',
 };
 
-/**
- * Brand Colors (Static)
- * Use these for elements that should remain consistent regardless of theme
- */
+// Brand colors (dynamic via CSS variables)
 export const BRAND_COLORS = {
-  navy: '#020178',
-  yellow: '#E4B340',
-  black: '#151515',
-  white: '#ffffff',
+  navy: 'var(--color-primary)',
+  yellow: 'var(--color-accent)',
+  black: 'var(--color-text)',
+  white: 'var(--color-bg)',
 };
 
 /**
@@ -143,9 +140,7 @@ export const getBackgroundStyle = (variant = 'bg') => {
  * </div>
  * ```
  */
-export const combineStyles = (...styles) => {
-  return Object.assign({}, ...styles);
-};
+export const combineStyles = (...styles) => Object.assign({}, ...styles);
 
 /**
  * Special colors for always-dark backgrounds (Footer, RoCafé section)
@@ -169,9 +164,7 @@ export const DARK_BG_COLORS = {
  * <p style={getDarkBgTextStyle('muted')}>Footer text</p>
  * ```
  */
-export const getDarkBgTextStyle = (variant = 'text') => {
-  return { color: DARK_BG_COLORS[variant] || DARK_BG_COLORS.text };
-};
+export const getDarkBgTextStyle = (variant = 'text') => ({ color: DARK_BG_COLORS[variant] || DARK_BG_COLORS.text });
 
 /**
  * WCAG 2.2 AA Contrast Ratios (for reference)

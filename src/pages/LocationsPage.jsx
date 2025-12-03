@@ -9,8 +9,8 @@ import { getActiveLocations, getLocationsByDistance, formatDistance } from '../d
 
 const LocationsPage = () => {
   const COLORS = {
-    navy: '#020178',
-    yellow: '#E4B340',
+    navy: 'var(--color-primary)',
+    yellow: 'var(--color-accent)',
   };
 
   const textColor = { color: 'var(--color-text)' };

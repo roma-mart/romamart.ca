@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ChevronRight, Heart, Users, Award, MapPin } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
 
 const AboutPage = () => {
   const COLORS = {
-    navy: '#020178',
-    yellow: '#E4B340',
+    navy: 'var(--color-primary)',
+    yellow: 'var(--color-accent)',
   };
 
   const textColor = { color: 'var(--color-text)' };
@@ -29,6 +29,10 @@ const AboutPage = () => {
     }, 5000);
     return () => clearInterval(interval);
   }, [heroImages.length]);
+
+  const handleSelectImage = useCallback((index) => {
+    setCurrentImageIndex(index);
+  }, []);
 
   const team = [
     {
@@ -135,7 +139,7 @@ const AboutPage = () => {
                 <button
                   type="button"
                   key={index}
-                  onClick={() => setCurrentImageIndex(index)}
+                  onClick={() => handleSelectImage(index)}
                   className={`w-2 h-2 rounded-full transition-all ${
                     index === currentImageIndex ? 'w-8' : 'w-2'
                   }`}

@@ -5,8 +5,8 @@ import ShareButton from '../components/ShareButton';
 
 const CookiesPage = () => {
   const COLORS = {
-    navy: '#020178',
-    yellow: '#E4B340',
+    navy: 'var(--color-primary)',
+    yellow: 'var(--color-accent)',
   };
 
   const textColor = { color: 'var(--color-text)' };
@@ -76,7 +76,7 @@ const CookiesPage = () => {
                 </p>
               </div>
 
-              <div className="border-l-4 pl-4" style={{ borderLeftColor: '#E4B340' }}>
+              <div className="border-l-4 pl-4" style={{ borderLeftColor: 'var(--color-accent)' }}>
                 <h3 className="text-xl font-coco uppercase mb-2" style={{ color: 'var(--color-heading)' }}>
                   Analytics Cookies
                 </h3>

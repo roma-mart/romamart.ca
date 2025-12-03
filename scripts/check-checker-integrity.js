@@ -42,6 +42,7 @@ const DEV_ETHOS = {
     'Dark mode compatibility',
     'Performance optimization',
     'Security by default',
+    'Deep understanding before action' // Added principle Dec 1 2025
   ],
   
   brandGuidelines: {
@@ -210,7 +211,8 @@ function checkDevEthosAlignment() {
   console.log(`${colors.blue}🎯 Checking dev ethos alignment...${colors.reset}`);
   
   const checkQuality = fs.readFileSync(path.join(__dirname, 'check-quality.js'), 'utf8');
-  const preCommitHook = fs.readFileSync(path.join(__dirname, '../.git/hooks/pre-commit'), 'utf8');
+  const hookPath = path.join(__dirname, '../.git/hooks/pre-commit');
+  const preCommitHook = fs.existsSync(hookPath) ? fs.readFileSync(hookPath, 'utf8') : '';
   
   // Principle 1: "Systems over spot fixes"
   // Checkers should validate patterns, not individual instances
@@ -227,17 +229,25 @@ function checkDevEthosAlignment() {
   }
   
   // Principle 2: "Automated development"
-  // Checkers should run automatically, not require manual intervention
-  const hasAutomation = preCommitHook.includes('npm run') || preCommitHook.includes('node scripts');
-  
-  if (!hasAutomation) {
+  if (!preCommitHook) {
     issues.push({
-      severity: 'HIGH',
+      severity: 'INFO',
       checker: 'Automation',
-      issue: 'Quality checks not integrated into git hooks',
-      impact: 'Developers must remember to run checks manually',
-      fix: 'Ensure pre-commit and pre-push hooks call quality checkers',
+      issue: 'Git hooks not present (fresh clone)',
+      impact: 'Quality checks must be run manually until hooks added',
+      fix: 'Add pre-commit/pre-push hooks or Husky to run checkers automatically',
     });
+  } else {
+    const hasAutomation = preCommitHook.includes('npm run') || preCommitHook.includes('node scripts');
+    if (!hasAutomation) {
+      issues.push({
+        severity: 'HIGH',
+        checker: 'Automation',
+        issue: 'Quality checks not integrated into git hooks',
+        impact: 'Developers must remember to run checks manually',
+        fix: 'Ensure pre-commit and pre-push hooks call quality checkers',
+      });
+    }
   }
   
   // Principle 3: "Universal standards"
