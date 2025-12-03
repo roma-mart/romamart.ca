@@ -9,8 +9,8 @@ import { queueFormSubmission, getPendingCount } from '../utils/indexedDB';
 
 const ContactPage = () => {
   const COLORS = {
-    navy: '#020178',
-    yellow: '#E4B340',
+    navy: 'var(--color-primary)',
+    yellow: 'var(--color-accent)',
   };
 
   const textColor = { color: 'var(--color-text)' };
@@ -114,6 +114,8 @@ const ContactPage = () => {
     }
   };
 
+  const formAccessKey = import.meta.env.VITE_WEB3FORMS_KEY || '';
+
   return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>
       <Helmet>
@@ -170,6 +172,7 @@ const ContactPage = () => {
                     href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(STORE_DATA.locations[0].address)}`}
                     target="_blank"
                     rel="noopener noreferrer"
+                    aria-label="Get directions to Roma Mart"
                     className="inline-block mt-2 font-inter text-sm font-semibold hover:underline"
                     style={{ color: COLORS.yellow }}
                   >
@@ -242,8 +245,8 @@ const ContactPage = () => {
             )}
 
             {formStatus === 'queued' && (
-              <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'rgba(228, 179, 64, 0.1)', borderColor: '#E4B340' }}>
-                <p className="font-inter" style={{ color: '#E4B340' }}>📥 Message saved! Will be sent automatically when connection is restored.</p>
+              <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'var(--color-accent-bg, rgba(228, 179, 64, 0.1))', borderColor: 'var(--color-accent)' }}>
+                <p className="font-inter" style={{ color: 'var(--color-accent)' }}>📥 Message saved! Will be sent automatically when connection is restored.</p>
               </div>
             )}
 
@@ -260,7 +263,7 @@ const ContactPage = () => {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              <input type="hidden" name="access_key" value="YOUR_WEB3FORMS_KEY" />
+              <input type="hidden" name="access_key" value={formAccessKey} />
               <input type="hidden" name="subject" value="New Contact Form Submission from romamart.ca" />
 
               <div>

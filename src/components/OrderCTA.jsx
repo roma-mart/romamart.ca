@@ -46,8 +46,13 @@ const OrderCTA = ({ orderUrl = 'https://nrsplus.com/orders/your-store-link' }) =
       });
     }
     
-    // Open ordering link from STORE_DATA config
-    window.open(orderUrl, '_blank', 'noopener,noreferrer');
+    // Open in new tab securely
+    try {
+      window.open(orderUrl, '_blank', 'noopener,noreferrer');
+    } catch (e) {
+      // fallback to location assign if window.open blocked
+      window.location.href = orderUrl;
+    }
   };
 
   return (
@@ -62,7 +67,7 @@ const OrderCTA = ({ orderUrl = 'https://nrsplus.com/orders/your-store-link' }) =
       aria-label="Order online from Roma Mart"
       aria-hidden={!isVisible}
     >
-      <ShoppingCart className="w-6 h-6" />
+      <ShoppingCart className="w-6 h-6" aria-hidden="true" />
       <span>Order Online</span>
     </button>
   );
