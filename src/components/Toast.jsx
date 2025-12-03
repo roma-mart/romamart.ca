@@ -12,7 +12,6 @@ const Toast = ({ message, type = 'info', duration = 3000, onClose }) => {
       const timer = setTimeout(() => {
         onClose();
       }, duration);
-
       return () => clearTimeout(timer);
     }
   }, [duration, onClose]);
@@ -28,26 +27,26 @@ const Toast = ({ message, type = 'info', duration = 3000, onClose }) => {
     }
   };
 
-  const getStyles = () => {
-    const base = 'flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg border-2 backdrop-blur-sm';
+  const base = 'flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg border-2 backdrop-blur-sm';
+  const getClasses = () => {
     switch (type) {
       case 'success':
         return `${base} border-green-500`;
       case 'error':
         return `${base} border-red-500`;
       default:
-        return `${base} border-yellow-500`;
+        return `${base} border-[var(--color-accent)]`;
     }
   };
-  
+
   const getColors = () => {
     switch (type) {
       case 'success':
-        return { backgroundColor: 'rgba(34, 197, 94, 0.1)', color: '#059669' };
+        return { backgroundColor: 'var(--color-success-bg)', color: 'var(--color-success)' };
       case 'error':
-        return { backgroundColor: 'rgba(239, 68, 68, 0.1)', color: '#DC2626' };
+        return { backgroundColor: 'var(--color-error-bg)', color: 'var(--color-error)' };
       default:
-        return { backgroundColor: 'rgba(228, 179, 64, 0.1)', color: '#E4B340' };
+        return { backgroundColor: 'var(--color-accent-bg, rgba(228,179,64,0.1))', color: 'var(--color-accent)' };
     }
   };
 
@@ -55,7 +54,7 @@ const Toast = ({ message, type = 'info', duration = 3000, onClose }) => {
     <div
       role="alert"
       aria-live="polite"
-      className={getStyles()}
+      className={getClasses()}
       style={getColors()}
     >
       {getIcon()}

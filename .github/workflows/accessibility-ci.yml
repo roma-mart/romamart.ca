@@ -48,6 +48,9 @@ jobs:
         run: npm ci
 
       - name: Build site
+        env:
+          VITE_WEB3FORMS_KEY: ${{ secrets.WEB3FORMS_KEY }}
+          VITE_GTM_ID: ${{ secrets.GTM_ID }}
         run: npm run build
 
       - name: Upload dist artifacts
@@ -100,6 +103,9 @@ jobs:
         run: npm ci
 
       - name: Build site
+        env:
+          VITE_WEB3FORMS_KEY: ${{ secrets.WEB3FORMS_KEY }}
+          VITE_GTM_ID: ${{ secrets.GTM_ID }}
         run: npm run build
 
       - name: Deploy to GitHub Pages

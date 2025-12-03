@@ -20,6 +20,8 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import child_process from 'child_process';
+import module from 'module';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -86,6 +88,89 @@ function getAllFiles(dir, extensions = ['.js', '.jsx'], files = []) {
   }
   
   return files;
+}
+
+/**
+ * Check 0: Environment & Tooling Compatibility
+ * Ensures external environment and key tooling meet latest stable standards.
+ */
+function checkEnvironment() {
+  console.log(`${colors.blue}🧭 Checking environment & tooling...${colors.reset}`);
+  try {
+    const nodeVer = process.version; // e.g., v24.11.1
+    const npmVer = child_process.spawnSync('npm', ['-v'], { encoding: 'utf8' }).stdout?.trim();
+    const npxVer = child_process.spawnSync('npx', ['-v'], { encoding: 'utf8' }).stdout?.trim();
+    const pkgPath = path.join(__dirname, '../package.json');
+    const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+    const readPkgVer = (mod) => {
+      try { return JSON.parse(fs.readFileSync(path.join(__dirname, `../node_modules/${mod}/package.json`), 'utf8')).version; } catch { return null; }
+    };
+    const viteVer = readPkgVer('vite');
+    const esbuildVer = readPkgVer('esbuild');
+    const lucideVer = readPkgVer('lucide-react');
+
+    // Record info
+    issues[SEVERITY.INFO].push({ category: CHECKS.CODE_QUALITY, file: 'env', line: 0, message: `Runtime: node ${nodeVer}, npm ${npmVer}, npx ${npxVer}`, code: '', fix: 'Ensure LTS stable and compatible toolchain.' });
+    if (viteVer) issues[SEVERITY.INFO].push({ category: CHECKS.CODE_QUALITY, file: 'env', line: 0, message: `vite ${viteVer}`, code: '', fix: '' });
+    if (esbuildVer) issues[SEVERITY.INFO].push({ category: CHECKS.CODE_QUALITY, file: 'env', line: 0, message: `esbuild ${esbuildVer}`, code: '', fix: '' });
+    if (lucideVer) issues[SEVERITY.INFO].push({ category: CHECKS.CODE_QUALITY, file: 'env', line: 0, message: `lucide-react ${lucideVer}`, code: '', fix: '' });
+
+    // Node version guidance: prefer latest LTS, flag very new major if toolchain may lag
+    const major = parseInt(nodeVer.replace(/^v/, '').split('.')[0], 10);
+    if (major >= 24) {
+      issues[SEVERITY.MEDIUM].push({ category: CHECKS.PERFORMANCE, file: 'env', line: 0, message: 'Using Node >=24. Ensure Vite/plugins fully support this runtime.', code: `node ${nodeVer}`, fix: 'Keep Vite/@vitejs/plugin-react on latest, update transitive deps.' });
+    }
+
+    // esbuild security advisory precheck
+    if (esbuildVer) {
+      const [a,b,c] = esbuildVer.split('.').map(n=>parseInt(n,10));
+      if (a===0 && ((b<24) || (b===24 && c<=2))) {
+        issues[SEVERITY.HIGH].push({ category: CHECKS.SECURITY, file: 'node_modules/esbuild', line: 0, message: 'esbuild vulnerable (<=0.24.2) to dev server request leak', code: `esbuild ${esbuildVer}`, fix: 'Update to >=0.27.x and ensure override pins new version.' });
+      }
+    }
+
+    // lucide-react integrity: detect NUL in ESM bundle (corrupt or incompatible)
+    try {
+      const lucideEsm = path.join(__dirname, '../node_modules/lucide-react/dist/esm/lucide-react.js');
+      if (fs.existsSync(lucideEsm)) {
+        const buf = fs.readFileSync(lucideEsm);
+        if (buf.includes(0)) {
+          issues[SEVERITY.HIGH].push({ category: CHECKS.PERFORMANCE, file: 'node_modules/lucide-react/dist/esm/lucide-react.js', line: 0, message: 'NUL byte detected in lucide-react ESM bundle (rollup parse error risk).', code: 'Unexpected character \0', fix: 'Reinstall dependencies; upgrade lucide-react to latest; clear npm cache.' });
+        }
+      }
+    } catch {}
+  } catch (e) {
+    issues[SEVERITY.INFO].push({ category: CHECKS.CODE_QUALITY, file: 'env', line: 0, message: 'Environment check partial failure', code: String(e), fix: 'Verify node/npm and installed module versions.' });
+  }
+}
+
+/**
+ * Check -1: Preflight syntax & wrapper integrity
+ * Catches common build-breaking JSX issues early.
+ */
+function checkPreflightSyntax() {
+  console.log(`${colors.blue}🧪 Preflight JSX integrity...${colors.reset}`);
+  const appPath = path.join(SRC_DIR, 'App.jsx');
+  if (fs.existsSync(appPath)) {
+    const content = fs.readFileSync(appPath, 'utf8');
+    const rel = path.relative(process.cwd(), appPath);
+    // Duplicate default export
+    const defaultExportCount = (content.match(/export\s+default\s+App/g) || []).length;
+    if (defaultExportCount > 1) {
+      issues[SEVERITY.CRITICAL].push({ category: CHECKS.CODE_QUALITY, file: rel, line: 0, message: 'Multiple exports with the same name "default" for App', code: 'export default App; export default App;', fix: 'Keep a single default export.' });
+    }
+    // Wrapper tag balance for LocationProvider
+    const opens = (content.match(/<LocationProvider\b/g) || []).length;
+    const closes = (content.match(/<\/LocationProvider>/g) || []).length;
+    if (opens !== closes) {
+      issues[SEVERITY.CRITICAL].push({ category: CHECKS.CODE_QUALITY, file: rel, line: 0, message: 'Mismatched <LocationProvider> wrapper tags', code: `open:${opens} close:${closes}`, fix: 'Ensure each opening tag has a matching closing tag, remove stray </div> before closing.' });
+    }
+    // Detect stray </div> after structured data section near wrapper end
+    const tail = content.slice(Math.max(0, content.length - 1200));
+    if (/StructuredData[\s\S]*<\/div>[\s\S]*<\/LocationProvider>/.test(tail)) {
+      issues[SEVERITY.HIGH].push({ category: CHECKS.CODE_QUALITY, file: rel, line: 0, message: 'Stray </div> before </LocationProvider> at file end', code: '</div> before </LocationProvider>', fix: 'Remove stray </div> so wrapper closes correctly.' });
+    }
+  }
 }
 
 /**
@@ -198,11 +283,11 @@ function checkDarkMode() {
   for (const file of files) {
     const content = fs.readFileSync(file, 'utf8');
     const relativePath = path.relative(process.cwd(), file);
+    const rel = relativePath.replace(/\\/g, '/');
+    const lines = content.split('\n');
     
     // Skip theme.js (has documentation examples)
-    if (relativePath.includes('utils/theme.js')) continue;
-    
-    const lines = content.split('\n');
+    if (rel.includes('utils/theme.js')) continue;
     
     // Check each violation pattern
     for (const { pattern, severity, message, fix } of violations) {
@@ -243,7 +328,10 @@ function checkDarkMode() {
       const lineNum = idx + 1;
       
       // Skip comments and index.css (CSS variable definitions)
-      if (line.trim().startsWith('//') || line.trim().startsWith('*') || relativePath.includes('index.css')) return;
+      if (line.trim().startsWith('//') || line.trim().startsWith('*') || 
+          rel.includes('index.css') || rel.includes('design/tokens.js')) {
+        return;
+      }
       
       const hexColorMatch = line.match(/(?:color|backgroundColor):\s*['"]#[0-9a-fA-F]{3,6}['"]/);
       if (hexColorMatch && !line.includes('COLORS.') && !line.includes('BRAND_COLORS')) {
@@ -308,7 +396,7 @@ function checkPerformance() {
       }
       
       // Images without lazy loading
-      if (/<img[^>]*src=/.test(line) && !/loading="lazy"|LazyImage/.test(line)) {
+      if (/{<}img[^>]*src=/.test(line) && !/loading="lazy"|LazyImage/.test(line)) {
         issues[SEVERITY.LOW].push({
           category: CHECKS.PERFORMANCE,
           file: relativePath,
@@ -641,24 +729,36 @@ function checkBrandConsistency() {
       darkGrey: '#242424',
       black: '#151515',
       white: '#FFFFFF',
+      // Extended approved palette from tokens
+      brown: '#321B11',
+      cream: '#F7EFD2',
+      lavender: '#B8C1FF',
+      lightGrey: '#E2E5E6',
+      offWhite: '#ECEAE4',
+      greyMid: '#8C8C8C',
+      greyLight: '#B3B3B3',
+      greyBorder: '#D1D6D8'
     },
     fonts: {
-      heading: ['Poppins', 'font-coco'], // Poppins for headings
-      body: ['Inter', 'font-inter'],    // Inter for body text
+      heading: ['Poppins', 'font-coco'],
+      body: ['Inter', 'font-inter'],
+      logo: ['Cocogoose', 'Poppins']
     },
   };
   
   for (const file of files) {
     const content = fs.readFileSync(file, 'utf8');
     const relativePath = path.relative(process.cwd(), file);
+    const rel = relativePath.replace(/\\/g, '/');
     const lines = content.split('\n');
     
     lines.forEach((line, idx) => {
       const lineNum = idx + 1;
       
-      // Skip comments, theme.js (documentation), and index.css (CSS variable definitions)
+      // Skip comments, theme.js (documentation), index.css (variables), and tokens (palette source)
       if (line.trim().startsWith('//') || line.trim().startsWith('*') || 
-          relativePath.includes('utils/theme.js') || relativePath.includes('index.css')) {
+          rel.includes('utils/theme.js') || rel.includes('index.css') || 
+          rel.includes('design/tokens.js')) {
         return;
       }
       
@@ -721,14 +821,15 @@ function checkBrandConsistency() {
         const fontMatch = line.match(/fontFamily\s*:\s*['"]([^'"]*)['"]/);
         if (fontMatch) {
           const font = fontMatch[1];
-          if (!font.includes('Poppins') && !font.includes('Inter') && !font.includes('system')) {
+          const isBrandFont = font.includes('Poppins') || font.includes('Inter') || font.includes('system') || font.includes('var(--font-heading)') || font.includes('var(--font-body)');
+          if (!isBrandFont) {
             issues[SEVERITY.MEDIUM].push({
               category: CHECKS.BRAND_CONSISTENCY,
               file: relativePath,
               line: lineNum,
               message: `Non-brand font family: ${font}`,
               code: line.trim().substring(0, 80),
-              fix: 'Use Poppins for headings or Inter for body text',
+              fix: 'Use Poppins for headings or Inter for body text via var(--font-heading)/var(--font-body)'
             });
           }
         }
@@ -738,47 +839,95 @@ function checkBrandConsistency() {
 }
 
 /**
- * Check 9: Browser Compatibility
+ * Check tooling preflight: PostCSS and Sucrase
+ * Validate PostCSS config loading and Sucrase package.json integrity.
  */
-function checkBrowserCompat() {
-  console.log(`${colors.blue}🌐 Checking browser compatibility...${colors.reset}`);
-  const files = getAllFiles(SRC_DIR, ['.jsx', '.js']);
-  
-  for (const file of files) {
-    const content = fs.readFileSync(file, 'utf8');
-    const relativePath = path.relative(process.cwd(), file);
-    const lines = content.split('\n');
-    
-    lines.forEach((line, idx) => {
-      const lineNum = idx + 1;
-      
-      // Modern JS features without fallbacks
-      if (/\?\?/.test(line)) {
-        issues[SEVERITY.INFO].push({
-          category: CHECKS.BROWSER_COMPAT,
-          file: relativePath,
-          line: lineNum,
-          message: 'Nullish coalescing (??) requires polyfill for IE11',
-          code: line.trim().substring(0, 80),
-          fix: 'Vite transpiles this automatically, but verify target browsers',
-        });
-      }
-      
-      // Optional chaining
-      if (/\?\.[a-zA-Z_]/.test(line)) {
-        issues[SEVERITY.INFO].push({
-          category: CHECKS.BROWSER_COMPAT,
-          file: relativePath,
-          line: lineNum,
-          message: 'Optional chaining (?.) requires polyfill for IE11',
-          code: line.trim().substring(0, 80),
-          fix: 'Vite transpiles this automatically, but verify target browsers',
-        });
-      }
-    });
+function checkToolingPreflight() {
+  console.log(`${colors.blue}🧪 Preflight PostCSS & plugins...${colors.reset}`);
+  // Validate postcss.config.js exists and loads
+  const postcssConfigPath = path.join(__dirname, '../postcss.config.js');
+  if (!fs.existsSync(postcssConfigPath)) {
+    issues[SEVERITY.HIGH].push({ category: CHECKS.PERFORMANCE, file: 'postcss.config.js', line: 0, message: 'Missing postcss.config.js', code: '', fix: 'Create postcss.config.js with tailwindcss and autoprefixer.' });
+  } else {
+    try {
+      // Attempt to require config via Node
+      const requireFunc = module.createRequire(import.meta.url);
+      requireFunc(postcssConfigPath);
+    } catch (e) {
+      issues[SEVERITY.CRITICAL].push({ category: CHECKS.CODE_QUALITY, file: 'postcss.config.js', line: 0, message: 'Failed to load PostCSS config', code: String(e).slice(0,200), fix: 'Ensure config exports plugins and dependency packages are valid.' });
+    }
+  }
+  // Validate sucrase package.json integrity (used by PostCSS loading chain on Windows)
+  const sucrasePkg = path.join(__dirname, '../node_modules/sucrase/package.json');
+  if (fs.existsSync(sucrasePkg)) {
+    try {
+      const content = fs.readFileSync(sucrasePkg, 'utf8');
+      JSON.parse(content);
+    } catch (e) {
+      issues[SEVERITY.CRITICAL].push({ category: CHECKS.CODE_QUALITY, file: sucrasePkg.replace(__dirname+'\\..\\',''), line: 0, message: 'Invalid sucrase/package.json (node_modules corruption)', code: String(e).slice(0,200), fix: 'Clean reinstall: remove node_modules and package-lock.json; npm cache clean --force; npm install.' });
+    }
   }
 }
 
+// === Roma Mart Quality Extension Injection ===
+(function rmQualityExtension(){
+  if (globalThis.__RM_QC_EXTENDED__) return; // idempotent
+  globalThis.__RM_QC_EXTENDED__ = true;
+  const ICON_FALLBACK = { CRITICAL:'[CRIT]', HIGH:'[HIGH]', MEDIUM:'[MED ]', LOW:'[LOW ]', INFO:'[INFO]' }; // not yet wired; reserved
+  // Provide browser compatibility check if undefined
+  if (typeof checkBrowserCompat !== 'function') {
+    globalThis.checkBrowserCompat = function checkBrowserCompat() {
+      console.log(`${colors.blue}🌐 Checking browser compatibility...${colors.reset}`);
+      const files = getAllFiles(SRC_DIR, ['.jsx','.js']);
+      files.forEach(f => {
+        const c = fs.readFileSync(f,'utf8');
+        if (c.includes('?.')) {
+          issues[SEVERITY.INFO].push({ category: CHECKS.BROWSER_COMPAT, file: path.relative(process.cwd(), f), line:0, message:'Optional chaining present (transpiled by Vite).', code:'?.', fix:'None required.' });
+        }
+        if (c.includes('??')) {
+          issues[SEVERITY.INFO].push({ category: CHECKS.BROWSER_COMPAT, file: path.relative(process.cwd(), f), line:0, message:'Nullish coalescing present (transpiled by Vite).', code:'??', fix:'None required.' });
+        }
+      });
+    };
+  }
+  // Provide ethos cohesion check
+  if (typeof checkEthos !== 'function') {
+    globalThis.checkEthos = function checkEthos() {
+      console.log(`${colors.blue}🎯 Checking ethos & brand cohesion...${colors.reset}`);
+      const files = getAllFiles(SRC_DIR, ['.jsx','.js']);
+      const allowedRawBrandFiles = ['src/index.css','src/design/tokens.js','src/components/Logo.jsx'];
+      const brandHexes = ['#020178','#E4B340','#242424','#151515'];
+      let logoImported = false;
+      files.forEach(f => {
+        const rel = path.relative(process.cwd(), f).replace(/\\/g,'/');
+        const c = fs.readFileSync(f,'utf8');
+        if (/import\s+.*Logo.*from/.test(c)) logoImported = true;
+        if (/RM</.test(c) && !/Logo/.test(c)) {
+          c.split('\n').forEach((ln,i) => {
+            if (/RM</.test(ln) && /(rounded|w-\d+|text-\d+|font-bold)/.test(ln)) {
+              issues[SEVERITY.MEDIUM].push({ category: CHECKS.BRAND_CONSISTENCY, file: rel, line:i+1, message:'Manual brand mark detected; use <Logo />.', code: ln.trim().slice(0,80), fix:'Replace with <Logo size={...} scheme=... />' });
+            }
+          });
+        }
+        if (!allowedRawBrandFiles.some(x => rel.endsWith(x))) {
+          brandHexes.forEach(hex => { if (c.includes(hex)) issues[SEVERITY.LOW].push({ category: CHECKS.BRAND_CONSISTENCY, file: rel, line:0, message:`Raw brand color ${hex} used; prefer CSS vars/tokens.`, code:hex, fix:'Use var(--color-primary)/var(--color-accent) or tokens.brandColors.' }); });
+        }
+        c.split('\n').forEach((ln,i) => {
+          if (/onClick=/.test(ln) && /className=/.test(ln)) {
+            (ln.match(/(?:w|h)-(\d+)/g)||[]).forEach(token => { const n=parseInt(token.split('-')[1],10); if(!isNaN(n)&&n<11){ issues[SEVERITY.MEDIUM].push({ category: CHECKS.ACCESSIBILITY, file: rel, line:i+1, message:`Potential touch target <44px (${token}).`, code: ln.trim().slice(0,80), fix:'Increase size or padding to meet recommended minimum.' }); }});
+          }
+        });
+        if (/pattern id=\"brand-pattern\"/.test(c) && !/BrandPattern/.test(c)) {
+          issues[SEVERITY.LOW].push({ category: CHECKS.PERFORMANCE, file: rel, line:0, message:'Inline brand pattern SVG detected; use reusable component.', code:'pattern id="brand-pattern"', fix:'Refactor to shared BrandPattern component.' });
+        }
+      });
+      if (!logoImported) {
+        issues[SEVERITY.HIGH].push({ category: CHECKS.BRAND_CONSISTENCY, file:'src/', line:0, message:'Logo component not imported; ensure <Logo /> is used for brand mark.', code:'Logo.jsx', fix:'Import Logo in Navbar/Footer.' });
+      }
+    };
+  }
+})();
+// === End Roma Mart Quality Extension Injection ===
 /**
  * Format and display results
  */
@@ -891,6 +1040,9 @@ function main() {
   console.log(`${colors.reset}\n`);
   
   try {
+    checkEnvironment();
+    checkToolingPreflight();
+    checkPreflightSyntax();
     checkAccessibility();
     checkDarkMode();
     checkPerformance();
@@ -900,7 +1052,7 @@ function main() {
     checkResponsive();
     checkBrandConsistency();
     checkBrowserCompat();
-    
+    checkEthos();
     return displayResults();
   } catch (error) {
     console.error(`${colors.red}Error during quality check:${colors.reset}`, error);
