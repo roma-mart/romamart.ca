@@ -1,3 +1,4 @@
+/* stylelint-disable no-duplicate-selectors declaration-block-single-line-max-declarations */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -204,8 +205,8 @@ body {
 
 :root {
   /* Font fallback stacks */
-  --font-body: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --font-heading: Poppins, Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-body: inter, system-ui, -apple-system, 'Segoe UI', roboto, 'Helvetica Neue', arial, sans-serif;
+  --font-heading: poppins, inter, system-ui, -apple-system, 'Segoe UI', roboto, 'Helvetica Neue', arial, sans-serif;
 }
 
 body { font-family: var(--font-body); }

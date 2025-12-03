@@ -1,6 +1,8 @@
 module.exports = {
   extends: ["stylelint-config-standard"],
   rules: {
+    "no-duplicate-selectors": null,
+    "declaration-block-single-line-max-declarations": null,
     "at-rule-no-unknown": [
       true,
       {
