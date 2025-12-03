@@ -169,16 +169,16 @@ export const getDarkBgTextStyle = (variant = 'text') => ({ color: DARK_BG_COLORS
 /**
  * WCAG 2.2 AA Contrast Ratios (for reference)
  * All combinations meet or exceed minimum requirements
- * 
+ *
  * Light Mode:
- * - Navy (#020178) on White: 12.6:1 (AAA ✓)
- * - Text (#151515) on White: 16:1 (AAA ✓)
- * - Muted (#5a5a5a) on White: 7.3:1 (AAA ✓)
- * 
+ * - Navy (use `var(--color-primary)`) on White: 12.6:1 (AAA ✓)
+ * - Text (use `var(--color-text)`) on White: 16:1 (AAA ✓)
+ * - Muted (use `var(--color-text-muted)`) on White: 7.3:1 (AAA ✓)
+ *
  * Dark Mode:
- * - Yellow (#E4B340) on Black: 8.4:1 (AAA ✓)
- * - White (#f4f4f4) on Black: 19.2:1 (AAA ✓)
- * - Muted (#a8a8a8) on Black: 9.1:1 (AAA ✓)
+ * - Accent (use `var(--color-accent)`) on Black: 8.4:1 (AAA ✓)
+ * - White (use `var(--color-bg)` or `#fff` token) on Black: 19.2:1 (AAA ✓)
+ * - Muted (use `var(--color-text-muted)`) on Black: 9.1:1 (AAA ✓)
  */
 
 /**

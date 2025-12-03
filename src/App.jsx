@@ -1,4 +1,16 @@
-import React, { useState, useEffect, Suspense, lazy, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, Suspense, lazy, useCallback, useMemo, useRef } from 'react';
+import { motion } from 'framer-motion';
+import {
+  ShoppingBasket,
+  Star,
+  Bitcoin,
+  Utensils,
+  ArrowRight,
+  ExternalLink,
+  MapPin,
+  Coffee,
+  Send
+} from 'lucide-react';
 import { LocationProvider } from './components/LocationProvider';
 import { getPrimaryLocation, getActiveLocationCount, LOCATIONS, getActiveLocations, isLocationOpenNow } from './data/locations';
 import { useLocationContext } from './hooks/useLocationContext';
@@ -23,10 +35,8 @@ const ContactPage = lazy(() => import('./pages/ContactPage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
 
 // --- BRAND GUIDELINES & DATA ---
-
-// Use CSS variables for brand colors to ensure dark mode compatibility
 const BRAND = {
-  primary: 'var(--color-primary)',
+  primary: 'var(--Color-primary, var(--color-primary))',
   accent: 'var(--color-accent)',
   heading: 'var(--color-heading)',
   icon: 'var(--color-icon)',
@@ -39,9 +49,7 @@ const BRAND = {
 const STORE_DATA = {
   legalName: "Roma Mart Corp.",
   dba: "Roma Mart Convenience",
-  // 1. PASTE YOUR NRS ONLINE STORE LINK HERE
   onlineStoreUrl: "https://nrsplus.com/orders/your-store-link",
-  // Social media links
   socialLinks: {
     facebook: "https://www.facebook.com/romamartca",
     instagram: "https://www.instagram.com/romamartca/",
@@ -52,12 +60,9 @@ const STORE_DATA = {
   contact: {
     phone: "+1 (382) 342-2000",
     email: "contact@romamart.ca",
-    // Web3Forms Access Key (contact form backend)
     // Use Vite environment variable VITE_WEB3FORMS_KEY for production builds
     web3FormsAccessKey: import.meta.env.VITE_WEB3FORMS_KEY || ''
   }
-  // NOTE: Location data moved to src/data/locations.js
-  // Use getPrimaryLocation() to get featured location
 };
 
 const SERVICES = [
@@ -76,178 +81,73 @@ const ROCAFE_MENU = [
   { name: "Fruit Slush", price: "$5.50", popular: false },
 ];
 
-// Use Vite's base URL so links work both at root and when hosted under a subpath (e.g. /romamart.ca/)
 const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
 
 // --- CUSTOM COMPONENTS ---
-
 function Hero({ onTrackOrder }) {
   return (
     <div id="hero-section" className="relative min-h-[90vh] flex items-center overflow-hidden" style={{ backgroundColor: BRAND.primary }}>
-      {/* Add BrandPatternBackground overlay */}
       <BrandPatternBackground className="absolute inset-0" opacity={0.12} />
-      
       <div className="absolute inset-0 bg-gradient-to-r from-blue-950 via-blue-900 to-transparent opacity-90 z-0" />
-      
       <div className="relative z-10 max-w-7xl mx-auto px-4 w-full pt-20">
         <div className="grid md:grid-cols-2 gap-12 items-center">
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-          >
+          <motion.div initial={{ opacity: 0, x: -50 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>
             <div className="inline-block px-4 py-1 mb-6 rounded-full border border-yellow-500/30 bg-yellow-500/10 backdrop-blur-sm">
-              <span className="text-sm font-inter font-semibold tracking-widest uppercase" style={{ color: BRAND.accent }}>
-                New In Town
-              </span>
+              <span className="text-sm font-inter font-semibold tracking-widest uppercase" style={{ color: BRAND.accent }}>New In Town</span>
             </div>
-            
-            <h1 className="text-5xl md:text-7xl font-coco uppercase leading-none text-white mb-6">
-              Your Daily <br/>
-              <span style={{ color: BRAND.accent }}>Stop & Go</span>
-            </h1>
-            
-            <p className="text-lg md:text-xl font-inter mb-6 max-w-lg leading-relaxed" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
-              Experience Sarnia's newest convenience destination. From daily essentials to bubble tea, we have what you need.
-            </p>
-            
-            <div className="mb-6">
-              <ShareButton 
-                title="Roma Mart"
-                text="Check out Roma Mart - Sarnia's newest convenience store!"
-                className="bg-white/10 text-white hover:bg-white/20 border border-white/30"
-              />
-            </div>
-            
+            <h1 className="text-5xl md:text-7xl font-coco uppercase leading-none text-white mb-6">Your Daily <br/><span style={{ color: BRAND.accent }}>Stop & Go</span></h1>
+            <p className="text-lg md:text-xl font-inter mb-6 max-w-lg leading-relaxed" style={{ color: 'rgba(255,255,255,0.8)' }}>Experience Sarnia's newest convenience destination. From daily essentials to bubble tea, we have what you need.</p>
+            <div className="mb-6"><ShareButton title="Roma Mart" text="Check out Roma Mart - Sarnia's newest convenience store!" className="bg-white/10 text-white hover:bg-white/20 border border-white/30" /></div>
             <div className="flex flex-col sm:flex-row gap-4">
-              {/* PRIMARY CTA - ORDER NOW */}
-              <motion.a 
-                href={STORE_DATA.onlineStoreUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={onTrackOrder}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-8 py-4 rounded-xl font-bold font-inter text-lg flex items-center justify-center gap-2 shadow-xl shadow-yellow-500/20"
-                style={{ backgroundColor: BRAND.accent, color: BRAND.primary }}
-              >
+              <motion.a href={STORE_DATA.onlineStoreUrl} target="_blank" rel="noopener noreferrer" onClick={() => onTrackOrder && onTrackOrder('hero_section')} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="px-8 py-4 rounded-xl font-bold font-inter text-lg flex items-center justify-center gap-2 shadow-xl shadow-yellow-500/20" style={{ backgroundColor: BRAND.accent, color: BRAND.primary }}>
                 ORDER ONLINE NOW <ExternalLink size={20} />
               </motion.a>
-              
-              <a 
-                href="#locations"
-                className="px-8 py-4 rounded-xl font-bold font-inter text-lg border-2 flex items-center justify-center gap-2 hover:bg-white/5 transition-colors"
-                style={{ borderColor: '#FFFFFF', color: '#FFFFFF' }}
-              >
-                Visit In Store <ArrowRight size={20} />
-              </a>
+              <a href="#locations" className="px-8 py-4 rounded-xl font-bold font-inter text-lg border-2 flex items-center justify-center gap-2 hover:bg-white/5 transition-colors" style={{ borderColor: '#FFFFFF', color: '#FFFFFF' }}>Visit In Store <ArrowRight size={20} /></a>
             </div>
           </motion.div>
-
-          <motion.div
-             initial={{ opacity: 0, scale: 0.9 }}
-             animate={{ opacity: 1, scale: 1 }}
-             transition={{ duration: 1, delay: 0.2 }}
-             className="relative hidden md:block"
-          >
+          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, delay: 0.2 }} className="relative hidden md:block">
             <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl border-4 border-white/10 rotate-3 hover:rotate-0 transition-transform duration-500">
-               <img 
-                 src="https://images.unsplash.com/photo-1555636222-cae831e670b3?w=1000&h=500&fit=crop" 
-                 alt="Roma Mart Storefront"
-                 className="w-full h-[500px] object-cover"
-                 loading="lazy"
-               />
-               
-               <div className="absolute top-6 right-6 w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-lg rotate-12">
-                 <div className="text-center">
-                   <span className="block font-coco text-xl leading-none" style={{ color: BRAND.primary }}>2.5%</span>
-                   <span className="block text-xs font-bold uppercase" style={{ color: 'var(--color-text)' }}>OFF CASH</span>
-                 </div>
-               </div>
+              <img src="https://images.unsplash.com/photo-1555636222-cae831e670b3?w=1000&h=500&fit=crop" alt="Roma Mart Storefront" className="w-full h-[500px] object-cover" loading="lazy" />
+              <div className="absolute top-6 right-6 w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-lg rotate-12"><div className="text-center"><span className="block font-coco text-xl leading-none" style={{ color: BRAND.primary }}>2.5%</span><span className="block text-xs font-bold uppercase" style={{ color: 'var(--color-text)' }}>OFF CASH</span></div></div>
             </div>
           </motion.div>
         </div>
       </div>
     </div>
   );
-};
+}
 
 const ServicesScroll = () => {
-  const scrollRef = React.useRef(null);
-
+  const scrollRef = useRef(null);
   const scrollByAmount = useCallback((direction) => {
     if (scrollRef.current) {
-      const scrollAmount = 320; // Card width + gap
-      scrollRef.current.scrollBy({
-        left: direction === 'left' ? -scrollAmount : scrollAmount,
-        behavior: 'smooth'
-      });
+      const scrollAmount = 320;
+      scrollRef.current.scrollBy({ left: direction === 'left' ? -scrollAmount : scrollAmount, behavior: 'smooth' });
     }
   }, []);
-
   const scrollLeft = useCallback(() => scrollByAmount('left'), [scrollByAmount]);
   const scrollRight = useCallback(() => scrollByAmount('right'), [scrollByAmount]);
 
   return (
     <section id="services" className="py-20 overflow-hidden" style={{ backgroundColor: BRAND.surface }}>
       <div className="max-w-7xl mx-auto px-4 mb-10">
-        <h2 className="text-3xl md:text-4xl font-coco uppercase text-center" style={{ color: BRAND.heading }}>
-          Our <span style={{ color: BRAND.accent }}>Services</span>
-        </h2>
+        <h2 className="text-3xl md:text-4xl font-coco uppercase text-center" style={{ color: BRAND.heading }}>Our <span style={{ color: BRAND.accent }}>Services</span></h2>
       </div>
-
       <div className="relative max-w-7xl mx-auto px-4">
-        {/* Scroll buttons for desktop */}
-        <button
-          type="button"
-          onClick={scrollLeft}
-          className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full items-center justify-center shadow-lg hover:scale-110 transition-transform"
-          style={{ backgroundColor: BRAND.accent, color: BRAND.primary }}
-          aria-label="Scroll left"
-        >
-          <ArrowRight size={24} className="rotate-180" />
-        </button>
-        <button
-          type="button"
-          onClick={scrollRight}
-          className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full items-center justify-center shadow-lg hover:scale-110 transition-transform"
-          style={{ backgroundColor: BRAND.accent, color: BRAND.primary }}
-          aria-label="Scroll right"
-        >
-          <ArrowRight size={24} />
-        </button>
-
-        <div 
-          ref={scrollRef}
-          className="flex overflow-x-auto pb-8 pt-2 gap-6 snap-x snap-mandatory scrollbar-hide"
-          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-        >
+        <button type="button" onClick={scrollLeft} className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full items-center justify-center shadow-lg hover:scale-110 transition-transform" style={{ backgroundColor: BRAND.accent, color: BRAND.primary }} aria-label="Scroll left"><ArrowRight size={24} className="rotate-180" /></button>
+        <button type="button" onClick={scrollRight} className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full items-center justify-center shadow-lg hover:scale-110 transition-transform" style={{ backgroundColor: BRAND.accent, color: BRAND.primary }} aria-label="Scroll right"><ArrowRight size={24} /></button>
+        <div ref={scrollRef} className="flex overflow-x-auto pb-8 pt-2 gap-6 snap-x snap-mandatory scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           {SERVICES.map((item) => (
-          <motion.div 
-            key={item.id}
-            whileHover={{ y: -5 }}
-            className="flex-shrink-0 w-72 md:w-80 p-8 rounded-2xl shadow-sm border snap-center flex flex-col items-start hover:shadow-md transition-shadow"
-            style={{ backgroundColor: BRAND.bg, borderColor: BRAND.surface }}
-          >
-            <div className="p-4 rounded-xl mb-6" style={{ backgroundColor: BRAND.surface }}>
-              {React.cloneElement(item.icon, { size: 32, style: { color: BRAND.icon } })}
-            </div>
-            <h3 className="font-coco text-xl mb-3" style={{ color: BRAND.heading }}>{item.title}</h3>
-            <p className="font-inter leading-relaxed" style={{ color: BRAND.text, opacity: 0.7 }}>{item.desc}</p>
-          </motion.div>
-        ))}
+            <motion.div key={item.id} whileHover={{ y: -5 }} className="flex-shrink-0 w-72 md:w-80 p-8 rounded-2xl shadow-sm border snap-center flex flex-col items-start hover:shadow-md transition-shadow" style={{ backgroundColor: BRAND.bg, borderColor: BRAND.surface }}>
+              <div className="p-4 rounded-xl mb-6" style={{ backgroundColor: BRAND.surface }}>{React.cloneElement(item.icon, { size: 32, style: { color: BRAND.icon } })}</div>
+              <h3 className="font-coco text-xl mb-3" style={{ color: BRAND.heading }}>{item.title}</h3>
+              <p className="font-inter leading-relaxed" style={{ color: BRAND.text, opacity: 0.7 }}>{item.desc}</p>
+            </motion.div>
+          ))}
         </div>
       </div>
-
-      {/* View All Services CTA */}
       <div className="text-center mt-12">
-        <a
-          href={`${BASE_URL}services`}
-          className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-bold font-inter transition-transform hover:scale-105 shadow-lg"
-          style={{ backgroundColor: BRAND.accent, color: BRAND.primary }}
-        >
-          View All Services <ArrowRight size={20} />
-        </a>
+        <a href={`${BASE_URL}services`} className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-bold font-inter transition-transform hover:scale-105 shadow-lg" style={{ backgroundColor: BRAND.accent, color: BRAND.primary }}>View All Services <ArrowRight size={20} /></a>
       </div>
     </section>
   );
@@ -257,7 +157,6 @@ const RoCafeSection = () => {
   return (
     <section id="rocafe" className="py-24 relative overflow-hidden text-white" style={{ backgroundColor: 'var(--color-text)' }}>
       <div className="absolute top-0 right-0 w-1/2 h-full bg-black/20 skew-x-12 transform translate-x-20"></div>
-
       <div className="max-w-7xl mx-auto px-4 relative z-10">
         <div className="flex flex-col md:flex-row gap-16 items-center">
           <div className="md:w-1/2">
@@ -270,11 +169,9 @@ const RoCafeSection = () => {
                  <p className="text-yellow-400 font-inter tracking-wider uppercase text-sm">Sip. Savor. Repeat.</p>
               </div>
             </div>
-            
             <p className="font-inter text-lg mb-8" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
               Step into our dedicated café corner. Whether you need a morning espresso kick or a refreshing afternoon bubble tea, RoCafé is brewing specifically for you.
             </p>
-
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {ROCAFE_MENU.map((item, idx) => (
                  <div key={idx} className="bg-white/5 p-4 rounded-lg backdrop-blur-sm border border-white/10 flex justify-between items-center">
@@ -286,8 +183,6 @@ const RoCafeSection = () => {
                  </div>
               ))}
             </div>
-
-            {/* View Full Menu CTA */}
             <div className="mt-8">
               <a
                 href={`${BASE_URL}rocafe`}
@@ -298,7 +193,6 @@ const RoCafeSection = () => {
               </a>
             </div>
           </div>
-
           <div className="md:w-1/2 w-full">
             <div className="relative aspect-square rounded-full overflow-hidden border-8 border-white/5 shadow-2xl">
                <img 
@@ -367,9 +261,8 @@ const Locations = () => {
               </button>
             ))}
           </div>
-
           <div className="lg:col-span-2 rounded-3xl overflow-hidden min-h-[400px] relative shadow-inner" style={{ backgroundColor: BRAND.surface }}>
-             <iframe 
+             <iframe
                title={`Google Maps - ${primaryLocation.name}`}
                src={primaryLocation.google.embedUrl}
                width="100%"
@@ -379,7 +272,6 @@ const Locations = () => {
                loading="lazy"
                className="absolute inset-0"
              ></iframe>
-             
              <div className="absolute bottom-6 right-6">
                 <a 
                   href={activeLoc.mapLink}
@@ -536,7 +428,6 @@ const ContactSection = () => {
               </button>
             </form>
           </div>
-
         </div>
       </div>
     </section>
@@ -796,57 +687,15 @@ const LoadingFallback = () => (
 
 // --- MAIN APP ---
 function App() {
-  // Simple client-side routing
   const pathname = typeof window !== 'undefined' ? window.location.pathname.replace(BASE_URL, '/') : '/';
-  
-  // Initialize PWA Service Worker
   useServiceWorker();
-  
-  // Batch 3: Performance optimizations
   const { isVisible } = usePageVisibility();
   const { batteryLevel, isCharging } = useBatteryStatus();
-  
-  // Disable heavy animations when battery low or user prefers reduced motion
-  // eslint-disable-next-line no-unused-vars
-  const shouldReduceMotion = React.useMemo(() => {
-    const lowBattery = batteryLevel !== null && batteryLevel < 0.2 && !isCharging;
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    return lowBattery || prefersReduced;
-  }, [batteryLevel, isCharging]);
-  
-  // Log page visibility changes (for analytics/debugging)
-  useEffect(() => {
-    if (!isVisible && import.meta.env.DEV) {
-      console.warn('[Performance] Tab hidden - pausing heavy operations');
-    }
-  }, [isVisible]);
-  
-  const getPage = () => {
-    if (pathname.includes('/services')) return 'services';
-    if (pathname.includes('/rocafe')) return 'rocafe';
-    if (pathname.includes('/locations')) return 'locations';
-    if (pathname.includes('/contact')) return 'contact';
-    if (pathname.includes('/about')) return 'about';
-    if (pathname.includes('/accessibility')) return 'accessibility';
-    if (pathname.includes('/privacy')) return 'privacy';
-    if (pathname.includes('/terms')) return 'terms';
-    if (pathname.includes('/cookies')) return 'cookies';
-    return 'home';
-  };
-
+  const shouldReduceMotion = useMemo(() => { const lowBattery = batteryLevel !== null && batteryLevel < 0.2 && !isCharging; const prefersReduced = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; return lowBattery || prefersReduced; }, [batteryLevel, isCharging]);
+  useEffect(() => { if (!isVisible && import.meta.env.DEV) { console.warn('[Performance] Tab hidden - pausing heavy operations'); } }, [isVisible]);
+  const getPage = useCallback(() => { if (pathname.includes('/services')) return 'services'; if (pathname.includes('/rocafe')) return 'rocafe'; if (pathname.includes('/locations')) return 'locations'; if (pathname.includes('/contact')) return 'contact'; if (pathname.includes('/about')) return 'about'; if (pathname.includes('/accessibility')) return 'accessibility'; if (pathname.includes('/privacy')) return 'privacy'; if (pathname.includes('/terms')) return 'terms'; if (pathname.includes('/cookies')) return 'cookies'; return 'home'; }, [pathname]);
   const currentPage = getPage();
-
-  const handleTrackOrderClick = useCallback((location = 'hero_section') => {
-    try {
-      if (typeof window.trackOrderClick === 'function') {
-        window.trackOrderClick(location);
-      }
-    } catch {}
-
-    if (window.dataLayer) {
-      window.dataLayer.push({ event: 'order_cta_click', cta_location: location, cta_text: 'Order Online' });
-    }
-  }, []);
+  const handleTrackOrderClick = useCallback((location = 'hero_section') => { try { if (typeof window.trackOrderClick === 'function') { window.trackOrderClick(location); } } catch {} if (window.dataLayer) { window.dataLayer.push({ event: 'order_cta_click', cta_location: location, cta_text: 'Order Online' }); } }, []);
 
   return (
     <LocationProvider>
@@ -854,7 +703,7 @@ function App() {
         <Navbar />
         <main className="flex-1">
           {currentPage !== 'home' ? (
-            <Suspense fallback={<LoadingFallback />}>
+            <Suspense fallback={<div>Loading...</div>}>
               <div id="main-content">
                 {currentPage === 'services' && <ServicesPage />}
                 {currentPage === 'rocafe' && <RoCafePage />}
@@ -869,9 +718,8 @@ function App() {
             </Suspense>
           ) : (
             <>
-              {/* WCAG 2.2 AA: Skip Navigation Link (Operable 2.4.1) */}
               <a href="#main-content" className="skip-link">Skip to main content</a>
-              <Hero onTrackOrder={() => handleTrackOrderClick('hero_section')} />
+              <Hero onTrackOrder={handleTrackOrderClick} />
               <div id="main-content">
                 <ServicesScroll />
                 <RoCafeSection />
@@ -880,43 +728,11 @@ function App() {
               </div>
             </>
           )}
-          {/* Use local footer implementation to avoid import conflict */}
-          <SiteFooter />
+          <Footer />
         </main>
       </div>
-      
-      {/* PWA Components */}
       <PWAInstallPrompt />
       <NetworkStatus />
-      
-      {/* Batch 3: Structured Data for SEO */}
-      <StructuredData 
-        type="LocalBusiness" 
-        data={{
-          name: STORE_DATA.dba,
-          alternateName: "Roma Mart",
-          description: "Your daily stop & go convenience store in Sarnia, Ontario. Fresh RoCafé beverages, ATM, Bitcoin ATM, printing, and more.",
-          telephone: STORE_DATA.contact.phone,
-          email: STORE_DATA.contact.email,
-          address: {
-            street: "189-3 Wellington Street",
-            city: "Sarnia",
-            region: "ON",
-            postal: "N7T 1G6"
-          },
-          geo: {
-            latitude: 42.970389,
-            longitude: -82.404589
-          },
-          socialLinks: Object.values(STORE_DATA.socialLinks)
-        }}
-      />
-      <StructuredData 
-        type="WebSite" 
-        data={{
-          description: "Your daily stop & go convenience store in Sarnia, Ontario."
-        }}
-      />
     </LocationProvider>
   );
 }
