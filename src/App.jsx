@@ -1,5 +1,6 @@
 import React, { useState, useEffect, Suspense, lazy, useCallback, useMemo, useRef } from 'react';
-import { motion } from 'framer-motion';
+// import { motion } from 'framer-motion';
+// comment out unused reference above for linter or remove entirely if youre sure you dont need it
 import {
   ShoppingBasket,
   Star,
