@@ -56,7 +56,11 @@ export default defineConfig([
       },
     },
     rules: {
-      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+      'no-unused-vars': ['error', { 
+        varsIgnorePattern: '^(_|[A-Z]|motion$)', // Ignore: underscore prefixed, uppercase (React components), and motion (used in JSX)
+        argsIgnorePattern: '^_',
+        ignoreRestSiblings: true
+      }],
       // Accessibility - WCAG 2.2 AA enforcement (jsx-a11y recommended baseline)
       'jsx-a11y/alt-text': 'error',
       'jsx-a11y/click-events-have-key-events': 'warn',
