@@ -3,7 +3,7 @@
 This repo hosts the Roma Mart 2.0 site built with React + Vite + Tailwind.
 
 ## Environments
-- Staging (GitHub Pages): `https://khanoflegend.github.io/romamart.ca/`
+- Staging (GitHub Pages): `https://roma-mart.github.io/romamart.ca/`
 - Production: `https://romamart.ca/`
 
 ## Build & Run
@@ -14,7 +14,7 @@ npm run build
 ```
 
 ## GTM & Consent
-- GTM container: `GTM-N4FWPSRF` (head + noscript in `index.html`).
+- GTM container.
 - Consent: Clickio CMP via GTM; Trustpilot/Snap/GA fire only after consent.
 
 ## Migration Notes
