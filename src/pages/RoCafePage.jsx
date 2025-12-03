@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ChevronRight, ChevronDown, Coffee, Wine, UtensilsCrossed, IceCream, Sparkles } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
@@ -97,6 +97,15 @@ const RoCafePage = () => {
     }
   ];
 
+  // create memoized handlers map for categories
+  const categoryHandlers = useMemo(() => {
+    const map = {};
+    for (const cat of menuCategories) {
+      map[cat.id] = () => toggleCategory(cat.id);
+    }
+    return map;
+  }, [toggleCategory]);
+
   return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>
       <Helmet>
@@ -177,7 +186,7 @@ const RoCafePage = () => {
               {/* Category Header */}
               <button
                 type="button"
-                onClick={() => toggleCategory(category.id)}
+                onClick={categoryHandlers[category.id]}
                 className="w-full p-6 flex items-center justify-between hover:opacity-80 transition-opacity"
               >
                 <div className="flex items-center gap-4">
