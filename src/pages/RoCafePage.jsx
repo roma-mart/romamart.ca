@@ -1,10 +1,10 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { ChevronRight, ChevronDown, Coffee, Wine, UtensilsCrossed, IceCream, Sparkles } from 'lucide-react';
+import { ChevronRight, ChevronDown, Coffee, Wine, UtensilsCrossed, IceCream, Sparkles, AlertTriangle } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
 import StandardizedItem from '../components/StandardizedItem';
 import { useLocationAware } from '../hooks/useLocationContext';
-import { ROCAFE_FULL_MENU, MENU_CATEGORIES } from '../data/rocafe-menu';
+import { ROCAFE_FULL_MENU, MENU_CATEGORIES, ALLERGEN_WARNING } from '../data/rocafe-menu';
 
 const RoCafePage = () => {
   const COLORS = {
@@ -147,6 +147,49 @@ const RoCafePage = () => {
             <div className="text-center">
               <div className="text-4xl font-coco mb-2" style={{ color: COLORS.yellow }}>{menuCategories.length}</div>
               <div className="text-sm font-inter uppercase tracking-wider" style={mutedTextColor}>Categories</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Allergen Warning Section */}
+      <section className="max-w-5xl mx-auto px-4 mb-12">
+        <div 
+          className="p-6 rounded-2xl border-4"
+          style={{ 
+            backgroundColor: COLORS.yellow,
+            borderColor: COLORS.navy
+          }}
+        >
+          <div className="flex items-start gap-4">
+            <AlertTriangle size={32} style={{ color: COLORS.navy, flexShrink: 0 }} />
+            <div>
+              <h2 className="text-2xl font-coco font-bold mb-2" style={{ color: COLORS.navy }}>
+                {ALLERGEN_WARNING.title}
+              </h2>
+              <p className="font-inter text-sm mb-4" style={{ color: COLORS.navy }}>
+                {ALLERGEN_WARNING.subtitle}
+              </p>
+              <div className="flex flex-wrap gap-2 mb-4">
+                {ALLERGEN_WARNING.allergens.map((allergen, idx) => (
+                  <div 
+                    key={idx}
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg"
+                    style={{ backgroundColor: COLORS.navy }}
+                  >
+                    <span className="text-lg">{allergen.icon}</span>
+                    <span className="text-xs font-inter font-bold" style={{ color: COLORS.yellow }}>
+                      {allergen.name}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <p className="font-inter text-xs font-bold mb-2" style={{ color: COLORS.navy }}>
+                {ALLERGEN_WARNING.footer}
+              </p>
+              <p className="font-inter text-xs leading-relaxed" style={{ color: COLORS.navy, opacity: 0.8 }}>
+                {ALLERGEN_WARNING.disclaimer}
+              </p>
             </div>
           </div>
         </div>

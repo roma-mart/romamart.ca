@@ -1,6 +1,8 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { getRoleColors } from '../design/tokens';
+import { calculateItemPrice, getLowestPrice, formatPrice } from '../data/rocafe-menu';
+import { useLocationContext } from '../hooks/useLocationContext';
 
 /**
  * StandardizedItem Component
@@ -29,6 +31,7 @@ const StandardizedItem = ({
   defaultExpanded = false
 }) => {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
+  const { nearestLocation } = useLocationContext();
 
   // Destructure item data  
   const {
@@ -37,9 +40,10 @@ const StandardizedItem = ({
     description,          // Full description (detailed view)
     image,                // Image URL or path
     badge,                // 'bestseller', 'new', 'halal', 'comingSoon', etc.
-    sizes = [],           // [{name: 'Small', price: 2.99}, ...]
+    sizes = [],           // [{name: 'Small', price: 2.99, calories: 320}, ...]
     defaultSize = 0,      // Index of default selected size
-    calories,             // Optional: nutritional info
+    customizations = [],  // [{type: 'Milk Choice', options: [{name: 'Whole Milk', price: 0}]}]
+    calories,             // Optional: legacy nutritional info
     ingredients,          // Optional: ingredient list
     icon,                 // Optional: Icon component (for services)
     action,               // Optional: CTA button config {text, email, url, subject, body}
@@ -52,7 +56,29 @@ const StandardizedItem = ({
     partner,              // Optional: {name, url, logo} for partner services
   } = item;
 
+  // State for size selection and customization options
   const [selectedSize, setSelectedSize] = useState(defaultSize);
+  const [selectedOptions, setSelectedOptions] = useState(() => {
+    // Initialize with default options
+    const defaults = {};
+    customizations.forEach(customization => {
+      const defaultOption = customization.options.find(opt => opt.default);
+      if (defaultOption) {
+        defaults[customization.type] = defaultOption.name;
+      }
+    });
+    return defaults;
+  });
+
+  // Calculate current price based on selections
+  const currentPrice = useMemo(() => {
+    return calculateItemPrice(item, selectedSize, selectedOptions);
+  }, [item, selectedSize, selectedOptions]);
+
+  // Get calories for selected size
+  const currentCalories = useMemo(() => {
+    return sizes[selectedSize]?.calories || calories;
+  }, [sizes, selectedSize, calories]);
 
   // Toggle handler memoized
   const toggleExpanded = useCallback(() => {
@@ -276,20 +302,38 @@ const StandardizedItem = ({
               {tagline}
             </p>
 
-            {/* Size Options & Price (Basic View) */}
-            {sizes.length > 0 && !isExpanded && (
-              <div className="flex items-center gap-2 flex-wrap">
+            {/* Price Display - Basic View */}
+            <div className="flex items-center justify-between mb-3">
+              <div className="text-2xl font-coco font-bold" style={{ color: 'var(--color-accent)' }}>
+                {formatPrice(currentPrice)}
+              </div>
+              {currentCalories && (
+                <div className="text-xs font-inter" style={{ color: 'var(--color-text-muted)' }}>
+                  {currentCalories} cal
+                </div>
+              )}
+            </div>
+
+            {/* Size Options - Clickable in Basic View */}
+            {sizes.length > 0 && (
+              <div className="flex items-center gap-2 flex-wrap mb-2">
                 {sizes.map((size, idx) => (
-                  <span 
+                  <button
+                    type="button"
                     key={idx}
-                    className={`text-sm px-2 py-1 rounded ${idx === selectedSize ? 'font-bold' : ''}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedSize(idx);
+                    }}
+                    className={`text-sm px-3 py-1.5 rounded-lg font-inter font-bold transition-all cursor-pointer hover:scale-105`}
                     style={{ 
                       backgroundColor: idx === selectedSize ? 'var(--color-accent)' : 'var(--color-bg)',
-                      color: idx === selectedSize ? 'var(--color-primary)' : 'var(--color-text-muted)'
+                      color: idx === selectedSize ? 'var(--color-primary)' : 'var(--color-text)',
+                      border: `2px solid ${idx === selectedSize ? 'var(--color-accent)' : 'var(--color-border)'}`
                     }}
                   >
-                    {size.name}: ${size.price.toFixed(2)}
-                  </span>
+                    {size.name}
+                  </button>
                 ))}
               </div>
             )}
@@ -337,10 +381,58 @@ const StandardizedItem = ({
                     }}
                   >
                     <div>{size.name}</div>
-                    <div className="text-xs">${size.price.toFixed(2)}</div>
+                    <div className="text-xs">
+                      ${size.price.toFixed(2)}
+                      {size.calories && <span className="ml-2 text-gray-500">• {size.calories} cal</span>}
+                    </div>
                   </button>
                 ))}
               </div>
+            </div>
+          )}
+
+          {/* Customization Options (for Menu Items) */}
+          {customizations.length > 0 && (
+            <div className="space-y-4 mb-4">
+              {customizations.map((customization, custIdx) => (
+                <div key={custIdx}>
+                  <h4 
+                    className="text-sm font-bold font-coco mb-2"
+                    style={{ color: 'var(--color-heading)' }}
+                  >
+                    {customization.type}
+                    {customization.required && <span style={{ color: 'var(--color-error)' }}> *</span>}
+                  </h4>
+                  <div className="flex gap-2 flex-wrap">
+                    {customization.options.map((option, optIdx) => {
+                      const isSelected = selectedOptions[customization.type] === option.name;
+                      return (
+                        <button
+                          type="button"
+                          key={optIdx}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedOptions(prev => ({
+                              ...prev,
+                              [customization.type]: option.name
+                            }));
+                          }}
+                          className="px-3 py-2 rounded-lg font-inter text-xs transition-all hover:scale-105"
+                          style={{
+                            backgroundColor: isSelected ? 'var(--color-accent)' : 'var(--color-bg)',
+                            color: isSelected ? 'var(--color-primary)' : 'var(--color-text)',
+                            border: `1px solid ${isSelected ? 'var(--color-accent)' : 'var(--color-border)'}`,
+                            fontWeight: isSelected ? 'bold' : 'normal'
+                          }}
+                        >
+                          {option.name}
+                          {option.price > 0 && <span className="ml-1">+${option.price.toFixed(2)}</span>}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
             </div>
           )}
 
@@ -368,51 +460,38 @@ const StandardizedItem = ({
             </div>
           )}
 
-          {/* Availability Status (for Services) - 4-State System */}
-          {(availability || locationStatus) && (
-            <div 
-              className="p-3 rounded-lg mb-4"
-              style={{ 
-                backgroundColor: 'var(--color-bg)',
-                borderLeft: `4px solid ${getAvailabilityColor()}`
-              }}
-            >
-              {isComingSoon ? (
+          {/* Availability Status */}
+          <div 
+            className="p-3 rounded-lg mb-4"
+            style={{ 
+              backgroundColor: 'var(--color-bg)',
+              borderLeft: `4px solid ${nearestLocation ? 'var(--color-success)' : 'var(--color-warning)'}`
+            }}
+          >
+            {nearestLocation ? (
+              <>
                 <p 
-                  className="text-sm font-inter font-bold"
-                  style={{ color: 'var(--color-accent)' }}
+                  className="text-sm font-inter font-bold mb-1"
+                  style={{ color: 'var(--color-success)' }}
                 >
-                  ⏳ Coming Soon to This Location
+                  📍 Available at {nearestLocation.name}
                 </p>
-              ) : isUnavailable ? (
                 <p 
-                  className="text-sm font-inter font-bold"
+                  className="text-xs font-inter"
                   style={{ color: 'var(--color-text-muted)' }}
                 >
-                  ✕ Not Available at This Location
+                  {nearestLocation.address}
                 </p>
-              ) : (
-                <>
-                  {locationStatus && (
-                    <p 
-                      className="text-sm font-inter font-bold mb-1"
-                      style={{ color: locationStatus === 'Open Now' ? getRoleColors('open').text : getRoleColors('closed').text }}
-                    >
-                      {locationStatus}
-                    </p>
-                  )}
-                  {availability && (
-                    <p 
-                      className="text-xs font-inter"
-                      style={{ color: 'var(--color-text-muted)' }}
-                    >
-                      <strong>Availability:</strong> {availability === '24_7' ? '24/7' : availability === 'store_hours' ? 'During Store Hours' : 'Limited Availability'}
-                    </p>
-                  )}
-                </>
-              )}
-            </div>
-          )}
+              </>
+            ) : (
+              <p 
+                className="text-sm font-inter"
+                style={{ color: 'var(--color-text-muted)' }}
+              >
+                📍 Select a location to check availability
+              </p>
+            )}
+          </div>
 
           {/* Partner Info */}
           {partner && (
@@ -485,17 +564,17 @@ const StandardizedItem = ({
           )}
 
           {/* Nutritional Info */}
-          {(calories || ingredients) && (
+          {(currentCalories || ingredients) && (
             <div 
               className="p-3 rounded-lg mb-4"
               style={{ backgroundColor: 'var(--color-bg)' }}
             >
-              {calories && (
+              {currentCalories && (
                 <p 
                   className="text-xs font-inter mb-1"
                   style={{ color: 'var(--color-text-muted)' }}
                 >
-                  <strong>Calories:</strong> {calories}
+                  <strong>Calories:</strong> {currentCalories} cal
                 </p>
               )}
               {ingredients && (
@@ -509,7 +588,25 @@ const StandardizedItem = ({
             </div>
           )}
 
-          {/* Action Button (Optional CTA) */}
+          {/* Order Now Button (for Menu Items) */}
+          {customizations.length > 0 && nearestLocation && (
+            <a
+              href={`https://www.ubereats.com/ca/store/roma-mart`}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="block w-full py-3 px-4 rounded-lg font-bold font-inter text-center transition-transform hover:scale-105 mb-2"
+              style={{
+                backgroundColor: 'var(--color-accent)',
+                color: 'var(--color-primary)',
+                textDecoration: 'none'
+              }}
+            >
+              Order Now • {formatPrice(currentPrice)}
+            </a>
+          )}
+
+          {/* Action Button (for Services) */}
           {action && !isUnavailable && !isComingSoon && (
             <a
               href={action.email ? `mailto:${action.email}?subject=${encodeURIComponent(action.subject || '')}&body=${encodeURIComponent(action.body || '')}` : action.url}

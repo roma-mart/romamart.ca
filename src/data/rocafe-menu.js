@@ -58,17 +58,45 @@ export const ROCAFE_FULL_MENU = [
     image: null, // Placeholder for future menu photography
     badge: 'bestseller',
     sizes: [
-      { name: 'Regular', price: 4.99 },
-      { name: 'Large', price: 5.99 }
+      { name: 'Regular', price: 4.99, calories: 320 },
+      { name: 'Large', price: 5.99, calories: 410 }
     ],
     defaultSize: 0,
     category: MENU_CATEGORIES.SPECIALTY,
     
-    // Customization options
+    // Customization options with structured pricing
     customizations: [
-      { type: 'Ice Level', options: ['Regular Ice', 'Less Ice', 'No Ice'] },
-      { type: 'Sugar Level', options: ['100%', '75%', '50%', '25%', 'No Sugar'] },
-      { type: 'Toppings', options: ['Tapioca Pearls (included)', 'Popping Boba (+$1)', 'Jelly (+$0.75)', 'Pudding (+$1)'] }
+      { 
+        type: 'Ice Level', 
+        required: true,
+        options: [
+          { name: 'Regular Ice', price: 0, default: true },
+          { name: 'Less Ice', price: 0 },
+          { name: 'No Ice', price: 0 }
+        ]
+      },
+      { 
+        type: 'Sugar Level', 
+        required: true,
+        options: [
+          { name: '100%', price: 0, default: true },
+          { name: '75%', price: 0 },
+          { name: '50%', price: 0 },
+          { name: '25%', price: 0 },
+          { name: 'No Sugar', price: 0 }
+        ]
+      },
+      { 
+        type: 'Toppings', 
+        required: false,
+        options: [
+          { name: 'Tapioca Pearls', price: 0, default: true },
+          { name: 'Popping Boba', price: 1.00 },
+          { name: 'Jelly', price: 0.75 },
+          { name: 'Pudding', price: 1.00 },
+          { name: 'No Toppings', price: 0 }
+        ]
+      }
     ],
     allergens: ['dairy'],
     dietary: ['vegetarian'],
@@ -76,17 +104,6 @@ export const ROCAFE_FULL_MENU = [
     temperature: ['iced'],
     caffeineLevel: 'medium',
     flavorProfile: ['sweet', 'creamy', 'chewy'],
-    
-    // Nutritional info (per regular size)
-    calories: '320',
-    nutrition: {
-      calories: 320,
-      protein: 2,
-      carbs: 68,
-      fat: 5,
-      sugar: 55,
-      caffeine: 45 // mg
-    },
     
     locationStatus: 'Available at all RoCafé locations',
     isAvailable: true
@@ -99,15 +116,25 @@ export const ROCAFE_FULL_MENU = [
     image: null,
     badge: null,
     sizes: [
-      { name: 'Small', price: 2.00 },
-      { name: 'Medium', price: 2.50 },
-      { name: 'Large', price: 3.00 }
+      { name: 'Small', price: 2.00, calories: 5 },
+      { name: 'Medium', price: 2.50, calories: 5 },
+      { name: 'Large', price: 3.00, calories: 5 }
     ],
     defaultSize: 1,
     category: MENU_CATEGORIES.HOT_COFFEE,
     
     customizations: [
-      { type: 'Additions', options: ['Black (no additions)', 'Cream', 'Milk', 'Sugar', 'Sweetener'] }
+      { 
+        type: 'Additions', 
+        required: true,
+        options: [
+          { name: 'Black', price: 0, default: true },
+          { name: 'Cream', price: 0 },
+          { name: 'Milk', price: 0 },
+          { name: 'Sugar', price: 0 },
+          { name: 'Sweetener', price: 0 }
+        ]
+      }
     ],
     allergens: [],
     dietary: ['vegan', 'gluten-free'],
@@ -115,16 +142,6 @@ export const ROCAFE_FULL_MENU = [
     temperature: ['hot'],
     caffeineLevel: 'high',
     flavorProfile: ['bold', 'smooth', 'aromatic'],
-    
-    calories: '5',
-    nutrition: {
-      calories: 5,
-      protein: 0,
-      carbs: 0,
-      fat: 0,
-      sugar: 0,
-      caffeine: 95 // mg
-    },
     
     locationStatus: 'Available 6 AM - 10 PM',
     isAvailable: true
@@ -137,16 +154,40 @@ export const ROCAFE_FULL_MENU = [
     image: null,
     badge: 'new',
     sizes: [
-      { name: 'Regular', price: 4.99 },
-      { name: 'Large', price: 5.99 }
+      { name: 'Regular', price: 4.99, calories: 180 },
+      { name: 'Large', price: 5.99, calories: 240 }
     ],
     defaultSize: 0,
     category: MENU_CATEGORIES.SPECIALTY,
     
     customizations: [
-      { type: 'Milk Choice', options: ['Whole Milk', 'Oat Milk (+$0.50)', 'Almond Milk (+$0.50)', 'Soy Milk (+$0.50)'] },
-      { type: 'Sweetness', options: ['Regular', 'Light', 'None'] },
-      { type: 'Temperature', options: ['Hot', 'Iced'] }
+      { 
+        type: 'Milk Choice', 
+        required: true,
+        options: [
+          { name: 'Whole Milk', price: 0, default: true },
+          { name: 'Oat Milk', price: 0.50 },
+          { name: 'Almond Milk', price: 0.50 },
+          { name: 'Soy Milk', price: 0.50 }
+        ]
+      },
+      { 
+        type: 'Sweetness', 
+        required: true,
+        options: [
+          { name: 'Regular', price: 0, default: true },
+          { name: 'Light', price: 0 },
+          { name: 'None', price: 0 }
+        ]
+      },
+      { 
+        type: 'Temperature', 
+        required: true,
+        options: [
+          { name: 'Hot', price: 0, default: true },
+          { name: 'Iced', price: 0 }
+        ]
+      }
     ],
     allergens: ['dairy', 'may contain nuts (almond milk option)'],
     dietary: ['vegetarian', 'gluten-free'],
@@ -155,16 +196,6 @@ export const ROCAFE_FULL_MENU = [
     temperature: ['hot', 'iced'],
     caffeineLevel: 'medium',
     flavorProfile: ['earthy', 'creamy', 'umami'],
-    
-    calories: '180',
-    nutrition: {
-      calories: 180,
-      protein: 8,
-      carbs: 24,
-      fat: 6,
-      sugar: 20,
-      caffeine: 70 // mg
-    },
     
     locationStatus: 'Available at all RoCafé locations',
     isAvailable: true
@@ -177,14 +208,22 @@ export const ROCAFE_FULL_MENU = [
     image: null,
     badge: null,
     sizes: [
-      { name: 'Regular', price: 5.50 },
-      { name: 'Large', price: 6.50 }
+      { name: 'Regular', price: 5.50, calories: 210 },
+      { name: 'Large', price: 6.50, calories: 280 }
     ],
     defaultSize: 0,
     category: MENU_CATEGORIES.FRESH_JUICE,
     
     customizations: [
-      { type: 'Add-ons', options: ['None', 'Popping Boba (+$1)', 'Chia Seeds (+$0.50)'] }
+      { 
+        type: 'Add-ons', 
+        required: false,
+        options: [
+          { name: 'None', price: 0, default: true },
+          { name: 'Popping Boba', price: 1.00 },
+          { name: 'Chia Seeds', price: 0.50 }
+        ]
+      }
     ],
     allergens: [],
     dietary: ['vegan', 'gluten-free', 'dairy-free'],
@@ -194,20 +233,35 @@ export const ROCAFE_FULL_MENU = [
     caffeineLevel: 'none',
     flavorProfile: ['tropical', 'sweet', 'tangy'],
     
-    calories: '210',
-    nutrition: {
-      calories: 210,
-      protein: 1,
-      carbs: 52,
-      fat: 0,
-      sugar: 45,
-      caffeine: 0
-    },
-    
     locationStatus: 'Seasonal - Available Spring/Summer',
     isAvailable: true
   }
 ];
+
+// Canadian Food Allergen Warning (based on in-store posted notice)
+// Compliant with Health Canada's 14 priority allergens
+export const ALLERGEN_WARNING = {
+  title: 'Check your allergy before eating',
+  subtitle: 'Food at this establishment may contain any of these 14 allergens.',
+  allergens: [
+    { name: 'Milk', icon: '🥛' },
+    { name: 'Crustaceans', icon: '🦞' },
+    { name: 'Eggs', icon: '🥚' },
+    { name: 'Fish', icon: '🐟' },
+    { name: 'Lupin', icon: '🫘' },
+    { name: 'Celery', icon: '🥬' },
+    { name: 'Soya', icon: '🫛' },
+    { name: 'Cereals (inc. gluten)', icon: '🌾' },
+    { name: 'Peanuts', icon: '🥜' },
+    { name: 'Nuts', icon: '🌰' },
+    { name: 'Sesame Seeds', icon: '🫘' },
+    { name: 'Mustard', icon: '🟡' },
+    { name: 'Molluscs', icon: '🦪' },
+    { name: 'Sulphites', icon: '⚗️' }
+  ],
+  footer: 'PLEASE ASK A MEMBER OF STAFF BEFORE ORDERING. THANK YOU',
+  disclaimer: 'Celery, cereals containing gluten (such as barley and oats), crustaceans (such as prawns, crabs, and lobsters), eggs, fish, lupin, milk, molluscs (such as mussels and oysters), mustard, peanuts, sesame, soybeans, sulphur dioxide and sulphites (at a concentration of more than ten parts per million) and tree nuts.'
+};
 
 // Featured items for homepage (4 items currently displayed)
 export const ROCAFE_FEATURED = ROCAFE_FULL_MENU.filter(item => 
@@ -227,4 +281,36 @@ export const getFeaturedItems = () => {
 // Helper function to format price
 export const formatPrice = (price) => {
   return typeof price === 'number' ? `$${price.toFixed(2)}` : price;
+};
+
+// Helper function to calculate total price based on size and selected options
+export const calculateItemPrice = (item, selectedSize = 0, selectedOptions = {}) => {
+  if (!item || !item.sizes || !item.sizes[selectedSize]) {
+    return 0;
+  }
+  
+  let totalPrice = item.sizes[selectedSize].price;
+  
+  // Add prices from selected customization options
+  if (item.customizations && selectedOptions) {
+    item.customizations.forEach((customization) => {
+      const selectedOptionName = selectedOptions[customization.type];
+      if (selectedOptionName) {
+        const option = customization.options.find(opt => opt.name === selectedOptionName);
+        if (option && option.price) {
+          totalPrice += option.price;
+        }
+      }
+    });
+  }
+  
+  return totalPrice;
+};
+
+// Helper function to get lowest price for "from $X.XX" display
+export const getLowestPrice = (item) => {
+  if (!item || !item.sizes || item.sizes.length === 0) {
+    return 0;
+  }
+  return Math.min(...item.sizes.map(size => size.price));
 };
