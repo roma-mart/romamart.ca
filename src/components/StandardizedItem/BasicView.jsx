@@ -151,7 +151,10 @@ export default function BasicView({
               className="flex-shrink-0 p-1 rounded-full transition-colors"
               style={{ color: 'var(--color-heading)' }}
               aria-label={isExpanded ? "Collapse details" : "Expand details"}
-              onClick={onToggleExpand}
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleExpand();
+              }}
               aria-expanded={isExpanded}
             >
               {isExpanded ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
