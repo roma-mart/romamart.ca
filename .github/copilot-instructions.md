@@ -282,7 +282,7 @@ const response = await fetch('https://api.web3forms.com/submit', {
   - No unused variables, no console.log in production code
 
 ### Git Workflow
-- **Branching strategy:** See [BRANCHING_STRATEGY.md](.github/BRANCHING_STRATEGY.md) for complete guide
+- **Branching strategy:** See [BRANCHING_STRATEGY.md](BRANCHING_STRATEGY.md) for complete guide
 - **Branch naming:**
   - `feature/*` - New features
   - `bugfix/*` - Bug fixes
@@ -293,8 +293,8 @@ const response = await fetch('https://api.web3forms.com/submit', {
   - Format: `<type>(<scope>): <description>`
   - Types: feat, fix, docs, style, refactor, perf, test, build, ci, chore
 - **Manual quality checks required** before commit: `npm run check:all`
-- **Git hooks:** Not configured (see [TOOLING_RECOMMENDATIONS.md](.github/TOOLING_RECOMMENDATIONS.md) for Husky setup)
-- **Pull requests:** Required for all changes to `main` (see [PULL_REQUEST_TEMPLATE.md](.github/PULL_REQUEST_TEMPLATE.md))
+- **Git hooks:** Not configured (see [TOOLING_RECOMMENDATIONS.md](TOOLING_RECOMMENDATIONS.md) for Husky setup)
+- **Pull requests:** Required for all changes to `main` (see [PULL_REQUEST_TEMPLATE.md](PULL_REQUEST_TEMPLATE.md))
 
 ### Testing Strategy
 - **No automated test suite** - Quality enforced via:

@@ -24,9 +24,9 @@ export function Logo({
   const cfg = tokens.logoSchemes[scheme] || tokens.logoSchemes.navy;
   const circleSize = size;
   const cartStroke = cfg.cart;
-  const textColor = tokens.fonts.heading;
-  const fontSize = tokens.TYPOGRAPHY.fontSize['lg'];
-  const fontWeight = tokens.TYPOGRAPHY.fontWeight.bold;
+  const textColor = tokens?.fonts?.heading || 'inherit';
+  const fontSize = tokens?.TYPOGRAPHY?.fontSize?.lg || '1rem';
+  const fontWeight = tokens?.TYPOGRAPHY?.fontWeight?.bold || 'bold';
   const showBorder = cfg.border;
 
   // Emblem uses inline SVG for crisp scaling & color control

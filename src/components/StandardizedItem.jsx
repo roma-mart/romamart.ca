@@ -89,6 +89,25 @@ const StandardizedItem = ({ item, defaultExpanded = false }) => {
   const isUnavailable = isAvailable === false;
   const isComingSoon = isAvailable === 'coming-soon';
 
+  // Defensive checks for tokens properties
+  const fontFamily = tokens?.TYPOGRAPHY?.fontFamily?.body || 'inherit';
+  const fontSize = tokens?.TYPOGRAPHY?.fontSize?.base || '1rem';
+  const lineHeight = tokens?.TYPOGRAPHY?.lineHeight?.relaxed || 1.5;
+
+  // Replace console.log with console.warn
+  console.warn('Debugging tokens:', tokens);
+
+  {/* Apply typography tokens explicitly */
+      const bodyFont = tokens?.fonts?.body || 'var(--font-body)';
+      const headingFont = tokens?.fonts?.heading || 'var(--font-heading)';
+
+      {/* Example usage in JSX */}
+      <>
+        <div style={{ fontFamily: bodyFont }}>Body Text Example</div>
+        <h1 style={{ fontFamily: headingFont }}>Heading Example</h1>
+      </>
+  }
+
   return (
     <div 
       className="rounded-xl border transition-all duration-300"
@@ -166,9 +185,9 @@ const StandardizedItem = ({ item, defaultExpanded = false }) => {
             className="text-sm font-inter leading-relaxed mb-4 mt-4"
             style={{ 
               color: 'var(--color-text)',
-              fontFamily: tokens.fonts.body,
-              fontSize: tokens.fontSize.base,
-              lineHeight: tokens.lineHeight.relaxed
+              fontFamily: fontFamily,
+              fontSize: fontSize,
+              lineHeight: lineHeight
             }}
           >
             {description}
@@ -185,12 +204,12 @@ const StandardizedItem = ({ item, defaultExpanded = false }) => {
           {features.length > 0 && (
             <div className="mb-4">
               <h4 
-                className="text-sm font-bold font-coco mb-2"
+                className="text-sm font-bold var(--font-heading) mb-2"
                 style={{ 
                   color: 'var(--color-heading)',
-                  fontFamily: tokens.fonts.heading,
-                  fontSize: tokens.fontSize.sm,
-                  fontWeight: tokens.fontWeight.bold
+                  fontFamily: tokens?.fonts?.heading || 'inherit',
+                  fontSize: tokens?.fontSize?.sm || '1rem',
+                  fontWeight: tokens?.fontWeight?.bold || 'bold',
                 }}
               >
                 Features:

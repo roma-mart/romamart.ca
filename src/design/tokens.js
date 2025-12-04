@@ -29,9 +29,9 @@ export const spacing = [0,4,8,12,16,20,24,32,40,48,64];
 
 // Font families
 export const fonts = {
-  body: 'var(--font-body)',
-  heading: 'var(--font-heading)',
-  logo: 'Cocogoose, Poppins, Inter, sans-serif'
+  body: 'var(--font-body)', // Inter, defined in CSS.
+  heading: 'var(--font-heading)', // Outfit, defined in CSS.
+  logo: 'var(--font-heading)', // Outfit, defined in CSS.
 };
 
 // Logo recommended rendered pixel sizes from brand sheet
@@ -94,28 +94,34 @@ export function getRoleColors(name, mode = 'light') {
 // Typography tokens
 export const TYPOGRAPHY = {
   fontFamily: {
-    heading: 'var(--font-heading)',
-    body: 'var(--font-body)',
-  },
-  fontSize: {
-    xs: '0.75rem',
-    sm: '0.875rem',
-    base: '1rem',
-    lg: '1.125rem',
-    xl: '1.25rem',
-    '2xl': '1.5rem',
-    '3xl': '1.875rem',
+    heading: fonts.heading, // Outfit for headings.
+    body: fonts.body, // Inter for body text.
   },
   fontWeight: {
-    normal: 400,
-    medium: 500,
-    semibold: 600,
-    bold: 700,
+    light: 300, // Inter for subtle text.
+    normal: 400, // Inter for standard body text.
+    medium: 500, // Inter for strong body emphasis.
+    semibold: 600, // Outfit for H2 headings.
+    bold: 700, // Inter for key UI elements.
+    extraBold: 800, // Outfit for H1/display text.
   },
-  lineHeight: {
-    normal: 1.5,
-    relaxed: 1.75,
-    tight: 1.25,
+  fontSizes: {
+    xs: '0.75rem', // Footnotes, captions.
+    sm: '0.875rem', // Standard UI labels.
+    base: '1rem', // Default body text.
+    lg: '1.125rem', // Sub-headings, block quotes.
+    xl: '1.375rem', // H3 Headings.
+    '2xl': '1.75rem', // H2 Headings (Weight: 600 Semibold).
+    '3xl': '2.25rem', // H1 Headings (Weight: 800 Extra Bold).
+  },
+  lineHeights: {
+    xs: 1.45, // For extra small text.
+    sm: 1.45, // For small text.
+    base: 1.45, // For base text.
+    lg: 1.4, // For large text.
+    xl: 1.35, // For extra large text.
+    '2xl': 1.25, // For 2XL headings.
+    '3xl': 1.2, // For 3XL headings.
   },
 };
 

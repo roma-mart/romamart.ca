@@ -173,7 +173,7 @@ export default function Footer() {
         </div>
 
         <div>
-          <h4 className="font-coco text-lg mb-6" style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Pages</h4>
+          <h4 className="var(--font-heading) text-lg mb-6" style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Pages</h4>
           <ul className="space-y-3 font-inter" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
             <li><a href={`${BASE_URL}services`} className="hover:text-yellow-400 transition-colors">Services</a></li>
             <li><a href={`${BASE_URL}rocafe`} className="hover:text-yellow-400 transition-colors">RoCafé Menu</a></li>
@@ -185,7 +185,7 @@ export default function Footer() {
         </div>
 
         <div>
-          <h4 className="font-coco text-lg mb-6" style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Legal & Accessibility</h4>
+          <h4 className="var(--font-heading) text-lg mb-6" style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Legal & Accessibility</h4>
           <ul className="space-y-2 font-inter" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
             <li><a href={`${BASE_URL}privacy`} className="hover:text-yellow-400 transition-colors">Privacy Policy</a></li>
             <li><a href={`${BASE_URL}terms`} className="hover:text-yellow-400 transition-colors">Terms of Service</a></li>
@@ -204,7 +204,7 @@ export default function Footer() {
           <div className="bg-white/5 rounded-lg p-4 border border-white/10">
             <label 
               htmlFor="location-selector" 
-              className="block font-coco text-sm mb-3"
+              className="block var(--font-heading) text-sm mb-3"
               style={{ color: BRAND.accent }}
             >
               <MapPin className="inline-block mr-2" size={16} />

@@ -24,7 +24,7 @@ export const COLORS = {
 
 export const TYPOGRAPHY = {
   fontFamily: {
-    heading: 'Poppins, sans-serif',
+    heading: 'Outfit, sans-serif',
     body: 'Inter, sans-serif',
   },
   fontSize: {
@@ -76,7 +76,7 @@ export const SPACING = {
   --color-text-muted: #6b7280;
   
   /* Typography */
-  --font-heading: 'Poppins', sans-serif;
+  --font-heading: 'Outfit', sans-serif;
   --font-body: 'Inter', sans-serif;
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
@@ -176,7 +176,7 @@ module.exports = {
         },
       },
       fontFamily: {
-        heading: ['Poppins', 'sans-serif'],
+        heading: ['Outfit', 'sans-serif'],
         body: ['Inter', 'sans-serif'],
       },
     },

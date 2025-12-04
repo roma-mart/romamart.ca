@@ -94,7 +94,7 @@ function Hero({ onTrackOrder }) {
             <div className="inline-block px-4 py-1 mb-6 rounded-full border border-yellow-500/30 bg-yellow-500/10 backdrop-blur-sm">
               <span className="text-sm font-inter font-semibold tracking-widest uppercase" style={{ color: BRAND.accent }}>New In Town</span>
             </div>
-            <h1 className="text-5xl md:text-7xl font-coco uppercase leading-none text-white mb-6">Your Daily <br/><span style={{ color: BRAND.accent }}>Stop & Go</span></h1>
+            <h1 className="text-5xl md:text-7xl var(--font-heading) uppercase leading-none text-white mb-6">Your Daily <br/><span style={{ color: BRAND.accent }}>Stop & Go</span></h1>
             <p className="text-lg md:text-xl font-inter mb-6 max-w-lg leading-relaxed" style={{ color: 'rgba(255,255,255,0.8)' }}>Experience Sarnia's newest convenience destination. From daily essentials to bubble tea, we have what you need.</p>
             <div className="mb-6"><ShareButton title="Roma Mart" text="Check out Roma Mart - Sarnia's newest convenience store!" className="bg-white/10 text-white hover:bg-white/20 border border-white/30" /></div>
             <div className="flex flex-col sm:flex-row gap-4">
@@ -107,7 +107,7 @@ function Hero({ onTrackOrder }) {
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, delay: 0.2 }} className="relative hidden md:block">
             <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl border-4 border-white/10 rotate-3 hover:rotate-0 transition-transform duration-500">
               <img src="https://images.unsplash.com/photo-1555636222-cae831e670b3?w=1000&h=500&fit=crop" alt="Roma Mart Storefront" className="w-full h-[500px] object-cover" loading="lazy" />
-              <div className="absolute top-6 right-6 w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-lg rotate-12"><div className="text-center"><span className="block font-coco text-xl leading-none" style={{ color: BRAND.primary }}>2.5%</span><span className="block text-xs font-bold uppercase" style={{ color: 'var(--color-text)' }}>OFF CASH</span></div></div>
+              <div className="absolute top-6 right-6 w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-lg rotate-12"><div className="text-center"><span className="block var(--font-heading) text-xl leading-none" style={{ color: BRAND.primary }}>2.5%</span><span className="block text-xs font-bold uppercase" style={{ color: 'var(--color-text)' }}>OFF CASH</span></div></div>
             </div>
           </motion.div>
         </div>
@@ -120,7 +120,7 @@ const ServicesSection = () => {
   return (
     <section id="services" className="py-20" style={{ backgroundColor: BRAND.surface }}>
       <div className="max-w-7xl mx-auto px-4">
-        <h2 className="text-3xl md:text-4xl font-coco uppercase text-center mb-12" style={{ color: BRAND.heading }}>Our <span style={{ color: BRAND.accent }}>Services</span></h2>
+        <h2 className="text-3xl md:text-4xl var(--font-heading) uppercase text-center mb-12" style={{ color: BRAND.heading }}>Our <span style={{ color: BRAND.accent }}>Services</span></h2>
         
         {/* Featured Services with StandardizedItem */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
@@ -153,7 +153,7 @@ const RoCafeSection = () => {
                 <Coffee size={32} color={undefined} style={{ color: BRAND.accent }} />
               </div>
               <div>
-                 <h2 className="text-4xl font-coco text-white">RoCafé</h2>
+                 <h2 className="text-4xl var(--font-heading) text-white">RoCafé</h2>
                  <p className="text-yellow-400 font-inter tracking-wider uppercase text-sm">Sip. Savor. Repeat.</p>
               </div>
             </div>
@@ -225,7 +225,7 @@ const Locations = () => {
       <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
           <span className="text-yellow-500 font-bold uppercase tracking-widest text-sm">Find Us</span>
-          <h2 className="text-4xl font-coco mt-2" style={{ color: BRAND.heading }}>Our Location{locationCount > 1 ? 's' : ''}</h2>
+          <h2 className="text-4xl var(--font-heading) mt-2" style={{ color: BRAND.heading }}>Our Location{locationCount > 1 ? 's' : ''}</h2>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
@@ -241,7 +241,7 @@ const Locations = () => {
                   backgroundColor: activeLoc.id === loc.id ? BRAND.surface : 'transparent'
                 }}
               >
-                <h3 className="font-coco text-lg mb-1" style={{ color: BRAND.heading }}>{loc.name}</h3>
+                <h3 className="var(--font-heading) text-lg mb-1" style={{ color: BRAND.heading }}>{loc.name}</h3>
                 <p className="text-sm font-inter mb-4" style={{ color: BRAND.text, opacity: 0.7 }}>{loc.address}</p>
                 <div className="flex items-center gap-2 text-sm font-semibold" style={{ color: BRAND.accent }}>
                   <div className={`w-2 h-2 rounded-full ${loc.isOpen ? 'bg-green-500' : 'bg-red-500'}`}></div>
@@ -300,7 +300,7 @@ const ContactSection = () => {
           {/* Contact Info Side */}
           <div>
             <span className="text-yellow-500 font-bold uppercase tracking-widest text-sm">Get in Touch</span>
-            <h2 className="text-4xl font-coco mt-2 mb-6" style={{ color: BRAND.primary }}>Contact Us</h2>
+            <h2 className="text-4xl var(--font-heading) mt-2 mb-6" style={{ color: BRAND.primary }}>Contact Us</h2>
             <p className="mb-10 font-inter leading-relaxed" style={mutedTextColor}>
               Have a question about our products, want to suggest a new snack, or interested in a partnership? We'd love to hear from you.
             </p>
@@ -356,7 +356,7 @@ const ContactSection = () => {
 
           {/* Web3Forms Contact Form */}
           <div className="p-8 rounded-2xl shadow-lg border" style={{ backgroundColor: BRAND.bg, borderColor: BRAND.border }}>
-            <h3 className="font-coco text-2xl mb-6" style={{ color: BRAND.primary }}>Send a Message</h3>
+            <h3 className="var(--font-heading) text-2xl mb-6" style={{ color: BRAND.primary }}>Send a Message</h3>
             
             <form 
               action="https://api.web3forms.com/submit" 

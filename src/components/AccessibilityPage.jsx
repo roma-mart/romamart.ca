@@ -31,7 +31,7 @@ const AccessibilityPage = () => {
       {/* Hero */}
       <section className="max-w-4xl mx-auto px-4 mb-16">
         <div className="flex flex-wrap items-start justify-between gap-4 mb-6">
-          <h1 className="text-4xl md:text-5xl font-coco uppercase" style={{ color: 'var(--color-heading)' }}>Accessibility Statement</h1>
+          <h1 className="text-4xl md:text-5xl var(--font-heading) uppercase" style={{ color: 'var(--color-heading)' }}>Accessibility Statement</h1>
           <ShareButton
             title="Roma Mart Accessibility"
             text="Learn about Roma Mart's accessibility commitment"
@@ -49,7 +49,7 @@ const AccessibilityPage = () => {
 
       {/* Standards */}
       <section className="max-w-4xl mx-auto px-4 mb-20">
-        <h2 className="text-3xl font-coco uppercase mb-12" style={{ color: 'var(--color-heading)' }}>Standards & Certifications</h2>
+        <h2 className="text-3xl var(--font-heading) uppercase mb-12" style={{ color: 'var(--color-heading)' }}>Standards & Certifications</h2>
         <div className="grid md:grid-cols-2 gap-8">
           {[
             { title: 'WCAG 2.2 Level AA', link: 'https://www.w3.org/WAI/WCAG22/quickref/' },
@@ -80,7 +80,7 @@ const AccessibilityPage = () => {
 
       {/* Features */}
       <section className="max-w-4xl mx-auto px-4 mb-20">
-        <h2 className="text-3xl font-coco uppercase mb-8" style={{ color: 'var(--color-heading)' }}>Accessibility Features</h2>
+        <h2 className="text-3xl var(--font-heading) uppercase mb-8" style={{ color: 'var(--color-heading)' }}>Accessibility Features</h2>
         <div className="space-y-6">
           {['Keyboard Navigation','Visible Focus Indicators','Screen Reader Support','Skip Navigation','Enhanced Color Contrast','Reduced Motion Support','Resizable Text & Zoom','Touch-Friendly Targets'].map((title, i) => (
             <div className="flex gap-4" key={i}>
@@ -106,12 +106,12 @@ const AccessibilityPage = () => {
       {/* Report issue */}
       <section className="max-w-4xl mx-auto px-4 mb-20">
         <h2 
-          className="text-3xl font-coco uppercase mb-8"
+          className="text-3xl var(--font-heading) uppercase mb-8"
           style={{ 
             color: 'var(--color-heading)',
-            fontFamily: tokens.fonts.heading,
-            fontSize: tokens.fontSize['3xl'],
-            fontWeight: tokens.fontWeight.bold
+            fontFamily: tokens?.fonts?.heading || 'inherit',
+            fontSize: tokens?.fontSize?.['3xl'] || '1.875rem',
+            fontWeight: tokens?.fontWeight?.bold || 'bold',
           }}
         >
           Report an Accessibility Issue
@@ -139,7 +139,7 @@ const AccessibilityPage = () => {
 
       {/* Commitment */}
       <section className="max-w-4xl mx-auto px-4">
-        <h2 className="text-3xl font-coco uppercase mb-8" style={{ color: 'var(--color-heading)' }}>Our Commitment to Accessibility</h2>
+        <h2 className="text-3xl var(--font-heading) uppercase mb-8" style={{ color: 'var(--color-heading)' }}>Our Commitment to Accessibility</h2>
         <div className="rounded-lg p-8" style={{ backgroundColor: 'var(--color-primary)' }}>
           <p className="text-lg leading-relaxed mb-6" style={{ color: 'white' }}>Accessibility is not a feature—it's a fundamental right. We are committed to:</p>
           <ul className="space-y-3" style={{ color: 'white' }}>

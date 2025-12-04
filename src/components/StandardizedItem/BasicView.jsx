@@ -97,7 +97,7 @@ export default function BasicView({
           <div className="flex items-start justify-between gap-2 mb-2">
             <div className="flex-1">
               <h3 
-                className="font-coco text-lg font-bold flex items-center gap-2 flex-wrap"
+                className="var(--font-heading) text-lg font-bold flex items-center gap-2 flex-wrap"
                 style={{ 
                   color: 'var(--color-heading)',
                   textDecoration: isUnavailable ? 'line-through' : 'none',
@@ -172,7 +172,7 @@ export default function BasicView({
           {/* Price Display - Only show for menu items (not services) with non-zero pricing */}
           {!item.features && (currentPrice > 0 || (item.price && item.price > 0)) && (
             <div className="flex items-center justify-between mb-3">
-              <div className="text-2xl font-coco font-bold" style={{ color: 'var(--color-accent)' }}>
+              <div className="text-2xl var(--font-heading) font-bold" style={{ color: 'var(--color-accent)' }}>
                 {formatPrice(currentPrice || item.price)}
               </div>
               {currentCalories && (

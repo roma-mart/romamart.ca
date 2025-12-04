@@ -78,7 +78,7 @@ Without self-validation, quality systems can:
 
 **Tests:**
 - Color validation (Navy #020178, Yellow #E4B340)
-- Font validation (Poppins headings, Inter body)
+- Font validation (Outfit headings, Inter body)
 - CSS variable usage
 
 **Example Issue:**
@@ -240,7 +240,7 @@ const DEV_ETHOS = {
       white: '#FFFFFF',
     },
     fonts: {
-      heading: 'Poppins',
+      heading: 'Outfit',
       body: 'Inter',
     },
   },

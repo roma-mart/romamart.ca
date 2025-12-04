@@ -5,7 +5,7 @@ This guide outlines the steps to implement a unified typography system for the R
 
 ## Objectives
 1. **Consistency**:
-   - Use Poppins for headings and Inter for body text.
+   - Use Outfit for headings and Inter for body text.
    - Define typography tokens as the single source of truth.
 2. **Accessibility**:
    - Ensure all typography adheres to WCAG 2.2 AA+ standards.
@@ -23,7 +23,7 @@ This guide outlines the steps to implement a unified typography system for the R
    ```javascript
    export const TYPOGRAPHY = {
      fontFamily: {
-       heading: 'Poppins, sans-serif',
+       heading: 'Outfit, sans-serif',
        body: 'Inter, sans-serif',
      },
      fontSize: {
@@ -54,7 +54,7 @@ This guide outlines the steps to implement a unified typography system for the R
    - Ensure variables adapt to responsive breakpoints.
    ```css
    :root {
-     --font-heading: 'Poppins, sans-serif';
+     --font-heading: 'Outfit, sans-serif';
      --font-body: 'Inter, sans-serif';
      --font-size-base: 1rem;
      --line-height-normal: 1.5;
@@ -114,7 +114,7 @@ After:
    ```javascript
    if (/fontFamily\s*:\s*['"][^'"]*['"]/.test(line)) {
      const font = line.match(/fontFamily\s*:\s*['"]([^'"]*)['"]/)[1];
-     if (!['Poppins', 'Inter'].includes(font)) {
+     if (!['Outfit', 'Inter'].includes(font)) {
        issues.push({
          severity: 'MEDIUM',
          message: `Non-brand font family: ${font}`,
@@ -146,7 +146,7 @@ After:
    - These can be refactored into reusable classes or tokens for better maintainability.
 
 3. **Typography Tokens**:
-   - Fonts like `font-coco` and `font-inter` are applied consistently but could benefit from centralized tokenization for font sizes, weights, and line heights.
+   - Fonts like `var(--font-heading)` and `font-inter` are applied consistently, leveraging centralized tokenization for font sizes, weights, and line heights.
 
 4. **Accessibility**:
    - The use of semantic HTML and ARIA attributes is consistent, aligning with WCAG 2.2 AA+ standards.

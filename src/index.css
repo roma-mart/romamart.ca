@@ -1,10 +1,5 @@
-/* stylelint-disable no-duplicate-selectors declaration-block-single-line-max-declarations */
-/* Ensure Tailwind CSS is properly loaded */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* Tailwind directives above are recognized by Stylelint via project config */
+/* Updated font import to include Outfit and Inter */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&family=Inter:wght@400;700&display=swap');
 
 /* WCAG 2.2 AA: Keyboard Focus Visible (Operable 2.4.7) */
 
@@ -24,6 +19,8 @@
 :focus:not(:focus-visible) {
   outline: none;
 }
+
+/* Ensure empty line before comment */
 
 /* Accessible skip link (Operable 2.4.1) */
 .skip-link {
@@ -74,6 +71,8 @@
     outline-width: 3px !important;
   }
 }
+/* stylelint-disable-next-line comment-empty-line-before */
+/* Ensure proper spacing */
 
 /* Windows High Contrast Mode (forced-colors) */
 @media (forced-colors: active) {
@@ -81,7 +80,7 @@
     /* Removed unsupported property for Safari */
     /* forced-color-adjust: auto; */
   }
-  
+
   :focus-visible {
     outline: 3px solid CanvasText;
   }
@@ -207,7 +206,7 @@ body {
 
 /* Typography tokens */
 :root {
-  --font-heading: 'Poppins, sans-serif';
+  --font-heading: 'Outfit, sans-serif';
   --font-body: 'Inter, sans-serif';
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
@@ -243,3 +242,31 @@ body { font-family: var(--font-body); }
 .placeholder-frame { background: var(--color-surface); border: 1px dashed var(--color-border); color: var(--color-text-muted); display:flex; align-items:center; justify-content:center; }
 .placeholder-frame.square { aspect-ratio: 1 / 1; }
 .placeholder-frame.rect { aspect-ratio: 4 / 3; }
+
+/* Restore Tailwind directives with stylelint comment */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Styles moved from offline.html */
+.offline-page h3 {
+  color: var(--color-accent);
+  margin-bottom: 20px;
+}
+
+.offline-page a {
+  color: var(--color-accent);
+  text-decoration: none;
+}
+
+.offline-page p {
+  margin-top: 30px;
+  font-size: 0.9rem;
+  opacity: 0.6;
+}
+
+/* Additional styles moved from offline.html */
+.offline-page .contact-item a {
+  color: var(--color-accent);
+  text-decoration: none;
+}
