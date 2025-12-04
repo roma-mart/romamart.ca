@@ -2,7 +2,6 @@ import React, { useState, useMemo } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { getRoleColors } from '../design/tokens';
 import { formatPrice } from '../utils/menuHelpers';
-import { getOrderingUrl } from '../config/ordering';
 import { useLocationContext } from '../hooks/useLocationContext';
 import PriceDisplay from './StandardizedItem/PriceDisplay';
 import SizeSelector from './StandardizedItem/SizeSelector';
@@ -589,22 +588,10 @@ const StandardizedItem = ({ item, defaultExpanded = false }) => {
           )}
 
           {/* Order Now Button (for Menu Items) */}
-          {customizations.length > 0 && nearestLocation && (
-            <a
-              href={getOrderingUrl('ubereats', nearestLocation)}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={(e) => e.stopPropagation()}
-              className="block w-full py-3 px-4 rounded-lg font-bold font-inter text-center transition-transform hover:scale-105 mb-2"
-              style={{
-                backgroundColor: 'var(--color-accent)',
-                color: 'var(--color-primary)',
-                textDecoration: 'none'
-              }}
-            >
-              Order Now • {formatPrice(currentPrice)}
-            </a>
-          )}
+          <OrderButton 
+            currentPrice={currentPrice}
+            hasCustomizations={customizations.length > 0}
+          />
 
           {/* Action Button (for Services) */}
           {action && !isUnavailable && !isComingSoon && (
