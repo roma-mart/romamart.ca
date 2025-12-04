@@ -4,6 +4,10 @@ import { getRoleColors } from '../design/tokens';
 import { formatPrice } from '../utils/menuHelpers';
 import { getOrderingUrl } from '../config/ordering';
 import { useLocationContext } from '../hooks/useLocationContext';
+import PriceDisplay from './StandardizedItem/PriceDisplay';
+import SizeSelector from './StandardizedItem/SizeSelector';
+import OrderButton from './StandardizedItem/OrderButton';
+import CustomizationSection from './StandardizedItem/CustomizationSection';
 
 /**
  * StandardizedItem Component
@@ -426,187 +430,11 @@ const StandardizedItem = ({ item, defaultExpanded = false }) => {
           </p>
 
           {/* Customization Options (for Menu Items) */}
-          {customizations.length > 0 && (
-            <div className="space-y-4 mb-4">
-              {customizations.map((customization, custIdx) => (
-                <div key={custIdx}>
-                  <h4 
-                    className="text-sm font-bold font-coco mb-2"
-                    style={{ color: 'var(--color-heading)' }}
-                  >
-                    {customization.type}
-                    {customization.required && <span style={{ color: 'var(--color-error)' }}> *</span>}
-                    {customization.multiple && <span className="text-xs font-normal font-inter ml-2" style={{ color: 'var(--color-text-muted)' }}>(Select all that apply)</span>}
-                    {customization.quantity && <span className="text-xs font-normal font-inter ml-2" style={{ color: 'var(--color-text-muted)' }}>(Adjust quantity)</span>}
-                  </h4>
-                  
-                  {customization.multiple ? (
-                    // Multiple selection: Checkboxes with optional maxSelections limit
-                    <div className="space-y-2">
-                      {customization.maxSelections && (
-                        <p 
-                          className="text-xs font-inter mb-2"
-                          style={{ color: 'var(--color-text-muted)' }}
-                        >
-                          Select up to {customization.maxSelections} option{customization.maxSelections > 1 ? 's' : ''}
-                        </p>
-                      )}
-                      {customization.options.map((option, optIdx) => {
-                        const currentSelections = Array.isArray(selectedOptions[customization.type]) ? selectedOptions[customization.type] : [];
-                        const isSelected = currentSelections.includes(option.name);
-                        const isMaxReached = customization.maxSelections && currentSelections.length >= customization.maxSelections && !isSelected;
-                        
-                        return (
-                          <label
-                            key={optIdx}
-                            className="flex items-center gap-3 p-2 rounded-lg cursor-pointer hover:bg-opacity-50 transition-all"
-                            style={{ 
-                              backgroundColor: isSelected ? 'var(--color-accent-light)' : 'transparent',
-                              opacity: isMaxReached ? 0.5 : 1,
-                              cursor: isMaxReached ? 'not-allowed' : 'pointer'
-                            }}
-                            onClick={(e) => e.stopPropagation()}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter' || e.key === ' ') {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                if (!isMaxReached) {
-                                  const checkbox = e.currentTarget.querySelector('input[type="checkbox"]');
-                                  if (checkbox) checkbox.click();
-                                }
-                              }
-                            }}
-                            tabIndex={0}
-                          >
-                            <input
-                              type="checkbox"
-                              checked={isSelected}
-                              disabled={isMaxReached}
-                              onChange={(e) => {
-                                e.stopPropagation();
-                                setSelectedOptions(prev => {
-                                  const currentSelections = Array.isArray(prev[customization.type]) ? prev[customization.type] : [];
-                                  const newSelections = e.target.checked
-                                    ? [...currentSelections, option.name]
-                                    : currentSelections.filter(name => name !== option.name);
-                                  return { ...prev, [customization.type]: newSelections };
-                                });
-                              }}
-                              className="w-4 h-4"
-                              style={{ accentColor: 'var(--color-accent)' }}
-                            />
-                            <span className="text-sm font-inter" style={{ color: 'var(--color-text)' }}>
-                              {option.name}
-                              {option.price > 0 && <span className="ml-2 font-bold" style={{ color: 'var(--color-accent)' }}>+${option.price.toFixed(2)}</span>}
-                            </span>
-                          </label>
-                        );
-                      })}
-                    </div>
-                  ) : customization.quantity ? (
-                    // Quantity support: Number input
-                    <div className="space-y-2">
-                      {customization.options.map((option, optIdx) => {
-                        const currentQty = (selectedOptions[customization.type] && selectedOptions[customization.type][option.name]) || 0;
-                        return (
-                          <div
-                            key={optIdx}
-                            className="flex items-center justify-between p-3 rounded-lg"
-                            style={{ backgroundColor: 'var(--color-bg)' }}
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <span className="text-sm font-inter" style={{ color: 'var(--color-text)' }}>
-                              {option.name}
-                              {option.price > 0 && <span className="ml-2 text-xs" style={{ color: 'var(--color-text-muted)' }}>${option.price.toFixed(2)} each</span>}
-                            </span>
-                            <div className="flex items-center gap-2">
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setSelectedOptions(prev => {
-                                    const currentOptions = prev[customization.type] || {};
-                                    const newQty = Math.max(0, (currentOptions[option.name] || 0) - 1);
-                                    return {
-                                      ...prev,
-                                      [customization.type]: { ...currentOptions, [option.name]: newQty }
-                                    };
-                                  });
-                                }}
-                                className="w-8 h-8 rounded-full font-bold transition-all hover:scale-110"
-                                style={{ 
-                                  backgroundColor: 'var(--color-surface)',
-                                  color: 'var(--color-text)',
-                                  border: '1px solid var(--color-border)'
-                                }}
-                              >
-                                −
-                              </button>
-                              <span className="w-8 text-center font-bold font-inter" style={{ color: 'var(--color-text)' }}>
-                                {currentQty}
-                              </span>
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setSelectedOptions(prev => {
-                                    const currentOptions = prev[customization.type] || {};
-                                    const newQty = (currentOptions[option.name] || 0) + 1;
-                                    return {
-                                      ...prev,
-                                      [customization.type]: { ...currentOptions, [option.name]: newQty }
-                                    };
-                                  });
-                                }}
-                                className="w-8 h-8 rounded-full font-bold transition-all hover:scale-110"
-                                style={{ 
-                                  backgroundColor: 'var(--color-accent)',
-                                  color: 'var(--color-primary)',
-                                  border: 'none'
-                                }}
-                              >
-                                +
-                              </button>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    // Single selection: Radio buttons
-                    <div className="flex gap-2 flex-wrap">
-                      {customization.options.map((option, optIdx) => {
-                        const isSelected = selectedOptions[customization.type] === option.name;
-                        return (
-                          <button
-                            type="button"
-                            key={optIdx}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedOptions(prev => ({
-                                ...prev,
-                                [customization.type]: option.name
-                              }));
-                            }}
-                            className="px-3 py-2 rounded-lg font-inter text-xs transition-all hover:scale-105"
-                            style={{
-                              backgroundColor: isSelected ? 'var(--color-accent)' : 'var(--color-bg)',
-                              color: isSelected ? 'var(--color-primary)' : 'var(--color-text)',
-                              border: `1px solid ${isSelected ? 'var(--color-accent)' : 'var(--color-border)'}`,
-                              fontWeight: isSelected ? 'bold' : 'normal'
-                            }}
-                          >
-                            {option.name}
-                            {option.price > 0 && <span className="ml-1">+${option.price.toFixed(2)}</span>}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
+          <CustomizationSection
+            customizations={customizations}
+            selectedOptions={selectedOptions}
+            onOptionsChange={setSelectedOptions}
+          />
 
           {/* Features List (for Services) */}
           {features.length > 0 && (
