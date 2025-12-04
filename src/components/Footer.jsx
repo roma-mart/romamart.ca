@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { MapPin } from 'lucide-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFacebook, faInstagram, faTiktok, faXTwitter, faSnapchat } from '@fortawesome/free-brands-svg-icons';
+import { getOrderingUrl } from '../config/ordering';
 import { Logo } from './Logo';
 import TrustpilotWidget from './TrustpilotWidget';
 import { useLocationContext } from '../hooks/useLocationContext';
@@ -14,7 +15,7 @@ const BRAND = {
 
 const STORE_DATA = {
   legalName: "Roma Mart Corp.",
-  onlineStoreUrl: "https://nrsplus.com/orders/your-store-link",
+  onlineStoreUrl: getOrderingUrl(),
   socialLinks: {
     facebook: "https://www.facebook.com/romamartca",
     instagram: "https://www.instagram.com/romamartca/",

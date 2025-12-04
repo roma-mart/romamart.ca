@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { ChevronDown, ChevronUp, ShoppingCart } from 'lucide-react';
 import { getRoleColors } from '../design/tokens';
 import { formatPrice } from '../utils/menuHelpers';
+import { getOrderingUrl } from '../config/ordering';
 import { useLocationContext } from '../hooks/useLocationContext';
 import PriceDisplay from './StandardizedItem/PriceDisplay';
 import SizeSelector from './StandardizedItem/SizeSelector';
@@ -600,7 +601,7 @@ const StandardizedItem = ({ item, defaultExpanded = false }) => {
                     item_price: currentPrice
                   });
                 }
-                window.open('https://nrsplus.com/orders/your-store-link', '_blank', 'noopener,noreferrer');
+                window.open(getOrderingUrl(), '_blank', 'noopener,noreferrer');
               }}
               className="w-full py-3 px-4 rounded-lg font-bold font-inter text-center transition-transform hover:scale-105 mb-2 flex items-center justify-center gap-2"
               style={{

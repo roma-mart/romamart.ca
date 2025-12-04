@@ -1,8 +1,9 @@
 import { ShoppingCart } from 'lucide-react';
 import { useVibration } from '../hooks/useBrowserFeatures';
+import { getOrderingUrl } from '../config/ordering';
 import { useState, useEffect } from 'react';
 
-const OrderCTA = ({ orderUrl = 'https://nrsplus.com/orders/your-store-link' }) => {
+const OrderCTA = ({ orderUrl = getOrderingUrl() }) => {
   const { vibrate, canVibrate } = useVibration();
   const [isVisible, setIsVisible] = useState(false);
 

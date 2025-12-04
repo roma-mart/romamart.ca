@@ -11,6 +11,7 @@ import {
   Coffee,
   Send
 } from 'lucide-react';
+import { getOrderingUrl } from './config/ordering';
 import { LocationProvider } from './components/LocationProvider';
 import { getPrimaryLocation, getActiveLocationCount, LOCATIONS, isLocationOpenNow } from './data/locations';
 import { Logo } from './components/Logo';
@@ -58,7 +59,7 @@ const BRAND = {
 const STORE_DATA = {
   legalName: "Roma Mart Corp.",
   dba: "Roma Mart Convenience",
-  onlineStoreUrl: "https://nrsplus.com/orders/your-store-link",
+  onlineStoreUrl: getOrderingUrl(),
   socialLinks: {
     facebook: "https://www.facebook.com/romamartca",
     instagram: "https://www.instagram.com/romamartca/",

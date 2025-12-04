@@ -11,21 +11,32 @@
  */
 export const ORDERING_CONFIG = {
   /**
+   * NRS Plus Online Ordering System (PRIMARY)
+   * All delivery platforms integrated on this page
+   * Single source of truth for all ordering CTAs site-wide
+   * @production Update to actual NRS store URL when available
+   */
+  nrs: 'https://nrsplus.com/orders/your-store-link',
+  
+  /**
    * UberEats ordering URL
    * - For production: Use restaurant-specific UberEats link
    * - For staging/testing: Generic UberEats homepage
+   * @deprecated Use NRS system instead (integrates all platforms)
    */
   uberEats: 'https://www.ubereats.com/',
   
   /**
    * Skip the Dishes ordering URL
    * @placeholder Update with actual restaurant link
+   * @deprecated Use NRS system instead (integrates all platforms)
    */
   skipTheDishes: 'https://www.skipthedishes.com/',
   
   /**
    * DoorDash ordering URL
    * @placeholder Update with actual restaurant link
+   * @deprecated Use NRS system instead (integrates all platforms)
    */
   doorDash: 'https://www.doordash.com/',
   
@@ -38,13 +49,14 @@ export const ORDERING_CONFIG = {
 
 /**
  * Get ordering URL based on service type and location
- * Future enhancement: Support location-specific URLs
  * 
- * @param {string} service - Service type ('ubereats', 'skipthedishes', 'doordash', 'phone')
+ * @param {string} service - Service type ('nrs', 'ubereats', 'skipthedishes', 'doordash', 'phone')
  * @param {Object} location - Location object (optional, for future use)
  * @returns {string} Ordering URL
+ * 
+ * @note NRS is now the default - it integrates all delivery platforms
  */
-export const getOrderingUrl = (service = 'ubereats', _location = null) => {
+export const getOrderingUrl = (service = 'nrs', _location = null) => {
   const serviceLower = service.toLowerCase().replace(/\s+/g, '');
   
   // Future: Add location-specific URL logic
@@ -52,11 +64,11 @@ export const getOrderingUrl = (service = 'ubereats', _location = null) => {
   //   return _location.orderingUrls[serviceLower];
   // }
   
-  return ORDERING_CONFIG[serviceLower] || ORDERING_CONFIG.uberEats;
+  return ORDERING_CONFIG[serviceLower] || ORDERING_CONFIG.nrs;
 };
 
 /**
  * Default ordering service
  * Used when user hasn't selected a preferred service
  */
-export const DEFAULT_ORDERING_SERVICE = 'ubereats';
+export const DEFAULT_ORDERING_SERVICE = 'nrs';
