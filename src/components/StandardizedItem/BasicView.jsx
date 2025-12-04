@@ -169,8 +169,8 @@ export default function BasicView({
             {tagline}
           </p>
 
-          {/* Price Display - Only show for menu items (not services) */}
-          {!item.features && (currentPrice > 0 || item.price) && (
+          {/* Price Display - Only show for menu items (not services) with non-zero pricing */}
+          {!item.features && (currentPrice > 0 || (item.price && item.price > 0)) && (
             <div className="flex items-center justify-between mb-3">
               <div className="text-2xl font-coco font-bold" style={{ color: 'var(--color-accent)' }}>
                 {formatPrice(currentPrice || item.price)}
