@@ -186,3 +186,13 @@ After:
 3. Monitor progress and ensure alignment with the development ethos.
 
 By following this guide, the Roma Mart website will achieve a cohesive, accessible, and brand-aligned typography system.
+
+## Integration with Color System
+
+The typography system is designed to work seamlessly with the unified color system. Key alignments include:
+
+- **Text Colors:** Typography tokens like `heading` and `body` are paired with color tokens such as `text-primary` and `text-muted`.
+- **Backgrounds and Surfaces:** Ensure that background colors (e.g., `surface`, `background`) complement typography styles for readability.
+- **Contrast Validation:** Both systems adhere to WCAG 2.2 AA+ standards, ensuring accessible contrast ratios.
+
+For detailed information on the color system, refer to the [Unified Color System Implementation Guide](./color-system-implementation-guide.md).
