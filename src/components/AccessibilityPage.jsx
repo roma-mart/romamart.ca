@@ -2,7 +2,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ExternalLink, Mail, Phone, MapPin, CheckCircle, ChevronRight } from 'lucide-react';
 import ShareButton from './ShareButton';
-import { tokens } from '../styles/tokens'; // Adjust the import path as needed
+import { tokens } from '../design/tokens';
 
 const AccessibilityPage = () => {
   const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
