@@ -1,11 +1,10 @@
 import React, { useState, useMemo } from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, ShoppingCart } from 'lucide-react';
 import { getRoleColors } from '../design/tokens';
 import { formatPrice } from '../utils/menuHelpers';
 import { useLocationContext } from '../hooks/useLocationContext';
 import PriceDisplay from './StandardizedItem/PriceDisplay';
 import SizeSelector from './StandardizedItem/SizeSelector';
-import OrderButton from './StandardizedItem/OrderButton';
 import CustomizationSection from './StandardizedItem/CustomizationSection';
 
 /**
@@ -588,10 +587,32 @@ const StandardizedItem = ({ item, defaultExpanded = false }) => {
           )}
 
           {/* Order Now Button (for Menu Items) */}
-          <OrderButton 
-            currentPrice={currentPrice}
-            hasCustomizations={customizations.length > 0}
-          />
+          {customizations.length > 0 && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (window.dataLayer) {
+                  window.dataLayer.push({
+                    event: 'order_cta_click',
+                    cta_location: 'menu_item_button',
+                    cta_text: 'Order Now',
+                    item_price: currentPrice
+                  });
+                }
+                window.open('https://nrsplus.com/orders/your-store-link', '_blank', 'noopener,noreferrer');
+              }}
+              className="w-full py-3 px-4 rounded-lg font-bold font-inter text-center transition-transform hover:scale-105 mb-2 flex items-center justify-center gap-2"
+              style={{
+                backgroundColor: 'var(--color-accent)',
+                color: 'var(--color-primary)'
+              }}
+              aria-label={`Order this item for ${formatPrice(currentPrice)}`}
+            >
+              <ShoppingCart className="w-5 h-5" aria-hidden="true" />
+              <span>Order Now • {formatPrice(currentPrice)}</span>
+            </button>
+          )}
 
           {/* Action Button (for Services) */}
           {action && !isUnavailable && !isComingSoon && (
