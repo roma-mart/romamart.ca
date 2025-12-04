@@ -12,17 +12,16 @@ import {
   Send
 } from 'lucide-react';
 import { LocationProvider } from './components/LocationProvider';
-import { getPrimaryLocation, getActiveLocationCount, LOCATIONS, getActiveLocations, isLocationOpenNow } from './data/locations';
-import { useLocationContext } from './hooks/useLocationContext';
+import { getPrimaryLocation, getActiveLocationCount, LOCATIONS, isLocationOpenNow } from './data/locations';
 import { Logo } from './components/Logo';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import BrandPatternBackground from './components/BrandPatternBackground';
 import ShareButton from './components/ShareButton';
+import StandardizedItem from './components/StandardizedItem';
+import { ROCAFE_FEATURED } from './data/rocafe-menu';
 import Phone from 'lucide-react/dist/esm/icons/phone.js';
 import Clock from 'lucide-react/dist/esm/icons/clock.js';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFacebook, faInstagram, faTiktok, faXTwitter, faSnapchat } from '@fortawesome/free-brands-svg-icons';
 
 // PWA Hooks
 import { useServiceWorker } from './hooks/useServiceWorker';
@@ -82,13 +81,6 @@ const SERVICES = [
   { id: 4, title: "TOBACCO & VAPE", desc: "Wide selection for adult customers.", icon: <ShoppingBasket /> },
   { id: 5, title: "HALAL MEAT", desc: "Certified Zabiha Halal meats.", icon: <Utensils /> },
   { id: 6, title: "LOTTERY", desc: "OLG Lottery & Scratch cards.", icon: <Star /> },
-];
-
-const ROCAFE_MENU = [
-  { name: "Signature Bubble Tea", price: "$5.99", popular: true },
-  { name: "Fresh Brewed Coffee", price: "$2.50", popular: false },
-  { name: "Matcha Latte", price: "$4.99", popular: true },
-  { name: "Fruit Slush", price: "$5.50", popular: false },
 ];
 
 const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
@@ -169,7 +161,7 @@ const ServicesScroll = () => {
 
 const RoCafeSection = () => {
   return (
-    <section id="rocafe" className="py-24 relative overflow-hidden text-white" style={{ backgroundColor: BRAND.primary }}>
+    <section id="rocafe" className="py-24 relative overflow-hidden" style={{ backgroundColor: BRAND.primary }}>
       <div className="absolute top-0 right-0 w-1/2 h-full bg-black/20 skew-x-12 transform translate-x-20"></div>
       <div className="max-w-7xl mx-auto px-4 relative z-10">
         <div className="flex flex-col md:flex-row gap-16 items-center">
@@ -186,17 +178,18 @@ const RoCafeSection = () => {
             <p className="font-inter text-lg mb-8" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
               Step into our dedicated café corner. Whether you need a morning espresso kick or a refreshing afternoon bubble tea, RoCafé is brewing specifically for you.
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {ROCAFE_MENU.map((item, idx) => (
-                 <div key={idx} className="bg-white/5 p-4 rounded-lg backdrop-blur-sm border border-white/10 flex justify-between items-center">
-                   <div>
-                     <p className="font-bold text-white">{item.name}</p>
-                     {item.popular && <span className="text-xs text-yellow-400 uppercase font-bold">Best Seller</span>}
-                   </div>
-                   <p className="font-coco text-lg" style={{ color: BRAND.accent }}>{item.price}</p>
-                 </div>
+            
+            {/* Featured Menu Items with StandardizedItem */}
+            <div className="space-y-3 mb-8">
+              {ROCAFE_FEATURED.map((item) => (
+                <StandardizedItem 
+                  key={item.id}
+                  item={item}
+                  defaultExpanded={false}
+                />
               ))}
             </div>
+            
             <div className="mt-8">
               <a
                 href={`${BASE_URL}rocafe`}
@@ -445,247 +438,6 @@ const ContactSection = () => {
         </div>
       </div>
     </section>
-  );
-};
-
-const SiteFooter = () => {
-  const { userLocation } = useLocationContext();
-  const [selectedLocationId, setSelectedLocationId] = useState(() => {
-    // Check if user has manually selected a location
-    return localStorage.getItem('roma_mart_selected_location') || 'auto';
-  });
-
-  // Calculate nearest location using useMemo (derived state, not effect)
-  const nearestLocationId = React.useMemo(() => {
-    if (!userLocation || !userLocation.latitude || !userLocation.longitude) {
-      return null;
-    }
-
-    // Haversine distance calculation
-    const calculateDistance = (lat1, lon1, lat2, lon2) => {
-      const R = 6371; // Earth radius in km
-      const dLat = (lat2 - lat1) * Math.PI / 180;
-      const dLon = (lon2 - lon1) * Math.PI / 180;
-      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                Math.sin(dLon/2) * Math.sin(dLon/2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-      return R * c;
-    };
-
-    // Find nearest active location
-    const activeLocations = getActiveLocations();
-    let nearest = null;
-    let minDistance = Infinity;
-
-    activeLocations.forEach(loc => {
-      if (loc.google?.coordinates) {
-        const distance = calculateDistance(
-          userLocation.latitude,
-          userLocation.longitude,
-          loc.google.coordinates.lat,
-          loc.google.coordinates.lng
-        );
-        if (distance < minDistance) {
-          minDistance = distance;
-          nearest = loc.id;
-        }
-      }
-    });
-
-    return nearest;
-  }, [userLocation]);
-
-  // Handle location selection change
-  const handleLocationChange = (e) => {
-    const newLocationId = e.target.value;
-    setSelectedLocationId(newLocationId);
-    
-    // Persist user's choice
-    if (newLocationId === 'auto') {
-      localStorage.removeItem('roma_mart_selected_location');
-    } else {
-      localStorage.setItem('roma_mart_selected_location', newLocationId);
-    }
-  };
-
-  // Determine which location to display
-  const getCurrentLocation = () => {
-    if (selectedLocationId === 'auto') {
-      // Auto mode: use nearest if available, otherwise HQ
-      return nearestLocationId 
-        ? LOCATIONS.find(loc => loc.id === nearestLocationId)
-        : getPrimaryLocation();
-    } else {
-      // Manual selection
-      return LOCATIONS.find(loc => loc.id === selectedLocationId) || getPrimaryLocation();
-    }
-  };
-
-  const currentLocation = getCurrentLocation();
-  const isAutoMode = selectedLocationId === 'auto';
-  const activeLocations = getActiveLocations();
-
-  // memoize social handlers map
-  const socialHandlers = useMemo(() => ({
-    facebook: () => window.dataLayer?.push({ event: 'social_click', platform: 'facebook' }),
-    instagram: () => window.dataLayer?.push({ event: 'social_click', platform: 'instagram' }),
-    tiktok: () => window.dataLayer?.push({ event: 'social_click', platform: 'tiktok' }),
-    x: () => window.dataLayer?.push({ event: 'social_click', platform: 'x' }),
-    snapchat: () => window.dataLayer?.push({ event: 'social_click', platform: 'snapchat' })
-  }), []);
-
-  return (
-    <footer className="text-white pt-16 pb-8" style={{ backgroundColor: BRAND.primary }}>
-      <div className="max-w-7xl mx-auto px-4 grid md:grid-cols-4 gap-12 mb-12">
-        <div className="col-span-1 md:col-span-2">
-           <a 
-             href={`${BASE_URL}`}
-             className="flex items-center gap-3 mb-6 hover:opacity-80 transition-opacity cursor-pointer w-fit"
-             aria-label="Roma Mart - Go to homepage"
-           >
-              <Logo />
-           </a>
-           <p className="font-inter max-w-sm mb-6" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
-             Your local one-stop shop for everything from daily groceries to premium café drinks. Proudly serving the Sarnia community.
-           </p>
-           <div className="flex gap-4">
-              <a 
-                href={STORE_DATA.socialLinks.facebook} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="w-10 h-10 rounded-full bg_white/10 flex items_center justify_center hover:bg-yellow-500 transition-colors" 
-                title="Facebook"
-                onClick={socialHandlers.facebook}
-              >
-                <FontAwesomeIcon icon={faFacebook} size="lg" style={{ color: BRAND.accent }} />
-              </a>
-              <a 
-                href={STORE_DATA.socialLinks.instagram} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="w-10 h-10 rounded-full bg_white/10 flex items_center justify_center hover:bg-yellow-500 transition-colors" 
-                title="Instagram"
-                onClick={socialHandlers.instagram}
-              >
-                <FontAwesomeIcon icon={faInstagram} size="lg" style={{ color: BRAND.accent }} />
-              </a>
-              <a 
-                href={STORE_DATA.socialLinks.tiktok} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="w-10 h-10 rounded-full bg_white/10 flex items_center justify_center hover:bg-yellow-500 transition-colors" 
-                title="TikTok"
-                onClick={socialHandlers.tiktok}
-              >
-                <FontAwesomeIcon icon={faTiktok} size="lg" style={{ color: BRAND.accent }} />
-              </a>
-              <a 
-                href={STORE_DATA.socialLinks.x} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="w-10 h-10 rounded-full bg_white/10 flex items_center justify_center hover:bg-yellow-500 transition-colors" 
-                title="X (Twitter)"
-                onClick={socialHandlers.x}
-              >
-                <FontAwesomeIcon icon={faXTwitter} size="lg" style={{ color: BRAND.accent }} />
-              </a>
-              <a 
-                href={STORE_DATA.socialLinks.snapchat} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="w-10 h-10 rounded-full bg_white/10 flex items_center justify_center hover:bg-yellow-500 transition-colors" 
-                title="Snapchat"
-                onClick={socialHandlers.snapchat}
-              >
-                <FontAwesomeIcon icon={faSnapchat} size="lg" style={{ color: BRAND.accent }} />
-              </a>
-           </div>
-        </div>
-
-        <div>
-          <h4 className="font-coco text-lg mb-6" style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Pages</h4>
-          <ul className="space-y-3 font-inter" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
-            <li><a href={`${BASE_URL}services`} className="hover:text-yellow-400 transition-colors">Services</a></li>
-            <li><a href={`${BASE_URL}rocafe`} className="hover:text-yellow-400 transition-colors">RoCafé Menu</a></li>
-            <li><a href={`${BASE_URL}locations`} className="hover:text-yellow-400 transition-colors">Locations</a></li>
-            <li><a href={`${BASE_URL}contact`} className="hover:text-yellow-400 transition-colors">Contact</a></li>
-            <li><a href={`${BASE_URL}about`} className="hover:text-yellow-400 transition-colors">About Us</a></li>
-            <li><a href={STORE_DATA.onlineStoreUrl} target="_blank" rel="noopener noreferrer" className="hover:text-yellow-400 transition-colors font-bold text-yellow-500">Order Online</a></li>
-          </ul>
-        </div>
-
-        <div>
-          <h4 className="font-coco text-lg mb-6" style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Legal & Accessibility</h4>
-          <ul className="space-y-2 font-inter" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
-            <li><a href={`${BASE_URL}privacy`} className="hover:text-yellow-400 transition-colors">Privacy Policy</a></li>
-            <li><a href={`${BASE_URL}terms`} className="hover:text-yellow-400 transition-colors">Terms of Service</a></li>
-            <li><a href={`${BASE_URL}cookies`} className="hover:text-yellow-400 transition-colors">Cookie Policy</a></li>
-            <li><a href={`${BASE_URL}accessibility`} className="hover:text-yellow-400 transition-colors font-bold text-yellow-500">Accessibility</a></li>
-          </ul>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 pt-8 border-t border-white/10">
-        {/* Trustpilot Widget - loads async via component */}
-        <div className="mb-8">
-          <TrustpilotWidget />
-        </div>
-
-        {/* Location Selector */}
-        <div className="mb-8 max-w-md mx-auto">
-          <div className="bg-white/5 rounded-lg p-4 border border-white/10">
-            <label 
-              htmlFor="location-selector" 
-              className="block font-coco text-sm mb-3"
-              style={{ color: BRAND.accent }}
-            >
-              <MapPin className="inline-block mr-2" size={16} />
-              Your Current Store
-            </label>
-            
-            <select
-              id="location-selector"
-              value={selectedLocationId}
-              onChange={handleLocationChange}
-              className="w-full px-4 py-3 rounded-lg font-inter bg-white/10 border border-white/20 text-white focus:outline-none focus:border-yellow-500 transition-colors"
-              style={{ cursor: 'pointer' }}
-            >
-              <option value="auto" style={{ backgroundColor: BRAND.primary, color: 'white' }}>
-                {isAutoMode && nearestLocationId
-                  ? `🎯 Auto-Detected: ${currentLocation.name}`
-                  : '🏢 Auto (HQ - Wellington St.)'}
-              </option>
-              {activeLocations.map(loc => (
-                <option 
-                  key={loc.id}
-                  value={loc.id}
-                  style={{ backgroundColor: BRAND.primary, color: 'white' }}
-                >
-                  {loc.name} {loc.isPrimary ? '(HQ)' : ''}
-                </option>
-              ))}
-            </select>
-
-            <div className="mt-3 text-xs font-inter" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
-              {isAutoMode ? (
-                nearestLocationId ? (
-                  <span>✓ Using nearest location based on your current position</span>
-                ) : (
-                  <span>Using headquarters as default • Grant location access for nearest store</span>
-                )
-              ) : (
-                <span>✓ Manually selected: {currentLocation.name}</span>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <div className="text-center font-inter text-sm" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
-          <p>&copy; {new Date().getFullYear()} {STORE_DATA.legalName} All rights reserved.</p>
-        </div>
-      </div>
-    </footer>
   );
 };
 
