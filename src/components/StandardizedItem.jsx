@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { ShoppingCart } from 'lucide-react';
+import { getRoleColors } from '../design/tokens';
 import { formatPrice } from '../utils/menuHelpers';
 import { getOrderingUrl } from '../config/ordering';
 import { useLocationContext } from '../hooks/useLocationContext';
@@ -40,22 +41,16 @@ const StandardizedItem = ({ item, defaultExpanded = false }) => {
 
   // Destructure item data  
   const {
-    name,
-    tagline,              // Short description (basic view)
     description,          // Full description (detailed view)
-    image,                // Image URL or path
-    badge,                // 'bestseller', 'new', 'halal', 'comingSoon', etc.
     sizes = [],           // [{name: 'Small', price: 2.99, calories: 320}, ...]
     defaultSize = 0,      // Index of default selected size
     customizations = [],  // [{type: 'Milk Choice', options: [{name: 'Whole Milk', price: 0}]}]
     calories,             // Optional: legacy nutritional info
     ingredients,          // Optional: ingredient list
-    icon,                 // Optional: Icon component (for services)
     action,               // Optional: CTA button config {text, email, url, subject, body}
     features = [],        // Optional: List of features (for services)
     isAvailable,          // Optional: Boolean (for services) - false means grey/unavailable
     locationStatus,       // Optional: 'Open Now' or 'Closed'
-    ageRestricted,        // Optional: Boolean for 19+ items
     legalNotice,          // Optional: {text, law, url} for age-restricted items
     partner,              // Optional: {name, url, logo} for partner services
   } = item;
@@ -134,38 +129,6 @@ const StandardizedItem = ({ item, defaultExpanded = false }) => {
   const toggleExpanded = () => {
     setIsExpanded(prev => !prev);
   };
-
-  // Badge configurations
-  const badgeStyles = {
-    bestseller: {
-      bg: 'var(--color-accent)',
-      text: 'var(--color-primary)',
-      label: 'BEST SELLER'
-    },
-    new: {
-      bg: 'var(--color-success)',
-      text: 'white',
-      label: 'NEW'
-    },
-    halal: {
-      bg: '#059669',
-      text: 'white',
-      label: 'HALAL'
-    },
-    comingSoon: {
-      bg: 'var(--color-warning)',
-      text: 'var(--color-primary)',
-      label: 'COMING SOON'
-    },
-    ageRestricted: {
-      bg: '#DC2626',
-      text: 'white',
-      label: '19+ ONLY'
-    }
-  };
-
-  const badgeStyle = badge ? badgeStyles[badge] : null;
-  const ageRestrictedBadge = ageRestricted ? badgeStyles.ageRestricted : null;
 
   // 4-state availability system for services
   const getAvailabilityColor = () => {
