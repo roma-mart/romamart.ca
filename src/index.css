@@ -1,4 +1,5 @@
 /* stylelint-disable no-duplicate-selectors declaration-block-single-line-max-declarations */
+/* Ensure Tailwind CSS is properly loaded */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -77,7 +78,8 @@
 /* Windows High Contrast Mode (forced-colors) */
 @media (forced-colors: active) {
   * {
-    forced-color-adjust: auto;
+    /* Removed unsupported property for Safari */
+    /* forced-color-adjust: auto; */
   }
   
   :focus-visible {
