@@ -91,34 +91,6 @@ export function getRoleColors(name, mode = 'light') {
   return { bg, text };
 }
 
-// Typography tokens
-export const TYPOGRAPHY = {
-  fontFamily: {
-    heading: 'var(--font-heading)',
-    body: 'var(--font-body)',
-  },
-  fontSize: {
-    xs: '0.75rem',
-    sm: '0.875rem',
-    base: '1rem',
-    lg: '1.125rem',
-    xl: '1.25rem',
-    '2xl': '1.5rem',
-    '3xl': '1.875rem',
-  },
-  fontWeight: {
-    normal: 400,
-    medium: 500,
-    semibold: 600,
-    bold: 700,
-  },
-  lineHeight: {
-    normal: 1.5,
-    relaxed: 1.75,
-    tight: 1.25,
-  },
-};
-
 export const tokens = {
   brandColors,
   colorScales,
@@ -130,8 +102,7 @@ export const tokens = {
   shadows,
   motion,
   roles,
-  getRoleColors,
-  TYPOGRAPHY
+  getRoleColors
 };
 
 export default tokens;

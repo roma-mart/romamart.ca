@@ -42,11 +42,6 @@ export const TYPOGRAPHY = {
     semibold: 600,
     bold: 700,
   },
-  lineHeight: {
-    normal: 1.5,
-    relaxed: 1.625,
-    tight: 1.375,
-  },
 };
 
 export const SPACING = {
@@ -78,20 +73,6 @@ export const SPACING = {
   /* Typography */
   --font-heading: 'Poppins', sans-serif;
   --font-body: 'Inter', sans-serif;
-  --font-size-xs: 0.75rem;
-  --font-size-sm: 0.875rem;
-  --font-size-base: 1rem;
-  --font-size-lg: 1.125rem;
-  --font-size-xl: 1.25rem;
-  --font-size-2xl: 1.5rem;
-  --font-size-3xl: 1.875rem;
-  --font-weight-normal: 400;
-  --font-weight-medium: 500;
-  --font-weight-semibold: 600;
-  --font-weight-bold: 700;
-  --line-height-normal: 1.5;
-  --line-height-relaxed: 1.625;
-  --line-height-tight: 1.375;
   
   /* Spacing */
   --spacing-page: 1rem;
@@ -205,17 +186,6 @@ module.exports = {
 // Theme hook
 <p style={colors.text}>
 ```
-
-## Recent Updates
-
-### Typography Tokens
-
-- **Font Families:** Added `heading` and `body` tokens for consistent typography.
-- **Font Sizes:** Defined a scalable size system (`xs` to `3xl`).
-- **Font Weights:** Introduced tokens for `normal`, `medium`, `semibold`, and `bold` weights.
-- **Line Heights:** Added tokens for `normal`, `relaxed`, and `tight` spacing.
-
-These tokens are mapped to CSS variables in `src/index.css` and are used across all components.
 
 ---
 
