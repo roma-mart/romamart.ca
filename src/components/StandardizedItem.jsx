@@ -7,6 +7,9 @@ import { useLocationContext } from '../hooks/useLocationContext';
 import PriceDisplay from './StandardizedItem/PriceDisplay';
 import SizeSelector from './StandardizedItem/SizeSelector';
 import CustomizationSection from './StandardizedItem/CustomizationSection';
+import AvailabilityIndicator from './StandardizedItem/AvailabilityIndicator';
+import PartnerInfo from './StandardizedItem/PartnerInfo';
+import LegalNoticeBox from './StandardizedItem/LegalNoticeBox';
 
 /**
  * StandardizedItem Component
@@ -460,107 +463,13 @@ const StandardizedItem = ({ item, defaultExpanded = false }) => {
           )}
 
           {/* Availability Status */}
-          <div 
-            className="p-3 rounded-lg mb-4"
-            style={{ 
-              backgroundColor: 'var(--color-bg)',
-              borderLeft: `4px solid ${nearestLocation ? 'var(--color-success)' : 'var(--color-warning)'}`
-            }}
-          >
-            {nearestLocation ? (
-              <>
-                <p 
-                  className="text-sm font-inter font-bold mb-1"
-                  style={{ color: 'var(--color-success)' }}
-                >
-                  📍 Available at {nearestLocation.name}
-                </p>
-                <p 
-                  className="text-xs font-inter"
-                  style={{ color: 'var(--color-text-muted)' }}
-                >
-                  {nearestLocation.address}
-                </p>
-              </>
-            ) : (
-              <p 
-                className="text-sm font-inter"
-                style={{ color: 'var(--color-text-muted)' }}
-              >
-                📍 Select a location to check availability
-              </p>
-            )}
-          </div>
+          <AvailabilityIndicator nearestLocation={nearestLocation} />
 
           {/* Partner Info */}
-          {partner && (
-            <div 
-              className="p-3 rounded-lg mb-4 flex items-center gap-3"
-              style={{ backgroundColor: 'var(--color-bg)' }}
-            >
-              {partner.logo && (
-                <img 
-                  src={partner.logo} 
-                  alt={`${partner.name} logo`}
-                  className="h-8 w-auto object-contain"
-                />
-              )}
-              <div>
-                <p 
-                  className="text-xs font-inter font-bold"
-                  style={{ color: 'var(--color-text-muted)' }}
-                >
-                  Partnered with
-                </p>
-                <a 
-                  href={partner.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm font-inter font-bold hover:underline"
-                  style={{ color: 'var(--color-accent)' }}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  {partner.name}
-                </a>
-              </div>
-            </div>
-          )}
+          <PartnerInfo partner={partner} />
 
           {/* Legal Notice (Age-Restricted Items) */}
-          {legalNotice && (
-            <div 
-              className="p-3 rounded-lg mb-4 border-2"
-              style={{ 
-                backgroundColor: 'var(--color-error-bg)',
-                borderColor: 'var(--color-error)',
-              }}
-            >
-              <p 
-                className="text-xs font-inter font-bold mb-1"
-                style={{ color: 'var(--color-error)' }}
-              >
-                ⚠️ Legal Notice
-              </p>
-              <p 
-                className="text-xs font-inter mb-2"
-                style={{ color: 'var(--color-error-dark)' }}
-              >
-                {legalNotice.text}
-              </p>
-              {legalNotice.url && (
-                <a 
-                  href={legalNotice.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs font-inter font-bold hover:underline"
-                  style={{ color: 'var(--color-error)' }}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  Learn more: {legalNotice.law}
-                </a>
-              )}
-            </div>
-          )}
+          <LegalNoticeBox legalNotice={legalNotice} />
 
           {/* Nutritional Info */}
           {(currentCalories || ingredients) && (
