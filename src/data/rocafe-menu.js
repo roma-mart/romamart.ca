@@ -69,6 +69,8 @@ export const ROCAFE_FULL_MENU = [
       { 
         type: 'Ice Level', 
         required: true,
+        multiple: false,
+        quantity: false,
         options: [
           { name: 'Regular Ice', price: 0, default: true },
           { name: 'Less Ice', price: 0 },
@@ -78,6 +80,8 @@ export const ROCAFE_FULL_MENU = [
       { 
         type: 'Sugar Level', 
         required: true,
+        multiple: false,
+        quantity: false,
         options: [
           { name: '100%', price: 0, default: true },
           { name: '75%', price: 0 },
@@ -89,12 +93,13 @@ export const ROCAFE_FULL_MENU = [
       { 
         type: 'Toppings', 
         required: false,
+        multiple: true,
+        quantity: false,
         options: [
           { name: 'Tapioca Pearls', price: 0, default: true },
           { name: 'Popping Boba', price: 1.00 },
           { name: 'Jelly', price: 0.75 },
-          { name: 'Pudding', price: 1.00 },
-          { name: 'No Toppings', price: 0 }
+          { name: 'Pudding', price: 1.00 }
         ]
       }
     ],
@@ -126,9 +131,10 @@ export const ROCAFE_FULL_MENU = [
     customizations: [
       { 
         type: 'Additions', 
-        required: true,
+        required: false,
+        multiple: false,
+        quantity: true,
         options: [
-          { name: 'Black', price: 0, default: true },
           { name: 'Cream', price: 0 },
           { name: 'Milk', price: 0 },
           { name: 'Sugar', price: 0 },
@@ -164,6 +170,8 @@ export const ROCAFE_FULL_MENU = [
       { 
         type: 'Milk Choice', 
         required: true,
+        multiple: false,
+        quantity: false,
         options: [
           { name: 'Whole Milk', price: 0, default: true },
           { name: 'Oat Milk', price: 0.50 },
@@ -174,6 +182,8 @@ export const ROCAFE_FULL_MENU = [
       { 
         type: 'Sweetness', 
         required: true,
+        multiple: false,
+        quantity: false,
         options: [
           { name: 'Regular', price: 0, default: true },
           { name: 'Light', price: 0 },
@@ -183,6 +193,8 @@ export const ROCAFE_FULL_MENU = [
       { 
         type: 'Temperature', 
         required: true,
+        multiple: false,
+        quantity: false,
         options: [
           { name: 'Hot', price: 0, default: true },
           { name: 'Iced', price: 0 }
@@ -218,8 +230,9 @@ export const ROCAFE_FULL_MENU = [
       { 
         type: 'Add-ons', 
         required: false,
+        multiple: true,
+        quantity: false,
         options: [
-          { name: 'None', price: 0, default: true },
           { name: 'Popping Boba', price: 1.00 },
           { name: 'Chia Seeds', price: 0.50 }
         ]
@@ -278,39 +291,8 @@ export const getFeaturedItems = () => {
   return ROCAFE_FULL_MENU.filter(item => item.badge === 'bestseller' || item.badge === 'new');
 };
 
-// Helper function to format price
-export const formatPrice = (price) => {
-  return typeof price === 'number' ? `$${price.toFixed(2)}` : price;
-};
-
-// Helper function to calculate total price based on size and selected options
-export const calculateItemPrice = (item, selectedSize = 0, selectedOptions = {}) => {
-  if (!item || !item.sizes || !item.sizes[selectedSize]) {
-    return 0;
-  }
-  
-  let totalPrice = item.sizes[selectedSize].price;
-  
-  // Add prices from selected customization options
-  if (item.customizations && selectedOptions) {
-    item.customizations.forEach((customization) => {
-      const selectedOptionName = selectedOptions[customization.type];
-      if (selectedOptionName) {
-        const option = customization.options.find(opt => opt.name === selectedOptionName);
-        if (option && option.price) {
-          totalPrice += option.price;
-        }
-      }
-    });
-  }
-  
-  return totalPrice;
-};
-
-// Helper function to get lowest price for "from $X.XX" display
-export const getLowestPrice = (item) => {
-  if (!item || !item.sizes || item.sizes.length === 0) {
-    return 0;
-  }
-  return Math.min(...item.sizes.map(size => size.price));
-};
+// ============================================================
+// HELPER FUNCTIONS MOVED TO utils/menuHelpers.js
+// Import from there for: formatPrice, calculateItemPrice, getLowestPrice
+// Centralized in utils/ per development ethos (utilities belong in utils/)
+// ============================================================
