@@ -1,22 +1,225 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Menu, X, Home, ExternalLink } from 'lucide-react';
 import { Logo } from './Logo';
+
+const BRAND = {
+  primary: 'var(--color-primary)',
+  accent: 'var(--color-accent)',
+  heading: 'var(--color-heading)',
+  bg: 'var(--color-bg)',
+  surface: 'var(--color-surface)',
+  text: 'var(--color-text)',
+  white: '#FFFFFF'
+};
+
+const STORE_DATA = {
+  onlineStoreUrl: "https://nrsplus.com/orders/your-store-link"
+};
 
 export default function Navbar() {
   const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
+  const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [isHomePage, setIsHomePage] = useState(true);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const checkPath = () => {
+      const path = window.location.pathname;
+      setIsHomePage(path === '/' || path === BASE_URL || path === BASE_URL + '/');
+    };
+    checkPath();
+    window.addEventListener('popstate', checkPath);
+    return () => window.removeEventListener('popstate', checkPath);
+  }, [BASE_URL]);
+
+  const handleNavClick = (e, sectionId, subpageUrl) => {
+    setIsOpen(false);
+    if (isHomePage && sectionId) {
+      e.preventDefault();
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else if (subpageUrl) {
+      e.preventDefault();
+      window.location.href = subpageUrl;
+    }
+  };
+
+  const trackOrderClick = (location) => {
+    if (window.dataLayer) {
+      window.dataLayer.push({
+        event: 'order_cta_click',
+        cta_location: location,
+        cta_text: 'Order Online'
+      });
+    }
+  };
+
   return (
-    <header role="banner" className="w-full" style={{ backgroundColor: 'var(--color-surface)', borderBottom: '1px solid var(--color-border)' }}>
-      <nav aria-label="Primary" className="mx-auto max-w-6xl px-4 py-3 flex items-center justify_between">
-        <a href={BASE_URL} className="flex items-center gap-3" aria-label="Roma Mart Home">
-          <Logo size={36} scheme="navy" />
-          <span className="text-heading" style={{ fontFamily: 'var(--font-heading)', color: 'var(--color-heading)', fontWeight: 700 }}>Roma Mart</span>
-        </a>
-        <div className="flex items-center gap-4">
-          <a href={`${BASE_URL}services`} className="text-body px-2 py-2" style={{ color: 'var(--color-text)' }}>Services</a>
-          <a href={`${BASE_URL}rocafe`} className="text-body px-2 py-2" style={{ color: 'var(--color-text)' }}>RoCaf�</a>
-          <a href={`${BASE_URL}locations`} className="text-body px-2 py-2" style={{ color: 'var(--color-text)' }}>Locations</a>
-          <a href={`${BASE_URL}contact`} className="text-body px-2 py-2" style={{ color: 'var(--color-text)' }}>Contact</a>
+    <nav
+      className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'shadow-md py-2' : 'py-4'}`}
+      style={{ backgroundColor: scrolled ? BRAND.bg : 'transparent' }}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center">
+          {/* Logo Area */}
+          <a
+            href={`${BASE_URL}`}
+            className="flex items-center space-x-2 hover:opacity-80 transition-opacity cursor-pointer"
+            aria-label="Roma Mart - Go to homepage"
+          >
+            <Logo size={48} />
+            <div className="hidden sm:block leading-tight">
+              <span className="block font-coco text-xl uppercase" style={{ color: scrolled ? BRAND.heading : BRAND.white }}>Roma Mart</span>
+              <span className="block text-xs font-inter font-semibold tracking-wider" style={{ color: BRAND.accent }}>CONVENIENCE</span>
+            </div>
+          </a>
+
+          {/* Desktop Menu */}
+          <div className="hidden md:flex items-center space-x-8">
+            {!isHomePage && (
+              <a
+                href={`${BASE_URL}`}
+                className="font-inter font-medium hover:opacity-80 transition-opacity flex items-center gap-1.5"
+                style={{ color: scrolled ? BRAND.text : BRAND.white }}
+                aria-label="Go to home"
+                title="Home"
+              >
+                <Home size={18} />
+              </a>
+            )}
+            <a
+              href={isHomePage ? `${BASE_URL}#services` : `${BASE_URL}services`}
+              onClick={(e) => handleNavClick(e, 'services', `${BASE_URL}services`)}
+              className="font-inter font-medium hover:opacity-80 transition-opacity"
+              style={{ color: scrolled ? BRAND.text : BRAND.white }}
+            >
+              Services
+            </a>
+            <a
+              href={isHomePage ? `${BASE_URL}#rocafe` : `${BASE_URL}rocafe`}
+              onClick={(e) => handleNavClick(e, 'rocafe', `${BASE_URL}rocafe`)}
+              className="font-inter font-medium hover:opacity-80 transition-opacity"
+              style={{ color: scrolled ? BRAND.text : BRAND.white }}
+            >
+              RoCafé
+            </a>
+            <a
+              href={isHomePage ? `${BASE_URL}#locations` : `${BASE_URL}locations`}
+              onClick={(e) => handleNavClick(e, 'locations', `${BASE_URL}locations`)}
+              className="font-inter font-medium hover:opacity-80 transition-opacity"
+              style={{ color: scrolled ? BRAND.text : BRAND.white }}
+            >
+              Locations
+            </a>
+            <a
+              href={isHomePage ? `${BASE_URL}#contact` : `${BASE_URL}contact`}
+              onClick={(e) => handleNavClick(e, 'contact', `${BASE_URL}contact`)}
+              className="font-inter font-medium hover:opacity-80 transition-opacity"
+              style={{ color: scrolled ? BRAND.text : BRAND.white }}
+            >
+              Contact
+            </a>
+            <a
+              href={STORE_DATA.onlineStoreUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => trackOrderClick('header_desktop')}
+              className="px-6 py-2 rounded-full font-bold font-inter text-sm transition-transform hover:scale-105 shadow-lg flex items-center gap-2"
+              style={{ backgroundColor: BRAND.accent, color: BRAND.primary }}
+            >
+              ORDER NOW <ExternalLink size={14} />
+            </a>
+          </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="md:hidden p-2 rounded-md"
+            style={{ color: scrolled ? BRAND.heading : BRAND.white }}
+            aria-label={isOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isOpen}
+          >
+            {isOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
-      </nav>
-    </header>
+      </div>
+
+      {/* Mobile Menu Overlay */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden border-t absolute w-full shadow-xl"
+            style={{ backgroundColor: BRAND.bg, borderColor: BRAND.surface }}
+          >
+            <div className="px-4 pt-2 pb-6 space-y-1">
+              {!isHomePage && (
+                <a
+                  href={`${BASE_URL}`}
+                  onClick={() => setIsOpen(false)}
+                  className="block px-3 py-4 text-lg font-bold font-coco uppercase border-b flex items-center gap-2"
+                  style={{ color: BRAND.heading, borderColor: BRAND.surface }}
+                >
+                  <Home size={20} /> Home
+                </a>
+              )}
+              <a
+                href={isHomePage ? `${BASE_URL}#services` : `${BASE_URL}services`}
+                onClick={(e) => handleNavClick(e, 'services', `${BASE_URL}services`)}
+                className="block px-3 py-4 text-lg font-bold font-coco uppercase border-b"
+                style={{ color: BRAND.heading, borderColor: BRAND.surface }}
+              >
+                Services
+              </a>
+              <a
+                href={isHomePage ? `${BASE_URL}#rocafe` : `${BASE_URL}rocafe`}
+                onClick={(e) => handleNavClick(e, 'rocafe', `${BASE_URL}rocafe`)}
+                className="block px-3 py-4 text-lg font-bold font-coco uppercase border-b"
+                style={{ color: BRAND.heading, borderColor: BRAND.surface }}
+              >
+                RoCafé
+              </a>
+              <a
+                href={isHomePage ? `${BASE_URL}#locations` : `${BASE_URL}locations`}
+                onClick={(e) => handleNavClick(e, 'locations', `${BASE_URL}locations`)}
+                className="block px-3 py-4 text-lg font-bold font-coco uppercase border-b"
+                style={{ color: BRAND.heading, borderColor: BRAND.surface }}
+              >
+                Locations
+              </a>
+              <a
+                href={isHomePage ? `${BASE_URL}#contact` : `${BASE_URL}contact`}
+                onClick={(e) => handleNavClick(e, 'contact', `${BASE_URL}contact`)}
+                className="block px-3 py-4 text-lg font-bold font-coco uppercase border-b"
+                style={{ color: BRAND.heading, borderColor: BRAND.surface }}
+              >
+                Contact
+              </a>
+              <a
+                href={STORE_DATA.onlineStoreUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => trackOrderClick('header_mobile')}
+                className="block px-3 py-4 text-center rounded-lg font-bold font-coco uppercase mt-4"
+                style={{ backgroundColor: BRAND.accent, color: BRAND.primary }}
+              >
+                ORDER NOW
+              </a>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </nav>
   );
 }

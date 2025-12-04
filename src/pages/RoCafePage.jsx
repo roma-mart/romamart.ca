@@ -1,9 +1,10 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { ChevronRight, ChevronDown, Coffee, Wine, UtensilsCrossed, IceCream, Sparkles } from 'lucide-react';
+import { ChevronRight, ChevronDown, Coffee, Wine, UtensilsCrossed, IceCream, Sparkles, AlertTriangle } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
 import StandardizedItem from '../components/StandardizedItem';
 import { useLocationAware } from '../hooks/useLocationContext';
+import { ROCAFE_FULL_MENU, MENU_CATEGORIES, ALLERGEN_WARNING } from '../data/rocafe-menu';
 
 const RoCafePage = () => {
   const COLORS = {
@@ -27,75 +28,56 @@ const RoCafePage = () => {
     // Location stored and available for StandardizedItem availability states
   });
 
-  // Menu structure - ready for full data
-  const menuCategories = useMemo(() => [
-    {
-      id: 'hot-coffee',
-      name: 'Hot Coffee',
-      icon: <Coffee size={24} />,
-      description: 'Freshly brewed coffee made to perfection',
-      items: [
-        // Placeholder - will be replaced with actual menu data
-        { name: 'Espresso', description: 'Rich and bold', price: '$3.99', calories: '5', sizes: ['Single', 'Double'], image: '/images/menu/espresso.jpg' }
-      ]
-    },
-    {
-      id: 'iced-coffee',
-      name: 'Iced Coffee',
-      icon: <Coffee size={24} />,
-      description: 'Refreshing cold coffee beverages',
-      items: []
-    },
-    {
-      id: 'tea',
-      name: 'Tea',
-      icon: <Wine size={24} />,
-      description: 'Premium tea selections',
-      items: []
-    },
-    {
-      id: 'fresh-juice',
-      name: 'Fresh Juice',
-      icon: <Wine size={24} />,
-      description: 'Made fresh daily',
-      items: []
-    },
-    {
-      id: 'smoothies',
-      name: 'Smoothies',
-      icon: <IceCream size={24} />,
-      description: 'Healthy and delicious blends',
-      items: []
-    },
-    {
-      id: 'frappes',
-      name: 'Frappés',
-      icon: <IceCream size={24} />,
-      description: 'Blended frozen beverages',
-      items: []
-    },
-    {
-      id: 'specialty',
-      name: 'Specialty Drinks',
-      icon: <Sparkles size={24} />,
-      description: 'Unique RoCafé creations',
-      items: []
-    },
-    {
-      id: 'food',
-      name: 'Food',
-      icon: <UtensilsCrossed size={24} />,
-      description: 'Fresh baked goods and snacks',
-      items: []
-    },
-    {
-      id: 'seasonal',
-      name: 'Seasonal Items',
-      icon: <Sparkles size={24} />,
-      description: 'Limited time offerings',
-      items: []
-    }
-  ], []);
+  // Group menu items by category
+  const menuCategories = useMemo(() => {
+    const categories = [
+      {
+        id: MENU_CATEGORIES.BUBBLE_TEA,
+        name: 'Bubble Tea',
+        icon: <Wine size={24} />,
+        description: 'Classic and creative bubble tea with tapioca pearls',
+        items: ROCAFE_FULL_MENU.filter(item => item.category === MENU_CATEGORIES.BUBBLE_TEA)
+      },
+      {
+        id: MENU_CATEGORIES.HOT_COFFEE,
+        name: 'Hot Coffee',
+        icon: <Coffee size={24} />,
+        description: 'Freshly brewed coffee made to perfection',
+        items: ROCAFE_FULL_MENU.filter(item => item.category === MENU_CATEGORIES.HOT_COFFEE)
+      },
+      {
+        id: MENU_CATEGORIES.ICED_COFFEE,
+        name: 'Iced Coffee',
+        icon: <Coffee size={24} />,
+        description: 'Refreshing cold coffee beverages',
+        items: ROCAFE_FULL_MENU.filter(item => item.category === MENU_CATEGORIES.ICED_COFFEE)
+      },
+      {
+        id: MENU_CATEGORIES.TEA,
+        name: 'Tea & Matcha',
+        icon: <Wine size={24} />,
+        description: 'Premium tea selections and matcha lattes',
+        items: ROCAFE_FULL_MENU.filter(item => item.category === MENU_CATEGORIES.TEA)
+      },
+      {
+        id: MENU_CATEGORIES.SMOOTHIES,
+        name: 'Smoothies & Fresh Juice',
+        icon: <IceCream size={24} />,
+        description: 'Healthy blended fruit beverages made fresh',
+        items: ROCAFE_FULL_MENU.filter(item => item.category === MENU_CATEGORIES.SMOOTHIES)
+      },
+      {
+        id: MENU_CATEGORIES.SPECIALTY,
+        name: 'Specialty Drinks',
+        icon: <Sparkles size={24} />,
+        description: 'Unique RoCafé creations',
+        items: ROCAFE_FULL_MENU.filter(item => item.category === MENU_CATEGORIES.SPECIALTY)
+      }
+    ];
+    
+    // Only return categories with items
+    return categories.filter(cat => cat.items.length > 0);
+  }, []);
 
   // create memoized handlers map for categories
   const categoryHandlers = useMemo(() => {
@@ -155,7 +137,7 @@ const RoCafePage = () => {
           {/* Quick stats */}
           <div className="flex flex-wrap justify-center gap-8 mt-12">
             <div className="text-center">
-              <div className="text-4xl font-coco mb-2" style={{ color: COLORS.yellow }}>50+</div>
+              <div className="text-4xl font-coco mb-2" style={{ color: COLORS.yellow }}>{ROCAFE_FULL_MENU.length}+</div>
               <div className="text-sm font-inter uppercase tracking-wider" style={mutedTextColor}>Menu Items</div>
             </div>
             <div className="text-center">
@@ -163,8 +145,51 @@ const RoCafePage = () => {
               <div className="text-sm font-inter uppercase tracking-wider" style={mutedTextColor}>Fresh Daily</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-coco mb-2" style={{ color: COLORS.yellow }}>9</div>
+              <div className="text-4xl font-coco mb-2" style={{ color: COLORS.yellow }}>{menuCategories.length}</div>
               <div className="text-sm font-inter uppercase tracking-wider" style={mutedTextColor}>Categories</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Allergen Warning Section */}
+      <section className="max-w-5xl mx-auto px-4 mb-12">
+        <div 
+          className="p-6 rounded-2xl border-4"
+          style={{ 
+            backgroundColor: COLORS.yellow,
+            borderColor: COLORS.navy
+          }}
+        >
+          <div className="flex items-start gap-4">
+            <AlertTriangle size={32} style={{ color: COLORS.navy, flexShrink: 0 }} />
+            <div>
+              <h2 className="text-2xl font-coco font-bold mb-2" style={{ color: COLORS.navy }}>
+                {ALLERGEN_WARNING.title}
+              </h2>
+              <p className="font-inter text-sm mb-4" style={{ color: COLORS.navy }}>
+                {ALLERGEN_WARNING.subtitle}
+              </p>
+              <div className="flex flex-wrap gap-2 mb-4">
+                {ALLERGEN_WARNING.allergens.map((allergen, idx) => (
+                  <div 
+                    key={idx}
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg"
+                    style={{ backgroundColor: COLORS.navy }}
+                  >
+                    <span className="text-lg">{allergen.icon}</span>
+                    <span className="text-xs font-inter font-bold" style={{ color: COLORS.yellow }}>
+                      {allergen.name}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <p className="font-inter text-xs font-bold mb-2" style={{ color: COLORS.navy }}>
+                {ALLERGEN_WARNING.footer}
+              </p>
+              <p className="font-inter text-xs leading-relaxed" style={{ color: COLORS.navy, opacity: 0.8 }}>
+                {ALLERGEN_WARNING.disclaimer}
+              </p>
             </div>
           </div>
         </div>
@@ -214,46 +239,14 @@ const RoCafePage = () => {
 
               {/* Category Items (Expandable) */}
               {expandedCategory === category.id && (
-                <div className="px-6 pb-6 space-y-4 border-t" style={{ borderColor: 'var(--color-border)' }}>
+                <div className="px-6 pb-6 space-y-3 border-t" style={{ borderColor: 'var(--color-border)' }}>
                   {category.items.length > 0 ? (
-                    category.items.map((item, index) => (
-                      <div 
-                        key={index}
-                        className="p-4 rounded-xl flex gap-4"
-                        style={{ backgroundColor: 'var(--color-bg)' }}
-                      >
-                        {/* Item Image */}
-                        {item.image && (
-                          <div 
-                            className="w-24 h-24 rounded-lg flex-shrink-0"
-                            style={{ 
-                              backgroundImage: `url(${item.image})`,
-                              backgroundSize: 'cover',
-                              backgroundPosition: 'center',
-                              backgroundColor: 'var(--color-surface)'
-                            }}
-                          />
-                        )}
-                        
-                        {/* Item Details */}
-                        <div className="flex-1">
-                          <div className="flex justify-between items-start mb-2">
-                            <h4 className="font-coco text-lg" style={{ color: 'var(--color-heading)' }}>
-                              {item.name}
-                            </h4>
-                            <span className="font-bold" style={{ color: COLORS.yellow }}>
-                              {item.price}
-                            </span>
-                          </div>
-                          <p className="font-inter text-sm mb-2" style={mutedTextColor}>
-                            {item.description}
-                          </p>
-                          <div className="flex gap-4 text-xs font-inter" style={mutedTextColor}>
-                            {item.calories && <span>{item.calories} cal</span>}
-                            {item.sizes && <span>Sizes: {item.sizes.join(', ')}</span>}
-                          </div>
-                        </div>
-                      </div>
+                    category.items.map((item) => (
+                      <StandardizedItem 
+                        key={item.id}
+                        item={item}
+                        defaultExpanded={false}
+                      />
                     ))
                   ) : (
                     <div className="text-center py-8" style={mutedTextColor}>
