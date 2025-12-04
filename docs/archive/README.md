@@ -10,6 +10,7 @@ This directory contains documentation from previous implementation phases. These
 
 | Document | Original Date | Description |
 |----------|---------------|-------------|
+| [RoCafé StandardizedItem Implementation](./rocafe-standardized-item-implementation.md) | Dec 4, 2025 | Complete menu variant implementation with dynamic pricing |
 | [Phase 2-3 Summary](./phase-2-3-summary.md) | Nov 2025 | Accessibility page & CI/CD implementation |
 | [Phase 4 Audit](./phase-4-audit.md) | Nov 2025 | Production readiness verification |
 | [Phase 5 Summary](./phase-5-summary.md) | Nov 2025 | Analytics, consent & SEO implementation |
