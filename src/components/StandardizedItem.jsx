@@ -466,6 +466,17 @@ const StandardizedItem = ({ item, defaultExpanded = false }) => {
                               cursor: isMaxReached ? 'not-allowed' : 'pointer'
                             }}
                             onClick={(e) => e.stopPropagation()}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                if (!isMaxReached) {
+                                  const checkbox = e.currentTarget.querySelector('input[type="checkbox"]');
+                                  if (checkbox) checkbox.click();
+                                }
+                              }
+                            }}
+                            tabIndex={0}
                           >
                             <input
                               type="checkbox"
