@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense, lazy, useCallback, useMemo, useRef } from 'react';
+import React, { useState, useEffect, Suspense, lazy, useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import {
   ShoppingBasket,
@@ -11,6 +11,7 @@ import {
   Coffee,
   Send
 } from 'lucide-react';
+import { getOrderingUrl } from './config/ordering';
 import { LocationProvider } from './components/LocationProvider';
 import { getPrimaryLocation, getActiveLocationCount, LOCATIONS, isLocationOpenNow } from './data/locations';
 import { Logo } from './components/Logo';
@@ -20,6 +21,7 @@ import BrandPatternBackground from './components/BrandPatternBackground';
 import ShareButton from './components/ShareButton';
 import StandardizedItem from './components/StandardizedItem';
 import { ROCAFE_FEATURED } from './data/rocafe-menu';
+import { SERVICES_FEATURED } from './data/services.jsx';
 import Phone from 'lucide-react/dist/esm/icons/phone.js';
 import Clock from 'lucide-react/dist/esm/icons/clock.js';
 
@@ -58,7 +60,7 @@ const BRAND = {
 const STORE_DATA = {
   legalName: "Roma Mart Corp.",
   dba: "Roma Mart Convenience",
-  onlineStoreUrl: "https://nrsplus.com/orders/your-store-link",
+  onlineStoreUrl: getOrderingUrl(),
   socialLinks: {
     facebook: "https://www.facebook.com/romamartca",
     instagram: "https://www.instagram.com/romamartca/",
@@ -73,15 +75,6 @@ const STORE_DATA = {
     web3FormsAccessKey: import.meta.env.VITE_WEB3FORMS_KEY || ''
   }
 };
-
-const SERVICES = [
-  { id: 1, title: "GROCERY ESSENTIALS", desc: "Daily staples, milk, bread & pantry needs.", icon: <ShoppingBasket /> },
-  { id: 2, title: "GLOBAL SNACKS", desc: "Imported flavors and unique treats.", icon: <Star /> },
-  { id: 3, title: "ATM + BTM", desc: "Cash & Bitcoin machines available.", icon: <Bitcoin /> },
-  { id: 4, title: "TOBACCO & VAPE", desc: "Wide selection for adult customers.", icon: <ShoppingBasket /> },
-  { id: 5, title: "HALAL MEAT", desc: "Certified Zabiha Halal meats.", icon: <Utensils /> },
-  { id: 6, title: "LOTTERY", desc: "OLG Lottery & Scratch cards.", icon: <Star /> },
-];
 
 const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
 
@@ -123,37 +116,26 @@ function Hero({ onTrackOrder }) {
   );
 }
 
-const ServicesScroll = () => {
-  const scrollRef = useRef(null);
-  const scrollByAmount = useCallback((direction) => {
-    if (scrollRef.current) {
-      const scrollAmount = 320;
-      scrollRef.current.scrollBy({ left: direction === 'left' ? -scrollAmount : scrollAmount, behavior: 'smooth' });
-    }
-  }, []);
-  const scrollLeft = useCallback(() => scrollByAmount('left'), [scrollByAmount]);
-  const scrollRight = useCallback(() => scrollByAmount('right'), [scrollByAmount]);
-
+const ServicesSection = () => {
   return (
-    <section id="services" className="py-20 overflow-hidden" style={{ backgroundColor: BRAND.surface }}>
-      <div className="max-w-7xl mx-auto px-4 mb-10">
-        <h2 className="text-3xl md:text-4xl font-coco uppercase text-center" style={{ color: BRAND.heading }}>Our <span style={{ color: BRAND.accent }}>Services</span></h2>
-      </div>
-      <div className="relative max-w-7xl mx-auto px-4">
-        <button type="button" onClick={scrollLeft} className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full items-center justify-center shadow-lg hover:scale-110 transition-transform" style={{ backgroundColor: BRAND.accent, color: BRAND.primary }} aria-label="Scroll left"><ArrowRight size={24} className="rotate-180" /></button>
-        <button type="button" onClick={scrollRight} className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full items-center justify-center shadow-lg hover:scale-110 transition-transform" style={{ backgroundColor: BRAND.accent, color: BRAND.primary }} aria-label="Scroll right"><ArrowRight size={24} /></button>
-        <div ref={scrollRef} className="flex overflow-x-auto pb-8 pt-2 gap-6 snap-x snap-mandatory scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-          {SERVICES.map((item) => (
-            <motion.div key={item.id} whileHover={{ y: -5 }} className="flex-shrink-0 w-72 md:w-80 p-8 rounded-2xl shadow-sm border snap-center flex flex-col items-start hover:shadow-md transition-shadow" style={{ backgroundColor: BRAND.bg, borderColor: BRAND.surface }}>
-              <div className="p-4 rounded-xl mb-6" style={{ backgroundColor: BRAND.surface }}>{React.cloneElement(item.icon, { size: 32, style: { color: BRAND.icon } })}</div>
-              <h3 className="font-coco text-xl mb-3" style={{ color: BRAND.heading }}>{item.title}</h3>
-              <p className="font-inter leading-relaxed" style={{ color: BRAND.text, opacity: 0.7 }}>{item.desc}</p>
-            </motion.div>
+    <section id="services" className="py-20" style={{ backgroundColor: BRAND.surface }}>
+      <div className="max-w-7xl mx-auto px-4">
+        <h2 className="text-3xl md:text-4xl font-coco uppercase text-center mb-12" style={{ color: BRAND.heading }}>Our <span style={{ color: BRAND.accent }}>Services</span></h2>
+        
+        {/* Featured Services with StandardizedItem */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+          {SERVICES_FEATURED.map((service) => (
+            <StandardizedItem 
+              key={service.id}
+              item={service}
+              defaultExpanded={false}
+            />
           ))}
         </div>
-      </div>
-      <div className="text-center mt-12">
-        <a href={`${BASE_URL}services`} className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-bold font-inter transition-transform hover:scale-105 shadow-lg" style={{ backgroundColor: BRAND.accent, color: BRAND.primary }}>View All Services <ArrowRight size={20} /></a>
+        
+        <div className="text-center">
+          <a href={`${BASE_URL}services`} className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-bold font-inter transition-transform hover:scale-105 shadow-lg" style={{ backgroundColor: BRAND.accent, color: BRAND.primary }}>View All Services <ArrowRight size={20} /></a>
+        </div>
       </div>
     </section>
   );
@@ -492,7 +474,7 @@ function App() {
               <a href="#main-content" className="skip-link">Skip to main content</a>
               <Hero onTrackOrder={handleTrackOrderClick} />
               <div id="main-content">
-                <ServicesScroll />
+                <ServicesSection />
                 <RoCafeSection />
                 <Locations />
                 <ContactSection />

@@ -24,10 +24,10 @@ export const MENU_CATEGORIES = {
 
 // Caffeine level configurations
 export const CAFFEINE_LEVELS = {
-  NONE: { label: 'Caffeine-Free', value: 0, color: '#6B7280' },
-  LOW: { label: 'Low Caffeine', value: 1, color: '#10B981' },
-  MEDIUM: { label: 'Medium Caffeine', value: 2, color: '#F59E0B' },
-  HIGH: { label: 'High Caffeine', value: 3, color: '#EF4444' }
+  NONE: { label: 'Caffeine-Free', value: 0, color: 'var(--color-text-muted)' },
+  LOW: { label: 'Low Caffeine', value: 1, color: 'var(--color-success)' },
+  MEDIUM: { label: 'Medium Caffeine', value: 2, color: 'var(--color-warning)' },
+  HIGH: { label: 'High Caffeine', value: 3, color: 'var(--color-error)' }
 };
 
 // Allergen configurations
@@ -41,11 +41,11 @@ export const ALLERGENS = {
 
 // Dietary tag configurations
 export const DIETARY_TAGS = {
-  VEGAN: { label: 'Vegan', icon: '🌱', color: '#10B981' },
-  VEGETARIAN: { label: 'Vegetarian', icon: '🥗', color: '#84CC16' },
-  GLUTEN_FREE: { label: 'Gluten-Free', icon: '⚪', color: '#8B5CF6' },
-  DAIRY_FREE: { label: 'Dairy-Free', icon: '🚫🥛', color: '#3B82F6' },
-  HALAL: { label: 'Halal', icon: '☪️', color: '#059669' }
+  VEGAN: { label: 'Vegan', icon: '🌱', color: 'var(--color-success)' },
+  VEGETARIAN: { label: 'Vegetarian', icon: '🥗', color: 'var(--color-success-light)' },
+  GLUTEN_FREE: { label: 'Gluten-Free', icon: '⚪', color: 'var(--color-info)' },
+  DAIRY_FREE: { label: 'Dairy-Free', icon: '🚫🥛', color: 'var(--color-primary-light)' },
+  HALAL: { label: 'Halal', icon: '☪️', color: 'var(--color-success-dark)' }
 };
 
 // Full menu items array

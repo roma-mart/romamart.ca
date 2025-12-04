@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Home, ExternalLink } from 'lucide-react';
+import { getOrderingUrl } from '../config/ordering';
 import { Logo } from './Logo';
 
 const BRAND = {
@@ -14,7 +15,7 @@ const BRAND = {
 };
 
 const STORE_DATA = {
-  onlineStoreUrl: "https://nrsplus.com/orders/your-store-link"
+  onlineStoreUrl: getOrderingUrl()
 };
 
 export default function Navbar() {
