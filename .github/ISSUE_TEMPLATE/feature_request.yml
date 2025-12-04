@@ -1,0 +1,81 @@
+name: Feature request
+description: Suggest a new feature or enhancement
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Feature Request
+        Thanks for suggesting a feature for Roma Mart!
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Feature Summary
+      description: Brief description of the feature you'd like
+      placeholder: A concise description of the feature
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: What problem does this feature solve?
+      placeholder: I'm always frustrated when...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: How would you like this to work?
+      placeholder: Describe your ideal solution
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Any alternative solutions or features you've considered?
+      placeholder: Describe any alternatives
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Feature Area
+      description: Which area of the site does this affect?
+      options:
+        - Homepage
+        - Services
+        - RoCafé Menu
+        - Locations
+        - Contact Form
+        - PWA/Offline
+        - Accessibility
+        - Performance
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this feature to you?
+      options:
+        - Nice to have
+        - Would be helpful
+        - Important
+        - Critical
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Add any other context, screenshots, or mockups
+      placeholder: Any additional information

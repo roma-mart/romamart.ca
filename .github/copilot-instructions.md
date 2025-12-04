@@ -78,7 +78,7 @@ npm run preview                # Preview production build
 - Uses CSS custom properties that respond to `@media (prefers-color-scheme: dark)`
 - Supports high contrast mode and forced-colors
 - Test all visual changes in both light/dark modes
-- See `DARK_MODE_SYSTEM.md` for implementation details
+- See `docs/guides/dark-mode.md` for implementation details
 
 ### Routing & Base Path
 - Client-side routing via pathname matching in `App.jsx`
@@ -207,14 +207,14 @@ Before going live on custom domain:
 ### Quality Check Failures
 - Read the specific error message and severity level
 - Fix CRITICAL and HIGH issues before committing
-- Reference `QUALITY_SYSTEM.md` for remediation strategies
+- Reference `docs/guides/quality-system.md` for remediation strategies
 - Don't suppress warnings; fix root cause
 
 ### Dark Mode Issues
 - Check CSS variable usage in `src/index.css`
 - Test with DevTools: Toggle `prefers-color-scheme`
 - Verify all colors use CSS variables, not hardcoded values
-- See `DARK_MODE_SYSTEM.md` for patterns
+- See `docs/guides/dark-mode.md` for patterns
 
 ### Build Failures
 - Check for syntax errors with `npm run lint`
@@ -229,6 +229,7 @@ Before going live on custom domain:
 | `DEVELOPMENT_ETHOS.md` | 25 core principles guiding all development |
 | `ARCHITECTURE.md` | High-level system design and conventions |
 | `QUALITY_SYSTEM.md` | Comprehensive quality standards documentation |
+| `docs/README.md` | Documentation index and navigation |
 | `src/design/tokens.js` | Single source of truth for design tokens |
 | `src/data/locations.js` | All store locations data |
 | `src/utils/theme.js` | Theme utilities and CSS variable helpers |
@@ -238,10 +239,18 @@ Before going live on custom domain:
 
 ## Additional Resources
 
-- Accessibility audit: `ACCESSIBILITY_COMPLIANCE.md`
-- Content guidelines: `CONTENT_GUIDE.md`
-- Release checklist: `RELEASE_CHECKLIST.md`
+- Documentation index: `docs/README.md`
+- Deployment guide: `docs/guides/deployment.md`
+- Quality system guide: `docs/guides/quality-system.md`
+- Dark mode guide: `docs/guides/dark-mode.md`
+- Accessibility guide: `docs/guides/accessibility.md`
+- Testing guide: `docs/guides/testing.md`
+- Troubleshooting: `docs/guides/troubleshooting.md`
+- Release checklist: `docs/checklists/release-checklist.md`
+- Accessibility audit: `docs/checklists/accessibility-audit.md`
 - Contributing guide: `CONTRIBUTING.md`
+- Code of Conduct: `CODE_OF_CONDUCT.md`
+- Security policy: `SECURITY.md`
 
 ## External API Integration
 
