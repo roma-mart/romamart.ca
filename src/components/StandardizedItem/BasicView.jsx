@@ -166,17 +166,19 @@ export default function BasicView({
             {tagline}
           </p>
 
-          {/* Price Display */}
-          <div className="flex items-center justify-between mb-3">
-            <div className="text-2xl font-coco font-bold" style={{ color: 'var(--color-accent)' }}>
-              {formatPrice(currentPrice)}
-            </div>
-            {currentCalories && (
-              <div className="text-xs font-inter" style={{ color: 'var(--color-text-muted)' }}>
-                {currentCalories} cal
+          {/* Price Display - Only show for menu items (not services) */}
+          {!item.features && (currentPrice > 0 || item.price) && (
+            <div className="flex items-center justify-between mb-3">
+              <div className="text-2xl font-coco font-bold" style={{ color: 'var(--color-accent)' }}>
+                {formatPrice(currentPrice || item.price)}
               </div>
-            )}
-          </div>
+              {currentCalories && (
+                <div className="text-xs font-inter" style={{ color: 'var(--color-text-muted)' }}>
+                  {currentCalories} cal
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Universal Size Selector - Adapts to Collapsed/Expanded State */}
           {sizes.length > 0 && (

@@ -402,8 +402,14 @@ export const getServiceAvailabilityText = (service, locationStatus) => {
   return 'Available';
 };
 
+// Featured services for homepage (6 items displayed)
+export const SERVICES_FEATURED = SERVICES.filter(service => 
+  ['groceries', 'snacks', 'atm', 'tobacco', 'halal_meat', 'lottery'].includes(service.id)
+);
+
 export default {
   SERVICES,
+  SERVICES_FEATURED,
   SERVICE_CATEGORIES,
   getServiceById,
   getServicesByCategory,
