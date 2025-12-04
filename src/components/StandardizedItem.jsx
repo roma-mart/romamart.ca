@@ -9,6 +9,7 @@ import CustomizationSection from './StandardizedItem/CustomizationSection';
 import AvailabilityIndicator from './StandardizedItem/AvailabilityIndicator';
 import PartnerInfo from './StandardizedItem/PartnerInfo';
 import LegalNoticeBox from './StandardizedItem/LegalNoticeBox';
+import tokens from '../design/tokens';
 
 /**
  * StandardizedItem Component
@@ -163,7 +164,12 @@ const StandardizedItem = ({ item, defaultExpanded = false }) => {
           {/* Full Description */}
           <p 
             className="text-sm font-inter leading-relaxed mb-4 mt-4"
-            style={{ color: 'var(--color-text)' }}
+            style={{ 
+              color: 'var(--color-text)',
+              fontFamily: tokens.fonts.body,
+              fontSize: tokens.fontSize.base,
+              lineHeight: tokens.lineHeight.relaxed
+            }}
           >
             {description}
           </p>
@@ -180,7 +186,12 @@ const StandardizedItem = ({ item, defaultExpanded = false }) => {
             <div className="mb-4">
               <h4 
                 className="text-sm font-bold font-coco mb-2"
-                style={{ color: 'var(--color-heading)' }}
+                style={{ 
+                  color: 'var(--color-heading)',
+                  fontFamily: tokens.fonts.heading,
+                  fontSize: tokens.fontSize.sm,
+                  fontWeight: tokens.fontWeight.bold
+                }}
               >
                 Features:
               </h4>

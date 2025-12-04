@@ -169,7 +169,7 @@ export default function Navbar() {
                 <a
                   href={`${BASE_URL}`}
                   onClick={() => setIsOpen(false)}
-                  className="block px-3 py-4 text-lg font-bold font-coco uppercase border-b flex items-center gap-2"
+                  className="px-3 py-4 text-lg font-bold font-coco uppercase border-b flex items-center gap-2"
                   style={{ color: BRAND.heading, borderColor: BRAND.surface }}
                 >
                   <Home size={20} /> Home

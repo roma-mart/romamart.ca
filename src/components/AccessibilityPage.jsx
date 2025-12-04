@@ -2,6 +2,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ExternalLink, Mail, Phone, MapPin, CheckCircle, ChevronRight } from 'lucide-react';
 import ShareButton from './ShareButton';
+import { tokens } from '../styles/tokens'; // Adjust the import path as needed
 
 const AccessibilityPage = () => {
   const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
@@ -104,7 +105,17 @@ const AccessibilityPage = () => {
 
       {/* Report issue */}
       <section className="max-w-4xl mx-auto px-4 mb-20">
-        <h2 className="text-3xl font-coco uppercase mb-8" style={{ color: 'var(--color-heading)' }}>Report an Accessibility Issue</h2>
+        <h2 
+          className="text-3xl font-coco uppercase mb-8"
+          style={{ 
+            color: 'var(--color-heading)',
+            fontFamily: tokens.fonts.heading,
+            fontSize: tokens.fontSize['3xl'],
+            fontWeight: tokens.fontWeight.bold
+          }}
+        >
+          Report an Accessibility Issue
+        </h2>
         <p className="mb-8 leading-relaxed" style={textColor}>If you encounter any accessibility barriers or have suggestions for improvement, we'd like to hear from you. Please contact us using any of the methods below:</p>
         <div className="grid md:grid-cols-3 gap-6">
           <div className="p-6 rounded-lg border" style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
