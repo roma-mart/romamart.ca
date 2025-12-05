@@ -145,7 +145,7 @@ const ServicesSection = () => {
 
 const RoCafeSection = () => {
   return (
-    <section id="rocafe" className="py-24 relative overflow-hidden" style={{ backgroundColor: BRAND.sectiona }}>
+    <section id="rocafe" className="py-24 relative overflow-hidden" style={{ backgroundColor: BRAND.primary }}>
       <div className="absolute top-0 right-0 w-1/2 h-full bg-black/20 skew-x-12 transform translate-x-20"></div>
       <div className="max-w-7xl mx-auto px-4 relative z-10">
         <div className="flex flex-col md:flex-row gap-16 items-center">
@@ -223,7 +223,7 @@ const Locations = () => {
   }, [displayLocation]);
 
   return (
-    <section id="locations" className="py-24" style={{ backgroundColor: BRAND.sectionb }}>
+    <section id="locations" className="py-24" style={{ backgroundColor: BRAND.bg }}>
       <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
           <span className="text-yellow-500 font-bold uppercase tracking-widest text-sm">Find Us</span>

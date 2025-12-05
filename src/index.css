@@ -98,8 +98,6 @@
   --color-surface: #f8f8f8;
   --color-border: #e5e5e5;
   --color-footer: #151515;
-  --color-sectiona: #242424;
-  --color-sectionb: #fff;
 
 
   /* Text */
@@ -108,7 +106,7 @@
 
   /* Brand colors - semantic usage */
   --color-primary: #020178; /* Navy - headings, primary elements */
-  --color-accent: #E4B340; /* Yellow - CTAs, highlights */
+  --color-accent: #E4B340; /* Yellow - CTAs, highlights */;
 
   /* Specific use cases */
   --color-heading: #020178; /* Navy for headings in light mode */
@@ -153,7 +151,7 @@
     --color-border: #2a2a2a;
     --color-text: #f4f4f4;
     --color-text-muted: #a8a8a8;
-    --color-primary: #020178; /* Navy - headings, primary elements */
+    --color-primary: #001540; /* Dark Navy - headings, primary elements */
     --color-accent: #E4B340; /* Yellow - CTAs, highlights */
     --color-heading: #E4B340;
     --color-icon: #E4B340;
@@ -167,8 +165,7 @@
     --color-warning-border: #F59E0B;
     --color-success: #34D399;
     --color-success-bg: #064E3B;
-    --color-sectiona: #242424;
-    --color-sectionb: #151515;
+    --color-footer: #151515;
   }
 }
 
