@@ -1,6 +1,9 @@
 /* Updated font import to include Outfit and Inter */
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&family=Inter:wght@400;700&display=swap');
 
+/* Import Inter and Outfit from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@600;800&display=swap');
+
 /* WCAG 2.2 AA: Keyboard Focus Visible (Operable 2.4.7) */
 
 /* High contrast focus outline for keyboard navigation */
@@ -94,62 +97,72 @@
   --color-bg: #fff;
   --color-surface: #f8f8f8;
   --color-border: #e5e5e5;
-  
+
   /* Text */
   --color-text: #151515;
   --color-text-muted: #5a5a5a;
-  
+
   /* Brand colors - semantic usage */
   --color-primary: #020178; /* Navy - headings, primary elements */
   --color-accent: #E4B340; /* Yellow - CTAs, highlights */
-  
+
   /* Specific use cases */
   --color-heading: #020178; /* Navy for headings in light mode */
   --color-icon: #020178; /* Navy for icons in light mode */
-  
+
   /* Semantic state colors - functional not brand */
-  --color-error: #DC2626; /* Red-600 for errors, restrictions */
-  --color-error-light: #FEE2E2; /* Red-100 for error backgrounds */
-  --color-error-bg: #FEF2F2; /* Red-50 for error containers */
-  --color-error-dark: #991B1B; /* Red-800 for error text */
-  --color-error-darker: #7F1D1D; /* Red-900 for strong error text */
-  --color-warning: #78350F; /* Amber-900 for warnings */
-  --color-warning-bg: #FFFBEB; /* Amber-50 for warning backgrounds */
-  --color-warning-border: #F59E0B; /* Amber-500 for warning borders */
-  --color-success: #059669; /* Emerald-600 for success states */
-  --color-success-bg: #ECFDF5; /* Emerald-50 for success backgrounds */
+  --color-error: #DC2626;
+  --color-error-light: #FEE2E2;
+  --color-error-bg: #FEF2F2;
+  --color-error-dark: #991B1B;
+  --color-error-darker: #7F1D1D;
+  --color-warning: #78350F;
+  --color-warning-bg: #FFFBEB;
+  --color-warning-border: #F59E0B;
+  --color-success: #059669;
+  --color-success-bg: #ECFDF5;
+
+  /* Typography tokens */
+  --font-heading: 'Outfit', sans-serif;
+  --font-body: 'Outfit', system-ui, sans-serif;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+  --line-height-tight: 1.25;
 }
 
+/* Dark mode overrides */
 @media (prefers-color-scheme: dark) {
   :root {
-    /* Backgrounds */
     --color-bg: #0b0b0b;
     --color-surface: #1a1a1a;
     --color-border: #2a2a2a;
-    
-    /* Text */
     --color-text: #f4f4f4;
     --color-text-muted: #a8a8a8;
-    
-    /* Brand colors - adapted for dark mode visibility */
-    --color-primary: #E4B340; /* Yellow for visibility */
-    --color-accent: #E4B340; /* Yellow for CTAs */
-    
-    /* Specific use cases */
-    --color-heading: #E4B340; /* Yellow for headings in dark mode */
-    --color-icon: #E4B340; /* Yellow for icons in dark mode */
-    
-    /* Semantic state colors - adjusted for dark mode */
-    --color-error: #F87171; /* Red-400 for dark mode visibility */
-    --color-error-light: #7F1D1D; /* Red-900 for dark mode backgrounds */
-    --color-error-bg: #450A0A; /* Red-950 for dark mode containers */
-    --color-error-dark: #FCA5A5; /* Red-300 for dark mode text */
-    --color-error-darker: #FEE2E2; /* Red-100 for strong dark mode text */
-    --color-warning: #FCD34D; /* Amber-300 for dark mode warnings */
-    --color-warning-bg: #451A03; /* Amber-950 for dark mode backgrounds */
-    --color-warning-border: #F59E0B; /* Amber-500 for dark mode borders */
-    --color-success: #34D399; /* Emerald-400 for dark mode success */
-    --color-success-bg: #064E3B; /* Emerald-900 for dark mode backgrounds */
+    --color-primary: #E4B340;
+    --color-accent: #E4B340;
+    --color-heading: #E4B340;
+    --color-icon: #E4B340;
+    --color-error: #F87171;
+    --color-error-light: #7F1D1D;
+    --color-error-bg: #450A0A;
+    --color-error-dark: #FCA5A5;
+    --color-error-darker: #FEE2E2;
+    --color-warning: #FCD34D;
+    --color-warning-bg: #451A03;
+    --color-warning-border: #F59E0B;
+    --color-success: #34D399;
+    --color-success-bg: #064E3B;
   }
 }
 
@@ -157,7 +170,7 @@
 body {
   background-color: var(--color-bg);
   color: var(--color-text);
-  font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  font-family: var(--font-body);
 }
 
 /* Component surface helper */
@@ -204,33 +217,10 @@ body {
   opacity: 0;
 }
 
-/* Typography tokens */
-:root {
-  --font-heading: 'Outfit, sans-serif';
-  --font-body: 'Inter, sans-serif';
-  --font-size-xs: 0.75rem;
-  --font-size-sm: 0.875rem;
-  --font-size-base: 1rem;
-  --font-size-lg: 1.125rem;
-  --font-size-xl: 1.25rem;
-  --font-size-2xl: 1.5rem;
-  --font-size-3xl: 1.875rem;
-  --font-weight-normal: 400;
-  --font-weight-medium: 500;
-  --font-weight-semibold: 600;
-  --font-weight-bold: 700;
-  --line-height-normal: 1.5;
-  --line-height-relaxed: 1.75;
-  --line-height-tight: 1.25;
-}
-
-body { font-family: var(--font-body); }
-
+/* Typography utilities */
 .h1, h1 { font-family: var(--font-heading); font-weight: 700; }
 .h2, h2 { font-family: var(--font-heading); font-weight: 600; }
 .h3, h3 { font-family: var(--font-heading); font-weight: 600; }
-
-/* Typography utilities for consistency */
 .text-body { font-family: var(--font-body); }
 .text-heading { font-family: var(--font-heading); }
 
