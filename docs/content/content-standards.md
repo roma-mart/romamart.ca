@@ -34,7 +34,7 @@ This guide covers content standards for text, images, and media across the Roma 
 
 ### Typography
 
-- **Headings:** Poppins (600 weight)
+- **Headings:** Outfit (600 weight)
 - **Body:** Inter (400 weight)
 - **Sizes:** Use design token scale
 

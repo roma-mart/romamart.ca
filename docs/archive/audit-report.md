@@ -25,7 +25,7 @@ The Roma Mart website has been comprehensively audited against all six core prin
 
 ### Visual Design
 - ✅ **Brand consistency**: Navy (#020178), Yellow (#E4B340), balanced grays throughout
-- ✅ **Typography**: Poppins (headings), Inter (body) - professional, readable
+- ✅ **Typography**: Outfit (headings), Inter (body) - professional, readable
 - ✅ **Animations**: Framer Motion used tastefully for hero, cards, transitions
 - ✅ **Responsive**: Mobile-first Tailwind CSS, tested breakpoints
 - ✅ **Visual hierarchy**: Proper spacing, clear sections, readable layout
@@ -296,7 +296,7 @@ Cleaned config:
    - Browser support: 97%+ (fallback to original)
 
 3. **Font subsetting**: Reduce Google Fonts weight
-   - Current: Full Poppins + Inter → Potential: Subset characters
+   - Current: Full Outfit + Inter → Potential: Subset characters
    - Trade-off: Setup complexity vs. marginal gains
 
 **Recommendation:** Current performance is excellent. Defer optimizations to future phase.

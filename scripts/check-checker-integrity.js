@@ -54,7 +54,7 @@ const DEV_ETHOS = {
       white: '#FFFFFF',
     },
     fonts: {
-      heading: 'Poppins',
+      heading: 'Outfit',
       body: 'Inter',
     },
   },
@@ -168,18 +168,18 @@ function checkBrandAlignment() {
   }
   
   // Test 2: Font specifications should be consistent
-  const poppinsInChecker = checkQuality.includes('Poppins');
+  const outfitInChecker = checkQuality.includes('Outfit');
   const interInChecker = checkQuality.includes('Inter');
-  const poppinsInApp = appJs.includes('Poppins');
+  const outfitInApp = appJs.includes('Outfit');
   const interInApp = appJs.includes('Inter');
   
-  if ((poppinsInApp && !poppinsInChecker) || (interInApp && !interInChecker)) {
+  if ((outfitInApp && !outfitInChecker) || (interInApp && !interInChecker)) {
     issues.push({
       severity: 'LOW',
       checker: 'Typography Validation',
       issue: 'Font usage in code not validated by checker',
       impact: 'Incorrect fonts may be used without detection',
-      fix: 'Ensure brand consistency checker validates Poppins/Inter usage',
+      fix: 'Ensure brand consistency checker validates Outfit/Inter usage',
     });
   }
   

@@ -16,6 +16,13 @@ module.exports = {
           "config"
         ]
       }
+    ],
+    "comment-empty-line-before": [
+      "always",
+      {
+        "except": ["first-nested"],
+        "ignore": ["stylelint-commands", "after-comment"]
+      }
     ]
   }
 };

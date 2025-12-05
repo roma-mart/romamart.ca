@@ -56,7 +56,7 @@ const ServicesPage = () => {
         <div className="flex flex-wrap items-start justify-between gap-4 mb-6">
           <div>
             <h1 
-              className="text-4xl md:text-5xl font-coco uppercase mb-4"
+              className="text-4xl md:text-5xl var(--font-heading) uppercase mb-4"
               style={{ color: 'var(--color-heading)' }}
             >
               Our <span style={{ color: COLORS.yellow }}>Services</span>
@@ -112,12 +112,12 @@ const ServicesPage = () => {
       {/* Compliance Notice with SFOA Signage - Keep existing */}
       <section className="max-w-7xl mx-auto px-4 mt-16">
         <div className="p-8 rounded-xl border" style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
-          <h3 className="font-coco text-2xl mb-6" style={{ color: 'var(--color-heading)' }}>Age-Restricted Products Compliance</h3>
+          <h3 className="var(--font-heading) text-2xl mb-6" style={{ color: 'var(--color-heading)' }}>Age-Restricted Products Compliance</h3>
           
           <div className="grid md:grid-cols-2 gap-8 mb-6">
             {/* Tobacco/Vape Section */}
             <div>
-              <h4 className="font-coco font-bold text-lg mb-3" style={{ color: 'var(--color-heading)' }}>Tobacco & Vapour Products</h4>
+              <h4 className="var(--font-heading) font-bold text-lg mb-3" style={{ color: 'var(--color-heading)' }}>Tobacco & Vapour Products</h4>
               <div className="p-4 rounded-lg border-2 mb-4" style={{ backgroundColor: 'var(--color-error-bg)', borderColor: 'var(--color-error)' }}>
                 <div className="flex items-start gap-3">
                   <div className="text-3xl">🚭</div>
@@ -134,7 +134,7 @@ const ServicesPage = () => {
 
             {/* Lottery Section */}
             <div>
-              <h4 className="font-coco font-bold text-lg mb-3" style={{ color: 'var(--color-heading)' }}>Lottery Products (Coming Soon)</h4>
+              <h4 className="var(--font-heading) font-bold text-lg mb-3" style={{ color: 'var(--color-heading)' }}>Lottery Products (Coming Soon)</h4>
               <div className="p-4 rounded-lg border-2 mb-4" style={{ backgroundColor: 'var(--color-warning-bg)', borderColor: COLORS.yellow }}>
                 <div className="flex items-start gap-3">
                   <div className="text-3xl">🎫</div>
@@ -163,7 +163,7 @@ const ServicesPage = () => {
       {/* CTA Section */}
       <section className="max-w-7xl mx-auto px-4 mt-20">
         <div className="p-12 rounded-3xl text-center" style={{ backgroundColor: COLORS.navy }}>
-          <h2 className="text-3xl md:text-4xl font-coco uppercase text-white mb-4">
+          <h2 className="text-3xl md:text-4xl var(--font-heading) uppercase text-white mb-4">
             Visit Us Today
           </h2>
           <p className="text-white/90 font-inter text-lg mb-8 max-w-2xl mx-auto">

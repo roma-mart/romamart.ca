@@ -79,7 +79,7 @@ export default function Navbar() {
           >
             <Logo size={48} />
             <div className="hidden sm:block leading-tight">
-              <span className="block font-coco text-xl uppercase" style={{ color: scrolled ? BRAND.heading : BRAND.white }}>Roma Mart</span>
+              <span className="block var(--font-heading) text-xl uppercase" style={{ color: scrolled ? BRAND.heading : BRAND.white }}>Roma Mart</span>
               <span className="block text-xs font-inter font-semibold tracking-wider" style={{ color: BRAND.accent }}>CONVENIENCE</span>
             </div>
           </a>
@@ -169,7 +169,7 @@ export default function Navbar() {
                 <a
                   href={`${BASE_URL}`}
                   onClick={() => setIsOpen(false)}
-                  className="block px-3 py-4 text-lg font-bold font-coco uppercase border-b flex items-center gap-2"
+                  className="px-3 py-4 text-lg font-bold var(--font-heading) uppercase border-b flex items-center gap-2"
                   style={{ color: BRAND.heading, borderColor: BRAND.surface }}
                 >
                   <Home size={20} /> Home
@@ -178,7 +178,7 @@ export default function Navbar() {
               <a
                 href={isHomePage ? `${BASE_URL}#services` : `${BASE_URL}services`}
                 onClick={(e) => handleNavClick(e, 'services', `${BASE_URL}services`)}
-                className="block px-3 py-4 text-lg font-bold font-coco uppercase border-b"
+                className="block px-3 py-4 text-lg font-bold var(--font-heading) uppercase border-b"
                 style={{ color: BRAND.heading, borderColor: BRAND.surface }}
               >
                 Services
@@ -186,7 +186,7 @@ export default function Navbar() {
               <a
                 href={isHomePage ? `${BASE_URL}#rocafe` : `${BASE_URL}rocafe`}
                 onClick={(e) => handleNavClick(e, 'rocafe', `${BASE_URL}rocafe`)}
-                className="block px-3 py-4 text-lg font-bold font-coco uppercase border-b"
+                className="block px-3 py-4 text-lg font-bold var(--font-heading) uppercase border-b"
                 style={{ color: BRAND.heading, borderColor: BRAND.surface }}
               >
                 RoCafé
@@ -194,7 +194,7 @@ export default function Navbar() {
               <a
                 href={isHomePage ? `${BASE_URL}#locations` : `${BASE_URL}locations`}
                 onClick={(e) => handleNavClick(e, 'locations', `${BASE_URL}locations`)}
-                className="block px-3 py-4 text-lg font-bold font-coco uppercase border-b"
+                className="block px-3 py-4 text-lg font-bold var(--font-heading) uppercase border-b"
                 style={{ color: BRAND.heading, borderColor: BRAND.surface }}
               >
                 Locations
@@ -202,7 +202,7 @@ export default function Navbar() {
               <a
                 href={isHomePage ? `${BASE_URL}#contact` : `${BASE_URL}contact`}
                 onClick={(e) => handleNavClick(e, 'contact', `${BASE_URL}contact`)}
-                className="block px-3 py-4 text-lg font-bold font-coco uppercase border-b"
+                className="block px-3 py-4 text-lg font-bold var(--font-heading) uppercase border-b"
                 style={{ color: BRAND.heading, borderColor: BRAND.surface }}
               >
                 Contact
@@ -212,7 +212,7 @@ export default function Navbar() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => trackOrderClick('header_mobile')}
-                className="block px-3 py-4 text-center rounded-lg font-bold font-coco uppercase mt-4"
+                className="block px-3 py-4 text-center rounded-lg font-bold var(--font-heading) uppercase mt-4"
                 style={{ backgroundColor: BRAND.accent, color: BRAND.primary }}
               >
                 ORDER NOW

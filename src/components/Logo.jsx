@@ -24,7 +24,9 @@ export function Logo({
   const cfg = tokens.logoSchemes[scheme] || tokens.logoSchemes.navy;
   const circleSize = size;
   const cartStroke = cfg.cart;
-  const textColor = cfg.text;
+  const textColor = tokens?.fonts?.heading || 'inherit';
+  const fontSize = tokens?.TYPOGRAPHY?.fontSize?.lg || '1rem';
+  const fontWeight = tokens?.TYPOGRAPHY?.fontWeight?.bold || 'bold';
   const showBorder = cfg.border;
 
   // Emblem uses inline SVG for crisp scaling & color control
@@ -69,13 +71,15 @@ export function Logo({
       {wordmark && (
         <span
           style={{
-            fontFamily: tokens.fonts.heading,
-            fontWeight: 700,
-            fontSize: size * 0.55,
+            fontFamily: textColor,
+            fontWeight: fontWeight,
+            fontSize: fontSize,
             color: textColor,
             letterSpacing: '-0.02em'
           }}
-        >Roma Mart</span>
+        >
+          Roma Mart
+        </span>
       )}
       {showBorder && (
         <span className="sr-only">Visual border variant</span>

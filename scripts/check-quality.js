@@ -742,9 +742,9 @@ function checkBrandConsistency() {
       greyBorder: '#D1D6D8'
     },
     fonts: {
-      heading: ['Poppins', 'font-coco'],
+      heading: ['Poppins', 'var(--font-heading)'],
       body: ['Inter', 'font-inter'],
-      logo: ['Cocogoose', 'Poppins']
+      logo: ['var(--font-heading)', 'Poppins']
     },
   };
   
@@ -801,18 +801,18 @@ function checkBrandConsistency() {
       }
       
       // Check for incorrect font usage
-      // Headings (h1-h6) should use Poppins/font-coco
+      // Headings (h1-h6) should use Poppins/var(--font-heading)
       if (/<h[1-6][^>]*>/.test(line)) {
-        if (!line.includes('font-coco') && !line.includes('Poppins')) {
+        if (!line.includes('var(--font-heading)') && !line.includes('Poppins')) {
           // Only flag if explicitly using wrong font
           if (line.includes('font-inter') || line.includes('Inter')) {
             issues[SEVERITY.MEDIUM].push({
               category: CHECKS.BRAND_CONSISTENCY,
               file: relativePath,
               line: lineNum,
-              message: 'Headings should use Poppins (font-coco), not Inter',
+              message: 'Headings should use Poppins (var(--font-heading)), not Inter',
               code: line.trim().substring(0, 80),
-              fix: 'Add className="font-coco" to heading elements',
+              fix: 'Add className="var(--font-heading)" to heading elements',
             });
           }
         }

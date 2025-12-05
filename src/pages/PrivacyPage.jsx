@@ -37,7 +37,7 @@ const PrivacyPage = () => {
 
       <div className="max-w-4xl mx-auto px-4">
         <div className="flex flex-wrap items-start justify-between gap-4 mb-8">
-          <h1 className="text-4xl font-coco uppercase" style={{ color: 'var(--color-heading)' }}>
+          <h1 className="text-4xl var(--font-heading) uppercase" style={{ color: 'var(--color-heading)' }}>
             Privacy Policy
           </h1>
           <ShareButton 
@@ -53,7 +53,7 @@ const PrivacyPage = () => {
           </p>
 
           <section className="mb-8">
-            <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
+            <h2 className="text-2xl var(--font-heading) uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
               1. Introduction
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
@@ -62,7 +62,7 @@ const PrivacyPage = () => {
           </section>
 
           <section className="mb-8">
-            <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
+            <h2 className="text-2xl var(--font-heading) uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
               2. Information We Collect
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
@@ -77,7 +77,7 @@ const PrivacyPage = () => {
           </section>
 
           <section className="mb-8">
-            <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
+            <h2 className="text-2xl var(--font-heading) uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
               3. How We Use Your Information
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
@@ -93,7 +93,7 @@ const PrivacyPage = () => {
           </section>
 
           <section className="mb-8">
-            <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
+            <h2 className="text-2xl var(--font-heading) uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
               4. Cookies and Tracking
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
@@ -105,7 +105,7 @@ const PrivacyPage = () => {
           </section>
 
           <section className="mb-8">
-            <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
+            <h2 className="text-2xl var(--font-heading) uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
               5. Data Retention
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
@@ -114,7 +114,7 @@ const PrivacyPage = () => {
           </section>
 
           <section className="mb-8">
-            <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
+            <h2 className="text-2xl var(--font-heading) uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
               6. Your Rights
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
@@ -130,7 +130,7 @@ const PrivacyPage = () => {
           </section>
 
           <section className="mb-8">
-            <h2 className="text-2xl font-coco uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
+            <h2 className="text-2xl var(--font-heading) uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
               7. Contact Us
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
