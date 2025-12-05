@@ -112,7 +112,7 @@ const StandardizedItem = ({ item, defaultExpanded = false }) => {
     <div 
       className="rounded-xl border transition-all duration-300"
       style={{ 
-        backgroundColor: isUnavailable ? 'var(--color-bg)' : 'var(--color-surface)',
+        backgroundColor: isUnavailable ? 'var(--color-bg)' : 'var(--color-bg)',
         borderColor: isExpanded ? 'var(--color-accent)' : getAvailabilityColor(),
         borderWidth: isExpanded ? '2px' : '2px',
         opacity: isUnavailable ? 0.6 : (isComingSoon ? 0.85 : 1),

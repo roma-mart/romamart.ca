@@ -47,14 +47,16 @@ import CopyButton from './components/CopyButton';
 
 // --- BRAND GUIDELINES & DATA ---
 const BRAND = {
-  primary: 'var(--Color-primary, var(--color-primary))',
+  primary: 'var(--color-primary)',
   accent: 'var(--color-accent)',
   heading: 'var(--color-heading)',
   icon: 'var(--color-icon)',
   bg: 'var(--color-bg)',
   surface: 'var(--color-surface)',
   border: 'var(--color-border)',
-  text: 'var(--color-text)'
+  text: 'var(--color-text)',
+  sectiona: 'var(--color-sectiona)',
+  sectionb: 'var(--color-sectionb)'
 };
 
 const STORE_DATA = {
@@ -143,7 +145,7 @@ const ServicesSection = () => {
 
 const RoCafeSection = () => {
   return (
-    <section id="rocafe" className="py-24 relative overflow-hidden" style={{ backgroundColor: BRAND.primary }}>
+    <section id="rocafe" className="py-24 relative overflow-hidden" style={{ backgroundColor: BRAND.sectiona }}>
       <div className="absolute top-0 right-0 w-1/2 h-full bg-black/20 skew-x-12 transform translate-x-20"></div>
       <div className="max-w-7xl mx-auto px-4 relative z-10">
         <div className="flex flex-col md:flex-row gap-16 items-center">
@@ -185,7 +187,7 @@ const RoCafeSection = () => {
           <div className="md:w-1/2 w-full">
             <div className="relative aspect-square rounded-full overflow-hidden border-8 border-white/5 shadow-2xl">
                <img 
-                 src="https://images.unsplash.com/photo-1558507304-7c2a5d911139?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
+                 src="/RoCafe_Logo.jpg" 
                  alt="Bubble Tea and Coffee"
                  className="w-full h-full object-cover hover:scale-110 transition-transform duration-700"
                  loading="lazy"
@@ -221,7 +223,7 @@ const Locations = () => {
   }, [displayLocation]);
 
   return (
-    <section id="locations" className="py-24" style={{ backgroundColor: BRAND.bg }}>
+    <section id="locations" className="py-24" style={{ backgroundColor: BRAND.sectionb }}>
       <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
           <span className="text-yellow-500 font-bold uppercase tracking-widest text-sm">Find Us</span>
@@ -237,7 +239,7 @@ const Locations = () => {
                 onClick={locationHandlers[loc.id]}
                 className="w-full text-left p-6 rounded-xl border-2 transition-all"
                 style={{ 
-                  borderColor: activeLoc.id === loc.id ? BRAND.primary : BRAND.surface,
+                  borderColor: activeLoc.id === loc.id ? BRAND.accent : BRAND.surface,
                   backgroundColor: activeLoc.id === loc.id ? BRAND.surface : 'transparent'
                 }}
               >
@@ -300,7 +302,7 @@ const ContactSection = () => {
           {/* Contact Info Side */}
           <div>
             <span className="text-yellow-500 font-bold uppercase tracking-widest text-sm">Get in Touch</span>
-            <h2 className="text-4xl var(--font-heading) mt-2 mb-6" style={{ color: BRAND.primary }}>Contact Us</h2>
+            <h2 className="text-4xl var(--font-heading) mt-2 mb-6" style={{ color: BRAND.heading }}>Contact Us</h2>
             <p className="mb-10 font-inter leading-relaxed" style={mutedTextColor}>
               Have a question about our products, want to suggest a new snack, or interested in a partnership? We'd love to hear from you.
             </p>
@@ -311,7 +313,7 @@ const ContactSection = () => {
                   <MapPin className="text-navy-900" style={{ color: BRAND.icon }} />
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-bold text-lg mb-1" style={{ color: BRAND.primary }}>Visit Us</h4>
+                  <h4 className="font-bold text-lg mb-1" style={{ color: BRAND.heading }}>Visit Us</h4>
                   <p className="mb-2" style={textColor}>{primaryLocation.address.formatted}</p>
                   <CopyButton 
                     text={primaryLocation.address.formatted}
@@ -327,7 +329,7 @@ const ContactSection = () => {
                   <Phone className="text-navy-900" style={{ color: BRAND.icon }} />
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-bold text-lg mb-1" style={{ color: BRAND.primary }}>Call Us</h4>
+                  <h4 className="font-bold text-lg mb-1" style={{ color: BRAND.heading }}>Call Us</h4>
                   <div className="flex items-center gap-2 flex-wrap">
                     <a href={`tel:${STORE_DATA.contact.phone}`} className="hover:underline" style={{ color: BRAND.accent }}>
                       {STORE_DATA.contact.phone}
@@ -346,7 +348,7 @@ const ContactSection = () => {
                   <Clock className="text-navy-900" style={{ color: BRAND.icon }} />
                 </div>
                 <div>
-                  <h4 className="font-bold text-lg" style={{ color: BRAND.primary }}>Hours</h4>
+                  <h4 className="font-bold text-lg" style={{ color: BRAND.accent }}>Hours</h4>
                   <p style={textColor}>Mon-Fri: {getPrimaryLocation().hours.weekdays}</p>
                   <p style={textColor}>Sat-Sun: {getPrimaryLocation().hours.weekends}</p>
                 </div>
@@ -356,7 +358,7 @@ const ContactSection = () => {
 
           {/* Web3Forms Contact Form */}
           <div className="p-8 rounded-2xl shadow-lg border" style={{ backgroundColor: BRAND.bg, borderColor: BRAND.border }}>
-            <h3 className="var(--font-heading) text-2xl mb-6" style={{ color: BRAND.primary }}>Send a Message</h3>
+            <h3 className="var(--font-heading) text-2xl mb-6" style={{ color: BRAND.heading }}>Send a Message</h3>
             
             <form 
               action="https://api.web3forms.com/submit" 
@@ -411,7 +413,7 @@ const ContactSection = () => {
               <button 
                 type="submit"
                 className="w-full py-4 rounded-xl font-bold font-inter text-white flex items-center justify-center gap-2 hover:opacity-90 transition-opacity shadow-lg"
-                style={{ backgroundColor: BRAND.primary }}
+                style={{ backgroundColor: BRAND.accent }}
               >
                 Send Message <Send size={18} />
               </button>

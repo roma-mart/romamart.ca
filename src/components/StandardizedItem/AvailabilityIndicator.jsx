@@ -16,7 +16,7 @@ export default function AvailabilityIndicator({ nearestLocation }) {
     <div 
       className="p-3 rounded-lg mb-4"
       style={{ 
-        backgroundColor: 'var(--color-bg)',
+        backgroundColor: 'var(--color-surface)',
         borderLeft: `4px solid ${nearestLocation ? 'var(--color-success)' : 'var(--color-warning)'}`
       }}
     >
