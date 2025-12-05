@@ -98,6 +98,9 @@
   --color-surface: #f8f8f8;
   --color-border: #e5e5e5;
   --color-footer: #151515;
+  --color-sectiona: #242424;
+  --color-sectionb: #fff;
+
 
   /* Text */
   --color-text: #151515;
@@ -164,6 +167,8 @@
     --color-warning-border: #F59E0B;
     --color-success: #34D399;
     --color-success-bg: #064E3B;
+    --color-sectiona: #242424;
+    --color-sectionb: #151515;
   }
 }
 
