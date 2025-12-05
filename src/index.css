@@ -97,6 +97,7 @@
   --color-bg: #fff;
   --color-surface: #f8f8f8;
   --color-border: #e5e5e5;
+  --color-footer: #151515;
 
   /* Text */
   --color-text: #151515;
@@ -131,7 +132,7 @@
   --font-size-lg: 1.125rem;
   --font-size-xl: 1.25rem;
   --font-size-2xl: 1.5rem;
-  --font-size-3xl: 1.875rem;
+  --font-size-3xl: 1.875rem; 
   --font-weight-normal: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
@@ -144,13 +145,13 @@
 /* Dark mode overrides */
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-bg: #0b0b0b;
+    --color-bg: #151515;
     --color-surface: #1a1a1a;
     --color-border: #2a2a2a;
     --color-text: #f4f4f4;
     --color-text-muted: #a8a8a8;
-    --color-primary: #E4B340;
-    --color-accent: #E4B340;
+    --color-primary: #020178; /* Navy - headings, primary elements */
+    --color-accent: #E4B340; /* Yellow - CTAs, highlights */
     --color-heading: #E4B340;
     --color-icon: #E4B340;
     --color-error: #F87171;

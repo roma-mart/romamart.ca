@@ -9,7 +9,7 @@ import { useLocationContext } from '../hooks/useLocationContext';
 import { LOCATIONS, getActiveLocations, getPrimaryLocation } from '../data/locations';
 
 const BRAND = {
-  primary: 'var(--color-primary)',
+  primary: 'var(--color-footer)',
   accent: 'var(--color-accent)'
 };
 
