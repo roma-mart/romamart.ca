@@ -142,6 +142,8 @@
   --line-height-normal: 1.5;
   --line-height-relaxed: 1.75;
   --line-height-tight: 1.25;
+
+  --color-text-on-primary: #fff;
 }
 
 /* Dark mode overrides */
@@ -167,6 +169,8 @@
     --color-success: #34D399;
     --color-success-bg: #064E3B;
     --color-footer: #151515;
+
+    --color-text-on-primary: #fff;
   }
 }
 

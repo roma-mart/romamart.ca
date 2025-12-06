@@ -84,19 +84,48 @@ function Hero({ onTrackOrder }) {
               <span className="text-sm font-inter font-semibold tracking-widest uppercase" style={{ color: 'var(--color-accent)' }}>New In Town</span>
             </div>
             <h1 className="text-5xl md:text-7xl var(--font-heading) uppercase leading-none text-white mb-6">Your Daily <br/><span style={{ color: 'var(--color-accent)' }}>Stop & Go</span></h1>
-            <p className="text-lg md:text-xl font-inter mb-6 max-w-lg leading-relaxed" style={{ color: 'var(--color-text)' }}>Experience Sarnia's newest convenience destination. From daily essentials to bubble tea, we have what you need.</p>
+            <p className="text-lg md:text-xl font-inter mb-6 max-w-lg leading-relaxed" style={{ color: 'var(--color-text-on-primary)' }}>
+              Experience Sarnia's newest convenience destination. From daily essentials to bubble tea, we have what you need.
+            </p>
             <div className="mb-6"><ShareButton title="Roma Mart" text="Check out Roma Mart - Sarnia's newest convenience store!" className="bg-white/10 text-white hover:bg-white/20 border border-white/30" /></div>
             <div className="flex flex-col sm:flex-row gap-4">
-              <motion.a href={STORE_DATA.onlineStoreUrl} target="_blank" rel="noopener noreferrer" onClick={handleOrderClick} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="px-8 py-4 rounded-xl font-bold font-inter text-lg flex items-center justify-center gap-2 shadow-xl shadow-yellow-500/20" style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)' }}>
+              <motion.a
+                href={STORE_DATA.onlineStoreUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={handleOrderClick}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-8 py-4 rounded-xl font-bold font-inter text-lg flex items-center justify-center gap-2"
+                style={{
+                  backgroundColor: 'var(--color-accent)',
+                  color: 'var(--color-primary)',
+                  boxShadow: '0px 4px 16px 0px rgba(228, 179, 64, 0.20)' // var(--color-accent) shadow
+                }}
+              >
                 ORDER ONLINE NOW <ExternalLink size={20} />
               </motion.a>
-              <a href="#locations" className="px-8 py-4 rounded-xl font-bold font-inter text-lg border-2 flex items-center justify-center gap-2 hover:scale-105 transition-transform" style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)', borderColor: 'var(--color-accent)' }}>Visit In Store <ArrowRight size={20} /></a>
+              <a
+                href="#locations"
+                className="px-8 py-4 rounded-xl font-bold font-inter text-lg border-2 flex items-center justify-center gap-2 transition-transform"
+                style={{
+                  backgroundColor: 'var(--color-accent)',
+                  color: 'var(--color-primary)',
+                  borderColor: 'var(--color-accent)'
+                }}
+                onMouseOver={e => e.currentTarget.style.backgroundColor = 'rgba(228, 179, 64, 0.85)'}
+                onFocus={e => e.currentTarget.style.backgroundColor = 'rgba(228, 179, 64, 0.85)'}
+                onMouseOut={e => e.currentTarget.style.backgroundColor = 'var(--color-accent)'}
+                onBlur={e => e.currentTarget.style.backgroundColor = 'var(--color-accent)'}
+              >
+                Visit In Store <ArrowRight size={20} />
+              </a>
             </div>
           </motion.div>
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, delay: 0.2 }} className="relative hidden md:block">
             <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl border-4 border-white/10 rotate-3 hover:rotate-0 transition-transform duration-500">
               <img src="https://images.unsplash.com/photo-1555636222-cae831e670b3?w=1000&h=500&fit=crop" alt="Roma Mart Storefront" className="w-full h-[500px] object-cover" loading="lazy" />
-              <div className="absolute top-6 right-6 w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-lg rotate-12"><div className="text-center"><span className="block var(--font-heading) text-xl leading-none" style={{ color: 'var(--color-primary)' }}>2.5%</span><span className="block text-xs font-bold uppercase" style={{ color: 'var(--color-text)' }}>OFF CASH</span></div></div>
+              <div className="absolute top-6 right-6 w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-lg rotate-12"><div className="text-center"><span className="block var(--font-heading) text-xl leading-none" style={{ color: 'var(--color-primary)' }}>2.5%</span><span className="block text-xs font-bold uppercase" style={{ color: 'var(--color-text)' }}>CASH DISCOUNT</span></div></div>
             </div>
           </motion.div>
         </div>
@@ -123,7 +152,21 @@ const ServicesSection = () => {
         </div>
         
         <div className="text-center">
-          <a href={`${BASE_URL}services`} className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-bold font-inter transition-transform hover:scale-105 shadow-lg" style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)' }}>View All Services <ArrowRight size={20} /></a>
+          <a
+            href={`${BASE_URL}services`}
+            className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-bold font-inter transition-transform border-2"
+            style={{
+              backgroundColor: 'var(--color-accent)',
+              color: 'var(--color-primary)',
+              borderColor: 'var(--color-accent)'
+            }}
+            onMouseOver={e => e.currentTarget.style.backgroundColor = 'rgba(228, 179, 64, 0.85)'}
+            onFocus={e => e.currentTarget.style.backgroundColor = 'rgba(228, 179, 64, 0.85)'}
+            onMouseOut={e => e.currentTarget.style.backgroundColor = 'var(--color-accent)'}
+            onBlur={e => e.currentTarget.style.backgroundColor = 'var(--color-accent)'}
+          >
+            View All Services <ArrowRight size={20} />
+          </a>
         </div>
       </div>
     </section>
@@ -146,7 +189,7 @@ const RoCafeSection = () => {
                  <p className="text-yellow-400 font-inter tracking-wider uppercase text-sm">Sip. Savor. Repeat.</p>
               </div>
             </div>
-            <p className="font-inter text-lg mb-8" style={{ color: 'var(--color-text)' }}>
+            <p className="font-inter text-lg mb-8" style={{ color: 'var(--color-text-on-primary)' }}>
               Step into our dedicated café corner. Whether you need a morning espresso kick or a refreshing afternoon bubble tea, RoCafé is brewing specifically for you.
             </p>
             
@@ -164,8 +207,16 @@ const RoCafeSection = () => {
             <div className="mt-8">
               <a
                 href={`${BASE_URL}rocafe`}
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-bold font-inter transition-transform hover:scale-105 shadow-lg border-2"
-                style={{ borderColor: 'var(--color-accent)', color: 'white' }}
+                className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-bold font-inter transition-transform border-2"
+                style={{
+                  backgroundColor: 'var(--color-accent)',
+                  color: 'var(--color-primary)',
+                  borderColor: 'var(--color-accent)'
+                }}
+                onMouseOver={e => e.currentTarget.style.backgroundColor = 'rgba(228, 179, 64, 0.85)'}
+                onFocus={e => e.currentTarget.style.backgroundColor = 'rgba(228, 179, 64, 0.85)'}
+                onMouseOut={e => e.currentTarget.style.backgroundColor = 'var(--color-accent)'}
+                onBlur={e => e.currentTarget.style.backgroundColor = 'var(--color-accent)'}
               >
                 View Full Menu <ArrowRight size={20} />
               </a>
@@ -238,6 +289,24 @@ const Locations = () => {
                 </div>
               </button>
             ))}
+            {/* Move button to end of subsection for consistency */}
+            <div className="text-center mt-8">
+              <a
+                href={`${BASE_URL}locations`}
+                className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-bold font-inter transition-transform border-2"
+                style={{
+                  backgroundColor: 'var(--color-accent)',
+                  color: 'var(--color-primary)',
+                  borderColor: 'var(--color-accent)'
+                }}
+                onMouseOver={e => e.currentTarget.style.backgroundColor = 'rgba(228, 179, 64, 0.85)'}
+                onFocus={e => e.currentTarget.style.backgroundColor = 'rgba(228, 179, 64, 0.85)'}
+                onMouseOut={e => e.currentTarget.style.backgroundColor = 'var(--color-accent)'}
+                onBlur={e => e.currentTarget.style.backgroundColor = 'var(--color-accent)'}
+              >
+                View All Locations <ArrowRight size={20} />
+              </a>
+            </div>
           </div>
           <div className="lg:col-span-2 rounded-3xl overflow-hidden min-h-[400px] relative shadow-inner" style={{ backgroundColor: 'var(--color-surface)' }}>
              <iframe
