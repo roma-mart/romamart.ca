@@ -16,6 +16,7 @@ const ServicesPage = () => {
 
   const textColor = { color: 'var(--color-text)' };
   const mutedTextColor = { color: 'var(--color-text)', opacity: 0.7 };
+  const textOnPrimary = { color: 'var(--color-text-on-primary)' };
 
   const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
   const primaryLocation = getPrimaryLocation();
@@ -27,7 +28,7 @@ const ServicesPage = () => {
   });
 
   return (
-    <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>
+    <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-surface)' }}>
       <Helmet>
         <title>Our Services | Roma Mart Convenience</title>
         <meta name="description" content="Roma Mart offers ATM, Bitcoin ATM, printing, package services, halal meat, money transfer, gift cards, perfumes, tobacco products, and more in Sarnia, Ontario." />
@@ -38,15 +39,18 @@ const ServicesPage = () => {
       <nav aria-label="Breadcrumb" className="max-w-7xl mx-auto px-4 mb-8">
         <ol className="flex items-center gap-2 text-sm font-inter">
           <li>
-            <a 
-              href={`${BASE_URL}`} 
-              className="hover:text-yellow-500 transition-colors"
-              style={mutedTextColor}
+            <a
+              href={`${BASE_URL}`}
+              style={{ color: 'var(--color-accent)', opacity: 0.7 }}
+              onMouseOver={e => e.currentTarget.style.color = 'rgba(228, 179, 64, 0.85)'}
+              onFocus={e => e.currentTarget.style.color = 'rgba(228, 179, 64, 0.85)'}
+              onMouseOut={e => e.currentTarget.style.color = 'var(--color-accent)'}
+              onBlur={e => e.currentTarget.style.color = 'var(--color-accent)'}
             >
               Home
             </a>
           </li>
-          <li aria-hidden="true"><ChevronRight size={16} style={mutedTextColor} /></li>
+          <li aria-hidden="true"><ChevronRight size={16} style={{ color: 'var(--color-accent)', opacity: 0.7 }} /></li>
           <li aria-current="page" className="font-semibold" style={textColor}>Services</li>
         </ol>
       </nav>
@@ -59,7 +63,7 @@ const ServicesPage = () => {
               className="text-4xl md:text-5xl var(--font-heading) uppercase mb-4"
               style={{ color: 'var(--color-heading)' }}
             >
-              Our <span style={{ color: COLORS.yellow }}>Services</span>
+              Our <span style={{ color: 'var(--color-accent)' }}>Services</span>
             </h1>
             <p className="text-lg font-inter leading-relaxed max-w-3xl" style={textColor}>
               Roma Mart is your one-stop convenience store offering a wide range of services to make your life easier. 
@@ -70,7 +74,11 @@ const ServicesPage = () => {
             <ShareButton 
               title="Roma Mart Services"
               text="Check out all the amazing services at Roma Mart in Sarnia!"
-              className="bg-yellow-500 text-gray-900 hover:bg-yellow-600"
+              style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)' }}
+              onMouseOver={e => e.currentTarget.style.backgroundColor = 'rgba(228, 179, 64, 0.85)'}
+              onFocus={e => e.currentTarget.style.backgroundColor = 'rgba(228, 179, 64, 0.85)'}
+              onMouseOut={e => e.currentTarget.style.backgroundColor = 'var(--color-accent)'}
+              onBlur={e => e.currentTarget.style.backgroundColor = 'var(--color-accent)'}
             />
             <NearestStoreButton 
               onLocationFound={() => {
@@ -111,7 +119,7 @@ const ServicesPage = () => {
 
       {/* Compliance Notice with SFOA Signage - Keep existing */}
       <section className="max-w-7xl mx-auto px-4 mt-16">
-        <div className="p-8 rounded-xl border" style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
+        <div className="p-8 rounded-xl border" style={{ backgroundColor: 'var(--color-bg)', borderColor: 'var(--color-border)' }}>
           <h3 className="var(--font-heading) text-2xl mb-6" style={{ color: 'var(--color-heading)' }}>Age-Restricted Products Compliance</h3>
           
           <div className="grid md:grid-cols-2 gap-8 mb-6">
@@ -128,7 +136,17 @@ const ServicesPage = () => {
                 </div>
               </div>
               <p className="text-xs font-inter" style={mutedTextColor}>
-                Required signage displayed in-store per <a href="https://www.ontario.ca/page/rules-selling-tobacco-and-vapour-products" target="_blank" rel="noopener noreferrer" className="text-yellow-500 hover:underline">Smoke-Free Ontario Act, 2017</a>
+                Required signage displayed in-store per <a
+                  href="https://www.ontario.ca/page/rules-selling-tobacco-and-vapour-products"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: 'var(--color-accent)' }}
+                  className="hover:underline"
+                  onMouseOver={e => e.currentTarget.style.color = 'rgba(228, 179, 64, 0.85)'}
+                  onFocus={e => e.currentTarget.style.color = 'rgba(228, 179, 64, 0.85)'}
+                  onMouseOut={e => e.currentTarget.style.color = 'var(--color-accent)'}
+                  onBlur={e => e.currentTarget.style.color = 'var(--color-accent)'}
+                >Smoke-Free Ontario Act, 2017</a>
               </p>
             </div>
 
@@ -145,7 +163,17 @@ const ServicesPage = () => {
                 </div>
               </div>
               <p className="text-xs font-inter" style={mutedTextColor}>
-                Regulated by <a href="https://www.olg.ca/" target="_blank" rel="noopener noreferrer" className="text-yellow-500 hover:underline">Ontario Lottery and Gaming Corporation (OLG)</a>
+                Regulated by <a
+                  href="https://www.olg.ca/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: 'var(--color-accent)' }}
+                  className="hover:underline"
+                  onMouseOver={e => e.currentTarget.style.color = 'rgba(228, 179, 64, 0.85)'}
+                  onFocus={e => e.currentTarget.style.color = 'rgba(228, 179, 64, 0.85)'}
+                  onMouseOut={e => e.currentTarget.style.color = 'var(--color-accent)'}
+                  onBlur={e => e.currentTarget.style.color = 'var(--color-accent)'}
+                >Ontario Lottery and Gaming Corporation (OLG)</a>
               </p>
             </div>
           </div>
@@ -162,25 +190,29 @@ const ServicesPage = () => {
 
       {/* CTA Section */}
       <section className="max-w-7xl mx-auto px-4 mt-20">
-        <div className="p-12 rounded-3xl text-center" style={{ backgroundColor: COLORS.navy }}>
-          <h2 className="text-3xl md:text-4xl var(--font-heading) uppercase text-white mb-4">
+        <div className="p-12 rounded-3xl text-center" style={{ backgroundColor: 'var(--color-primary)' }}>
+          <h2 className="text-3xl md:text-4xl var(--font-heading) uppercase mb-4" style={{ color: 'var(--color-text-on-primary)' }}>
             Visit Us Today
           </h2>
-          <p className="text-white/90 font-inter text-lg mb-8 max-w-2xl mx-auto">
+          <p className="font-inter text-lg mb-8 max-w-2xl mx-auto" style={{ color: 'var(--color-text-on-primary)', opacity: 0.9 }}>
             Experience the convenience of all our services under one roof. Our friendly staff is ready to assist you.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <a
               href={`${BASE_URL}#contact`}
               className="px-8 py-4 rounded-full font-bold font-inter transition-transform hover:scale-105 shadow-lg"
-              style={{ backgroundColor: COLORS.yellow, color: COLORS.navy }}
+              style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)' }}
+              onMouseOver={e => e.currentTarget.style.backgroundColor = 'rgba(228, 179, 64, 0.85)'}
+              onFocus={e => e.currentTarget.style.backgroundColor = 'rgba(228, 179, 64, 0.85)'}
+              onMouseOut={e => e.currentTarget.style.backgroundColor = 'var(--color-accent)'}
+              onBlur={e => e.currentTarget.style.backgroundColor = 'var(--color-accent)'}
             >
               Get Directions
             </a>
             <a
               href={`${BASE_URL}#contact`}
-              className="px-8 py-4 rounded-full font-bold font-inter transition-transform hover:scale-105 border-2 text-white"
-              style={{ borderColor: 'white' }}
+              className="px-8 py-4 rounded-full font-bold font-inter transition-transform hover:scale-105 border-2"
+              style={{ borderColor: 'var(--color-accent)', color: 'var(--color-text-on-primary)', backgroundColor: 'transparent' }}
             >
               Contact Us
             </a>
