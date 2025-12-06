@@ -79,9 +79,10 @@
 
 /* Windows High Contrast Mode (forced-colors) */
 @media (forced-colors: active) {
-  * {
-    /* Removed unsupported property for Safari */
-    /* forced-color-adjust: auto; */
+  @supports (forced-color-adjust: auto) {
+    * {
+      forced-color-adjust: auto;
+    }
   }
 
   :focus-visible {
