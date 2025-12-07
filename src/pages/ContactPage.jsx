@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ChevronRight, MapPin, Phone, Clock, Mail, Send } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
 import CopyButton from '../components/CopyButton';
 import { useBackgroundSync } from '../hooks/useServiceWorker';
 import { useToast } from '../components/ToastContainer';
-import { queueFormSubmission, getPendingCount } from '../utils/indexedDB';
+// import { queueFormSubmission, getPendingCount } from '../utils/indexedDB'; // Disabled offline queue
 
 const ContactPage = () => {
   const COLORS = {
@@ -33,25 +33,8 @@ const ContactPage = () => {
   };
 
   const [formStatus, setFormStatus] = useState('');
-  const [pendingSubmissions, setPendingSubmissions] = useState(0);
-  const { syncSupported, queueSync } = useBackgroundSync();
+  const { syncSupported } = useBackgroundSync();
   const { showInfo, showSuccess, showError } = useToast();
-
-  // Check for pending submissions on mount
-  useEffect(() => {
-    const checkPending = async () => {
-      try {
-        const count = await getPendingCount();
-        setPendingSubmissions(count);
-        if (count > 0) {
-          showInfo(`You have ${count} pending form submission(s) that will sync when online`);
-        }
-      } catch (error) {
-        console.error('Error checking pending submissions:', error);
-      }
-    };
-    checkPending();
-  }, [showInfo]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -60,23 +43,6 @@ const ContactPage = () => {
     
     // Check if online
     const isOnline = navigator.onLine;
-    
-    if (!isOnline && syncSupported) {
-      // Queue for background sync
-      try {
-        await queueFormSubmission(formObject);
-        await queueSync('contact-form-sync');
-        setFormStatus('queued');
-        showInfo('Form saved! Will submit when connection restored.');
-        e.target.reset();
-        setPendingSubmissions(prev => prev + 1);
-      } catch (error) {
-        console.error('Error queuing form:', error);
-        setFormStatus('error');
-        showError('Failed to save form. Please try again when online.');
-      }
-      return;
-    }
     
     // Online - submit immediately
     try {
@@ -94,23 +60,8 @@ const ContactPage = () => {
         showError('Failed to send message. Please try again.');
       }
     } catch {
-      // If fetch fails while "online", try to queue
-      if (syncSupported) {
-        try {
-          await queueFormSubmission(formObject);
-          await queueSync('contact-form-sync');
-          setFormStatus('queued');
-          showInfo('Connection issue. Form saved and will submit when restored.');
-          e.target.reset();
-          setPendingSubmissions(prev => prev + 1);
-        } catch {
-          setFormStatus('error');
-          showError('Failed to send message. Please try again.');
-        }
-      } else {
-        setFormStatus('error');
-        showError('Failed to send message. Please try again.');
-      }
+      setFormStatus('error');
+      showError('Failed to send message. Please try again.');
     }
   };
 
@@ -253,12 +204,6 @@ const ContactPage = () => {
             {formStatus === 'error' && (
               <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'var(--color-error-bg)', borderColor: 'var(--color-error)' }}>
                 <p className="font-inter" style={{ color: 'var(--color-error)' }}>✗ Something went wrong. Please try again.</p>
-              </div>
-            )}
-
-            {pendingSubmissions > 0 && (
-              <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'var(--color-warning-bg)', borderColor: 'var(--color-warning-border)' }}>
-                <p className="font-inter" style={{ color: 'var(--color-warning)' }}>⏳ You have {pendingSubmissions} pending submission(s) waiting to sync.</p>
               </div>
             )}
 
