@@ -108,7 +108,7 @@
   --color-text-on-primary: #fff;
   --color-on-footer: #f4f4f4;
   --color-on-footer-muted: #bdbdbd;
-  --color-on-footer-subtle: #888888;
+  --color-on-footer-subtle: #888;
   --color-on-footer-dark: #001540;
 
   /* Brand colors - semantic usage */
@@ -175,7 +175,7 @@
     --color-footer: #151515;
     --color-on-footer: #f4f4f4;
     --color-on-footer-muted: #bdbdbd;
-    --color-on-footer-subtle: #888888;
+    --color-on-footer-subtle: #888;
     --color-text-on-primary: #fff;
   }
 }
