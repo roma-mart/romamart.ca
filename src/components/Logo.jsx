@@ -13,7 +13,7 @@ import { tokens } from '../design/tokens';
  */
 export function Logo({
   size = 32,
-  scheme = 'navy',
+  scheme = 'white',
   // layout = 'horizontal',
   // comment out unused var above
   ariaLabel = 'Roma Mart',
@@ -27,38 +27,23 @@ export function Logo({
   const textColor = tokens?.fonts?.heading || 'inherit';
   const fontSize = tokens?.TYPOGRAPHY?.fontSize?.lg || '1rem';
   const fontWeight = tokens?.TYPOGRAPHY?.fontWeight?.bold || 'bold';
-  const showBorder = cfg.border;
+  const showBorder = false;
 
   // Emblem uses inline SVG for crisp scaling & color control
   const Emblem = (
-    <svg
-      width={circleSize}
-      height={circleSize}
-      viewBox="0 0 64 64"
-      role="img"
-      aria-hidden={wordmark ? true : false}
-      focusable="false"
-    >
-      {/* Circle */}
-      <circle cx="32" cy="32" r="30" fill={cfg.invertCircle ? cfg.bg : cartStroke} />
-      {/* RM letters */}
-      <text
-        x="32"
-        y="37"
-        textAnchor="middle"
-        fontFamily={tokens.fonts.logo}
-        fontSize="24"
-        fontWeight="700"
-        fill={cfg.invertCircle ? textColor : cfg.bg}
-        style={{ letterSpacing: '-0.5px' }}
-      >RM</text>
-      {/* Cart handle + smile (abstracted) */}
-      <path d="M12 28h12" stroke={cartStroke} strokeWidth="4" strokeLinecap="round" />
-      <path d="M20 28c0 14 10 22 24 22 6 0 11-2 16-6" stroke={cartStroke} strokeWidth="4" strokeLinecap="round" fill="none" />
-      {/* Wheels */}
-      <circle cx="28" cy="54" r="4" fill={cartStroke} />
-      <circle cx="40" cy="54" r="4" fill={cartStroke} />
-    </svg>
+    <img
+    src="/romamart.ca/white-logo.svg" // Update this path as needed
+    width={circleSize}
+    height={circleSize}
+    alt=""
+    aria-hidden={wordmark ? "true" : "false"}
+    style={{
+      // borderRadius: "50%",
+      border: showBorder ? `2px solid ${cartStroke}` : undefined,
+      objectFit: "cover",
+      background: "transparent"
+    }}
+  />
   );
 
   return (

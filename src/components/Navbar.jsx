@@ -84,10 +84,10 @@ export default function Navbar() {
             aria-label="Roma Mart - Go to homepage"
           >
             <Logo size={48} />
-            <div className="hidden sm:block leading-tight">
+            {/* <div className="hidden sm:block leading-tight">
               <span className="block var(--font-heading) text-xl uppercase" style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : BRAND.heading }}>Roma Mart</span>
               <span className="block text-xs font-inter font-semibold tracking-wider" style={{ color: BRAND.accent }}>CONVENIENCE</span>
-            </div>
+            </div> */}
           </a>
 
           {/* Desktop Menu */}

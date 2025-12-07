@@ -110,6 +110,9 @@ export default function Footer() {
       <footer className="pt-16 pb-8" style={{ backgroundColor: 'var(--color-footer)', color: 'var(--color-on-footer)' }}>
         <div className="max-w-7xl mx-auto px-4 grid md:grid-cols-4 gap-12 mb-12">
         <div className="col-span-1 md:col-span-2">
+    <footer className="pt-16 pb-8" style={{ backgroundColor: 'var(--color-footer)', color: 'var(--color-on-footer)' }}>
+      <div className="max-w-7xl mx-auto p-4 grid md:grid-cols-4 gap-12 mb-12">
+        <div className="p-1 col-span-1 md:col-span-2">
            <a 
              href={`${BASE_URL}`}
              className="flex items-center gap-3 mb-6 hover:opacity-80 transition-opacity cursor-pointer w-fit"
@@ -117,10 +120,10 @@ export default function Footer() {
            >
               <Logo />
            </a>
-           <p className="font-inter max-w-sm mb-6" style={{ color: 'var(--color-on-footer-muted)' }}>
+           <p className="p-1 font-inter max-w-sm mb-6" style={{ color: 'var(--color-on-footer-muted)' }}>
              Your local one-stop shop for everything from daily groceries to premium café drinks. Proudly serving the Sarnia community.
            </p>
-           <div className="flex gap-4">
+           <div className="flex gap-4 p-1">
               <a 
                 href={STORE_DATA.socialLinks.facebook} 
                 target="_blank" 
@@ -189,9 +192,9 @@ export default function Footer() {
            </div>
         </div>
 
-        <div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
+        <div className="col-span-1 md:col-span-2 grid grid-cols-2 gap-8">
+          {/* <div className="grid grid-cols-2 md:grid-cols-2 gap-12"> */}
+            <div className="p-1">
               <h4 className="font-heading text-lg mb-6" style={{ color: 'var(--color-on-footer)' }}>Pages</h4>
               <ul className="space-y-3 font-inter" style={{ color: 'var(--color-on-footer-muted)' }}>
                 <li><a href={`${BASE_URL}services`} className="transition-colors" style={{ color: 'var(--color-link)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-link)'}>Services</a></li>
@@ -202,7 +205,7 @@ export default function Footer() {
                 <li><a href={STORE_DATA.onlineStoreUrl} target="_blank" rel="noopener noreferrer" className="font-bold transition-colors" style={{ color: 'var(--color-accent)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-accent)'}>Order Online</a></li>
               </ul>
             </div>
-            <div>
+            <div className="p-1">
               <h4 className="font-heading text-lg mb-6" style={{ color: 'var(--color-on-footer)' }}>Legal & Accessibility</h4>
               <ul className="space-y-2 font-inter" style={{ color: 'var(--color-on-footer-muted)' }}>
                 <li><a href={`${BASE_URL}privacy`} className="transition-colors" style={{ color: 'var(--color-link)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-link)'}>Privacy Policy</a></li>
@@ -211,7 +214,7 @@ export default function Footer() {
                 <li><a href={`${BASE_URL}accessibility`} className="font-bold transition-colors" style={{ color: 'var(--color-accent)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-accent)'}>Accessibility</a></li>
               </ul>
             </div>
-          </div>
+          {/* </div> */}
         </div>
       </div>
 
