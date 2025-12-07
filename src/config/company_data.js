@@ -7,6 +7,7 @@ import { getOrderingUrl } from './ordering';
 const COMPANY_DATA = {
   legalName: 'Roma Mart Corp.',
   dba: 'Roma Mart Convenience',
+  gstNumber: '780971768',
   onlineStoreUrl: getOrderingUrl(),
   socialLinks: {
     facebook: 'https://www.facebook.com/romamartca',

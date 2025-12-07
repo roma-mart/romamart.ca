@@ -271,6 +271,7 @@ export default function Footer() {
 
         <div className="text-center font-inter text-sm" style={{ color: 'var(--color-on-footer-subtle)' }}>
           <p>&copy; {new Date().getFullYear()} {COMPANY_DATA.legalName} All rights reserved.</p>
+          <p>GST Number: {COMPANY_DATA.gstNumber}</p>
         </div>
       </div>
     </footer>
