@@ -8,6 +8,10 @@ import TrustpilotWidget from './TrustpilotWidget';
 import { useLocationContext } from '../hooks/useLocationContext';
 import { LOCATIONS, getActiveLocations, getPrimaryLocation } from '../data/locations';
 import { NAVIGATION_LINKS } from '../config/navigation';
+import OrderCTA from './OrderCTA';
+import Button from './Button';
+import { useLocationAware } from '../hooks/useLocationContext';
+
 // Social platforms to control display in Footer (label, icon)
 const SOCIAL_LINKS = [
   { label: 'Facebook', icon: 'Facebook' },
@@ -16,10 +20,6 @@ const SOCIAL_LINKS = [
   { label: 'X', icon: 'X' },
   { label: 'Snapchat', icon: 'Snapchat' }
 ];
-import OrderCTA from './OrderCTA';
-
-
-// ...existing code...
 
 export default function Footer() {
   const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
@@ -27,6 +27,9 @@ export default function Footer() {
   const [selectedLocationId, setSelectedLocationId] = useState(() => {
     return localStorage.getItem('roma_mart_selected_location') || 'auto';
   });
+
+  // Trigger automatic location request site-wide
+  useLocationAware();
 
   // Calculate nearest location
   const nearestLocationId = useMemo(() => {
@@ -212,7 +215,6 @@ export default function Footer() {
                 ))}
               </ul>
             </div>
-          {/* </div> */}
         </div>
       </div>
 
@@ -265,6 +267,17 @@ export default function Footer() {
               ) : (
                 <span>✓ Manually selected: {currentLocation.name}</span>
               )}
+              <div className="mt-8 flex justify-center">
+                <Button
+                  variant="location"
+                  onLocationFound={loc => {
+                    // Update nearest location selection
+                    if (loc && loc.coords) {
+                      setSelectedLocationId('auto');
+                    }
+                  }}
+                />
+              </div>
             </div>
           </div>
         </div>

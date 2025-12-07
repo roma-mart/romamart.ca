@@ -20,11 +20,77 @@
  * </Button>
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import PropTypes from 'prop-types';
-import { useVibration } from '../hooks/useBrowserFeatures';
+import { useGeolocation } from '../hooks/useBrowserFeatures';
+import { useToast } from './ToastContainer';
+import { MapPin, Loader } from 'lucide-react';
 import { CSS_VARS } from '../utils/theme';
+
+// Per-variant vibration strength (ms or array)
+const VARIANT_VIBRATION = {
+  order: 50,
+  nav: 30,
+  action: 40,
+  navlink: 30,
+  icon: 20,
+  location: 60,
+  secondary: 20,
+  custom: 35,
+};
+
+// Per-variant analytics event (default, can be overridden)
+const VARIANT_ANALYTICS = {
+  order: 'order_cta',
+  nav: 'nav_click',
+  action: 'action_cta',
+  navlink: 'navlink_click',
+  icon: 'icon_click',
+  location: 'location_cta',
+  secondary: 'secondary_cta',
+  custom: 'custom_cta',
+};
+
+// Per-variant Framer Motion animation props
+const VARIANT_ANIMATION = {
+  order: {
+    whileHover: { scale: 1.07, boxShadow: '0 10px 32px var(--color-accent-shadow, rgba(228,179,64,0.22))' },
+    whileTap: { scale: 0.96, boxShadow: '0 2px 8px var(--color-accent-shadow, rgba(228,179,64,0.10))' },
+    transition: { type: 'spring', stiffness: 400, damping: 30, duration: 0.18 },
+  },
+  nav: {
+    whileHover: { scale: 1.03 },
+    whileTap: { scale: 0.98 },
+    transition: { duration: 0.15 },
+  },
+  action: {
+    whileHover: { backgroundColor: 'var(--color-accent-hover, #f7d774)', boxShadow: '0 8px 28px var(--color-accent-shadow, rgba(228,179,64,0.22))' },
+    whileTap: { backgroundColor: 'var(--color-accent)', boxShadow: '0 2px 8px var(--color-accent-shadow, rgba(228,179,64,0.10))' },
+    transition: { duration: 0.18 },
+  },
+  navlink: {
+    whileHover: { scale: 1.015 },
+    whileTap: { scale: 0.99 },
+    transition: { duration: 0.15 },
+  },
+  icon: {
+    whileHover: { scale: 1.15 },
+    whileTap: { scale: 0.9 },
+    transition: { duration: 0.12 },
+  },
+  location: {
+    whileHover: { scale: 1.05, boxShadow: '0 8px 24px var(--color-location-shadow, rgba(64,179,228,0.18))' },
+    whileTap: { scale: 0.97, boxShadow: '0 2px 8px var(--color-location-shadow, rgba(64,179,228,0.10))' },
+    transition: { duration: 0.18 },
+  },
+  secondary: {
+    whileHover: { scale: 1.02 },
+    whileTap: { scale: 0.98 },
+    transition: { duration: 0.13 },
+  },
+  custom: {},
+};
 
 const VARIANT_STYLES = {
   order: {
@@ -87,11 +153,7 @@ const VARIANT_STYLES = {
   },
 };
 
-function fireAnalytics(event) {
-  if (window && window.dataLayer && event) {
-    window.dataLayer.push(typeof event === 'string' ? { event } : event);
-  }
-}
+// fireAnalytics removed (unused)
 
 const Button = React.forwardRef(({
   variant = 'order',
@@ -103,21 +165,41 @@ const Button = React.forwardRef(({
   type = 'button',
   ariaLabel,
   disabled = false,
-  loading = false,
+  loading: loadingProp = false,
   analyticsEvent,
   vibrationPattern = 10,
   className = '',
   style = {},
   tabIndex,
+  onLocationFound,
   ...props
 }, ref) => {
-  const { vibrate, canVibrate } = useVibration();
+  // useVibration removed (unused)
 
-  const handleClick = e => {
-    if (!disabled && canVibrate) vibrate(vibrationPattern);
-    if (analyticsEvent) fireAnalytics(analyticsEvent);
-    if (onClick) onClick(e);
-  };
+  // Location variant logic
+  const isLocation = variant === 'location';
+  const { getCurrentLocation, location, loading, error, canUseGeolocation } = useGeolocation();
+  const { showSuccess, showError } = useToast();
+
+  useEffect(() => {
+    if (isLocation && location) {
+      if (onLocationFound) {
+        onLocationFound({
+          coords: {
+            latitude: location.latitude,
+            longitude: location.longitude
+          }
+        });
+      }
+      showSuccess('Location found! Sorting stores by distance...');
+    }
+  }, [isLocation, location, onLocationFound, showSuccess]);
+
+  useEffect(() => {
+    if (isLocation && error) {
+      showError(`Location error: ${error}`);
+    }
+  }, [isLocation, error, showError]);
 
   const mergedStyle = {
     minHeight: 44,
@@ -169,14 +251,31 @@ const Button = React.forwardRef(({
     if (props.onMouseUp) props.onMouseUp(e);
   };
 
-  const content = (
-    <>
-      {icon && iconPosition === 'left' && <span style={{ marginRight: 10, display: 'inline-flex', alignItems: 'center' }}>{icon}</span>}
-      {children && <span>{children}</span>}
-      {icon && iconPosition === 'right' && <span style={{ marginLeft: 10, display: 'inline-flex', alignItems: 'center' }}>{icon}</span>}
-      {loading && <span className="inline-block ml-2 animate-spin" style={{ width: 18, height: 18, border: '2px solid var(--color-accent)', borderTop: '2px solid transparent', borderRadius: '50%' }} aria-hidden="true"></span>}
-    </>
-  );
+  // Helper to render button content
+  function renderContent() {
+    if (isLocation) {
+      if (!canUseGeolocation) return null;
+      return loading ? (
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+          <Loader size={20} className="animate-spin" />
+          Looking for you...
+        </span>
+      ) : (
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+          <MapPin size={20} />
+          Update location
+        </span>
+      );
+    }
+    return (
+      <>
+        {icon && iconPosition === 'left' && <span style={{ marginRight: 10, display: 'inline-flex', alignItems: 'center' }}>{icon}</span>}
+        {children && <span>{children}</span>}
+        {icon && iconPosition === 'right' && <span style={{ marginLeft: 10, display: 'inline-flex', alignItems: 'center' }}>{icon}</span>}
+        {loadingProp && <span className="inline-block ml-2 animate-spin" style={{ width: 18, height: 18, border: '2px solid var(--color-accent)', borderTop: '2px solid transparent', borderRadius: '50%' }} aria-hidden="true"></span>}
+      </>
+    );
+  }
 
   // Icon-only buttons must have aria-label
   const ariaProps = {};
@@ -188,43 +287,8 @@ const Button = React.forwardRef(({
   const allClasses = `button ${variantClass} ${className}`.trim();
 
 
-  // Framer Motion animation props for navlink/order/action variants
-  let motionProps = {};
-  if (variant === 'navlink' || variant === 'order') {
-    motionProps = {
-      whileHover: {
-        scale: variant === 'order' ? 1.05 : 1.0125,
-        boxShadow:
-          variant === 'order'
-            ? '0 8px 24px var(--color-accent-shadow, rgba(228,179,64,0.18))'
-            : '0 4px 12px var(--color-accent-shadow, rgba(228,179,64,0.10))',
-      },
-      whileTap: {
-        scale: variant === 'order' ? 0.97 : 0.99,
-        boxShadow:
-          variant === 'order'
-            ? '0 2px 8px var(--color-accent-shadow, rgba(228,179,64,0.10))'
-            : '0 2px 6px var(--color-accent-shadow, rgba(228,179,64,0.07))',
-      },
-      transition: { type: 'spring', stiffness: 400, damping: 30, duration: 0.18 },
-    };
-  } else if (variant === 'action') {
-    motionProps = {
-      whileHover: {
-        backgroundColor: 'var(--color-accent-hover, #f7d774)',
-        boxShadow: '0 6px 20px var(--color-accent-shadow, rgba(228,179,64,0.18))',
-      },
-      whileFocus: {
-        backgroundColor: 'var(--color-accent-hover, #f7d774)',
-        boxShadow: '0 6px 20px var(--color-accent-shadow, rgba(228,179,64,0.18))',
-      },
-      whileTap: {
-        backgroundColor: 'var(--color-accent)',
-        boxShadow: '0 2px 8px var(--color-accent-shadow, rgba(228,179,64,0.10))',
-      },
-      transition: { duration: 0.18 },
-    };
-  }
+  // Framer Motion animation props per variant
+  const motionProps = VARIANT_ANIMATION[variant] || {};
 
   // Accessibility: If rendering as <a>, ensure role and keyboard support for non-standard cases
   if (href) {
@@ -235,11 +299,11 @@ const Button = React.forwardRef(({
         tabIndex={tabIndex}
         className={allClasses}
         style={mergedStyle}
-        onClick={handleClick}
+        onClick={onClick}
         onKeyDown={e => {
           if ((e.key === 'Enter' || e.key === ' ') && onClick) {
             e.preventDefault();
-            handleClick(e);
+            onClick(e);
           }
         }}
         onMouseEnter={handleMouseEnter}
@@ -251,9 +315,29 @@ const Button = React.forwardRef(({
         {...props}
         {...motionProps}
       >
-        {content}
+        {renderContent()}
       </motion.a>
     );
+  }
+
+  // Unified click handler for all variants
+  function handleClick(e) {
+    if (disabled) return;
+    if (isLocation) {
+      getCurrentLocation(e);
+      return;
+    }
+    // Vibration per variant
+    const vibrateStrength = typeof vibrationPattern !== 'undefined' ? vibrationPattern : VARIANT_VIBRATION[variant];
+    if (typeof window !== 'undefined' && window.navigator && window.navigator.vibrate && vibrateStrength) {
+      window.navigator.vibrate(vibrateStrength);
+    }
+    // Analytics per variant
+    const eventToFire = analyticsEvent || VARIANT_ANALYTICS[variant];
+    if (eventToFire && typeof window !== 'undefined' && window.dataLayer) {
+      window.dataLayer.push(typeof eventToFire === 'string' ? { event: eventToFire } : eventToFire);
+    }
+    if (onClick) onClick(e);
   }
 
   return (
@@ -264,26 +348,22 @@ const Button = React.forwardRef(({
       className={allClasses}
       style={mergedStyle}
       onClick={handleClick}
-      onKeyDown={
-        variant === 'icon'
-          ? (e) => {
-              if ((e.key === 'Enter' || e.key === ' ') && !disabled && !loading) {
-                e.preventDefault();
-                handleClick(e);
-              }
-            }
-          : undefined
-      }
+      onKeyDown={e => {
+        if ((e.key === 'Enter' || e.key === ' ') && !disabled && !(isLocation ? loading : loadingProp)) {
+          e.preventDefault();
+          handleClick(e);
+        }
+      }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
-      disabled={disabled || loading}
+      disabled={disabled || (isLocation ? loading : loadingProp)}
       {...ariaProps}
       {...props}
       {...motionProps}
     >
-      {content}
+      {renderContent()}
     </motion.button>
   );
 });
@@ -304,6 +384,7 @@ Button.propTypes = {
   className: PropTypes.string,
   style: PropTypes.object,
   tabIndex: PropTypes.number,
+  onLocationFound: PropTypes.func,
 };
 
 export default Button;

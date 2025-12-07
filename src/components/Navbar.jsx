@@ -157,7 +157,7 @@ export default function Navbar() {
                 <a
                   key="home"
                   href={BASE_URL}
-                  className="block px-3 py-4 text-lg font-bold var(--font-heading) uppercase border-b flex items-center gap-2"
+                  className="px-3 py-4 text-lg font-bold var(--font-heading) uppercase border-b flex items-center gap-2"
                   style={{ color: 'var(--color-heading)', borderColor: 'var(--color-surface)' }}
                   aria-label="Go to homepage"
                   title="Home"

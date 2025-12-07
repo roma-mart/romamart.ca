@@ -115,6 +115,10 @@
   --color-primary: #020178; /* Navy - headings, primary elements */
   --color-accent: #E4B340; /* Yellow - CTAs, highlights */;
 
+  /* Location button colors */
+  --color-location-bg: #E4F1FB; /* Soft blue, map/location theme */
+  --color-location-text: #001540; /* Dark navy, matches brand primary */
+
   /* Specific use cases */
   --color-heading: #020178; /* Navy for headings in light mode */
   --color-icon: #020178; /* Navy for icons in light mode */
@@ -162,6 +166,8 @@
     --color-accent: #E4B340; /* Yellow - CTAs, highlights */
     --color-heading: #E4B340;
     --color-icon: #E4B340;
+    --color-location-bg: #093A5E; /* Deep blue for location button */
+    --color-location-text: #E4F1FB; /* Light blue for location text */
     --color-error: #F87171;
     --color-error-light: #7F1D1D;
     --color-error-bg: #450A0A;

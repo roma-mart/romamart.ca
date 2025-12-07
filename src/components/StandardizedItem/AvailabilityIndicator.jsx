@@ -7,9 +7,9 @@ import React from 'react';
  * Displays nearest location with address, or prompts to select location.
  * 
  * @param {Object} props
- * @param {Object} [props.nearestLocation] - Nearest location object
+ * @param {Object} [props.nearestLocation] - Nearest location object (computed from userLocation)
  * @param {string} props.nearestLocation.name - Location name
- * @param {string} props.nearestLocation.address - Location address
+ * @param {Object} props.nearestLocation.address - Location address object
  */
 export default function AvailabilityIndicator({ nearestLocation }) {
   return (
@@ -32,7 +32,7 @@ export default function AvailabilityIndicator({ nearestLocation }) {
             className="text-xs font-inter"
             style={{ color: 'var(--color-text-muted)' }}
           >
-            {nearestLocation.address}
+            {nearestLocation.address?.formatted}
           </p>
         </>
       ) : (

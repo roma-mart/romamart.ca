@@ -2,9 +2,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ChevronRight } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
-import NearestStoreButton from '../components/NearestStoreButton';
 import StandardizedItem from '../components/StandardizedItem';
-import { useLocationAware } from '../hooks/useLocationContext';
 import { SERVICES } from '../data/services.jsx';
 import { getPrimaryLocation, isLocationOpenNow } from '../data/locations';
 import COMPANY_DATA from '../config/company_data';
@@ -21,11 +19,6 @@ const ServicesPage = () => {
   const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
   const primaryLocation = getPrimaryLocation();
   const locationIsOpen = isLocationOpenNow(primaryLocation);
-  
-  // Auto-request location when StandardizedItem components mount
-  useLocationAware(() => {
-    // Location stored for StandardizedItem availability states
-  });
 
   return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-surface)' }}>
@@ -79,11 +72,6 @@ const ServicesPage = () => {
               onFocus={e => e.currentTarget.style.backgroundColor = 'rgba(228, 179, 64, 0.85)'}
               onMouseOut={e => e.currentTarget.style.backgroundColor = 'var(--color-accent)'}
               onBlur={e => e.currentTarget.style.backgroundColor = 'var(--color-accent)'}
-            />
-            <NearestStoreButton 
-              onLocationFound={() => {
-                // User location found - services now show based on availability
-              }}
             />
           </div>
         </div>
