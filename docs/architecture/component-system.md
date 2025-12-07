@@ -50,24 +50,28 @@ Context providers for global state:
 
 ## Component Patterns
 
+
 ### Functional Components
 
-All components use functional syntax with hooks:
+All components use functional syntax with hooks. **Always use centralized config for navigation and company info.**
 
 ```jsx
 import { useState, useEffect } from 'react';
+import COMPANY_DATA from '../config/company_data';
+import { NAVIGATION_LINKS } from '../config/navigation';
 
-export default function MyComponent({ prop1, prop2 }) {
-  const [state, setState] = useState(initialValue);
-
-  useEffect(() => {
-    // Side effects
-  }, [dependencies]);
+export default function MyComponent() {
+  const [state, setState] = useState('');
 
   return (
-    <div>
-      {/* JSX */}
-    </div>
+    <nav>
+      {NAVIGATION_LINKS.filter(link => link.showIn.navbar).map(link => (
+        <a href={link.href}>{link.label}</a>
+      ))}
+    </nav>
+    <footer>
+      <span>{COMPANY_DATA.legalName}</span>
+    </footer>
   );
 }
 ```

@@ -14,12 +14,39 @@ npm install
 npm run dev
 ```
 
+
 ## 📖 Documentation
 
 - [Getting Started](./docs/guides/deployment.md)
 - [Architecture](./ARCHITECTURE.md)
 - [Contributing](./CONTRIBUTING.md)
 - [Full Documentation](./docs/README.md)
+
+## 🧩 Centralized Data & Navigation
+
+All company info and navigation links are managed via:
+
+- `src/config/company_data.js` — Single source of truth for brand, contact, GST, social links, order link
+- `src/config/navigation.js` — Single source of truth for all navigation links (Navbar, Footer, Sitemap)
+
+**Never use hardcoded URLs or company info in components/pages.**
+
+**Pattern:**
+```jsx
+import COMPANY_DATA from '../config/company_data';
+import { NAVIGATION_LINKS } from '../config/navigation';
+
+// Example: Render navigation
+{NAVIGATION_LINKS.filter(link => link.showIn.navbar).map(link => (
+	<a href={link.href}>{link.label}</a>
+))}
+
+// Example: Use company info
+COMPANY_DATA.legalName
+COMPANY_DATA.socialLinks.facebook
+```
+
+See [Architecture](./ARCHITECTURE.md) and [Quality System](./QUALITY_SYSTEM.md) for details.
 
 ## ✨ Features
 

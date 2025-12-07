@@ -8,25 +8,12 @@ import { useBackgroundSync } from '../hooks/useServiceWorker';
 import { useToast } from '../components/ToastContainer';
 // import { queueFormSubmission, getPendingCount } from '../utils/indexedDB'; // Disabled offline queue
 import Button from '../components/Button';
+import COMPANY_DATA from '../config/company_data';
 
 const ContactPage = () => {
-
   const textColor = { color: 'var(--color-text)' };
   const mutedTextColor = { color: 'var(--color-text)', opacity: 0.7 };
   const BASE_URL = import.meta.env.BASE_URL || '/';
-  const STORE_DATA = {
-    contact: {
-      phone: '+1 (382) 342-2000',
-      email: 'info@romamart.ca'
-    },
-    locations: [{
-      address: '189-3 Wellington Street, Sarnia, ON N7T 1G6',
-      hours: {
-        weekdays: '7:00 AM - 11:00 PM',
-        weekends: '8:00 AM - 11:00 PM'
-      }
-    }]
-  };
 
   const [formStatus, setFormStatus] = useState('');
   const { syncSupported } = useBackgroundSync();
@@ -114,9 +101,9 @@ const ContactPage = () => {
                 </div>
                 <div>
                   <h4 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Visit Us</h4>
-                  <p style={textColor}>{STORE_DATA.locations[0].address}</p>
+                  <p style={textColor}>189-3 Wellington Street, Sarnia, ON N7T 1G6</p>
                   <a 
-                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(STORE_DATA.locations[0].address)}`}
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(COMPANY_DATA.address)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Get directions to Roma Mart"
@@ -135,11 +122,11 @@ const ContactPage = () => {
                 <div className="flex-1">
                   <h4 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Call Us</h4>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <a href={`tel:${STORE_DATA.contact.phone}`} className="hover:underline" style={{ color: 'var(--color-accent)' }}>
-                      {STORE_DATA.contact.phone}
+                    <a href={`tel:${COMPANY_DATA.contact.phone}`} className="hover:underline" style={{ color: 'var(--color-accent)' }}>
+                      {COMPANY_DATA.contact.phone}
                     </a>
                     <CopyButton 
-                      text={STORE_DATA.contact.phone}
+                      text={COMPANY_DATA.contact.phone}
                       label="Phone number"
                       style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)' }}
                     />
@@ -154,11 +141,11 @@ const ContactPage = () => {
                 <div className="flex-1">
                   <h4 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Email Us</h4>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <a href={`mailto:${STORE_DATA.contact.email}`} className="hover:underline" style={{ color: 'var(--color-accent)' }}>
-                      {STORE_DATA.contact.email}
+                    <a href={`mailto:${COMPANY_DATA.contact.email}`} className="hover:underline" style={{ color: 'var(--color-accent)' }}>
+                      {COMPANY_DATA.contact.email}
                     </a>
                     <CopyButton 
-                      text={STORE_DATA.contact.email}
+                      text={COMPANY_DATA.contact.email}
                       label="Email address"
                       style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)' }}
                     />
@@ -172,8 +159,8 @@ const ContactPage = () => {
                 </div>
                 <div>
                   <h4 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Hours</h4>
-                  <p style={textColor}>Mon-Fri: {STORE_DATA.locations[0].hours.weekdays}</p>
-                  <p style={textColor}>Sat-Sun: {STORE_DATA.locations[0].hours.weekends}</p>
+                  <p style={textColor}>Mon-Fri: {COMPANY_DATA.hours.weekdays}</p>
+                  <p style={textColor}>Sat-Sun: {COMPANY_DATA.hours.weekends}</p>
                 </div>
               </div>
             </div>

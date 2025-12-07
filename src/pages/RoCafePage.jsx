@@ -6,6 +6,7 @@ import Button from '../components/Button';
 import StandardizedItem from '../components/StandardizedItem';
 import { useLocationAware } from '../hooks/useLocationContext';
 import { ROCAFE_FULL_MENU, MENU_CATEGORIES, ALLERGEN_WARNING } from '../data/rocafe-menu';
+import COMPANY_DATA from '../config/company_data';
 
 const RoCafePage = () => {
 
@@ -211,6 +212,12 @@ const RoCafePage = () => {
                 type="button"
                 variant="nav"
                 onClick={categoryHandlers[category.id]}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    categoryHandlers[category.id](e);
+                  }
+                }}
                 className="w-full p-6 flex items-center justify-between"
                 style={{ background: 'none', boxShadow: 'none', border: 'none', textAlign: 'left' }}
                 aria-label={`Expand ${category.name} category`}

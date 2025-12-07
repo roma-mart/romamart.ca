@@ -5,8 +5,9 @@
 
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
+import COMPANY_DATA from '../config/company_data';
 
-const StructuredData = ({ type = 'LocalBusiness', data }) => {
+const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
   const generateSchema = () => {
     switch (type) {
       case 'LocalBusiness':
@@ -14,18 +15,18 @@ const StructuredData = ({ type = 'LocalBusiness', data }) => {
           '@context': 'https://schema.org',
           '@type': 'LocalBusiness',
           '@id': 'https://romamart.ca/#business',
-          name: data.name || 'Roma Mart Convenience',
-          alternateName: data.alternateName || 'Roma Mart',
+          name: data.name || COMPANY_DATA.legalName || 'Roma Mart Convenience',
+          alternateName: data.alternateName || COMPANY_DATA.dba || 'Roma Mart',
           description: data.description || 'Your daily stop & go convenience store in Sarnia, Ontario. Fresh RoCafé beverages, ATM, Bitcoin ATM, printing, and more.',
           url: 'https://romamart.ca',
-          telephone: data.telephone || '+1-382-342-2000',
-          email: data.email || 'contact@romamart.ca',
+          telephone: data.telephone || COMPANY_DATA.contact.phone || '+1-382-342-2000',
+          email: data.email || COMPANY_DATA.contact.email || 'contact@romamart.ca',
           priceRange: '$$',
           image: data.image || 'https://romamart.ca/images/store-front.jpg',
           logo: 'https://romamart.ca/icon-512.svg',
           address: {
             '@type': 'PostalAddress',
-            streetAddress: data.address?.street || '189-3 Wellington Street',
+            streetAddress: data.address?.street || COMPANY_DATA.address || '189-3 Wellington Street',
             addressLocality: data.address?.city || 'Sarnia',
             addressRegion: data.address?.region || 'ON',
             postalCode: data.address?.postal || 'N7T 1G6',
@@ -50,13 +51,7 @@ const StructuredData = ({ type = 'LocalBusiness', data }) => {
               closes: '23:00'
             }
           ],
-          sameAs: data.socialLinks || [
-            'https://www.facebook.com/romamartca',
-            'https://www.instagram.com/romamartca/',
-            'https://www.tiktok.com/@romamartca/',
-            'https://www.snapchat.com/@romamartca/',
-            'https://www.x.com/romamartca/'
-          ],
+          sameAs: data.socialLinks || Object.values(COMPANY_DATA.socialLinks),
           hasOfferCatalog: {
             '@type': 'OfferCatalog',
             name: 'Services & Products',

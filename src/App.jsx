@@ -11,7 +11,7 @@ import {
   Coffee,
   Send
 } from 'lucide-react';
-import { getOrderingUrl } from './config/ordering';
+// ...existing code...
 import { LocationProvider } from './components/LocationProvider';
 import { getPrimaryLocation, getActiveLocationCount, LOCATIONS, isLocationOpenNow } from './data/locations';
 import { Logo } from './components/Logo';
@@ -46,25 +46,7 @@ const AboutPage = lazy(() => import('./pages/AboutPage'));
 import NetworkStatus from  './components/NetworkStatus';
 import CopyButton from './components/CopyButton';
 
-// --- BRAND GUIDELINES & DATA ---
-const STORE_DATA = {
-  legalName: "Roma Mart Corp.",
-  dba: "Roma Mart Convenience",
-  onlineStoreUrl: getOrderingUrl(),
-  socialLinks: {
-    facebook: "https://www.facebook.com/romamartca",
-    instagram: "https://www.instagram.com/romamartca/",
-    tiktok: "https://www.tiktok.com/@romamartca/",
-    snapchat: "https://www.snapchat.com/@romamartca/",
-    x: "https://www.x.com/romamartca/"
-  },
-  contact: {
-    phone: "+1 (382) 342-2000",
-    email: "contact@romamart.ca",
-    // Use Vite environment variable VITE_WEB3FORMS_KEY for production builds
-    web3FormsAccessKey: import.meta.env.VITE_WEB3FORMS_KEY || ''
-  }
-};
+import COMPANY_DATA from './config/company_data';
 
 const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
 
@@ -92,7 +74,7 @@ function Hero({ onTrackOrder }) {
             <div className="flex flex-col sm:flex-row gap-4">
               <Button
                 as="a"
-                href={STORE_DATA.onlineStoreUrl}
+                href={COMPANY_DATA.onlineStoreUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 variant="order"
@@ -371,11 +353,11 @@ const ContactSection = () => {
                 <div className="flex-1">
                   <h4 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Call Us</h4>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <a href={`tel:${STORE_DATA.contact.phone}`} className="hover:underline" style={{ color: 'var(--color-accent)' }}>
-                      {STORE_DATA.contact.phone}
+                    <a href={`tel:${COMPANY_DATA.contact.phone}`} className="hover:underline" style={{ color: 'var(--color-accent)' }}>
+                      {COMPANY_DATA.contact.phone}
                     </a>
                     <CopyButton 
-                      text={STORE_DATA.contact.phone}
+                      text={COMPANY_DATA.contact.phone}
                       label="Phone number"
                       style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)' }}
                     />
@@ -406,8 +388,8 @@ const ContactSection = () => {
               className="space-y-6"
               onSubmit={handleContactSubmit}
             >
-              {/* Web3Forms Access Key is set in STORE_DATA */}
-              <input type="hidden" name="access_key" value={STORE_DATA.contact.web3FormsAccessKey} />
+              {/* Web3Forms Access Key is set in COMPANY_DATA */}
+              <input type="hidden" name="access_key" value={COMPANY_DATA.contact.web3FormsAccessKey} />
               <input type="hidden" name="subject" value="New Contact from Roma Mart Website" />
               <input type="hidden" name="from_name" value="Roma Mart Website" />
 

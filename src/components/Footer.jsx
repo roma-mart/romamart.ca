@@ -2,26 +2,24 @@ import React, { useState, useMemo } from 'react';
 import { MapPin } from 'lucide-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFacebook, faInstagram, faTiktok, faXTwitter, faSnapchat } from '@fortawesome/free-brands-svg-icons';
-import { getOrderingUrl } from '../config/ordering';
+import COMPANY_DATA from '../config/company_data';
 import { Logo } from './Logo';
 import TrustpilotWidget from './TrustpilotWidget';
 import { useLocationContext } from '../hooks/useLocationContext';
 import { LOCATIONS, getActiveLocations, getPrimaryLocation } from '../data/locations';
-
+import { NAVIGATION_LINKS } from '../config/navigation';
+// Social platforms to control display in Footer (label, icon)
+const SOCIAL_LINKS = [
+  { label: 'Facebook', icon: 'Facebook' },
+  { label: 'Instagram', icon: 'Instagram' },
+  { label: 'TikTok', icon: 'TikTok' },
+  { label: 'X', icon: 'X' },
+  { label: 'Snapchat', icon: 'Snapchat' }
+];
 import OrderCTA from './OrderCTA';
 
 
-const STORE_DATA = {
-  legalName: "Roma Mart Corp.",
-  onlineStoreUrl: getOrderingUrl(),
-  socialLinks: {
-    facebook: "https://www.facebook.com/romamartca",
-    instagram: "https://www.instagram.com/romamartca/",
-    tiktok: "https://www.tiktok.com/@romamartca/",
-    snapchat: "https://www.snapchat.com/@romamartca/",
-    x: "https://www.x.com/romamartca/"
-  }
-};
+// ...existing code...
 
 export default function Footer() {
   const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
@@ -94,13 +92,13 @@ export default function Footer() {
   const isAutoMode = selectedLocationId === 'auto';
   const activeLocations = getActiveLocations();
 
-  const socialHandlers = useMemo(() => ({
-    facebook: () => window.dataLayer?.push({ event: 'social_click', platform: 'facebook' }),
-    instagram: () => window.dataLayer?.push({ event: 'social_click', platform: 'instagram' }),
-    tiktok: () => window.dataLayer?.push({ event: 'social_click', platform: 'tiktok' }),
-    x: () => window.dataLayer?.push({ event: 'social_click', platform: 'x' }),
-    snapchat: () => window.dataLayer?.push({ event: 'social_click', platform: 'snapchat' })
-  }), []);
+  const socialHandlers = useMemo(() => {
+    const handlers = {};
+    SOCIAL_LINKS.forEach(link => {
+      handlers[link.label.toLowerCase()] = () => window.dataLayer?.push({ event: 'social_click', platform: link.label.toLowerCase() });
+    });
+    return handlers;
+  }, []);
 
   return (
     <React.Fragment>
@@ -120,71 +118,46 @@ export default function Footer() {
              Your local one-stop shop for everything from daily groceries to premium café drinks. Proudly serving the Sarnia community.
            </p>
            <div className="flex gap-4 p-1">
-              <a 
-                href={STORE_DATA.socialLinks.facebook} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="w-10 h-10 rounded-full flex items-center justify-center transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
-                style={{ backgroundColor: 'var(--color-surface-muted)' }}
-                title="Facebook"
-                onClick={socialHandlers.facebook}
-                onMouseEnter={e => e.currentTarget.firstChild.style.color = 'var(--color-accent)'}
-                onMouseLeave={e => e.currentTarget.firstChild.style.color = 'var(--color-on-footer)'}
-              >
-                <FontAwesomeIcon icon={faFacebook} size="lg" style={{ color: 'var(--color-on-footer)' }} />
-              </a>
-              <a 
-                href={STORE_DATA.socialLinks.instagram} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="w-10 h-10 rounded-full flex items-center justify-center transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
-                style={{ backgroundColor: 'var(--color-surface-muted)' }}
-                title="Instagram"
-                onClick={socialHandlers.instagram}
-                onMouseEnter={e => e.currentTarget.firstChild.style.color = 'var(--color-accent)'}
-                onMouseLeave={e => e.currentTarget.firstChild.style.color = 'var(--color-on-footer)'}
-              >
-                <FontAwesomeIcon icon={faInstagram} size="lg" style={{ color: 'var(--color-on-footer)' }} />
-              </a>
-              <a 
-                href={STORE_DATA.socialLinks.tiktok} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="w-10 h-10 rounded-full flex items-center justify-center transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
-                style={{ backgroundColor: 'var(--color-surface-muted)' }}
-                title="TikTok"
-                onClick={socialHandlers.tiktok}
-                onMouseEnter={e => e.currentTarget.firstChild.style.color = 'var(--color-accent)'}
-                onMouseLeave={e => e.currentTarget.firstChild.style.color = 'var(--color-on-footer)'}
-              >
-                <FontAwesomeIcon icon={faTiktok} size="lg" style={{ color: 'var(--color-on-footer)' }} />
-              </a>
-              <a 
-                href={STORE_DATA.socialLinks.x} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="w-10 h-10 rounded-full flex items-center justify-center transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
-                style={{ backgroundColor: 'var(--color-surface-muted)' }}
-                title="X (Twitter)"
-                onClick={socialHandlers.x}
-                onMouseEnter={e => e.currentTarget.firstChild.style.color = 'var(--color-accent)'}
-                onMouseLeave={e => e.currentTarget.firstChild.style.color = 'var(--color-on-footer)'}
-              >
-                <FontAwesomeIcon icon={faXTwitter} size="lg" style={{ color: 'var(--color-on-footer)' }} />
-              </a>
-                <a 
-                  href={STORE_DATA.socialLinks.snapchat} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="w-10 h-10 rounded-full flex items-center justify-center transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
-                  style={{ backgroundColor: 'var(--color-surface-muted)' }}
-                  title="Snapchat"
-                  onClick={socialHandlers.snapchat}
-                  onMouseEnter={e => e.currentTarget.firstChild.style.color = 'var(--color-accent)'}
-                  onMouseLeave={e => e.currentTarget.firstChild.style.color = 'var(--color-on-footer)'}
-                >
-                  <FontAwesomeIcon icon={faSnapchat} size="lg" style={{ color: 'var(--color-on-footer)' }} />
-                </a>
+             {SOCIAL_LINKS.map(link => {
+               const url = COMPANY_DATA.socialLinks[link.label.toLowerCase()];
+               if (!url) return null;
+               let icon;
+               switch (link.icon) {
+                 case 'Facebook':
+                   icon = faFacebook;
+                   break;
+                 case 'Instagram':
+                   icon = faInstagram;
+                   break;
+                 case 'TikTok':
+                   icon = faTiktok;
+                   break;
+                 case 'X':
+                   icon = faXTwitter;
+                   break;
+                 case 'Snapchat':
+                   icon = faSnapchat;
+                   break;
+                 default:
+                   icon = faFacebook;
+               }
+               return (
+                 <a
+                   key={link.label}
+                   href={url}
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   className="w-10 h-10 rounded-full flex items-center justify-center transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
+                   style={{ backgroundColor: 'var(--color-surface-muted)' }}
+                   title={link.label}
+                   onClick={socialHandlers[link.label.toLowerCase()]}
+                   onMouseEnter={e => e.currentTarget.firstChild.style.color = 'var(--color-accent)'}
+                   onMouseLeave={e => e.currentTarget.firstChild.style.color = 'var(--color-on-footer)'}
+                 >
+                   <FontAwesomeIcon icon={icon} size="lg" style={{ color: 'var(--color-on-footer)' }} />
+                 </a>
+               );
+             })}
            </div>
         </div>
 
@@ -193,21 +166,50 @@ export default function Footer() {
             <div className="p-1">
               <h4 className="font-heading text-lg mb-6" style={{ color: 'var(--color-on-footer)' }}>Pages</h4>
               <ul className="space-y-3 font-inter" style={{ color: 'var(--color-on-footer-muted)' }}>
-                <li><a href={`${BASE_URL}services`} className="transition-colors" style={{ color: 'var(--color-link)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-link)'}>Services</a></li>
-                <li><a href={`${BASE_URL}rocafe`} className="transition-colors" style={{ color: 'var(--color-link)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-link)'}>RoCafé Menu</a></li>
-                <li><a href={`${BASE_URL}locations`} className="transition-colors" style={{ color: 'var(--color-link)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-link)'}>Locations</a></li>
-                <li><a href={`${BASE_URL}contact`} className="transition-colors" style={{ color: 'var(--color-link)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-link)'}>Contact</a></li>
-                <li><a href={`${BASE_URL}about`} className="transition-colors" style={{ color: 'var(--color-link)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-link)'}>About Us</a></li>
-                <li><a href={STORE_DATA.onlineStoreUrl} target="_blank" rel="noopener noreferrer" className="font-bold transition-colors" style={{ color: 'var(--color-accent)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-accent)'}>Order Online</a></li>
+                {NAVIGATION_LINKS.filter(link => link.showIn.footer && !['privacy','terms','cookies','accessibility'].includes(link.label.toLowerCase())).map(link => (
+                  <li key={link.href}>
+                    <a
+                      href={`${BASE_URL}${link.href.replace('/', '')}`}
+                      className="transition-colors"
+                      style={{ color: 'var(--color-link)' }}
+                      onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'}
+                      onMouseLeave={e => e.currentTarget.style.color = 'var(--color-link)'}
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+                <li>
+                  <a
+                    href={COMPANY_DATA.onlineStoreUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-bold transition-colors"
+                    style={{ color: 'var(--color-accent)' }}
+                    onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'}
+                    onMouseLeave={e => e.currentTarget.style.color = 'var(--color-accent)'}
+                  >
+                    Order Online
+                  </a>
+                </li>
               </ul>
             </div>
             <div className="p-1">
               <h4 className="font-heading text-lg mb-6" style={{ color: 'var(--color-on-footer)' }}>Legal & Accessibility</h4>
               <ul className="space-y-2 font-inter" style={{ color: 'var(--color-on-footer-muted)' }}>
-                <li><a href={`${BASE_URL}privacy`} className="transition-colors" style={{ color: 'var(--color-link)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-link)'}>Privacy Policy</a></li>
-                <li><a href={`${BASE_URL}terms`} className="transition-colors" style={{ color: 'var(--color-link)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-link)'}>Terms of Service</a></li>
-                <li><a href={`${BASE_URL}cookies`} className="transition-colors" style={{ color: 'var(--color-link)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-link)'}>Cookie Policy</a></li>
-                <li><a href={`${BASE_URL}accessibility`} className="font-bold transition-colors" style={{ color: 'var(--color-accent)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-accent)'}>Accessibility</a></li>
+                {NAVIGATION_LINKS.filter(link => link.showIn.footer && ['privacy','terms','cookies','accessibility'].includes(link.label.toLowerCase())).map(link => (
+                  <li key={link.href}>
+                    <a
+                      href={`${BASE_URL}${link.href.replace('/', '')}`}
+                      className={link.label.toLowerCase() === 'accessibility' ? 'font-bold transition-colors' : 'transition-colors'}
+                      style={{ color: link.label.toLowerCase() === 'accessibility' ? 'var(--color-accent)' : 'var(--color-link)' }}
+                      onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'}
+                      onMouseLeave={e => e.currentTarget.style.color = link.label.toLowerCase() === 'accessibility' ? 'var(--color-accent)' : 'var(--color-link)'}
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
               </ul>
             </div>
           {/* </div> */}
@@ -268,7 +270,8 @@ export default function Footer() {
         </div>
 
         <div className="text-center font-inter text-sm" style={{ color: 'var(--color-on-footer-subtle)' }}>
-          <p>&copy; {new Date().getFullYear()} {STORE_DATA.legalName} All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} {COMPANY_DATA.legalName} All rights reserved.</p>
+          <p>GST Number: {COMPANY_DATA.gstNumber}</p>
         </div>
       </div>
     </footer>

@@ -2,6 +2,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ChevronRight } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
+import COMPANY_DATA from '../config/company_data';
 
 const PrivacyPage = () => {
 
@@ -138,7 +139,7 @@ const PrivacyPage = () => {
               <p style={textColor}>Sarnia, ON N7T 1G6</p>
               <p style={textColor}>Email: <a href="mailto:contact@romamart.ca" style={{ color: 'var(--color-accent)' }}>contact@romamart.ca</a></p>
               <p style={textColor}>Phone: <a href="tel:+13823422000" style={{ color: 'var(--color-accent)' }}>+1 (382) 342-2000</a></p>
-              <p className="text-sm mt-4" style={mutedTextColor}>GST/HST#: 780971768</p>
+              <p className="text-sm mt-4" style={mutedTextColor}>GST/HST#: {COMPANY_DATA.gstNumber}</p>
             </div>
           </section>
         </div>
