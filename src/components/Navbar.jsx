@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Home, ExternalLink } from 'lucide-react';
+import Button from './Button';
 import { getOrderingUrl } from '../config/ordering';
 import { Logo } from './Logo';
 
@@ -137,16 +138,20 @@ export default function Navbar() {
             >
               Contact
             </a>
-            <a
+            <Button
+              variant="order"
               href={STORE_DATA.onlineStoreUrl}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={() => trackOrderClick('header_desktop')}
-              className="px-6 py-2 rounded-full font-bold font-inter text-sm transition-transform hover:scale-105 shadow-lg flex items-center gap-2"
-              style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)' }}
+              icon={<ExternalLink size={14} />}
+              iconPosition="right"
+              analyticsEvent={{ event: 'order_cta_click', cta_location: 'header_desktop', cta_text: 'Order Online' }}
+              ariaLabel="Order Online"
+              className="font-bold font-inter text-sm shadow-lg"
+              style={{ minWidth: 120 }}
             >
-              ORDER NOW <ExternalLink size={14} />
-            </a>
+              ORDER NOW
+            </Button>
           </div>
 
           {/* Mobile Menu Button */}
