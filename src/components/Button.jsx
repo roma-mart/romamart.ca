@@ -135,13 +135,16 @@ const Button = React.forwardRef(({
     ariaProps['aria-label'] = ariaLabel;
   }
 
+  const variantClass = variant ? variant : '';
+  const allClasses = `button ${variantClass} ${className}`.trim();
+
   if (href) {
     return (
       <a
         ref={ref}
         href={href}
         tabIndex={tabIndex}
-        className={`button ${className}`}
+        className={allClasses}
         style={mergedStyle}
         onClick={handleClick}
         onMouseEnter={handleMouseEnter}
@@ -159,7 +162,7 @@ const Button = React.forwardRef(({
       ref={ref}
       type={type}
       tabIndex={tabIndex}
-      className={`button ${className}`}
+      className={allClasses}
       style={mergedStyle}
       onClick={handleClick}
       onMouseEnter={handleMouseEnter}

@@ -231,6 +231,18 @@ body {
   opacity: 0;
 }
 
+/* FAB animations */
+@keyframes fab-in {
+  0% { opacity: 0; transform: scale(0.9) translateY(20px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes fab-out {
+  0% { opacity: 1; transform: scale(1) translateY(0); }
+  100% { opacity: 0; transform: scale(0.9) translateY(20px); }
+}
+.animate-fab-in { animation: fab-in 0.4s cubic-bezier(.4,0,.2,1) both; }
+.animate-fab-out { animation: fab-out 0.3s cubic-bezier(.4,0,.2,1) both; }
+
 /* Typography utilities */
 .h1, h1 { font-family: var(--font-heading); font-weight: 700; }
 .h2, h2 { font-family: var(--font-heading); font-weight: 600; }
@@ -273,4 +285,12 @@ body {
 .offline-page .contact-item a {
   color: var(--color-accent);
   text-decoration: none;
+}
+
+/* Order button animations */
+.button.order:hover,
+.button.order:focus-visible {
+  transform: scale(1.05);
+  box-shadow: 0 8px 24px rgba(228,179,64,0.18);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
