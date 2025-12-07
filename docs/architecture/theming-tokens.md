@@ -186,24 +186,27 @@ module.exports = {
 
 ## Anti-Patterns
 
+
 ### ❌ Don't Do
 
 ```jsx
-// Hardcoded colors
-<p style={{ color: '#333' }}>
+// Hardcoded colors (❌)
+<p style={{ color: '#333' }}>Wrong!</p>
 
-// Tailwind gray classes
-<p className="text-gray-600">
+// Tailwind gray classes (❌)
+<p className="text-gray-600">Wrong!</p>
 ```
 
 ### ✅ Do Instead
 
 ```jsx
-// CSS variables
-<p style={{ color: 'var(--color-text)' }}>
+// CSS variables (✅)
+<p style={{ color: 'var(--color-text)' }}>Correct!</p>
 
-// Theme hook
-<p style={colors.text}>
+// Theme hook (✅)
+import { useThemeColors } from '../utils/theme';
+const colors = useThemeColors();
+<p style={colors.text}>Correct!</p>
 ```
 
 ## Recent Updates

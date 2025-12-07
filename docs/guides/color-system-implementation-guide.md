@@ -102,33 +102,47 @@ This guide outlines the steps to implement a unified color system for the Roma M
 ### Additional Examples for Refactoring Components
 
 #### Example: Replacing Hardcoded Colors
-Before:
+
+Before (❌ Incorrect):
 ```jsx
 <div style={{ backgroundColor: '#FFFFFF', color: '#020178' }}>
   Welcome to Roma Mart
 </div>
 ```
 
-After:
+After (✅ Correct):
 ```jsx
-<div style={{ backgroundColor: 'var(--color-bg-light)', color: 'var(--color-text-primary-light)' }}>
+// Using CSS variables
+<div style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-primary)' }}>
   Welcome to Roma Mart
+</div>
+
+// Using theme utilities
+import { useThemeColors } from '../utils/theme';
+const colors = useThemeColors();
+<div style={colors.bg}>
+  <h1 style={colors.heading}>Welcome to Roma Mart</h1>
 </div>
 ```
 
 #### Example: Aligning Colors with Typography
-Before:
+
+Before (❌ Incorrect):
 ```jsx
 <h1 style={{ color: '#FFD700' }}>
   Our Values
 </h1>
 ```
 
-After:
+After (✅ Correct):
 ```jsx
 <h1 style={{ color: 'var(--color-primary)' }}>
   Our Values
 </h1>
+// Or using theme hook
+import { useThemeColors } from '../utils/theme';
+const colors = useThemeColors();
+<h1 style={colors.heading}>Our Values</h1>
 ```
 
 ### Phase 3: Automate Quality Checks

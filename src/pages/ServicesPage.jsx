@@ -16,7 +16,6 @@ const ServicesPage = () => {
 
   const textColor = { color: 'var(--color-text)' };
   const mutedTextColor = { color: 'var(--color-text)', opacity: 0.7 };
-  const textOnPrimary = { color: 'var(--color-text-on-primary)' };
 
   const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
   const primaryLocation = getPrimaryLocation();

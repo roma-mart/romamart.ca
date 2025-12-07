@@ -711,19 +711,17 @@ export default ExampleComponent;
 
 ### For Styling
 
+
 ```jsx
 // ✅ Theme Utilities (Best)
-import { useThemeColors, BRAND_COLORS } from '../utils/theme';
+import { useThemeColors } from '../utils/theme';
 const { text, surface } = useThemeColors();
 <div style={surface}>
   <h1 style={text}>Title</h1>
 </div>
 
 // ✅ CSS Variables (Good)
-<div style={{ 
-  backgroundColor: 'var(--color-surface)',
-  color: 'var(--color-text)'
-}}>
+<div style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)' }}>
   Content
 </div>
 
@@ -732,13 +730,10 @@ const { text, surface } = useThemeColors();
   Content
 </div>
 
-// ⚠️ Brand Colors (Use Sparingly)
-import { BRAND_COLORS } from '../utils/theme';
-<button style={{ backgroundColor: BRAND_COLORS.NAVY }}>
-  CTA Button
-</button>
-
 // ❌ Hardcoded (Avoid)
+<div style={{ color: '#020178', backgroundColor: '#fff' }}>
+  Will break in dark mode
+</div>
 <div className="text-gray-600 bg-gray-100">
   Will break in dark mode
 </div>

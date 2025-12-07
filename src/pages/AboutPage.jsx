@@ -67,8 +67,8 @@ const AboutPage = () => {
       description: 'Proudly serving Sarnia and the surrounding areas for years.'
     }
   ];
-          className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center"
-          style={{ backgroundColor: 'rgba(255, 221, 51, 0.12)', color: 'var(--color-icon)' }}
+
+  return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>
       <Helmet>
         <title>About Us | Roma Mart Convenience</title>
@@ -83,8 +83,6 @@ const AboutPage = () => {
             <a 
               href={`${BASE_URL}`} 
               style={{ ...mutedTextColor, transition: 'color 0.2s', cursor: 'pointer' }}
-              onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'}
-              onMouseLeave={e => e.currentTarget.style.color = mutedTextColor.color }
             >
               Home
             </a>
@@ -212,7 +210,7 @@ const AboutPage = () => {
               <div className="w-48 h-48 rounded-full mx-auto mb-6 overflow-hidden border-4 shadow-lg" style={{ borderColor: 'var(--color-accent)' }}>
                 <img
                   src={member.image}
-                  alt={`Photo of ${member.name}, ${member.role}`}
+                  alt={`${member.name}, ${member.role}`}
                   className="w-full h-full object-cover"
                   style={{ backgroundColor: 'var(--color-primary)' }}
                 />
@@ -265,6 +263,6 @@ const AboutPage = () => {
       </section>
     </div>
   );
-};
+}
 
 export default AboutPage;
