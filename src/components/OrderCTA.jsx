@@ -47,7 +47,7 @@ const OrderCTA = ({ orderUrl = getOrderingUrl() }) => {
       style={{ boxShadow: 'none', transform: 'none' }}
       aria-hidden={!isVisible}
     >
-      Order Online
+      <span className="hidden md:inline">Order Online</span>
     </Button>
   );
 };
