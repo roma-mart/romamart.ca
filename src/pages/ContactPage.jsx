@@ -7,18 +7,13 @@ import CopyButton from '../components/CopyButton';
 import { useBackgroundSync } from '../hooks/useServiceWorker';
 import { useToast } from '../components/ToastContainer';
 // import { queueFormSubmission, getPendingCount } from '../utils/indexedDB'; // Disabled offline queue
+import Button from '../components/Button';
 
 const ContactPage = () => {
-  const COLORS = {
-    navy: 'var(--color-primary)',
-    yellow: 'var(--color-accent)',
-  };
 
   const textColor = { color: 'var(--color-text)' };
   const mutedTextColor = { color: 'var(--color-text)', opacity: 0.7 };
-
-  const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
-
+  const BASE_URL = import.meta.env.BASE_URL || '/';
   const STORE_DATA = {
     contact: {
       phone: '+1 (382) 342-2000',
@@ -263,14 +258,16 @@ const ContactPage = () => {
                 />
               </div>
 
-              <button
+              <Button
                 type="submit"
-                className="w-full py-4 rounded-lg font-bold font-inter flex items-center justify-center gap-2 transition-transform hover:scale-105"
+                variant="action"
+                icon={<Send size={20} />}
+                className="w-full py-4 rounded-lg font-bold font-inter flex items-center justify-center gap-2"
                 style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-on-accent)' }}
+                aria-label="Send Message"
               >
-                <Send size={20} />
                 Send Message
-              </button>
+              </Button>
             </form>
           </div>
         </div>

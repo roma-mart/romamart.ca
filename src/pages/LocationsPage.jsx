@@ -4,6 +4,7 @@ import { ChevronRight, MapPin, Clock, Phone, ExternalLink, Building2 } from 'luc
 import ShareButton from '../components/ShareButton';
 import CopyButton from '../components/CopyButton';
 import NearestStoreButton from '../components/NearestStoreButton';
+import Button from '../components/Button';
 import { useLocationAware } from '../hooks/useLocationContext';
 import { getActiveLocations, getLocationsByDistance, formatDistance } from '../data/locations';
 
@@ -247,21 +248,14 @@ const LocationsPage = () => {
           <p className="font-inter text-lg mb-8 max-w-2xl mx-auto" style={{ color: 'var(--color-text-on-primary)', opacity: 0.9 }}>
             Stop by any of our locations for quality products and friendly service!
           </p>
-          <a
+          <Button
             href={`${BASE_URL}contact`}
-            className="inline-block px-8 py-4 rounded-full font-bold font-inter transition-transform border-2 shadow-lg"
-            style={{
-              backgroundColor: 'var(--color-accent)',
-              color: 'var(--color-primary)',
-              borderColor: 'var(--color-accent)'
-            }}
-            onMouseOver={e => e.currentTarget.style.backgroundColor = 'rgba(228, 179, 64, 0.85)'}
-            onFocus={e => e.currentTarget.style.backgroundColor = 'rgba(228, 179, 64, 0.85)'}
-            onMouseOut={e => e.currentTarget.style.backgroundColor = 'var(--color-accent)'}
-            onBlur={e => e.currentTarget.style.backgroundColor = 'var(--color-accent)'}
+            variant="navlink"
+            style={{ minWidth: 180 }}
+            analyticsEvent="locations_contact_us"
           >
             Contact Us
-          </a>
+          </Button>
         </div>
       </section>
     </div>

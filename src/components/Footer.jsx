@@ -8,6 +8,7 @@ import TrustpilotWidget from './TrustpilotWidget';
 import { useLocationContext } from '../hooks/useLocationContext';
 import { LOCATIONS, getActiveLocations, getPrimaryLocation } from '../data/locations';
 
+import OrderCTA from './OrderCTA';
 
 
 const STORE_DATA = {
@@ -102,6 +103,9 @@ export default function Footer() {
   }), []);
 
   return (
+    <React.Fragment>
+    {/* Persistent floating OrderCTA button for site-wide visibility */}
+    <OrderCTA />
     <footer className="pt-16 pb-8" style={{ backgroundColor: 'var(--color-footer)', color: 'var(--color-on-footer)' }}>
       <div className="max-w-7xl mx-auto p-4 grid md:grid-cols-4 gap-12 mb-12">
         <div className="p-1 col-span-1 md:col-span-2">
@@ -268,5 +272,6 @@ export default function Footer() {
         </div>
       </div>
     </footer>
+    </React.Fragment>
   );
 }

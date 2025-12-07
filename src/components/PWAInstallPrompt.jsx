@@ -5,8 +5,9 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { X, Download, Smartphone } from 'lucide-react';
+import { X, Download } from 'lucide-react';
 import { useLocalStorage, useVibration } from '../hooks/useBrowserFeatures';
+import Button from './Button';
 
 const PWAInstallPrompt = () => {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
@@ -185,7 +186,7 @@ const PWAInstallPrompt = () => {
     >
       <div
         className="rounded-2xl shadow-2xl border-2 overflow-hidden"
-        style={{ backgroundColor: 'var(--color_surface)', borderColor: 'var(--color-accent)' }}
+        style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-accent)' }}
       >
         {/* Header */}
         <div
@@ -193,20 +194,26 @@ const PWAInstallPrompt = () => {
           style={{ backgroundColor: 'var(--color-primary)' }}
         >
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg" style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)' }}>
+            <div className="w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg" style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)', fontFamily: 'var(--font-heading)', fontWeight: 'var(--font-weight-bold)' }}>
               RM
             </div>
             <div>
-              <h3 id="pwa-install-title" className="font-bold text-lg" style={{ color: 'white' }}>
+              <h3 id="pwa-install-title" className="font-bold text-lg" style={{ color: 'var(--color-on-primary)', fontFamily: 'var(--font-heading)', fontWeight: 'var(--font-weight-bold)' }}>
                 Install Roma Mart
               </h3>
-              <p className="text-sm" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>Quick access anytime</p>
+              <p className="text-sm" style={{ color: 'var(--color-on-primary)', opacity: 0.8, fontFamily: 'var(--font-body)', fontWeight: 'var(--font-weight-normal)' }}>Quick access anytime</p>
             </div>
           </div>
           <button
             type="button"
             onClick={handleDismiss}
-            className="transition-colors p-1"
+            onKeyDown={e => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleDismiss(e);
+              }
+            }}
+            className="transition-colors p-1 rounded-full hover:bg-white/10 focus-visible:bg-white/20"
             style={{ color: 'white' }}
             aria-label="Dismiss install prompt"
           >
@@ -216,53 +223,67 @@ const PWAInstallPrompt = () => {
 
         {/* Content */}
         <div className="p-6">
-          <p id="pwa-install-description" className="mb-6 leading-relaxed" style={{ color: 'var(--color-text)' }}>
+          <p id="pwa-install-description" className="mb-6 leading-relaxed" style={{ color: 'var(--color-text)', fontFamily: 'var(--font-body)', fontWeight: 'var(--font-weight-normal)' }}>
             Install our app for faster access, offline viewing, and a better mobile experience!
           </p>
 
           {/* Features */}
           <div className="space-y-3 mb-6">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full flex items_center justify-center flex-shrink-0" style={{ backgroundColor: 'var(--color-success_bg)' }}>
-                <span className="text-lg" style={{ color: 'var(--color-success)' }}>⚡</span>
+              <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'var(--color-success-bg)' }}>
+                <span className="text-lg" style={{ color: 'var(--color-success)', fontFamily: 'var(--font-body)', fontWeight: 'var(--font-weight-bold)' }}>⚡</span>
               </div>
-              <span className="text-sm" style={{ color: 'var(--color-text)' }}>Faster loading times</span>
+              <span className="text-sm" style={{ color: 'var(--color-text)', fontFamily: 'var(--font-body)', fontWeight: 'var(--font-weight-normal)' }}>Faster loading times</span>
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full flex items_center justify-center flex-shrink-0" style={{ backgroundColor: 'var(--color-warning_bg)' }}>
-                <span className="text-lg" style={{ color: 'var(--color-accent)' }}>📱</span>
+              <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'var(--color-warning-bg)' }}>
+                <span className="text-lg" style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-body)', fontWeight: 'var(--font-weight-bold)' }}>📱</span>
               </div>
-              <span className="text-sm" style={{ color: 'var(--color-text)' }}>Works offline</span>
+              <span className="text-sm" style={{ color: 'var(--color-text)', fontFamily: 'var(--font-body)', fontWeight: 'var(--font-weight-normal)' }}>Works offline</span>
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'var(--color_surface)' }}>
-                <span className="text-lg" style={{ color: 'var(--color-heading)' }}>🏠</span>
+              <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'var(--color-surface)' }}>
+                <span className="text-lg" style={{ color: 'var(--color-heading)', fontFamily: 'var(--font-body)', fontWeight: 'var(--font-weight-bold)' }}>🏠</span>
               </div>
-              <span className="text-sm" style={{ color: 'var(--color-text)' }}>Add to home screen</span>
+              <span className="text-sm" style={{ color: 'var(--color-text)', fontFamily: 'var(--font-body)', fontWeight: 'var(--font-weight-normal)' }}>Add to home screen</span>
             </div>
           </div>
 
           {/* Actions */}
           <div className="flex gap-3">
-            <button
+            <Button
               type="button"
-              onClick={handleInstall}
-              className="flex-1 py-3 px-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-transform hover:scale-105 shadow-lg"
+              variant="action"
+              icon={<Download size={20} />}
+              className="flex-1 font-bold"
               style={{ backgroundColor: 'var(--color-primary)', color: 'var(--color-accent)' }}
+              onClick={handleInstall}
+              onKeyDown={e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleInstall(e);
+                }
+              }}
+              aria-label="Install App"
             >
-              <Download size={20} />
               Install App
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant="action"
+              className="px-4 py-3 font-semibold"
+              style={{ color: 'var(--color-text)', backgroundColor: 'var(--color-surface)' }}
               onClick={handleDismiss}
-              className="px-4 py-3 rounded-xl font-semibold transition-colors"
-              style={{ color: 'var(--color-text)' }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--color-surface)'}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+              onKeyDown={e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleDismiss(e);
+                }
+              }}
+              aria-label="Not Now"
             >
               Not Now
-            </button>
+            </Button>
           </div>
         </div>
       </div>
