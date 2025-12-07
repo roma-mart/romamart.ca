@@ -241,16 +241,24 @@ const LocationsPage = () => {
 
       <section className="max-w-7xl mx-auto px-4 mt-20">
         <div className="p-12 rounded-3xl text-center" style={{ backgroundColor: 'var(--color-primary)' }}>
-          <h2 className="text-3xl md:text-4xl var(--font-heading) uppercase text-white mb-4">
+          <h2 className="text-3xl md:text-4xl var(--font-heading) uppercase mb-4" style={{ color: 'var(--color-text-on-primary)' }}>
             Visit Us Today
           </h2>
-          <p className="text-white/90 font-inter text-lg mb-8 max-w-2xl mx-auto">
+          <p className="font-inter text-lg mb-8 max-w-2xl mx-auto" style={{ color: 'var(--color-text-on-primary)', opacity: 0.9 }}>
             Stop by any of our locations for quality products and friendly service!
           </p>
           <a
-            href={`${BASE_URL}#contact`}
-            className="inline-block px-8 py-4 rounded-full font-bold font-inter transition-transform hover:scale-105 shadow-lg"
-            style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)' }}
+            href={`${BASE_URL}contact`}
+            className="inline-block px-8 py-4 rounded-full font-bold font-inter transition-transform border-2 shadow-lg"
+            style={{
+              backgroundColor: 'var(--color-accent)',
+              color: 'var(--color-primary)',
+              borderColor: 'var(--color-accent)'
+            }}
+            onMouseOver={e => e.currentTarget.style.backgroundColor = 'rgba(228, 179, 64, 0.85)'}
+            onFocus={e => e.currentTarget.style.backgroundColor = 'rgba(228, 179, 64, 0.85)'}
+            onMouseOut={e => e.currentTarget.style.backgroundColor = 'var(--color-accent)'}
+            onBlur={e => e.currentTarget.style.backgroundColor = 'var(--color-accent)'}
           >
             Contact Us
           </a>
