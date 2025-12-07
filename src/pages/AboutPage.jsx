@@ -67,8 +67,8 @@ const AboutPage = () => {
       description: 'Proudly serving Sarnia and the surrounding areas for years.'
     }
   ];
-
-  return (
+          className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center"
+          style={{ backgroundColor: 'rgba(255, 221, 51, 0.12)', color: 'var(--color-icon)' }}
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>
       <Helmet>
         <title>About Us | Roma Mart Convenience</title>
