@@ -49,12 +49,12 @@ const NearestStoreButton = ({ onLocationFound, className = '' }) => {
       {loading ? (
         <>
           <Loader size={20} className="animate-spin" />
-          Finding...
+          Looking for you...
         </>
       ) : (
         <>
           <MapPin size={20} />
-          Find Nearest Store
+          Update location
         </>
       )}
     </button>

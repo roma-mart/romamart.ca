@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ChevronRight, MapPin, Clock, Phone, ExternalLink, Building2 } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
 import CopyButton from '../components/CopyButton';
 import Button from '../components/Button';
-import { getActiveLocations, getLocationsByDistance, formatDistance } from '../data/locations';
+import { getActiveLocations, formatDistance } from '../data/locations';
 import COMPANY_DATA from '../config/company_data';
 
 const LocationsPage = () => {
@@ -15,14 +15,11 @@ const LocationsPage = () => {
 
   const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
 
-  const [sortedLocations, setSortedLocations] = useState(() => {
-    // Default sort: HQ first, then rest
-    const locs = getActiveLocations();
-    return locs.sort((a, b) => {
-      if (a.isPrimary) return -1;
-      if (b.isPrimary) return 1;
-      return 0;
-    });
+  // Default sort: HQ first, then rest
+  const sortedLocations = getActiveLocations().sort((a, b) => {
+    if (a.isPrimary) return -1;
+    if (b.isPrimary) return 1;
+    return 0;
   });
 
   const locations = sortedLocations.map(loc => ({
