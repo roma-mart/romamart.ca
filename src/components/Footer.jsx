@@ -8,10 +8,7 @@ import TrustpilotWidget from './TrustpilotWidget';
 import { useLocationContext } from '../hooks/useLocationContext';
 import { LOCATIONS, getActiveLocations, getPrimaryLocation } from '../data/locations';
 
-const BRAND = {
-  primary: 'var(--color-footer)',
-  accent: 'var(--color-accent)'
-};
+
 
 const STORE_DATA = {
   legalName: "Roma Mart Corp.",
@@ -105,7 +102,7 @@ export default function Footer() {
   }), []);
 
   return (
-    <footer className="text-white pt-16 pb-8" style={{ backgroundColor: BRAND.primary }}>
+    <footer className="pt-16 pb-8" style={{ backgroundColor: 'var(--color-footer)', color: 'var(--color-on-footer)' }}>
       <div className="max-w-7xl mx-auto px-4 grid md:grid-cols-4 gap-12 mb-12">
         <div className="col-span-1 md:col-span-2">
            <a 
@@ -115,7 +112,7 @@ export default function Footer() {
            >
               <Logo />
            </a>
-           <p className="font-inter max-w-sm mb-6" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+           <p className="font-inter max-w-sm mb-6" style={{ color: 'var(--color-on-footer-muted)' }}>
              Your local one-stop shop for everything from daily groceries to premium café drinks. Proudly serving the Sarnia community.
            </p>
            <div className="flex gap-4">
@@ -123,89 +120,104 @@ export default function Footer() {
                 href={STORE_DATA.socialLinks.facebook} 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-yellow-500 transition-colors" 
+                className="w-10 h-10 rounded-full flex items-center justify-center transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
+                style={{ backgroundColor: 'var(--color-surface-muted)' }}
                 title="Facebook"
                 onClick={socialHandlers.facebook}
+                onMouseEnter={e => e.currentTarget.firstChild.style.color = 'var(--color-accent)'}
+                onMouseLeave={e => e.currentTarget.firstChild.style.color = 'var(--color-on-footer)'}
               >
-                <FontAwesomeIcon icon={faFacebook} size="lg" style={{ color: BRAND.accent }} />
+                <FontAwesomeIcon icon={faFacebook} size="lg" style={{ color: 'var(--color-on-footer)' }} />
               </a>
               <a 
                 href={STORE_DATA.socialLinks.instagram} 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-yellow-500 transition-colors" 
+                className="w-10 h-10 rounded-full flex items-center justify-center transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
+                style={{ backgroundColor: 'var(--color-surface-muted)' }}
                 title="Instagram"
                 onClick={socialHandlers.instagram}
+                onMouseEnter={e => e.currentTarget.firstChild.style.color = 'var(--color-accent)'}
+                onMouseLeave={e => e.currentTarget.firstChild.style.color = 'var(--color-on-footer)'}
               >
-                <FontAwesomeIcon icon={faInstagram} size="lg" style={{ color: BRAND.accent }} />
+                <FontAwesomeIcon icon={faInstagram} size="lg" style={{ color: 'var(--color-on-footer)' }} />
               </a>
               <a 
                 href={STORE_DATA.socialLinks.tiktok} 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-yellow-500 transition-colors" 
+                className="w-10 h-10 rounded-full flex items-center justify-center transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
+                style={{ backgroundColor: 'var(--color-surface-muted)' }}
                 title="TikTok"
                 onClick={socialHandlers.tiktok}
+                onMouseEnter={e => e.currentTarget.firstChild.style.color = 'var(--color-accent)'}
+                onMouseLeave={e => e.currentTarget.firstChild.style.color = 'var(--color-on-footer)'}
               >
-                <FontAwesomeIcon icon={faTiktok} size="lg" style={{ color: BRAND.accent }} />
+                <FontAwesomeIcon icon={faTiktok} size="lg" style={{ color: 'var(--color-on-footer)' }} />
               </a>
               <a 
                 href={STORE_DATA.socialLinks.x} 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-yellow-500 transition-colors" 
+                className="w-10 h-10 rounded-full flex items-center justify-center transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
+                style={{ backgroundColor: 'var(--color-surface-muted)' }}
                 title="X (Twitter)"
                 onClick={socialHandlers.x}
+                onMouseEnter={e => e.currentTarget.firstChild.style.color = 'var(--color-accent)'}
+                onMouseLeave={e => e.currentTarget.firstChild.style.color = 'var(--color-on-footer)'}
               >
-                <FontAwesomeIcon icon={faXTwitter} size="lg" style={{ color: BRAND.accent }} />
+                <FontAwesomeIcon icon={faXTwitter} size="lg" style={{ color: 'var(--color-on-footer)' }} />
               </a>
-              <a 
-                href={STORE_DATA.socialLinks.snapchat} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-yellow-500 transition-colors" 
-                title="Snapchat"
-                onClick={socialHandlers.snapchat}
-              >
-                <FontAwesomeIcon icon={faSnapchat} size="lg" style={{ color: BRAND.accent }} />
-              </a>
+                <a 
+                  href={STORE_DATA.socialLinks.snapchat} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="w-10 h-10 rounded-full flex items-center justify-center transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
+                  style={{ backgroundColor: 'var(--color-surface-muted)' }}
+                  title="Snapchat"
+                  onClick={socialHandlers.snapchat}
+                  onMouseEnter={e => e.currentTarget.firstChild.style.color = 'var(--color-accent)'}
+                  onMouseLeave={e => e.currentTarget.firstChild.style.color = 'var(--color-on-footer)'}
+                >
+                  <FontAwesomeIcon icon={faSnapchat} size="lg" style={{ color: 'var(--color-on-footer)' }} />
+                </a>
            </div>
         </div>
 
         <div>
-          <h4 className="var(--font-heading) text-lg mb-6" style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Pages</h4>
-          <ul className="space-y-3 font-inter" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
-            <li><a href={`${BASE_URL}services`} className="hover:text-yellow-400 transition-colors">Services</a></li>
-            <li><a href={`${BASE_URL}rocafe`} className="hover:text-yellow-400 transition-colors">RoCafé Menu</a></li>
-            <li><a href={`${BASE_URL}locations`} className="hover:text-yellow-400 transition-colors">Locations</a></li>
-            <li><a href={`${BASE_URL}contact`} className="hover:text-yellow-400 transition-colors">Contact</a></li>
-            <li><a href={`${BASE_URL}about`} className="hover:text-yellow-400 transition-colors">About Us</a></li>
-            <li><a href={STORE_DATA.onlineStoreUrl} target="_blank" rel="noopener noreferrer" className="hover:text-yellow-400 transition-colors font-bold text-yellow-500">Order Online</a></li>
+          <h4 className="font-heading text-lg mb-6" style={{ color: 'var(--color-on-footer)' }}>Pages</h4>
+          <ul className="space-y-3 font-inter" style={{ color: 'var(--color-on-footer-muted)' }}>
+            <li><a href={`${BASE_URL}services`} className="transition-colors" style={{ color: 'var(--color-link)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-link)'}>Services</a></li>
+            <li><a href={`${BASE_URL}rocafe`} className="transition-colors" style={{ color: 'var(--color-link)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-link)'}>RoCafé Menu</a></li>
+            <li><a href={`${BASE_URL}locations`} className="transition-colors" style={{ color: 'var(--color-link)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-link)'}>Locations</a></li>
+            <li><a href={`${BASE_URL}contact`} className="transition-colors" style={{ color: 'var(--color-link)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-link)'}>Contact</a></li>
+            <li><a href={`${BASE_URL}about`} className="transition-colors" style={{ color: 'var(--color-link)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-link)'}>About Us</a></li>
+            <li><a href={STORE_DATA.onlineStoreUrl} target="_blank" rel="noopener noreferrer" className="font-bold transition-colors" style={{ color: 'var(--color-accent)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-accent)'}>Order Online</a></li>
           </ul>
         </div>
 
         <div>
-          <h4 className="var(--font-heading) text-lg mb-6" style={{ color: 'rgba(255, 255, 255, 0.9)' }}>Legal & Accessibility</h4>
-          <ul className="space-y-2 font-inter" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
-            <li><a href={`${BASE_URL}privacy`} className="hover:text-yellow-400 transition-colors">Privacy Policy</a></li>
-            <li><a href={`${BASE_URL}terms`} className="hover:text-yellow-400 transition-colors">Terms of Service</a></li>
-            <li><a href={`${BASE_URL}cookies`} className="hover:text-yellow-400 transition-colors">Cookie Policy</a></li>
-            <li><a href={`${BASE_URL}accessibility`} className="hover:text-yellow-400 transition-colors font-bold text-yellow-500">Accessibility</a></li>
+          <h4 className="font-heading text-lg mb-6" style={{ color: 'var(--color-on-footer)' }}>Legal & Accessibility</h4>
+          <ul className="space-y-2 font-inter" style={{ color: 'var(--color-on-footer-muted)' }}>
+            <li><a href={`${BASE_URL}privacy`} className="transition-colors" style={{ color: 'var(--color-link)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-link)'}>Privacy Policy</a></li>
+            <li><a href={`${BASE_URL}terms`} className="transition-colors" style={{ color: 'var(--color-link)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-link)'}>Terms of Service</a></li>
+            <li><a href={`${BASE_URL}cookies`} className="transition-colors" style={{ color: 'var(--color-link)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-link)'}>Cookie Policy</a></li>
+            <li><a href={`${BASE_URL}accessibility`} className="font-bold transition-colors" style={{ color: 'var(--color-accent)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-accent)'}>Accessibility</a></li>
           </ul>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 pt-8 border-t border-white/10">
+      <div className="max-w-7xl mx-auto px-4 pt-8" style={{ borderTop: '1px solid var(--color-border-muted)' }}>
         <div className="mb-8">
           <TrustpilotWidget />
         </div>
 
         <div className="mb-8 max-w-md mx-auto">
-          <div className="bg-white/5 rounded-lg p-4 border border-white/10">
+          <div className="rounded-lg p-4" style={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border-muted)' }}>
             <label 
               htmlFor="location-selector" 
-              className="block var(--font-heading) text-sm mb-3"
-              style={{ color: BRAND.accent }}
+              className="block font-heading text-sm mb-3"
+              style={{ color: 'var(--color-accent)' }}
             >
               <MapPin className="inline-block mr-2" size={16} />
               Your Current Store
@@ -215,10 +227,10 @@ export default function Footer() {
               id="location-selector"
               value={selectedLocationId}
               onChange={handleLocationChange}
-              className="w-full px-4 py-3 rounded-lg font-inter bg-white/10 border border-white/20 text-white focus:outline-none focus:border-yellow-500 transition-colors"
-              style={{ cursor: 'pointer' }}
+              className="w-full px-4 py-3 rounded-lg font-inter transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
+              style={{ backgroundColor: 'var(--color-surface-muted)', border: '1px solid var(--color-border-muted)', color: 'var(--color-on-surface)', cursor: 'pointer' }}
             >
-              <option value="auto" style={{ backgroundColor: BRAND.primary, color: 'white' }}>
+              <option value="auto" style={{ backgroundColor: 'var(--color-footer)', color: 'var(--color-on-footer)' }}>
                 {isAutoMode && nearestLocationId
                   ? `🎯 Auto-Detected: ${currentLocation.name}`
                   : '🏢 Auto (HQ - Wellington St.)'}
@@ -227,14 +239,14 @@ export default function Footer() {
                 <option 
                   key={loc.id}
                   value={loc.id}
-                  style={{ backgroundColor: BRAND.primary, color: 'white' }}
+                  style={{ backgroundColor: 'var(--color-footer)', color: 'var(--color-on-footer)' }}
                 >
                   {loc.name} {loc.isPrimary ? '(HQ)' : ''}
                 </option>
               ))}
             </select>
 
-            <div className="mt-3 text-xs font-inter" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+            <div className="mt-3 text-xs font-inter" style={{ color: 'var(--color-on-footer-subtle)' }}>
               {isAutoMode ? (
                 nearestLocationId ? (
                   <span>✓ Using nearest location based on your current position</span>
@@ -248,7 +260,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="text-center font-inter text-sm" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+        <div className="text-center font-inter text-sm" style={{ color: 'var(--color-on-footer-subtle)' }}>
           <p>&copy; {new Date().getFullYear()} {STORE_DATA.legalName} All rights reserved.</p>
         </div>
       </div>
