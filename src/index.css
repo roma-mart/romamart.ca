@@ -79,9 +79,10 @@
 
 /* Windows High Contrast Mode (forced-colors) */
 @media (forced-colors: active) {
-  * {
-    /* Removed unsupported property for Safari */
-    /* forced-color-adjust: auto; */
+  @supports (forced-color-adjust: auto) {
+    * {
+      forced-color-adjust: auto;
+    }
   }
 
   :focus-visible {
@@ -98,17 +99,21 @@
   --color-surface: #f8f8f8;
   --color-border: #e5e5e5;
   --color-footer: #151515;
-  --color-sectiona: #242424;
-  --color-sectionb: #fff;
+
 
 
   /* Text */
   --color-text: #151515;
   --color-text-muted: #5a5a5a;
+  --color-text-on-primary: #fff;
+  --color-on-footer: #f4f4f4;
+  --color-on-footer-muted: #bdbdbd;
+  --color-on-footer-subtle: #888;
+  --color-on-footer-dark: #001540;
 
   /* Brand colors - semantic usage */
   --color-primary: #020178; /* Navy - headings, primary elements */
-  --color-accent: #E4B340; /* Yellow - CTAs, highlights */
+  --color-accent: #E4B340; /* Yellow - CTAs, highlights */;
 
   /* Specific use cases */
   --color-heading: #020178; /* Navy for headings in light mode */
@@ -153,7 +158,7 @@
     --color-border: #2a2a2a;
     --color-text: #f4f4f4;
     --color-text-muted: #a8a8a8;
-    --color-primary: #020178; /* Navy - headings, primary elements */
+    --color-primary: #001540; /* Dark Navy - headings, primary elements */
     --color-accent: #E4B340; /* Yellow - CTAs, highlights */
     --color-heading: #E4B340;
     --color-icon: #E4B340;
@@ -167,8 +172,11 @@
     --color-warning-border: #F59E0B;
     --color-success: #34D399;
     --color-success-bg: #064E3B;
-    --color-sectiona: #242424;
-    --color-sectionb: #151515;
+    --color-footer: #151515;
+    --color-on-footer: #f4f4f4;
+    --color-on-footer-muted: #bdbdbd;
+    --color-on-footer-subtle: #888;
+    --color-text-on-primary: #fff;
   }
 }
 

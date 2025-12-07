@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+/* eslint-disable no-unused-vars */
+import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ChevronRight, MapPin, Phone, Clock, Mail, Send } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
 import CopyButton from '../components/CopyButton';
 import { useBackgroundSync } from '../hooks/useServiceWorker';
 import { useToast } from '../components/ToastContainer';
-import { queueFormSubmission, getPendingCount } from '../utils/indexedDB';
+// import { queueFormSubmission, getPendingCount } from '../utils/indexedDB'; // Disabled offline queue
 
 const ContactPage = () => {
   const COLORS = {
@@ -33,25 +34,8 @@ const ContactPage = () => {
   };
 
   const [formStatus, setFormStatus] = useState('');
-  const [pendingSubmissions, setPendingSubmissions] = useState(0);
-  const { syncSupported, queueSync } = useBackgroundSync();
+  const { syncSupported } = useBackgroundSync();
   const { showInfo, showSuccess, showError } = useToast();
-
-  // Check for pending submissions on mount
-  useEffect(() => {
-    const checkPending = async () => {
-      try {
-        const count = await getPendingCount();
-        setPendingSubmissions(count);
-        if (count > 0) {
-          showInfo(`You have ${count} pending form submission(s) that will sync when online`);
-        }
-      } catch (error) {
-        console.error('Error checking pending submissions:', error);
-      }
-    };
-    checkPending();
-  }, [showInfo]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -60,23 +44,6 @@ const ContactPage = () => {
     
     // Check if online
     const isOnline = navigator.onLine;
-    
-    if (!isOnline && syncSupported) {
-      // Queue for background sync
-      try {
-        await queueFormSubmission(formObject);
-        await queueSync('contact-form-sync');
-        setFormStatus('queued');
-        showInfo('Form saved! Will submit when connection restored.');
-        e.target.reset();
-        setPendingSubmissions(prev => prev + 1);
-      } catch (error) {
-        console.error('Error queuing form:', error);
-        setFormStatus('error');
-        showError('Failed to save form. Please try again when online.');
-      }
-      return;
-    }
     
     // Online - submit immediately
     try {
@@ -94,23 +61,8 @@ const ContactPage = () => {
         showError('Failed to send message. Please try again.');
       }
     } catch {
-      // If fetch fails while "online", try to queue
-      if (syncSupported) {
-        try {
-          await queueFormSubmission(formObject);
-          await queueSync('contact-form-sync');
-          setFormStatus('queued');
-          showInfo('Connection issue. Form saved and will submit when restored.');
-          e.target.reset();
-          setPendingSubmissions(prev => prev + 1);
-        } catch {
-          setFormStatus('error');
-          showError('Failed to send message. Please try again.');
-        }
-      } else {
-        setFormStatus('error');
-        showError('Failed to send message. Please try again.');
-      }
+      setFormStatus('error');
+      showError('Failed to send message. Please try again.');
     }
   };
 
@@ -127,7 +79,7 @@ const ContactPage = () => {
       <nav aria-label="Breadcrumb" className="max-w-7xl mx-auto px-4 mb-8">
         <ol className="flex items-center gap-2 text-sm font-inter">
           <li>
-            <a href={`${BASE_URL}`} className="hover:text-yellow-500 transition-colors" style={mutedTextColor}>Home</a>
+            <a href={`${BASE_URL}`} className="hover:text-accent transition-colors" style={mutedTextColor}>Home</a>
           </li>
           <li aria-hidden="true"><ChevronRight size={16} style={mutedTextColor} /></li>
           <li aria-current="page" className="font-semibold" style={textColor}>Contact</li>
@@ -138,7 +90,7 @@ const ContactPage = () => {
         <div className="flex flex-wrap items-start justify-between gap-4 mb-6">
           <div>
             <h1 className="text-4xl md:text-5xl var(--font-heading) uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
-              Contact <span style={{ color: COLORS.yellow }}>Us</span>
+              Contact <span style={{ color: 'var(--color-accent)' }}>Us</span>
             </h1>
             <p className="text-lg font-inter leading-relaxed max-w-3xl" style={textColor}>
               Have a question or feedback? We'd love to hear from you! Reach out through any of the methods below.
@@ -147,7 +99,7 @@ const ContactPage = () => {
           <ShareButton 
             title="Contact Roma Mart"
             text="Get in touch with Roma Mart - Sarnia's premier convenience store!"
-            className="bg-yellow-500 text-gray-900 hover:bg-yellow-600"
+            style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-on-accent)' }}
           />
         </div>
       </section>
@@ -174,7 +126,7 @@ const ContactPage = () => {
                     rel="noopener noreferrer"
                     aria-label="Get directions to Roma Mart"
                     className="inline-block mt-2 font-inter text-sm font-semibold hover:underline"
-                    style={{ color: COLORS.yellow }}
+                    style={{ color: 'var(--color-accent)' }}
                   >
                     Get Directions →
                   </a>
@@ -188,7 +140,7 @@ const ContactPage = () => {
                 <div className="flex-1">
                   <h4 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Call Us</h4>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <a href={`tel:${STORE_DATA.contact.phone}`} className="hover:underline" style={{ color: COLORS.yellow }}>
+                    <a href={`tel:${STORE_DATA.contact.phone}`} className="hover:underline" style={{ color: 'var(--color-accent)' }}>
                       {STORE_DATA.contact.phone}
                     </a>
                     <CopyButton 
@@ -207,7 +159,7 @@ const ContactPage = () => {
                 <div className="flex-1">
                   <h4 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Email Us</h4>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <a href={`mailto:${STORE_DATA.contact.email}`} className="hover:underline" style={{ color: COLORS.yellow }}>
+                    <a href={`mailto:${STORE_DATA.contact.email}`} className="hover:underline" style={{ color: 'var(--color-accent)' }}>
                       {STORE_DATA.contact.email}
                     </a>
                     <CopyButton 
@@ -239,8 +191,8 @@ const ContactPage = () => {
             </h3>
 
             {formStatus === 'success' && (
-              <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'rgba(34, 197, 94, 0.1)', borderColor: '#059669' }}>
-                <p className="font-inter" style={{ color: '#059669' }}>✓ Message sent successfully! We'll get back to you soon.</p>
+              <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'var(--color-success-bg)', borderColor: 'var(--color-success)' }}>
+                <p className="font-inter" style={{ color: 'var(--color-success)' }}>✓ Message sent successfully! We'll get back to you soon.</p>
               </div>
             )}
 
@@ -251,14 +203,8 @@ const ContactPage = () => {
             )}
 
             {formStatus === 'error' && (
-              <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', borderColor: '#DC2626' }}>
-                <p className="font-inter" style={{ color: '#DC2626' }}>✗ Something went wrong. Please try again.</p>
-              </div>
-            )}
-
-            {pendingSubmissions > 0 && (
-              <div className="mb-6 p-4 rounded-lg bg-yellow-50 border border-yellow-200">
-                <p className="text-yellow-800 font-inter">⏳ You have {pendingSubmissions} pending submission(s) waiting to sync.</p>
+              <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'var(--color-error-bg)', borderColor: 'var(--color-error)' }}>
+                <p className="font-inter" style={{ color: 'var(--color-error)' }}>✗ Something went wrong. Please try again.</p>
               </div>
             )}
 
@@ -320,7 +266,7 @@ const ContactPage = () => {
               <button
                 type="submit"
                 className="w-full py-4 rounded-lg font-bold font-inter flex items-center justify-center gap-2 transition-transform hover:scale-105"
-                style={{ backgroundColor: COLORS.yellow, color: COLORS.navy }}
+                style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-on-accent)' }}
               >
                 <Send size={20} />
                 Send Message

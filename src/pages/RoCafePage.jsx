@@ -7,13 +7,10 @@ import { useLocationAware } from '../hooks/useLocationContext';
 import { ROCAFE_FULL_MENU, MENU_CATEGORIES, ALLERGEN_WARNING } from '../data/rocafe-menu';
 
 const RoCafePage = () => {
-  const COLORS = {
-    navy: 'var(--color-primary)',
-    yellow: 'var(--color-accent)',
-  };
+
 
   const textColor = { color: 'var(--color-text)' };
-  const mutedTextColor = { color: 'var(--color-text)', opacity: 0.7 };
+  const mutedTextColor = { color: 'var(--color-text-muted)' };
 
   const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
 
@@ -120,7 +117,7 @@ const RoCafePage = () => {
             className="text-4xl md:text-5xl var(--font-heading) uppercase mb-6"
             style={{ color: 'var(--color-heading)' }}
           >
-            RoCafé <span style={{ color: COLORS.yellow }}>Menu</span>
+            RoCafé <span style={{ color: 'var(--color-accent)' }}>Menu</span>
           </h1>
           <p className="text-lg font-inter leading-relaxed max-w-3xl mx-auto mb-6" style={textColor}>
             Welcome to RoCafé, where quality meets convenience. Enjoy our premium selection of beverages and food, 
@@ -130,22 +127,22 @@ const RoCafePage = () => {
             <ShareButton 
               title="RoCafé Menu"
               text="Check out the delicious RoCafé menu at Roma Mart!"
-              className="bg-yellow-500 text-gray-900 hover:bg-yellow-600"
+              className="bg-[var(--color-accent)] text-[var(--color-primary)] hover:bg-[color-mix(in srgb, var(--color-accent) 85%, transparent)]"
             />
           </div>
           
           {/* Quick stats */}
           <div className="flex flex-wrap justify-center gap-8 mt-12">
             <div className="text-center">
-              <div className="text-4xl var(--font-heading) mb-2" style={{ color: COLORS.yellow }}>{ROCAFE_FULL_MENU.length}+</div>
+              <div className="text-4xl var(--font-heading) mb-2" style={{ color: 'var(--color-accent)' }}>{ROCAFE_FULL_MENU.length}+</div>
               <div className="text-sm font-inter uppercase tracking-wider" style={mutedTextColor}>Menu Items</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl var(--font-heading) mb-2" style={{ color: COLORS.yellow }}>100%</div>
+              <div className="text-4xl var(--font-heading) mb-2" style={{ color: 'var(--color-accent)' }}>100%</div>
               <div className="text-sm font-inter uppercase tracking-wider" style={mutedTextColor}>Fresh Daily</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl var(--font-heading) mb-2" style={{ color: COLORS.yellow }}>{menuCategories.length}</div>
+              <div className="text-4xl var(--font-heading) mb-2" style={{ color: 'var(--color-accent)' }}>{menuCategories.length}</div>
               <div className="text-sm font-inter uppercase tracking-wider" style={mutedTextColor}>Categories</div>
             </div>
           </div>
@@ -154,20 +151,20 @@ const RoCafePage = () => {
 
       {/* Allergen Warning Section */}
       <section className="max-w-5xl mx-auto px-4 mb-12">
-        <div 
+        <div
           className="p-6 rounded-2xl border-4"
-          style={{ 
-            backgroundColor: COLORS.yellow,
-            borderColor: COLORS.navy
+          style={{
+            backgroundColor: 'var(--color-warning-bg)',
+            borderColor: 'var(--color-warning-border)'
           }}
         >
           <div className="flex items-start gap-4">
-            <AlertTriangle size={32} style={{ color: COLORS.navy, flexShrink: 0 }} />
+            <AlertTriangle size={32} style={{ color: 'var(--color-warning)', flexShrink: 0 }} />
             <div>
-              <h2 className="text-2xl var(--font-heading) font-bold mb-2" style={{ color: COLORS.navy }}>
+              <h2 className="text-2xl var(--font-heading) font-bold mb-2" style={{ color: 'var(--color-warning)' }}>
                 {ALLERGEN_WARNING.title}
               </h2>
-              <p className="font-inter text-sm mb-4" style={{ color: COLORS.navy }}>
+              <p className="font-inter text-sm mb-4" style={{ color: 'var(--color-warning)' }}>
                 {ALLERGEN_WARNING.subtitle}
               </p>
               <div className="flex flex-wrap gap-2 mb-4">
@@ -175,19 +172,19 @@ const RoCafePage = () => {
                   <div 
                     key={idx}
                     className="flex items-center gap-2 px-3 py-2 rounded-lg"
-                    style={{ backgroundColor: COLORS.navy }}
+                    style={{ backgroundColor: 'var(--color-warning)', color: 'var(--color-warning-bg)' }}
                   >
                     <span className="text-lg">{allergen.icon}</span>
-                    <span className="text-xs font-inter font-bold" style={{ color: COLORS.yellow }}>
+                    <span className="text-xs font-inter font-bold" style={{ color: 'var(--color-warning-bg)' }}>
                       {allergen.name}
                     </span>
                   </div>
                 ))}
               </div>
-              <p className="font-inter text-xs font-bold mb-2" style={{ color: COLORS.navy }}>
+              <p className="font-inter text-xs font-bold mb-2" style={{ color: 'var(--color-warning)' }}>
                 {ALLERGEN_WARNING.footer}
               </p>
-              <p className="font-inter text-xs leading-relaxed" style={{ color: COLORS.navy, opacity: 0.8 }}>
+              <p className="font-inter text-xs leading-relaxed" style={{ color: 'var(--color-warning)', opacity: 0.8 }}>
                 {ALLERGEN_WARNING.disclaimer}
               </p>
             </div>
@@ -199,12 +196,12 @@ const RoCafePage = () => {
       <section className="max-w-5xl mx-auto px-4">
         <div className="space-y-4">
           {menuCategories.map((category) => (
-            <div 
+            <div
               key={category.id}
               className="rounded-2xl overflow-hidden border transition-all"
-              style={{ 
+              style={{
                 backgroundColor: 'var(--color-surface)',
-                borderColor: expandedCategory === category.id ? COLORS.yellow : 'var(--color-border)',
+                borderColor: expandedCategory === category.id ? 'var(--color-accent)' : 'var(--color-border)',
                 borderWidth: expandedCategory === category.id ? '2px' : '1px'
               }}
             >
@@ -217,7 +214,7 @@ const RoCafePage = () => {
                 <div className="flex items-center gap-4">
                   <div 
                     className="w-12 h-12 rounded-xl flex items-center justify-center"
-                    style={{ backgroundColor: COLORS.yellow + '20', color: 'var(--color-icon)' }}
+                    style={{ backgroundColor: 'rgba(228, 179, 64, 0.15)', color: 'var(--color-icon)' }}
                   >
                     {category.icon}
                   </div>
@@ -231,9 +228,9 @@ const RoCafePage = () => {
                   </div>
                 </div>
                 <ChevronDown 
-                  size={24} 
+                  size={24}
                   className={`transition-transform ${expandedCategory === category.id ? 'rotate-180' : ''}`}
-                  style={{ color: COLORS.yellow }}
+                  style={{ color: 'var(--color-accent)' }}
                 />
               </button>
 
@@ -262,25 +259,41 @@ const RoCafePage = () => {
 
       {/* CTA Section */}
       <section className="max-w-7xl mx-auto px-4 mt-20">
-        <div className="p-12 rounded-3xl text-center" style={{ backgroundColor: COLORS.navy }}>
-          <h2 className="text-3xl md:text-4xl var(--font-heading) uppercase text-white mb-4">
+        <div className="p-12 rounded-3xl text-center" style={{ backgroundColor: 'var(--color-primary)' }}>
+          <h2 className="text-3xl md:text-4xl var(--font-heading) uppercase mb-4" style={{ color: 'var(--color-text-on-primary)' }}>
             Visit RoCafé Today
           </h2>
-          <p className="text-white/90 font-inter text-lg mb-8 max-w-2xl mx-auto">
+          <p className="font-inter text-lg mb-8 max-w-2xl mx-auto" style={{ color: 'var(--color-text-on-primary)', opacity: 0.9 }}>
             Come taste the difference! Fresh ingredients, expertly crafted beverages, and friendly service.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <a
-              href={`${BASE_URL}#contact`}
-              className="px-8 py-4 rounded-full font-bold font-inter transition-transform hover:scale-105 shadow-lg"
-              style={{ backgroundColor: COLORS.yellow, color: COLORS.navy }}
+              href={`${BASE_URL}locations`}
+              className="px-8 py-4 rounded-full font-bold font-inter transition-transform border-2 shadow-lg"
+              style={{
+                backgroundColor: 'var(--color-accent)',
+                color: 'var(--color-primary)',
+                borderColor: 'var(--color-accent)'
+              }}
+              onMouseOver={e => e.currentTarget.style.backgroundColor = 'rgba(228, 179, 64, 0.85)'}
+              onFocus={e => e.currentTarget.style.backgroundColor = 'rgba(228, 179, 64, 0.85)'}
+              onMouseOut={e => e.currentTarget.style.backgroundColor = 'var(--color-accent)'}
+              onBlur={e => e.currentTarget.style.backgroundColor = 'var(--color-accent)'}
             >
               Get Directions
             </a>
             <a
-              href={`${BASE_URL}#rocafe`}
-              className="px-8 py-4 rounded-full font-bold font-inter transition-transform hover:scale-105 border-2 text-white"
-              style={{ borderColor: 'white' }}
+              href={`${BASE_URL}rocafe`}
+              className="px-8 py-4 rounded-full font-bold font-inter transition-transform border-2"
+              style={{
+                backgroundColor: 'transparent',
+                color: 'var(--color-text-on-primary)',
+                borderColor: 'var(--color-text-on-primary)'
+              }}
+              onMouseOver={e => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)'}
+              onFocus={e => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)'}
+              onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
+              onBlur={e => e.currentTarget.style.backgroundColor = 'transparent'}
             >
               Back to Home
             </a>

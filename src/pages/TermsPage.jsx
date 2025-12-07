@@ -4,10 +4,6 @@ import { ChevronRight } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
 
 const TermsPage = () => {
-  const COLORS = {
-    navy: 'var(--color-primary)',
-    yellow: 'var(--color-accent)',
-  };
 
   const textColor = { color: 'var(--color-text)' };
   const mutedTextColor = { color: 'var(--color-text)', opacity: 0.7 };
@@ -26,7 +22,7 @@ const TermsPage = () => {
       <nav aria-label="Breadcrumb" className="max-w-4xl mx-auto px-4 mb-8">
         <ol className="flex items-center gap-2 text-sm font-inter">
           <li>
-            <a href={`${BASE_URL}`} className="hover:text-yellow-500 transition-colors" style={mutedTextColor}>
+            <a href={`${BASE_URL}`} className="hover:text-accent transition-colors" style={mutedTextColor}>
               Home
             </a>
           </li>
@@ -43,7 +39,7 @@ const TermsPage = () => {
           <ShareButton 
             title="Roma Mart Terms of Service"
             text="Read Roma Mart's terms of service"
-            className="bg-yellow-500 text-gray-900 hover:bg-yellow-600"
+            style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-on-accent)' }}
           />
         </div>
 
@@ -132,8 +128,8 @@ const TermsPage = () => {
               <p style={textColor}><strong>Roma Mart Corp.</strong></p>
               <p style={textColor}>189-3 Wellington Street</p>
               <p style={textColor}>Sarnia, ON N7T 1G6</p>
-              <p style={textColor}>Email: <a href="mailto:contact@romamart.ca" className="text-yellow-500 hover:text-yellow-600">contact@romamart.ca</a></p>
-              <p style={textColor}>Phone: <a href="tel:+13823422000" className="text-yellow-500 hover:text-yellow-600">+1 (382) 342-2000</a></p>
+              <p style={textColor}>Email: <a href="mailto:contact@romamart.ca" style={{ color: 'var(--color-accent)' }}>contact@romamart.ca</a></p>
+              <p style={textColor}>Phone: <a href="tel:+13823422000" style={{ color: 'var(--color-accent)' }}>+1 (382) 342-2000</a></p>
               <p className="text-sm mt-4" style={mutedTextColor}>GST/HST#: 780971768</p>
             </div>
           </section>

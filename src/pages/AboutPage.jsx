@@ -4,10 +4,6 @@ import { ChevronRight, Heart, Users, Award, MapPin } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
 
 const AboutPage = () => {
-  const COLORS = {
-    navy: 'var(--color-primary)',
-    yellow: 'var(--color-accent)',
-  };
 
   const textColor = { color: 'var(--color-text)' };
   const mutedTextColor = { color: 'var(--color-text)', opacity: 0.7 };
@@ -86,8 +82,7 @@ const AboutPage = () => {
           <li>
             <a 
               href={`${BASE_URL}`} 
-              className="hover:text-yellow-500 transition-colors"
-              style={mutedTextColor}
+              style={{ ...mutedTextColor, transition: 'color 0.2s', cursor: 'pointer' }}
             >
               Home
             </a>
@@ -105,7 +100,7 @@ const AboutPage = () => {
               className="text-4xl md:text-5xl var(--font-heading) uppercase mb-6"
               style={{ color: 'var(--color-heading)' }}
             >
-              About <span style={{ color: COLORS.yellow }}>Roma Mart</span>
+              About <span style={{ color: 'var(--color-accent)' }}>Roma Mart</span>
             </h1>
             <p className="text-lg font-inter leading-relaxed mb-6" style={textColor}>
               Roma Mart is your trusted neighborhood convenience store, proudly serving the Sarnia community. 
@@ -126,17 +121,19 @@ const AboutPage = () => {
           <div className="relative h-96 rounded-3xl overflow-hidden shadow-2xl">
             <div className="absolute inset-0 bg-gradient-to-r from-blue-950 via-transparent to-transparent opacity-40 z-10" />
             {heroImages.map((image, index) => (
-              <div
+              <img
                 key={index}
-                className={`absolute inset-0 transition-opacity duration-1000 ${
+                src={image}
+                alt={(() => {
+                  if (image.includes('store-front')) return 'Roma Mart store front';
+                  if (image.includes('store-interior')) return 'Roma Mart store interior';
+                  if (image.includes('team')) return 'Roma Mart team photo';
+                  return 'Roma Mart image';
+                })()}
+                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
                   index === currentImageIndex ? 'opacity-100' : 'opacity-0'
                 }`}
-                style={{ 
-                  backgroundImage: `url(${image})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  backgroundColor: COLORS.navy // Fallback color
-                }}
+                style={{ backgroundColor: 'var(--color-primary)' }}
               />
             ))}
             {/* Image indicators */}
@@ -146,11 +143,13 @@ const AboutPage = () => {
                   type="button"
                   key={index}
                   onClick={heroImageHandlers[index]}
-                  className={`w-2 h-2 rounded-full transition-all ${
+                  className={`w-2 h-2 rounded-full transition-all focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 ${
                     index === currentImageIndex ? 'w-8' : 'w-2'
                   }`}
-                  style={{ backgroundColor: index === currentImageIndex ? COLORS.yellow : 'white' }}
+                  style={{ backgroundColor: index === currentImageIndex ? 'var(--color-accent)' : 'var(--color-surface)', outline: '2px solid var(--color-focus)', outlineOffset: '2px' }}
                   aria-label={`View image ${index + 1}`}
+                  tabIndex={0}
+                  onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { heroImageHandlers[index](); } }}
                 />
               ))}
             </div>
@@ -164,7 +163,7 @@ const AboutPage = () => {
           className="text-3xl md:text-4xl var(--font-heading) uppercase text-center mb-12"
           style={{ color: 'var(--color-heading)' }}
         >
-          Our <span style={{ color: COLORS.yellow }}>Values</span>
+          Our <span style={{ color: 'var(--color-accent)' }}>Values</span>
         </h2>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -176,7 +175,7 @@ const AboutPage = () => {
             >
               <div 
                 className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center"
-                style={{ backgroundColor: COLORS.yellow + '20', color: 'var(--color-icon)' }}
+                style={{ backgroundColor: 'rgba(255, 221, 51, 0.12)', color: 'var(--color-icon)' }}
               >
                 {value.icon}
               </div>
@@ -197,7 +196,7 @@ const AboutPage = () => {
           className="text-3xl md:text-4xl var(--font-heading) uppercase text-center mb-12"
           style={{ color: 'var(--color-heading)' }}
         >
-          Meet Our <span style={{ color: COLORS.yellow }}>Team</span>
+          Meet Our <span style={{ color: 'var(--color-accent)' }}>Team</span>
         </h2>
 
         <div className="flex justify-center">
@@ -208,15 +207,12 @@ const AboutPage = () => {
               style={{ backgroundColor: 'var(--color-surface)' }}
             >
               {/* Circular headshot */}
-              <div className="w-48 h-48 rounded-full mx-auto mb-6 overflow-hidden border-4 shadow-lg" style={{ borderColor: COLORS.yellow }}>
-                <div 
-                  className="w-full h-full"
-                  style={{ 
-                    backgroundImage: `url(${member.image})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    backgroundColor: COLORS.navy // Fallback
-                  }}
+              <div className="w-48 h-48 rounded-full mx-auto mb-6 overflow-hidden border-4 shadow-lg" style={{ borderColor: 'var(--color-accent)' }}>
+                <img
+                  src={member.image}
+                  alt={`${member.name}, ${member.role}`}
+                  className="w-full h-full object-cover"
+                  style={{ backgroundColor: 'var(--color-primary)' }}
                 />
               </div>
               
@@ -224,7 +220,7 @@ const AboutPage = () => {
                 {member.name}
               </h3>
               
-              <p className="text-sm font-inter font-bold uppercase tracking-wider mb-4" style={{ color: COLORS.yellow }}>
+              <p className="text-sm font-inter font-bold uppercase tracking-wider mb-4" style={{ color: 'var(--color-accent)' }}>
                 {member.role}
               </p>
               
@@ -238,7 +234,7 @@ const AboutPage = () => {
 
       {/* CTA Section */}
       <section className="max-w-7xl mx-auto px-4">
-        <div className="p-12 rounded-3xl text-center" style={{ backgroundColor: COLORS.navy }}>
+        <div className="p-12 rounded-3xl text-center" style={{ backgroundColor: 'var(--color-primary)' }}>
           <h2 className="text-3xl md:text-4xl var(--font-heading) uppercase text-white mb-4">
             Visit Us Today
           </h2>
@@ -248,15 +244,17 @@ const AboutPage = () => {
           <div className="flex flex-wrap justify-center gap-4">
             <a
               href={`${BASE_URL}#contact`}
-              className="px-8 py-4 rounded-full font-bold font-inter transition-transform hover:scale-105 shadow-lg"
-              style={{ backgroundColor: COLORS.yellow, color: COLORS.navy }}
+              className="px-8 py-4 rounded-full font-bold font-inter transition-transform hover:scale-105 shadow-lg focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+              style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)', outline: '2px solid var(--color-focus)', outlineOffset: '2px' }}
+              tabIndex={0}
             >
               Get Directions
             </a>
             <a
               href={`${BASE_URL}#contact`}
-              className="px-8 py-4 rounded-full font-bold font-inter transition-transform hover:scale-105 border-2 text-white"
-              style={{ borderColor: 'white' }}
+              className="px-8 py-4 rounded-full font-bold font-inter transition-transform hover:scale-105 border-2 text-white focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+              style={{ borderColor: 'white', outline: '2px solid var(--color-focus)', outlineOffset: '2px' }}
+              tabIndex={0}
             >
               Contact Us
             </a>
@@ -265,6 +263,6 @@ const AboutPage = () => {
       </section>
     </div>
   );
-};
+}
 
 export default AboutPage;

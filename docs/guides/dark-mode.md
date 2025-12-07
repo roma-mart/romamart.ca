@@ -47,11 +47,12 @@ export const COLORS = {
 
 ## Usage Guidelines
 
+
 ### ✅ Correct Patterns
 
 ```jsx
 // Use CSS variables directly
-<div style={{ backgroundColor: 'var(--color-surface)' }}>
+<div style={{ backgroundColor: 'var(--color-surface)' }}>Content</div>
 
 // Use theme hook
 import { useThemeColors } from '../utils/theme';
@@ -60,17 +61,17 @@ const colors = useThemeColors();
 
 // Use design tokens
 import { CSS_VARS } from '../utils/theme';
-<div style={{ color: CSS_VARS.textMuted }}>
+<div style={{ color: CSS_VARS.textMuted }}>Content</div>
 ```
 
 ### ❌ Incorrect Patterns
 
 ```jsx
 // NEVER hardcode colors
-<div style={{ color: '#020178' }}>  // Wrong!
+<div style={{ color: '#020178' }}>Wrong!</div>
 
 // NEVER use gray Tailwind classes
-<p className="text-gray-600">  // Wrong!
+<p className="text-gray-600">Wrong!</p>
 ```
 
 ## High Contrast Support
