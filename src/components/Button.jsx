@@ -16,7 +16,7 @@ const VARIANT_STYLES = {
     fontWeight: 700,
     fontFamily: CSS_VARS.heading,
     border: 'none',
-    boxShadow: '0 4px 16px rgba(228,179,64,0.15)',
+    boxShadow: '0 4px 16px var(--color-accent-shadow, rgba(228,179,64,0.15))',
   },
   nav: {
     backgroundColor: 'var(--color-primary)',
@@ -34,13 +34,19 @@ const VARIANT_STYLES = {
     border: '2px solid var(--color-accent)',
     boxShadow: 'none',
   },
-  secondary: {
-    backgroundColor: 'var(--color-bg)',
-    color: 'var(--color-text)',
-    fontWeight: 500,
-    fontFamily: CSS_VARS.body,
-    border: '1px solid var(--color-border)',
-    boxShadow: 'none',
+  navlink: {
+    backgroundColor: 'var(--color-accent)',
+    color: 'var(--color-primary)',
+    fontWeight: 700,
+    fontFamily: CSS_VARS.heading,
+    border: 'none',
+    borderRadius: '9999px', // fully rounded
+    boxShadow: '0 4px 16px var(--color-accent-shadow, rgba(228,179,64,0.15))',
+    transition: 'all 0.2s',
+    padding: '12px 28px',
+    minHeight: 44,
+    minWidth: 44,
+    // Exactly matches order button, minus scaling
   },
   icon: {
     backgroundColor: 'transparent',
@@ -50,12 +56,12 @@ const VARIANT_STYLES = {
     fontSize: '1.25rem',
   },
   location: {
-    backgroundColor: 'var(--color-location-bg, #E4B340)',
-    color: 'var(--color-location-text, #020178)',
+    backgroundColor: 'var(--color-location-bg, var(--color-accent))',
+    color: 'var(--color-location-text, var(--color-primary))',
     fontWeight: 700,
     fontFamily: CSS_VARS.heading,
     border: '2px solid var(--color-primary)',
-    boxShadow: '0 2px 8px rgba(228,179,64,0.10)',
+    boxShadow: '0 2px 8px var(--color-accent-shadow, rgba(228,179,64,0.10))',
   },
 };
 
@@ -104,20 +110,41 @@ const Button = React.forwardRef(({
     ...style,
   };
 
-  // Add default hover effect for 'order' variant
+  // Add default hover and active effect for 'order' and 'navlink' variants
   const handleMouseEnter = (e) => {
     if (variant === 'order' && !disabled) {
       e.currentTarget.style.transform = 'scale(1.05)';
-      e.currentTarget.style.boxShadow = '0 8px 24px rgba(228,179,64,0.18)';
+      e.currentTarget.style.boxShadow = '0 8px 24px var(--color-accent-shadow, rgba(228,179,64,0.18))';
+    } else if (variant === 'navlink' && !disabled) {
+      e.currentTarget.style.transform = 'scale(1.0125)';
+      e.currentTarget.style.boxShadow = '0 4px 12px var(--color-accent-shadow, rgba(228,179,64,0.10))';
     }
     if (props.onMouseEnter) props.onMouseEnter(e);
   };
   const handleMouseLeave = (e) => {
     if (variant === 'order' && !disabled) {
       e.currentTarget.style.transform = 'scale(1)';
-      e.currentTarget.style.boxShadow = mergedStyle.boxShadow || '0 4px 16px rgba(228,179,64,0.15)';
+      e.currentTarget.style.boxShadow = mergedStyle.boxShadow || '0 4px 16px var(--color-accent-shadow, rgba(228,179,64,0.15))';
+    } else if (variant === 'navlink' && !disabled) {
+      e.currentTarget.style.transform = 'scale(1)';
+      e.currentTarget.style.boxShadow = mergedStyle.boxShadow || '0 4px 16px var(--color-accent-shadow, rgba(228,179,64,0.15))';
     }
     if (props.onMouseLeave) props.onMouseLeave(e);
+  };
+  // Add click/active feedback for navlink
+  const handleMouseDown = (e) => {
+    if (variant === 'navlink' && !disabled) {
+      e.currentTarget.style.transform = 'scale(0.99)';
+      e.currentTarget.style.boxShadow = '0 2px 6px var(--color-accent-shadow, rgba(228,179,64,0.07))';
+    }
+    if (props.onMouseDown) props.onMouseDown(e);
+  };
+  const handleMouseUp = (e) => {
+    if (variant === 'navlink' && !disabled) {
+      e.currentTarget.style.transform = 'scale(1.0125)';
+      e.currentTarget.style.boxShadow = '0 4px 12px var(--color-accent-shadow, rgba(228,179,64,0.10))';
+    }
+    if (props.onMouseUp) props.onMouseUp(e);
   };
 
   const content = (
@@ -138,6 +165,8 @@ const Button = React.forwardRef(({
   const variantClass = variant ? variant : '';
   const allClasses = `button ${variantClass} ${className}`.trim();
 
+
+  // Accessibility: If rendering as <a>, ensure role and keyboard support for non-standard cases
   if (href) {
     return (
       <a
@@ -147,8 +176,17 @@ const Button = React.forwardRef(({
         className={allClasses}
         style={mergedStyle}
         onClick={handleClick}
+        onKeyDown={e => {
+          if ((e.key === 'Enter' || e.key === ' ') && onClick) {
+            e.preventDefault();
+            handleClick(e);
+          }
+        }}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        role="button"
         {...ariaProps}
         {...props}
       >
@@ -167,6 +205,8 @@ const Button = React.forwardRef(({
       onClick={handleClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
       disabled={disabled || loading}
       {...ariaProps}
       {...props}
