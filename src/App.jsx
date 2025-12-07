@@ -19,6 +19,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import BrandPatternBackground from './components/BrandPatternBackground';
 import ShareButton from './components/ShareButton';
+import Button from './components/Button';
 import StandardizedItem from './components/StandardizedItem';
 import { ROCAFE_FEATURED } from './data/rocafe-menu';
 import { SERVICES_FEATURED } from './data/services.jsx';
@@ -89,37 +90,30 @@ function Hero({ onTrackOrder }) {
             </p>
             <div className="mb-6"><ShareButton title="Roma Mart" text="Check out Roma Mart - Sarnia's newest convenience store!" className="bg-white/10 text-white hover:bg-white/20 border border-white/30" /></div>
             <div className="flex flex-col sm:flex-row gap-4">
-              <motion.a
+              <Button
+                as="a"
                 href={STORE_DATA.onlineStoreUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                variant="order"
+                icon={<ExternalLink size={20} />}
+                analyticsEvent="order_cta_hero"
+                aria-label="Order online now from Roma Mart"
                 onClick={handleOrderClick}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-8 py-4 rounded-xl font-bold font-inter text-lg flex items-center justify-center gap-2"
-                style={{
-                  backgroundColor: 'var(--color-accent)',
-                  color: 'var(--color-primary)',
-                  boxShadow: '0px 4px 16px 0px rgba(228, 179, 64, 0.20)' // var(--color-accent) shadow
-                }}
+                className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-bold text-lg"
               >
-                ORDER ONLINE NOW <ExternalLink size={20} />
-              </motion.a>
-              <a
-                href="#locations"
-                className="px-8 py-4 rounded-xl font-bold font-inter text-lg border-2 flex items-center justify-center gap-2 transition-transform"
-                style={{
-                  backgroundColor: 'var(--color-accent)',
-                  color: 'var(--color-primary)',
-                  borderColor: 'var(--color-accent)'
-                }}
-                onMouseOver={e => e.currentTarget.style.backgroundColor = 'rgba(228, 179, 64, 0.85)'}
-                onFocus={e => e.currentTarget.style.backgroundColor = 'rgba(228, 179, 64, 0.85)'}
-                onMouseOut={e => e.currentTarget.style.backgroundColor = 'var(--color-accent)'}
-                onBlur={e => e.currentTarget.style.backgroundColor = 'var(--color-accent)'}
+                ORDER ONLINE NOW
+              </Button>
+              <Button
+                as="a"
+                href={`${BASE_URL}locations`} // Uses base path for internal link
+                variant="navlink"
+                icon={<ArrowRight size={20} />}
+                aria-label="Visit In Store Location"
+                className="px-8 py-4 text-lg"
               >
-                Visit In Store <ArrowRight size={20} />
-              </a>
+                Visit In Store
+              </Button>
             </div>
           </motion.div>
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, delay: 0.2 }} className="relative hidden md:block">
@@ -152,21 +146,18 @@ const ServicesSection = () => {
         </div>
         
         <div className="text-center">
-          <a
-            href={`${BASE_URL}services`}
-            className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-bold font-inter transition-transform border-2"
-            style={{
-              backgroundColor: 'var(--color-accent)',
-              color: 'var(--color-primary)',
-              borderColor: 'var(--color-accent)'
-            }}
-            onMouseOver={e => e.currentTarget.style.backgroundColor = 'rgba(228, 179, 64, 0.85)'}
-            onFocus={e => e.currentTarget.style.backgroundColor = 'rgba(228, 179, 64, 0.85)'}
-            onMouseOut={e => e.currentTarget.style.backgroundColor = 'var(--color-accent)'}
-            onBlur={e => e.currentTarget.style.backgroundColor = 'var(--color-accent)'}
-          >
-            View All Services <ArrowRight size={20} />
-          </a>
+          <motion.div>
+            <Button
+              as="a"
+              href={`${BASE_URL}services`}
+              variant="navlink"
+              icon={<ArrowRight size={20} />}
+              aria-label="View all services"
+              className="px-8 py-4 text-lg"
+            >
+              View All Services
+            </Button>
+          </motion.div>
         </div>
       </div>
     </section>
@@ -205,21 +196,18 @@ const RoCafeSection = () => {
             </div>
             
             <div className="mt-8">
-              <a
-                href={`${BASE_URL}rocafe`}
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-bold font-inter transition-transform border-2"
-                style={{
-                  backgroundColor: 'var(--color-accent)',
-                  color: 'var(--color-primary)',
-                  borderColor: 'var(--color-accent)'
-                }}
-                onMouseOver={e => e.currentTarget.style.backgroundColor = 'rgba(228, 179, 64, 0.85)'}
-                onFocus={e => e.currentTarget.style.backgroundColor = 'rgba(228, 179, 64, 0.85)'}
-                onMouseOut={e => e.currentTarget.style.backgroundColor = 'var(--color-accent)'}
-                onBlur={e => e.currentTarget.style.backgroundColor = 'var(--color-accent)'}
-              >
-                View Full Menu <ArrowRight size={20} />
-              </a>
+              <motion.div>
+                <Button
+                  as="a"
+                  href={`${BASE_URL}rocafe`}
+                  variant="navlink"
+                  icon={<ArrowRight size={20} />}
+                  aria-label="View full RoCafe menu"
+                  className="px-8 py-4 text-lg"
+                >
+                  View Full Menu
+                </Button>
+              </motion.div>
             </div>
           </div>
           <div className="md:w-1/2 w-full">
@@ -289,23 +277,19 @@ const Locations = () => {
                 </div>
               </button>
             ))}
-            {/* Move button to end of subsection for consistency */}
-            <div className="text-center mt-8">
-              <a
-                href={`${BASE_URL}locations`}
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-bold font-inter transition-transform border-2"
-                style={{
-                  backgroundColor: 'var(--color-accent)',
-                  color: 'var(--color-primary)',
-                  borderColor: 'var(--color-accent)'
-                }}
-                onMouseOver={e => e.currentTarget.style.backgroundColor = 'rgba(228, 179, 64, 0.85)'}
-                onFocus={e => e.currentTarget.style.backgroundColor = 'rgba(228, 179, 64, 0.85)'}
-                onMouseOut={e => e.currentTarget.style.backgroundColor = 'var(--color-accent)'}
-                onBlur={e => e.currentTarget.style.backgroundColor = 'var(--color-accent)'}
-              >
-                View All Locations <ArrowRight size={20} />
-              </a>
+            <div className="text-center mt-12">
+              <motion.div>
+                <Button
+                  as="a"
+                  href={`${BASE_URL}locations`}
+                  variant="navlink"
+                  icon={<ArrowRight size={20} />}
+                  aria-label="View all locations"
+                  className="px-8 py-4 text-lg"
+                >
+                  View All Locations
+                </Button>
+              </motion.div>
             </div>
           </div>
           <div className="lg:col-span-2 rounded-3xl overflow-hidden min-h-[400px] relative shadow-inner" style={{ backgroundColor: 'var(--color-surface)' }}>
