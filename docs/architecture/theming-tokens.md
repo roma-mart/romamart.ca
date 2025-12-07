@@ -6,6 +6,7 @@
 
 Roma Mart uses a centralized design token system with CSS custom properties for consistent theming and dark mode support.
 
+
 ## Token Sources
 
 ### Design Tokens
@@ -13,6 +14,7 @@ Roma Mart uses a centralized design token system with CSS custom properties for 
 **File:** `src/design/tokens.js`
 
 ```javascript
+// Always import tokens from this file, never hardcode colors or typography in components.
 export const COLORS = {
   primary: '#020178',      // Navy
   secondary: '#E4B340',    // Yellow
@@ -59,6 +61,26 @@ export const SPACING = {
   12: '3rem',
   16: '4rem',
 };
+```
+
+### CSS Variables
+
+**File:** `src/index.css`
+
+```css
+:root {
+  /* Colors - always use CSS variables, never hardcoded values */
+  --color-primary: #020178;
+  --color-secondary: #E4B340;
+  --color-background: #ffffff;
+  --color-surface: #f8f9fa;
+  --color-text: #1a1a1a;
+  --color-text-muted: #6b7280;
+  
+  /* Typography */
+  --font-heading: 'Outfit', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
 ```
 
 ### CSS Variables

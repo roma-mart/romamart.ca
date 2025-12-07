@@ -6,55 +6,41 @@
 
 Roma Mart uses client-side routing with pathname matching in `App.jsx`, combined with static site generation (SSG) via Vite.
 
+
 ## Route Configuration
 
 ### App.jsx Routing
 
 ```jsx
+import { NAVIGATION_LINKS } from './config/navigation';
+import COMPANY_DATA from './config/company_data';
+
 function App() {
   const pathname = window.location.pathname;
   const basePath = import.meta.env.BASE_URL;
-  
   // Normalize path
   const normalizedPath = pathname.replace(basePath, '/');
-  
+
   // Route matching
   const renderPage = () => {
     switch (normalizedPath) {
       case '/':
         return <HomePage />;
-      case '/services':
-        return <ServicesPage />;
-      case '/rocafe':
-        return <RoCafePage />;
-      case '/locations':
-        return <LocationsPage />;
-      case '/contact':
-        return <ContactPage />;
-      case '/about':
-        return <AboutPage />;
-      case '/accessibility':
-        return <AccessibilityPage />;
-      case '/privacy':
-        return <PrivacyPage />;
-      case '/terms':
-        return <TermsPage />;
-      case '/cookies':
-        return <CookiesPage />;
+      // ...other cases...
       default:
         return <NotFoundPage />;
     }
   };
-  
+
   return (
     <div>
-      <Navbar />
+      <Navbar links={NAVIGATION_LINKS.filter(link => link.showIn.navbar)} />
       <main>
         <Suspense fallback={<Loading />}>
           {renderPage()}
         </Suspense>
       </main>
-      <Footer />
+      <Footer company={COMPANY_DATA} links={NAVIGATION_LINKS.filter(link => link.showIn.footer)} />
     </div>
   );
 }

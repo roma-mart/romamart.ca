@@ -7,6 +7,7 @@ import StandardizedItem from '../components/StandardizedItem';
 import { useLocationAware } from '../hooks/useLocationContext';
 import { SERVICES } from '../data/services.jsx';
 import { getPrimaryLocation, isLocationOpenNow } from '../data/locations';
+import COMPANY_DATA from '../config/company_data';
 
 const ServicesPage = () => {
   const COLORS = {

@@ -66,6 +66,7 @@ docs/
 └── archive/               # Historical/deprecated docs
 ```
 
+
 ## 📝 Documentation Standards
 
 ### File Naming
@@ -78,6 +79,29 @@ docs/
 - Include brief description
 - Use markdown tables for structured data
 - Include code examples where applicable
+
+### Code Example Compliance
+- **All code examples must use centralized config:**
+	- Navigation: `import { NAVIGATION_LINKS } from '../config/navigation'`
+	- Company info: `import COMPANY_DATA from '../config/company_data'`
+- **Do not use hardcoded URLs, company names, or social links.**
+- **Breadcrumbs and canonical links may be page-specific, but navigation and company info must always use config.**
+
+**Example (Compliant):**
+```jsx
+import { NAVIGATION_LINKS } from '../config/navigation';
+import COMPANY_DATA from '../config/company_data';
+
+<nav>
+	{NAVIGATION_LINKS.filter(link => link.showIn.navbar).map(link => (
+		<a href={link.href}>{link.label}</a>
+	))}
+</nav>
+
+<footer>
+	<span>{COMPANY_DATA.legalName}</span>
+</footer>
+```
 - Link to related documentation
 
 ### Updates

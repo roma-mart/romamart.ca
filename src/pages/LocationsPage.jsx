@@ -7,6 +7,7 @@ import NearestStoreButton from '../components/NearestStoreButton';
 import Button from '../components/Button';
 import { useLocationAware } from '../hooks/useLocationContext';
 import { getActiveLocations, getLocationsByDistance, formatDistance } from '../data/locations';
+import COMPANY_DATA from '../config/company_data';
 
 const LocationsPage = () => {
 

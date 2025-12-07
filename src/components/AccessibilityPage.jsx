@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { ExternalLink, Mail, Phone, MapPin, CheckCircle, ChevronRight } from 'lucide-react';
 import ShareButton from './ShareButton';
 import { tokens } from '../design/tokens';
+import COMPANY_DATA from '../config/company_data';
 
 const AccessibilityPage = () => {
   const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
@@ -121,17 +122,17 @@ const AccessibilityPage = () => {
           <div className="p-6 rounded-lg border" style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
             <Mail size={32} className="mb-4" style={{ color: 'var(--color-icon)' }} />
             <h3 className="font-bold text-lg mb-2" style={textColor}>Email</h3>
-            <a href="mailto:accessibility@romamart.ca" className="hover:underline break-all" style={{ color: 'var(--color-accent)' }}>accessibility@romamart.ca</a>
+            <a href={`mailto:${COMPANY_DATA.contact.email}`} className="hover:underline break-all" style={{ color: 'var(--color-accent)' }}>{COMPANY_DATA.contact.email}</a>
           </div>
           <div className="p-6 rounded-lg border" style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
             <Phone size={32} className="mb-4" style={{ color: 'var(--color-icon)' }} />
             <h3 className="font-bold text-lg mb-2" style={textColor}>Phone</h3>
-            <a href="tel:+13823422000" className="hover:underline" style={{ color: 'var(--color-accent)' }}>+1 (382) 342-2000</a>
+            <a href={`tel:${COMPANY_DATA.contact.phone}`} className="hover:underline" style={{ color: 'var(--color-accent)' }}>{COMPANY_DATA.contact.phone}</a>
           </div>
           <div className="p-6 rounded-lg border" style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
             <MapPin size={32} className="mb-4" style={{ color: 'var(--color-icon)' }} />
             <h3 className="font-bold text-lg mb-2" style={textColor}>Visit Us</h3>
-            <p className="text-sm" style={textColor}>189-3 Wellington Street<br />Sarnia, ON N7T 1G6</p>
+            <p className="text-sm" style={textColor}>{COMPANY_DATA.address}</p>
           </div>
         </div>
         <p className="mt-8 leading-relaxed" style={textColor}>We will make reasonable efforts to provide accommodations and respond to accessibility inquiries within 5 business days.</p>
