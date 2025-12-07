@@ -9,7 +9,7 @@ import { useLocationContext } from '../hooks/useLocationContext';
 import { LOCATIONS, getActiveLocations, getPrimaryLocation } from '../data/locations';
 import { NAVIGATION_LINKS } from '../config/navigation';
 import OrderCTA from './OrderCTA';
-import NearestStoreButton from './NearestStoreButton';
+import Button from './Button';
 import { useLocationAware } from '../hooks/useLocationContext';
 
 // Social platforms to control display in Footer (label, icon)
@@ -268,7 +268,15 @@ export default function Footer() {
                 <span>✓ Manually selected: {currentLocation.name}</span>
               )}
               <div className="mt-8 flex justify-center">
-                <NearestStoreButton />
+                <Button
+                  variant="location"
+                  onLocationFound={loc => {
+                    // Update nearest location selection
+                    if (loc && loc.coords) {
+                      setSelectedLocationId('auto');
+                    }
+                  }}
+                />
               </div>
             </div>
           </div>

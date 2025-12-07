@@ -20,10 +20,12 @@
  * </Button>
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import PropTypes from 'prop-types';
-import { useVibration } from '../hooks/useBrowserFeatures';
+import { useGeolocation } from '../hooks/useBrowserFeatures';
+import { useToast } from './ToastContainer';
+import { MapPin, Loader } from 'lucide-react';
 import { CSS_VARS } from '../utils/theme';
 
 const VARIANT_STYLES = {
@@ -87,11 +89,7 @@ const VARIANT_STYLES = {
   },
 };
 
-function fireAnalytics(event) {
-  if (window && window.dataLayer && event) {
-    window.dataLayer.push(typeof event === 'string' ? { event } : event);
-  }
-}
+// fireAnalytics removed (unused)
 
 const Button = React.forwardRef(({
   variant = 'order',
@@ -103,21 +101,41 @@ const Button = React.forwardRef(({
   type = 'button',
   ariaLabel,
   disabled = false,
-  loading = false,
+  loading: loadingProp = false,
   analyticsEvent,
-  vibrationPattern = 10,
+  // vibrationPattern removed (unused)
   className = '',
   style = {},
   tabIndex,
+  onLocationFound,
   ...props
 }, ref) => {
-  const { vibrate, canVibrate } = useVibration();
+  // useVibration removed (unused)
 
-  const handleClick = e => {
-    if (!disabled && canVibrate) vibrate(vibrationPattern);
-    if (analyticsEvent) fireAnalytics(analyticsEvent);
-    if (onClick) onClick(e);
-  };
+  // Location variant logic
+  const isLocation = variant === 'location';
+  const { getCurrentLocation, location, loading, error, canUseGeolocation } = useGeolocation();
+  const { showSuccess, showError } = useToast();
+
+  useEffect(() => {
+    if (isLocation && location) {
+      if (onLocationFound) {
+        onLocationFound({
+          coords: {
+            latitude: location.latitude,
+            longitude: location.longitude
+          }
+        });
+      }
+      showSuccess('Location found! Sorting stores by distance...');
+    }
+  }, [isLocation, location, onLocationFound, showSuccess]);
+
+  useEffect(() => {
+    if (isLocation && error) {
+      showError(`Location error: ${error}`);
+    }
+  }, [isLocation, error, showError]);
 
   const mergedStyle = {
     minHeight: 44,
@@ -169,14 +187,30 @@ const Button = React.forwardRef(({
     if (props.onMouseUp) props.onMouseUp(e);
   };
 
-  const content = (
-    <>
-      {icon && iconPosition === 'left' && <span style={{ marginRight: 10, display: 'inline-flex', alignItems: 'center' }}>{icon}</span>}
-      {children && <span>{children}</span>}
-      {icon && iconPosition === 'right' && <span style={{ marginLeft: 10, display: 'inline-flex', alignItems: 'center' }}>{icon}</span>}
-      {loading && <span className="inline-block ml-2 animate-spin" style={{ width: 18, height: 18, border: '2px solid var(--color-accent)', borderTop: '2px solid transparent', borderRadius: '50%' }} aria-hidden="true"></span>}
-    </>
-  );
+  let content;
+  if (isLocation) {
+    if (!canUseGeolocation) return null;
+    content = loading ? (
+      <>
+        <Loader size={20} className="animate-spin" />
+        Looking for you...
+      </>
+    ) : (
+      <>
+        <MapPin size={20} />
+        Update location
+      </>
+    );
+  } else {
+    content = (
+      <>
+        {icon && iconPosition === 'left' && <span style={{ marginRight: 10, display: 'inline-flex', alignItems: 'center' }}>{icon}</span>}
+        {children && <span>{children}</span>}
+        {icon && iconPosition === 'right' && <span style={{ marginLeft: 10, display: 'inline-flex', alignItems: 'center' }}>{icon}</span>}
+        {loadingProp && <span className="inline-block ml-2 animate-spin" style={{ width: 18, height: 18, border: '2px solid var(--color-accent)', borderTop: '2px solid transparent', borderRadius: '50%' }} aria-hidden="true"></span>}
+      </>
+    );
+  }
 
   // Icon-only buttons must have aria-label
   const ariaProps = {};
@@ -235,11 +269,11 @@ const Button = React.forwardRef(({
         tabIndex={tabIndex}
         className={allClasses}
         style={mergedStyle}
-        onClick={handleClick}
+        onClick={onClick}
         onKeyDown={e => {
           if ((e.key === 'Enter' || e.key === ' ') && onClick) {
             e.preventDefault();
-            handleClick(e);
+            onClick(e);
           }
         }}
         onMouseEnter={handleMouseEnter}
@@ -256,6 +290,9 @@ const Button = React.forwardRef(({
     );
   }
 
+  // Location variant: override click handler
+  const buttonClick = isLocation ? getCurrentLocation : onClick;
+
   return (
     <motion.button
       ref={ref}
@@ -263,13 +300,13 @@ const Button = React.forwardRef(({
       tabIndex={tabIndex}
       className={allClasses}
       style={mergedStyle}
-      onClick={handleClick}
+      onClick={buttonClick}
       onKeyDown={
         variant === 'icon'
           ? (e) => {
-              if ((e.key === 'Enter' || e.key === ' ') && !disabled && !loading) {
+              if ((e.key === 'Enter' || e.key === ' ') && !disabled && !(isLocation ? loading : loadingProp)) {
                 e.preventDefault();
-                handleClick(e);
+                buttonClick && buttonClick(e);
               }
             }
           : undefined
@@ -278,7 +315,7 @@ const Button = React.forwardRef(({
       onMouseLeave={handleMouseLeave}
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
-      disabled={disabled || loading}
+      disabled={disabled || (isLocation ? loading : loadingProp)}
       {...ariaProps}
       {...props}
       {...motionProps}
@@ -304,6 +341,7 @@ Button.propTypes = {
   className: PropTypes.string,
   style: PropTypes.object,
   tabIndex: PropTypes.number,
+  onLocationFound: PropTypes.func,
 };
 
 export default Button;
