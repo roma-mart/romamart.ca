@@ -3,9 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { ChevronRight, MapPin, Clock, Phone, ExternalLink, Building2 } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
 import CopyButton from '../components/CopyButton';
-import NearestStoreButton from '../components/NearestStoreButton';
 import Button from '../components/Button';
-import { useLocationAware } from '../hooks/useLocationContext';
 import { getActiveLocations, getLocationsByDistance, formatDistance } from '../data/locations';
 import COMPANY_DATA from '../config/company_data';
 
@@ -25,12 +23,6 @@ const LocationsPage = () => {
       if (b.isPrimary) return 1;
       return 0;
     });
-  });
-
-  // Auto-request location when component mounts
-  useLocationAware((position) => {
-    const sorted = getLocationsByDistance(position.coords.latitude, position.coords.longitude);
-    setSortedLocations(sorted);
   });
 
   const locations = sortedLocations.map(loc => ({
@@ -79,24 +71,6 @@ const LocationsPage = () => {
               title="Roma Mart Locations"
               text="Find Roma Mart convenience stores near you in Sarnia!"
               className="bg-[var(--color-accent)] text-[var(--color-primary)] hover:bg-[color-mix(in srgb, var(--color-accent) 85%, transparent)]"
-            />
-            <NearestStoreButton 
-              onLocationFound={(position) => {
-                // Sort locations by distance from user
-                const sorted = getLocationsByDistance(position.coords.latitude, position.coords.longitude);
-                setSortedLocations(sorted);
-                
-                // Scroll to nearest location
-                const nearest = sorted[0];
-                if (nearest) {
-                  const element = document.getElementById(`location-${nearest.id}`);
-                  if (element) {
-                    setTimeout(() => {
-                      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }, 100);
-                  }
-                }
-              }}
             />
           </div>
         </div>
