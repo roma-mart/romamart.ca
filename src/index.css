@@ -101,10 +101,15 @@
   --color-footer: #151515;
 
 
+
   /* Text */
   --color-text: #151515;
   --color-text-muted: #5a5a5a;
   --color-text-on-primary: #fff;
+  --color-on-footer: #f4f4f4;
+  --color-on-footer-muted: #bdbdbd;
+  --color-on-footer-subtle: #888888;
+  --color-on-footer-dark: #001540;
 
   /* Brand colors - semantic usage */
   --color-primary: #020178; /* Navy - headings, primary elements */
@@ -168,6 +173,9 @@
     --color-success: #34D399;
     --color-success-bg: #064E3B;
     --color-footer: #151515;
+    --color-on-footer: #f4f4f4;
+    --color-on-footer-muted: #bdbdbd;
+    --color-on-footer-subtle: #888888;
     --color-text-on-primary: #fff;
   }
 }
