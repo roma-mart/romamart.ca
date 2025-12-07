@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import { motion } from 'framer-motion';
 import PropTypes from 'prop-types';
 import { useVibration } from '../hooks/useBrowserFeatures';
 import { CSS_VARS } from '../utils/theme';
@@ -27,12 +28,17 @@ const VARIANT_STYLES = {
     boxShadow: 'none',
   },
   action: {
-    backgroundColor: 'var(--color-surface)',
-    color: 'var(--color-accent)',
-    fontWeight: 600,
-    fontFamily: CSS_VARS.body,
-    border: '2px solid var(--color-accent)',
-    boxShadow: 'none',
+    backgroundColor: 'var(--color-accent)',
+    color: 'var(--color-primary)',
+    fontWeight: 700,
+    fontFamily: CSS_VARS.heading,
+    border: 'none',
+    borderRadius: '9999px', // fully rounded
+    boxShadow: '0 4px 16px var(--color-accent-shadow, rgba(228,179,64,0.15))',
+    transition: 'all 0.2s',
+    padding: '12px 28px',
+    minHeight: 44,
+    minWidth: 44,
   },
   navlink: {
     backgroundColor: 'var(--color-accent)',
@@ -166,10 +172,48 @@ const Button = React.forwardRef(({
   const allClasses = `button ${variantClass} ${className}`.trim();
 
 
+  // Framer Motion animation props for navlink/order/action variants
+  let motionProps = {};
+  if (variant === 'navlink' || variant === 'order') {
+    motionProps = {
+      whileHover: {
+        scale: variant === 'order' ? 1.05 : 1.0125,
+        boxShadow:
+          variant === 'order'
+            ? '0 8px 24px var(--color-accent-shadow, rgba(228,179,64,0.18))'
+            : '0 4px 12px var(--color-accent-shadow, rgba(228,179,64,0.10))',
+      },
+      whileTap: {
+        scale: variant === 'order' ? 0.97 : 0.99,
+        boxShadow:
+          variant === 'order'
+            ? '0 2px 8px var(--color-accent-shadow, rgba(228,179,64,0.10))'
+            : '0 2px 6px var(--color-accent-shadow, rgba(228,179,64,0.07))',
+      },
+      transition: { type: 'spring', stiffness: 400, damping: 30, duration: 0.18 },
+    };
+  } else if (variant === 'action') {
+    motionProps = {
+      whileHover: {
+        backgroundColor: 'var(--color-accent-hover, #f7d774)',
+        boxShadow: '0 6px 20px var(--color-accent-shadow, rgba(228,179,64,0.18))',
+      },
+      whileFocus: {
+        backgroundColor: 'var(--color-accent-hover, #f7d774)',
+        boxShadow: '0 6px 20px var(--color-accent-shadow, rgba(228,179,64,0.18))',
+      },
+      whileTap: {
+        backgroundColor: 'var(--color-accent)',
+        boxShadow: '0 2px 8px var(--color-accent-shadow, rgba(228,179,64,0.10))',
+      },
+      transition: { duration: 0.18 },
+    };
+  }
+
   // Accessibility: If rendering as <a>, ensure role and keyboard support for non-standard cases
   if (href) {
     return (
-      <a
+      <motion.a
         ref={ref}
         href={href}
         tabIndex={tabIndex}
@@ -189,14 +233,15 @@ const Button = React.forwardRef(({
         role="button"
         {...ariaProps}
         {...props}
+        {...motionProps}
       >
         {content}
-      </a>
+      </motion.a>
     );
   }
 
   return (
-    <button
+    <motion.button
       ref={ref}
       type={type}
       tabIndex={tabIndex}
@@ -210,9 +255,10 @@ const Button = React.forwardRef(({
       disabled={disabled || loading}
       {...ariaProps}
       {...props}
+      {...motionProps}
     >
       {content}
-    </button>
+    </motion.button>
   );
 });
 
