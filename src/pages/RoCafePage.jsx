@@ -2,6 +2,7 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ChevronRight, ChevronDown, Coffee, Wine, UtensilsCrossed, IceCream, Sparkles, AlertTriangle } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
+import Button from '../components/Button';
 import StandardizedItem from '../components/StandardizedItem';
 import { useLocationAware } from '../hooks/useLocationContext';
 import { ROCAFE_FULL_MENU, MENU_CATEGORIES, ALLERGEN_WARNING } from '../data/rocafe-menu';
@@ -206,10 +207,13 @@ const RoCafePage = () => {
               }}
             >
               {/* Category Header */}
-              <button
+              <Button
                 type="button"
+                variant="nav"
                 onClick={categoryHandlers[category.id]}
-                className="w-full p-6 flex items-center justify-between hover:opacity-80 transition-opacity"
+                className="w-full p-6 flex items-center justify-between"
+                style={{ background: 'none', boxShadow: 'none', border: 'none', textAlign: 'left' }}
+                aria-label={`Expand ${category.name} category`}
               >
                 <div className="flex items-center gap-4">
                   <div 
@@ -232,7 +236,7 @@ const RoCafePage = () => {
                   className={`transition-transform ${expandedCategory === category.id ? 'rotate-180' : ''}`}
                   style={{ color: 'var(--color-accent)' }}
                 />
-              </button>
+              </Button>
 
               {/* Category Items (Expandable) */}
               {expandedCategory === category.id && (
@@ -267,36 +271,22 @@ const RoCafePage = () => {
             Come taste the difference! Fresh ingredients, expertly crafted beverages, and friendly service.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <a
+            <Button
               href={`${BASE_URL}locations`}
-              className="px-8 py-4 rounded-full font-bold font-inter transition-transform border-2 shadow-lg"
-              style={{
-                backgroundColor: 'var(--color-accent)',
-                color: 'var(--color-primary)',
-                borderColor: 'var(--color-accent)'
-              }}
-              onMouseOver={e => e.currentTarget.style.backgroundColor = 'rgba(228, 179, 64, 0.85)'}
-              onFocus={e => e.currentTarget.style.backgroundColor = 'rgba(228, 179, 64, 0.85)'}
-              onMouseOut={e => e.currentTarget.style.backgroundColor = 'var(--color-accent)'}
-              onBlur={e => e.currentTarget.style.backgroundColor = 'var(--color-accent)'}
+              variant="navlink"
+              style={{ minWidth: 180 }}
+              analyticsEvent="rocafe_get_directions"
             >
               Get Directions
-            </a>
-            <a
-              href={`${BASE_URL}rocafe`}
-              className="px-8 py-4 rounded-full font-bold font-inter transition-transform border-2"
-              style={{
-                backgroundColor: 'transparent',
-                color: 'var(--color-text-on-primary)',
-                borderColor: 'var(--color-text-on-primary)'
-              }}
-              onMouseOver={e => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)'}
-              onFocus={e => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)'}
-              onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
-              onBlur={e => e.currentTarget.style.backgroundColor = 'transparent'}
+            </Button>
+            <Button
+              href={`${BASE_URL}`}
+              variant="navlink"
+              style={{ minWidth: 180 }}
+              analyticsEvent="rocafe_back_home"
             >
               Back to Home
-            </a>
+            </Button>
           </div>
         </div>
       </section>
