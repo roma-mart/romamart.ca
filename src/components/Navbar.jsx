@@ -1,14 +1,14 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Home, ExternalLink } from 'lucide-react';
 import Button from './Button';
-import { getOrderingUrl } from '../config/ordering';
+import COMPANY_DATA from '../config/company_data';
 import { Logo } from './Logo';
+import { NAVIGATION_LINKS } from '../config/navigation';
 
 
-const STORE_DATA = {
-  onlineStoreUrl: getOrderingUrl()
-};
+// ...existing code...
 
 export default function Navbar() {
     // ...existing state declarations...
@@ -38,7 +38,7 @@ export default function Navbar() {
     // Always navigate to About subpage
     if (subpageUrl && subpageUrl.endsWith('about')) {
       e.preventDefault();
-      window.location.href = subpageUrl;
+      window.location.assign(subpageUrl);
       return;
     }
     if (isHomePage && sectionId) {
@@ -49,7 +49,7 @@ export default function Navbar() {
       }
     } else if (subpageUrl) {
       e.preventDefault();
-      window.location.href = subpageUrl;
+      window.location.assign(subpageUrl);
     }
   };
 
@@ -81,68 +81,26 @@ export default function Navbar() {
             aria-label="Roma Mart - Go to homepage"
           >
             <Logo size={48} />
-            {/* <div className="hidden sm:block leading-tight">
-              <span className="block var(--font-heading) text-xl uppercase" style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-heading)' }}>Roma Mart</span>
-              <span className="block text-xs font-inter font-semibold tracking-wider" style={{ color: 'var(--color-accent)' }}>CONVENIENCE</span>
-            </div> */}
           </a>
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
-            {!isHomePage && (
+            {NAVIGATION_LINKS.filter(link => link.showIn.navbar).map(link => (
               <a
-                href={`${BASE_URL}`}
-                className="font-inter font-medium hover:opacity-80 transition-opacity flex items-center gap-1.5"
+                key={link.href}
+                href={isHomePage && link.href.startsWith('/') && link.href !== '/' ? `${BASE_URL}#${link.href.replace('/', '')}` : `${BASE_URL}${link.href.replace('/', '')}`}
+                onClick={e => handleNavClick(e, link.href !== '/' ? link.href.replace('/', '') : null, `${BASE_URL}${link.href.replace('/', '')}`)}
+                className="font-inter font-medium hover:opacity-80 transition-opacity"
                 style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-text)' }}
-                aria-label="Go to home"
-                title="Home"
+                aria-label={link.ariaLabel || link.label}
+                title={link.label}
               >
-                <Home size={18} />
+                {link.label}
               </a>
-            )}
-            <a
-              href={isHomePage ? `${BASE_URL}#services` : `${BASE_URL}services`}
-              onClick={(e) => handleNavClick(e, 'services', `${BASE_URL}services`)}
-              className="font-inter font-medium hover:opacity-80 transition-opacity"
-                style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-text)' }}
-            >
-              Services
-            </a>
-            <a
-              href={isHomePage ? `${BASE_URL}#rocafe` : `${BASE_URL}rocafe`}
-              onClick={(e) => handleNavClick(e, 'rocafe', `${BASE_URL}rocafe`)}
-              className="font-inter font-medium hover:opacity-80 transition-opacity"
-              style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-text)' }}
-            >
-              RoCafé
-            </a>
-            <a
-              href={isHomePage ? `${BASE_URL}#locations` : `${BASE_URL}locations`}
-              onClick={(e) => handleNavClick(e, 'locations', `${BASE_URL}locations`)}
-              className="font-inter font-medium hover:opacity-80 transition-opacity"
-              style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-text)' }}
-            >
-              Locations
-            </a>
-            <a
-              href={isHomePage ? `${BASE_URL}#contact` : `${BASE_URL}contact`}
-              onClick={(e) => handleNavClick(e, 'contact', `${BASE_URL}contact`)}
-              className="font-inter font-medium hover:opacity-80 transition-opacity"
-              style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-text)' }}
-            >
-              Contact
-            </a>
-            <a
-              href={isHomePage ? `${BASE_URL}about` : `${BASE_URL}about`}
-              onClick={(e) => handleNavClick(e, 'about', `${BASE_URL}about`)}
-              className="font-inter font-medium hover:opacity-80 transition-opacity"
-              style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-text)' }}
-            >
-              About
-            </a>
+            ))}
             <Button
               variant="order"
-              href={STORE_DATA.onlineStoreUrl}
+              href={COMPANY_DATA.onlineStoreUrl}
               target="_blank"
               rel="noopener noreferrer"
               icon={<ExternalLink size={14} />}
@@ -186,65 +144,26 @@ export default function Navbar() {
             style={{ backgroundColor: isHomePage && !scrolled ? 'var(--color-primary)' : 'var(--color-bg)', borderColor: 'var(--color-surface)' }}
           >
             <div className="px-4 pt-2 pb-6 space-y-1">
-              {!isHomePage && (
+              {NAVIGATION_LINKS.filter(link => link.showIn.navbar).map(link => (
                 <a
-                  href={`${BASE_URL}`}
-                  onClick={handleMenuClose}
+                  key={link.href}
+                  href={isHomePage && link.href.startsWith('/') && link.href !== '/' ? `${BASE_URL}#${link.href.replace('/', '')}` : `${BASE_URL}${link.href.replace('/', '')}`}
+                  onClick={e => { handleNavClick(e, link.href !== '/' ? link.href.replace('/', '') : null, `${BASE_URL}${link.href.replace('/', '')}`); handleMenuClose(); }}
                   onKeyDown={e => {
                     if (e.key === 'Enter' || e.key === ' ') {
                       e.preventDefault();
                       handleMenuClose();
                     }
                   }}
-                  className="px-3 py-4 text-lg font-bold var(--font-heading) uppercase border-b flex items-center gap-2"
-                    style={{ color: 'var(--color-heading)', borderColor: 'var(--color-surface)' }}
+                  className="block px-3 py-4 text-lg font-bold var(--font-heading) uppercase border-b"
+                  style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-heading)', borderColor: 'var(--color-surface)' }}
+                  aria-label={link.ariaLabel || link.label}
                 >
-                  <Home size={20} /> Home
+                  {link.label}
                 </a>
-              )}
+              ))}
               <a
-                href={isHomePage ? `${BASE_URL}#services` : `${BASE_URL}services`}
-                onClick={(e) => handleNavClick(e, 'services', `${BASE_URL}services`)}
-                className="block px-3 py-4 text-lg font-bold var(--font-heading) uppercase border-b"
-                style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-heading)', borderColor: 'var(--color-surface)' }}
-              >
-                Services
-              </a>
-              <a
-                href={isHomePage ? `${BASE_URL}#rocafe` : `${BASE_URL}rocafe`}
-                onClick={(e) => handleNavClick(e, 'rocafe', `${BASE_URL}rocafe`)}
-                className="block px-3 py-4 text-lg font-bold var(--font-heading) uppercase border-b"
-                style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-heading)', borderColor: 'var(--color-surface)' }}
-              >
-                RoCafé
-              </a>
-              <a
-                href={isHomePage ? `${BASE_URL}#locations` : `${BASE_URL}locations`}
-                onClick={(e) => handleNavClick(e, 'locations', `${BASE_URL}locations`)}
-                className="block px-3 py-4 text-lg font-bold var(--font-heading) uppercase border-b"
-                style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-heading)', borderColor: 'var(--color-surface)' }}
-              >
-                Locations
-              </a>
-              <a
-                href={isHomePage ? `${BASE_URL}#contact` : `${BASE_URL}contact`}
-                onClick={(e) => handleNavClick(e, 'contact', `${BASE_URL}contact`)}
-                className="block px-3 py-4 text-lg font-bold var(--font-heading) uppercase border-b"
-                style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-heading)', borderColor: 'var(--color-surface)' }}
-              >
-                Contact
-              </a>
-              <a
-                href={`${BASE_URL}about`}
-                onClick={(e) => handleNavClick(e, null, `${BASE_URL}about`)}
-                className="block px-3 py-4 text-lg font-bold var(--font-heading) uppercase border-b"
-                style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-heading)', borderColor: 'var(--color-surface)' }}
-                aria-label="About Roma Mart"
-              >
-                About
-              </a>
-              <a
-                href={STORE_DATA.onlineStoreUrl}
+                href={COMPANY_DATA.onlineStoreUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={handleOrderClick}
