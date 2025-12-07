@@ -1,7 +1,23 @@
 /**
  * Unified Button Component for Roma Mart 2.0
  * Supports: variants, haptic feedback, analytics, accessibility, icon, design tokens, responsive styles
- * Usage: <Button variant="order" icon={<Icon />} analyticsEvent="order_cta" onClick={...}>Order Now</Button>
+ * Accessibility: All variants support keyboard activation (Enter/Space) and focus-visible styles.
+ * Usage Example:
+ * <Button
+ *   variant="order"
+ *   icon={<Icon />}
+ *   analyticsEvent="order_cta"
+ *   onClick={handleOrderClick}
+ *   onKeyDown={e => {
+ *     if (e.key === 'Enter' || e.key === ' ') {
+ *       e.preventDefault();
+ *       handleOrderClick(e);
+ *     }
+ *   }}
+ *   aria-label="Order Now"
+ * >
+ *   Order Now
+ * </Button>
  */
 
 import React from 'react';
@@ -248,6 +264,16 @@ const Button = React.forwardRef(({
       className={allClasses}
       style={mergedStyle}
       onClick={handleClick}
+      onKeyDown={
+        variant === 'icon'
+          ? (e) => {
+              if ((e.key === 'Enter' || e.key === ' ') && !disabled && !loading) {
+                e.preventDefault();
+                handleClick(e);
+              }
+            }
+          : undefined
+      }
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onMouseDown={handleMouseDown}

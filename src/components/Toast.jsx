@@ -64,6 +64,12 @@ const Toast = ({ message, type = 'info', duration = 3000, onClose }) => {
         type="button"
         variant="icon"
         onClick={onClose}
+        onKeyDown={e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onClose(e);
+          }
+        }}
         aria-label="Close notification"
         style={{ padding: 0, backgroundColor: 'transparent', color: 'var(--color-text)' }}
         className="hover:opacity-70 transition-opacity"

@@ -207,6 +207,12 @@ const PWAInstallPrompt = () => {
           <button
             type="button"
             onClick={handleDismiss}
+            onKeyDown={e => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleDismiss(e);
+              }
+            }}
             className="transition-colors p-1 rounded-full hover:bg-white/10 focus-visible:bg-white/20"
             style={{ color: 'white' }}
             aria-label="Dismiss install prompt"
@@ -252,6 +258,12 @@ const PWAInstallPrompt = () => {
               className="flex-1 font-bold"
               style={{ backgroundColor: 'var(--color-primary)', color: 'var(--color-accent)' }}
               onClick={handleInstall}
+              onKeyDown={e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleInstall(e);
+                }
+              }}
               aria-label="Install App"
             >
               Install App
@@ -262,6 +274,12 @@ const PWAInstallPrompt = () => {
               className="px-4 py-3 font-semibold"
               style={{ color: 'var(--color-text)', backgroundColor: 'var(--color-surface)' }}
               onClick={handleDismiss}
+              onKeyDown={e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleDismiss(e);
+                }
+              }}
               aria-label="Not Now"
             >
               Not Now
