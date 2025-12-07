@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Home, ExternalLink } from 'lucide-react';
 import Button from './Button';
@@ -20,6 +20,7 @@ const STORE_DATA = {
 };
 
 export default function Navbar() {
+    // ...existing state declarations...
   const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -55,7 +56,7 @@ export default function Navbar() {
     }
   };
 
-  const trackOrderClick = (location) => {
+  const trackOrderClick = useCallback((location) => {
     if (window.dataLayer) {
       window.dataLayer.push({
         event: 'order_cta_click',
@@ -63,7 +64,11 @@ export default function Navbar() {
         cta_text: 'Order Online'
       });
     }
-  };
+  }, []);
+
+    const toggleMenu = useCallback(() => setIsOpen(prev => !prev), []);
+    const handleMenuClose = useCallback(() => setIsOpen(false), []);
+    const handleOrderClick = useCallback(() => trackOrderClick('header_mobile'), [trackOrderClick]);
 
   return (
     <nav
@@ -156,7 +161,13 @@ export default function Navbar() {
 
           {/* Mobile Menu Button */}
           <button
-            onClick={() => setIsOpen(!isOpen)}
+            onClick={toggleMenu}
+            onKeyDown={e => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleMenu();
+              }
+            }}
             className="md:hidden p-2 rounded-md"
             style={{ color: scrolled ? BRAND.heading : BRAND.white }}
             aria-label={isOpen ? "Close menu" : "Open menu"}
@@ -181,7 +192,13 @@ export default function Navbar() {
               {!isHomePage && (
                 <a
                   href={`${BASE_URL}`}
-                  onClick={() => setIsOpen(false)}
+                  onClick={handleMenuClose}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      handleMenuClose();
+                    }
+                  }}
                   className="px-3 py-4 text-lg font-bold var(--font-heading) uppercase border-b flex items-center gap-2"
                     style={{ color: 'var(--color-heading)', borderColor: 'var(--color-surface)' }}
                 >
@@ -232,7 +249,13 @@ export default function Navbar() {
                 href={STORE_DATA.onlineStoreUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={() => trackOrderClick('header_mobile')}
+                onClick={handleOrderClick}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleOrderClick();
+                  }
+                }}
                 className="block px-3 py-4 text-center rounded-lg font-bold var(--font-heading) uppercase mt-4"
                 style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)' }}
               >
