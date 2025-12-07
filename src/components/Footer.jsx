@@ -185,35 +185,38 @@ export default function Footer() {
         </div>
 
         <div>
-          <h4 className="font-heading text-lg mb-6" style={{ color: 'var(--color-on-footer)' }}>Pages</h4>
-          <ul className="space-y-3 font-inter" style={{ color: 'var(--color-on-footer-muted)' }}>
-            <li><a href={`${BASE_URL}services`} className="transition-colors" style={{ color: 'var(--color-link)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-link)'}>Services</a></li>
-            <li><a href={`${BASE_URL}rocafe`} className="transition-colors" style={{ color: 'var(--color-link)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-link)'}>RoCafé Menu</a></li>
-            <li><a href={`${BASE_URL}locations`} className="transition-colors" style={{ color: 'var(--color-link)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-link)'}>Locations</a></li>
-            <li><a href={`${BASE_URL}contact`} className="transition-colors" style={{ color: 'var(--color-link)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-link)'}>Contact</a></li>
-            <li><a href={`${BASE_URL}about`} className="transition-colors" style={{ color: 'var(--color-link)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-link)'}>About Us</a></li>
-            <li><a href={STORE_DATA.onlineStoreUrl} target="_blank" rel="noopener noreferrer" className="font-bold transition-colors" style={{ color: 'var(--color-accent)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-accent)'}>Order Online</a></li>
-          </ul>
-        </div>
-
-        <div>
-          <h4 className="font-heading text-lg mb-6" style={{ color: 'var(--color-on-footer)' }}>Legal & Accessibility</h4>
-          <ul className="space-y-2 font-inter" style={{ color: 'var(--color-on-footer-muted)' }}>
-            <li><a href={`${BASE_URL}privacy`} className="transition-colors" style={{ color: 'var(--color-link)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-link)'}>Privacy Policy</a></li>
-            <li><a href={`${BASE_URL}terms`} className="transition-colors" style={{ color: 'var(--color-link)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-link)'}>Terms of Service</a></li>
-            <li><a href={`${BASE_URL}cookies`} className="transition-colors" style={{ color: 'var(--color-link)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-link)'}>Cookie Policy</a></li>
-            <li><a href={`${BASE_URL}accessibility`} className="font-bold transition-colors" style={{ color: 'var(--color-accent)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-accent)'}>Accessibility</a></li>
-          </ul>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+              <h4 className="font-heading text-lg mb-6" style={{ color: 'var(--color-on-footer)' }}>Pages</h4>
+              <ul className="space-y-3 font-inter" style={{ color: 'var(--color-on-footer-muted)' }}>
+                <li><a href={`${BASE_URL}services`} className="transition-colors" style={{ color: 'var(--color-link)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-link)'}>Services</a></li>
+                <li><a href={`${BASE_URL}rocafe`} className="transition-colors" style={{ color: 'var(--color-link)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-link)'}>RoCafé Menu</a></li>
+                <li><a href={`${BASE_URL}locations`} className="transition-colors" style={{ color: 'var(--color-link)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-link)'}>Locations</a></li>
+                <li><a href={`${BASE_URL}contact`} className="transition-colors" style={{ color: 'var(--color-link)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-link)'}>Contact</a></li>
+                <li><a href={`${BASE_URL}about`} className="transition-colors" style={{ color: 'var(--color-link)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-link)'}>About Us</a></li>
+                <li><a href={STORE_DATA.onlineStoreUrl} target="_blank" rel="noopener noreferrer" className="font-bold transition-colors" style={{ color: 'var(--color-accent)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-accent)'}>Order Online</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-heading text-lg mb-6" style={{ color: 'var(--color-on-footer)' }}>Legal & Accessibility</h4>
+              <ul className="space-y-2 font-inter" style={{ color: 'var(--color-on-footer-muted)' }}>
+                <li><a href={`${BASE_URL}privacy`} className="transition-colors" style={{ color: 'var(--color-link)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-link)'}>Privacy Policy</a></li>
+                <li><a href={`${BASE_URL}terms`} className="transition-colors" style={{ color: 'var(--color-link)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-link)'}>Terms of Service</a></li>
+                <li><a href={`${BASE_URL}cookies`} className="transition-colors" style={{ color: 'var(--color-link)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-link)'}>Cookie Policy</a></li>
+                <li><a href={`${BASE_URL}accessibility`} className="font-bold transition-colors" style={{ color: 'var(--color-accent)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--color-accent)'}>Accessibility</a></li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 pt-8" style={{ borderTop: '1px solid var(--color-border-muted)' }}>
-        <div className="mb-8">
+        <div className="mb-8 flex justify-center items-center">
           <TrustpilotWidget />
         </div>
 
         <div className="mb-8 max-w-md mx-auto">
-          <div className="rounded-lg p-4" style={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border-muted)' }}>
+          <div className="rounded-lg p-4" style={{ backgroundColor: 'var(--color-footer)', border: '.5px solid var(--color-border)' }}>
             <label 
               htmlFor="location-selector" 
               className="block font-heading text-sm mb-3"
