@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Home, ExternalLink } from 'lucide-react';
@@ -7,11 +6,7 @@ import COMPANY_DATA from '../config/company_data';
 import { Logo } from './Logo';
 import { NAVIGATION_LINKS } from '../config/navigation';
 
-
-// ...existing code...
-
 export default function Navbar() {
-    // ...existing state declarations...
   const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -63,9 +58,9 @@ export default function Navbar() {
     }
   }, []);
 
-    const toggleMenu = useCallback(() => setIsOpen(prev => !prev), []);
-    const handleMenuClose = useCallback(() => setIsOpen(false), []);
-    const handleOrderClick = useCallback(() => trackOrderClick('header_mobile'), [trackOrderClick]);
+  const toggleMenu = useCallback(() => setIsOpen(prev => !prev), []);
+  const handleMenuClose = useCallback(() => setIsOpen(false), []);
+  const handleOrderClick = useCallback(() => trackOrderClick('header_mobile'), [trackOrderClick]);
 
   return (
     <nav
@@ -85,10 +80,23 @@ export default function Navbar() {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
-            {NAVIGATION_LINKS.filter(link => link.showIn.navbar).map(link => (
+            {/* Only show Home button if NOT on homepage */}
+            {!isHomePage && (
+              <a
+                key="home"
+                href={BASE_URL}
+                className="font-inter font-medium hover:opacity-80 transition-opacity flex items-center gap-2"
+                style={{ color: 'var(--color-text)' }}
+                aria-label="Go to homepage"
+                title="Home"
+              >
+                <Home size={20} />
+              </a>
+            )}
+            {NAVIGATION_LINKS.filter(link => link.showIn.navbar && link.href !== '/').map(link => (
               <a
                 key={link.href}
-                href={isHomePage && link.href.startsWith('/') && link.href !== '/' ? `${BASE_URL}#${link.href.replace('/', '')}` : `${BASE_URL}${link.href.replace('/', '')}`}
+                href={isHomePage && link.href.startsWith('/') ? `${BASE_URL}#${link.href.replace('/', '')}` : `${BASE_URL}${link.href.replace('/', '')}`}
                 onClick={e => handleNavClick(e, link.href !== '/' ? link.href.replace('/', '') : null, `${BASE_URL}${link.href.replace('/', '')}`)}
                 className="font-inter font-medium hover:opacity-80 transition-opacity"
                 style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-text)' }}
@@ -144,10 +152,24 @@ export default function Navbar() {
             style={{ backgroundColor: isHomePage && !scrolled ? 'var(--color-primary)' : 'var(--color-bg)', borderColor: 'var(--color-surface)' }}
           >
             <div className="px-4 pt-2 pb-6 space-y-1">
-              {NAVIGATION_LINKS.filter(link => link.showIn.navbar).map(link => (
+              {/* Only show Home button if NOT on homepage */}
+              {!isHomePage && (
+                <a
+                  key="home"
+                  href={BASE_URL}
+                  className="block px-3 py-4 text-lg font-bold var(--font-heading) uppercase border-b flex items-center gap-2"
+                  style={{ color: 'var(--color-heading)', borderColor: 'var(--color-surface)' }}
+                  aria-label="Go to homepage"
+                  title="Home"
+                  onClick={handleMenuClose}
+                >
+                  <Home size={20} />
+                </a>
+              )}
+              {NAVIGATION_LINKS.filter(link => link.showIn.navbar && link.href !== '/').map(link => (
                 <a
                   key={link.href}
-                  href={isHomePage && link.href.startsWith('/') && link.href !== '/' ? `${BASE_URL}#${link.href.replace('/', '')}` : `${BASE_URL}${link.href.replace('/', '')}`}
+                  href={isHomePage && link.href.startsWith('/') ? `${BASE_URL}#${link.href.replace('/', '')}` : `${BASE_URL}${link.href.replace('/', '')}`}
                   onClick={e => { handleNavClick(e, link.href !== '/' ? link.href.replace('/', '') : null, `${BASE_URL}${link.href.replace('/', '')}`); handleMenuClose(); }}
                   onKeyDown={e => {
                     if (e.key === 'Enter' || e.key === ' ') {
@@ -158,6 +180,7 @@ export default function Navbar() {
                   className="block px-3 py-4 text-lg font-bold var(--font-heading) uppercase border-b"
                   style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-heading)', borderColor: 'var(--color-surface)' }}
                   aria-label={link.ariaLabel || link.label}
+                  title={link.label}
                 >
                   {link.label}
                 </a>
