@@ -134,20 +134,20 @@ export default function Navbar() {
               Locations
             </a>
             <a
-              href={isHomePage ? `${BASE_URL}about` : `${BASE_URL}about`}
-              onClick={(e) => handleNavClick(e, 'about', `${BASE_URL}about`)}
-              className="font-inter font-medium hover:opacity-80 transition-opacity"
-              style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : BRAND.text }}
-            >
-              About
-            </a>
-            <a
               href={isHomePage ? `${BASE_URL}#contact` : `${BASE_URL}contact`}
               onClick={(e) => handleNavClick(e, 'contact', `${BASE_URL}contact`)}
               className="font-inter font-medium hover:opacity-80 transition-opacity"
               style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : BRAND.text }}
             >
               Contact
+            </a>
+            <a
+              href={isHomePage ? `${BASE_URL}about` : `${BASE_URL}about`}
+              onClick={(e) => handleNavClick(e, 'about', `${BASE_URL}about`)}
+              className="font-inter font-medium hover:opacity-80 transition-opacity"
+              style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : BRAND.text }}
+            >
+              About
             </a>
             <Button
               variant="order"
@@ -235,15 +235,6 @@ export default function Navbar() {
               >
                 Locations
               </a>
-                <a
-                  href={`${BASE_URL}about`}
-                  onClick={(e) => handleNavClick(e, null, `${BASE_URL}about`)}
-                  className="block px-3 py-4 text-lg font-bold var(--font-heading) uppercase border-b"
-                  style={{ color: 'var(--color-heading)', borderColor: 'var(--color-surface)' }}
-                  aria-label="About Roma Mart"
-                >
-                  About
-                </a>
               <a
                 href={isHomePage ? `${BASE_URL}#contact` : `${BASE_URL}contact`}
                 onClick={(e) => handleNavClick(e, 'contact', `${BASE_URL}contact`)}
@@ -251,6 +242,15 @@ export default function Navbar() {
                 style={{ color: 'var(--color-heading)', borderColor: 'var(--color-surface)' }}
               >
                 Contact
+              </a>
+              <a
+                href={`${BASE_URL}about`}
+                onClick={(e) => handleNavClick(e, null, `${BASE_URL}about`)}
+                className="block px-3 py-4 text-lg font-bold var(--font-heading) uppercase border-b"
+                style={{ color: 'var(--color-heading)', borderColor: 'var(--color-surface)' }}
+                aria-label="About Roma Mart"
+              >
+                About
               </a>
               <a
                 href={STORE_DATA.onlineStoreUrl}
