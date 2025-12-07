@@ -38,6 +38,7 @@ import tokens from '../design/tokens';
 
 const StandardizedItem = ({ item, defaultExpanded = false }) => {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
+  // Use nearestLocation from context (now computed from userLocation)
   const { nearestLocation } = useLocationContext();
 
   // Destructure item data  
