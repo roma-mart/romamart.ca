@@ -5,15 +5,6 @@ import Button from './Button';
 import { getOrderingUrl } from '../config/ordering';
 import { Logo } from './Logo';
 
-const BRAND = {
-  primary: 'var(--color-primary)',
-  accent: 'var(--color-accent)',
-  heading: 'var(--color-heading)',
-  bg: 'var(--color-bg)',
-  surface: 'var(--color-surface)',
-  text: 'var(--color-text)',
-  white: 'var(--color-primary)'
-};
 
 const STORE_DATA = {
   onlineStoreUrl: getOrderingUrl()
@@ -79,7 +70,7 @@ export default function Navbar() {
   return (
     <nav
       className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'shadow-md py-2' : 'py-4'}`}
-      style={{ backgroundColor: scrolled ? 'var(--color-bg)' : 'transparent' }}
+      style={{ backgroundColor: isOpen ? (isHomePage && !scrolled ? 'var(--color-primary)' : 'var(--color-bg)') : (scrolled ? 'var(--color-bg)' : 'transparent') }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
@@ -91,8 +82,8 @@ export default function Navbar() {
           >
             <Logo size={48} />
             {/* <div className="hidden sm:block leading-tight">
-              <span className="block var(--font-heading) text-xl uppercase" style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : BRAND.heading }}>Roma Mart</span>
-              <span className="block text-xs font-inter font-semibold tracking-wider" style={{ color: BRAND.accent }}>CONVENIENCE</span>
+              <span className="block var(--font-heading) text-xl uppercase" style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-heading)' }}>Roma Mart</span>
+              <span className="block text-xs font-inter font-semibold tracking-wider" style={{ color: 'var(--color-accent)' }}>CONVENIENCE</span>
             </div> */}
           </a>
 
@@ -102,7 +93,7 @@ export default function Navbar() {
               <a
                 href={`${BASE_URL}`}
                 className="font-inter font-medium hover:opacity-80 transition-opacity flex items-center gap-1.5"
-                style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : BRAND.text }}
+                style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-text)' }}
                 aria-label="Go to home"
                 title="Home"
               >
@@ -113,7 +104,7 @@ export default function Navbar() {
               href={isHomePage ? `${BASE_URL}#services` : `${BASE_URL}services`}
               onClick={(e) => handleNavClick(e, 'services', `${BASE_URL}services`)}
               className="font-inter font-medium hover:opacity-80 transition-opacity"
-              style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : BRAND.text }}
+                style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-text)' }}
             >
               Services
             </a>
@@ -121,7 +112,7 @@ export default function Navbar() {
               href={isHomePage ? `${BASE_URL}#rocafe` : `${BASE_URL}rocafe`}
               onClick={(e) => handleNavClick(e, 'rocafe', `${BASE_URL}rocafe`)}
               className="font-inter font-medium hover:opacity-80 transition-opacity"
-              style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : BRAND.text }}
+              style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-text)' }}
             >
               RoCafé
             </a>
@@ -129,7 +120,7 @@ export default function Navbar() {
               href={isHomePage ? `${BASE_URL}#locations` : `${BASE_URL}locations`}
               onClick={(e) => handleNavClick(e, 'locations', `${BASE_URL}locations`)}
               className="font-inter font-medium hover:opacity-80 transition-opacity"
-              style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : BRAND.text }}
+              style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-text)' }}
             >
               Locations
             </a>
@@ -137,7 +128,7 @@ export default function Navbar() {
               href={isHomePage ? `${BASE_URL}#contact` : `${BASE_URL}contact`}
               onClick={(e) => handleNavClick(e, 'contact', `${BASE_URL}contact`)}
               className="font-inter font-medium hover:opacity-80 transition-opacity"
-              style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : BRAND.text }}
+              style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-text)' }}
             >
               Contact
             </a>
@@ -145,7 +136,7 @@ export default function Navbar() {
               href={isHomePage ? `${BASE_URL}about` : `${BASE_URL}about`}
               onClick={(e) => handleNavClick(e, 'about', `${BASE_URL}about`)}
               className="font-inter font-medium hover:opacity-80 transition-opacity"
-              style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : BRAND.text }}
+              style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-text)' }}
             >
               About
             </a>
@@ -175,7 +166,7 @@ export default function Navbar() {
               }
             }}
             className="md:hidden p-2 rounded-md"
-            style={{ color: scrolled ? BRAND.heading : BRAND.white }}
+            style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-heading)' }}
             aria-label={isOpen ? "Close menu" : "Open menu"}
             aria-expanded={isOpen}
           >
@@ -191,8 +182,8 @@ export default function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden border-t absolute w-full shadow-xl"
-            style={{ backgroundColor: 'var(--color-bg)', borderColor: 'var(--color-surface)' }}
+            className="md:hidden border-t absolute w-full shadow-2xl"
+            style={{ backgroundColor: isHomePage && !scrolled ? 'var(--color-primary)' : 'var(--color-bg)', borderColor: 'var(--color-surface)' }}
           >
             <div className="px-4 pt-2 pb-6 space-y-1">
               {!isHomePage && (
@@ -215,7 +206,7 @@ export default function Navbar() {
                 href={isHomePage ? `${BASE_URL}#services` : `${BASE_URL}services`}
                 onClick={(e) => handleNavClick(e, 'services', `${BASE_URL}services`)}
                 className="block px-3 py-4 text-lg font-bold var(--font-heading) uppercase border-b"
-                  style={{ color: 'var(--color-heading)', borderColor: 'var(--color-surface)' }}
+                style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-heading)', borderColor: 'var(--color-surface)' }}
               >
                 Services
               </a>
@@ -223,7 +214,7 @@ export default function Navbar() {
                 href={isHomePage ? `${BASE_URL}#rocafe` : `${BASE_URL}rocafe`}
                 onClick={(e) => handleNavClick(e, 'rocafe', `${BASE_URL}rocafe`)}
                 className="block px-3 py-4 text-lg font-bold var(--font-heading) uppercase border-b"
-                  style={{ color: 'var(--color-heading)', borderColor: 'var(--color-surface)' }}
+                style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-heading)', borderColor: 'var(--color-surface)' }}
               >
                 RoCafé
               </a>
@@ -231,7 +222,7 @@ export default function Navbar() {
                 href={isHomePage ? `${BASE_URL}#locations` : `${BASE_URL}locations`}
                 onClick={(e) => handleNavClick(e, 'locations', `${BASE_URL}locations`)}
                 className="block px-3 py-4 text-lg font-bold var(--font-heading) uppercase border-b"
-                  style={{ color: 'var(--color-heading)', borderColor: 'var(--color-surface)' }}
+                style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-heading)', borderColor: 'var(--color-surface)' }}
               >
                 Locations
               </a>
@@ -239,7 +230,7 @@ export default function Navbar() {
                 href={isHomePage ? `${BASE_URL}#contact` : `${BASE_URL}contact`}
                 onClick={(e) => handleNavClick(e, 'contact', `${BASE_URL}contact`)}
                 className="block px-3 py-4 text-lg font-bold var(--font-heading) uppercase border-b"
-                style={{ color: 'var(--color-heading)', borderColor: 'var(--color-surface)' }}
+                style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-heading)', borderColor: 'var(--color-surface)' }}
               >
                 Contact
               </a>
@@ -247,7 +238,7 @@ export default function Navbar() {
                 href={`${BASE_URL}about`}
                 onClick={(e) => handleNavClick(e, null, `${BASE_URL}about`)}
                 className="block px-3 py-4 text-lg font-bold var(--font-heading) uppercase border-b"
-                style={{ color: 'var(--color-heading)', borderColor: 'var(--color-surface)' }}
+                style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-heading)', borderColor: 'var(--color-surface)' }}
                 aria-label="About Roma Mart"
               >
                 About
