@@ -214,10 +214,6 @@ export default function Footer() {
                   </li>
                 ))}
               </ul>
-              {/* Add NearestStoreButton below legal links, inside locations/info box */}
-              <div className="mt-8">
-                <NearestStoreButton />
-              </div>
             </div>
         </div>
       </div>
@@ -271,6 +267,9 @@ export default function Footer() {
               ) : (
                 <span>✓ Manually selected: {currentLocation.name}</span>
               )}
+              <div className="mt-8 flex justify-center">
+                <NearestStoreButton />
+              </div>
             </div>
           </div>
         </div>
