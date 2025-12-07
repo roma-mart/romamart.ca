@@ -8,6 +8,8 @@ import TrustpilotWidget from './TrustpilotWidget';
 import { useLocationContext } from '../hooks/useLocationContext';
 import { LOCATIONS, getActiveLocations, getPrimaryLocation } from '../data/locations';
 
+import OrderCTA from './OrderCTA';
+
 
 
 const STORE_DATA = {
@@ -102,8 +104,11 @@ export default function Footer() {
   }), []);
 
   return (
-    <footer className="pt-16 pb-8" style={{ backgroundColor: 'var(--color-footer)', color: 'var(--color-on-footer)' }}>
-      <div className="max-w-7xl mx-auto px-4 grid md:grid-cols-4 gap-12 mb-12">
+    <>
+      {/* Persistent floating OrderCTA button for site-wide visibility */}
+      <OrderCTA />
+      <footer className="pt-16 pb-8" style={{ backgroundColor: 'var(--color-footer)', color: 'var(--color-on-footer)' }}>
+        <div className="max-w-7xl mx-auto px-4 grid md:grid-cols-4 gap-12 mb-12">
         <div className="col-span-1 md:col-span-2">
            <a 
              href={`${BASE_URL}`}
@@ -267,6 +272,7 @@ export default function Footer() {
           <p>&copy; {new Date().getFullYear()} {STORE_DATA.legalName} All rights reserved.</p>
         </div>
       </div>
-    </footer>
+      </footer>
+    </>
   );
 }

@@ -450,13 +450,16 @@ const ContactSection = () => {
                 ></textarea>
               </div>
 
-              <button 
+              <Button
                 type="submit"
-                className="w-full py-4 rounded-xl font-bold font-inter text-white flex items-center justify-center gap-2 hover:opacity-90 transition-opacity shadow-lg"
+                variant="action"
+                icon={<Send size={18} />}
+                className="w-full py-4 rounded-xl font-bold font-inter flex items-center justify-center gap-2"
                 style={{ backgroundColor: 'var(--color-accent)' }}
+                aria-label="Send Message"
               >
-                Send Message <Send size={18} />
-              </button>
+                Send Message
+              </Button>
             </form>
           </div>
         </div>

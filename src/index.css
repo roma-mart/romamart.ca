@@ -108,7 +108,7 @@
   --color-text-on-primary: #fff;
   --color-on-footer: #f4f4f4;
   --color-on-footer-muted: #bdbdbd;
-  --color-on-footer-subtle: #888888;
+  --color-on-footer-subtle: #888;
   --color-on-footer-dark: #001540;
 
   /* Brand colors - semantic usage */
@@ -175,7 +175,7 @@
     --color-footer: #151515;
     --color-on-footer: #f4f4f4;
     --color-on-footer-muted: #bdbdbd;
-    --color-on-footer-subtle: #888888;
+    --color-on-footer-subtle: #888;
     --color-text-on-primary: #fff;
   }
 }
@@ -236,6 +236,7 @@ body {
   0% { opacity: 0; transform: scale(0.9) translateY(20px); }
   100% { opacity: 1; transform: scale(1) translateY(0); }
 }
+
 @keyframes fab-out {
   0% { opacity: 1; transform: scale(1) translateY(0); }
   100% { opacity: 0; transform: scale(0.9) translateY(20px); }
@@ -291,6 +292,6 @@ body {
 .button.order:hover,
 .button.order:focus-visible {
   transform: scale(1.05);
-  box-shadow: 0 8px 24px rgba(228,179,64,0.18);
+  box-shadow: 0 8px 24px rgb(228 179 64 / 18%);
   transition: transform 0.2s, box-shadow 0.2s;
 }
