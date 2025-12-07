@@ -11,13 +11,14 @@
       /* fallback colors if CSS vars unavailable */
       --color-primary: #020178;
       --color-accent: #E4B340;
-      --color-text: #151515;
-      --color-bg: #ffffff;
+      --color-text: #ffffff;
+      --color-bg: #151515;
+      --color-text-on-primary: #fff;
     }
     body {
       font-family: 'Outfit', 'Inter', sans-serif;
       background: linear-gradient(135deg, var(--color-primary) 0%, rgba(2,1,120,0.85) 100%);
-      color: #ffffff;
+      color: var(--color-text-on-primary);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -37,7 +38,7 @@
     p { font-size: 1.2rem; line-height: 1.6; margin-bottom: 30px; opacity: 0.9; }
     .info-box {
       background: rgba(255, 255, 255, 0.1);
-      border: 2px solid rgba(228, 179, 64, 0.3);
+      border: 2px solid var(--color-accent);
       border-radius: 15px; padding: 30px; margin: 30px 0;
       -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
     }
@@ -46,9 +47,10 @@
     .button {
       display: inline-block; background: var(--color-accent); color: var(--color-primary);
       padding: 15px 40px; border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 1.1rem;
-      transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 5px 15px rgba(228, 179, 64, 0.3);
+      transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 5px 15px var(--color-accent);
     }
     .button:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(228, 179, 64, 0.4); }
+      .button:hover { transform: translateY(-2px); box-shadow: 0 8px 20px var(--color-accent); }
     .offline-icon { font-size: 4rem; margin-bottom: 20px; opacity: 0.7; }
     @media (max-width: 768px) {
       h1 { font-size: 2rem; }
@@ -58,11 +60,11 @@
   </style>
 </head>
 <body>
-  <div class="container">
+  <main class="container" role="main" tabindex="-1">
     <div class="logo" aria-label="Roma Mart Logo">RM</div>
     <div class="offline-icon" aria-hidden="true">📡</div>
     <h1>You're Offline</h1>
-    <p>It looks like you've lost your internet connection. Don't worry - some pages you've visited are still available!</p>
+    <p>It looks like you've lost your internet connection.</p>
     <div class="info-box">
       <h3 id="location-name">Roma Mart Convenience</h3>
       <div class="contact-item">
@@ -87,7 +89,7 @@
     </div>
     <a href="javascript:window.location.reload()" class="button" aria-label="Try reloading the page">Try Again</a>
     <p id="location-distance">This page works offline. Once you're back online, you'll have full access to our website.</p>
-  </div>
+  </main>
   <script>
     (function() {
       const LOCATIONS = [
