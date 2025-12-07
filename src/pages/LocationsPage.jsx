@@ -8,13 +8,10 @@ import { useLocationAware } from '../hooks/useLocationContext';
 import { getActiveLocations, getLocationsByDistance, formatDistance } from '../data/locations';
 
 const LocationsPage = () => {
-  const COLORS = {
-    navy: 'var(--color-primary)',
-    yellow: 'var(--color-accent)',
-  };
+
 
   const textColor = { color: 'var(--color-text)' };
-  const mutedTextColor = { color: 'var(--color-text)', opacity: 0.7 };
+  const mutedTextColor = { color: 'var(--color-text-muted)' };
 
   const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
 
@@ -69,7 +66,7 @@ const LocationsPage = () => {
         <div className="flex flex-wrap items-start justify-between gap-4 mb-6">
           <div>
             <h1 className="text-4xl md:text-5xl var(--font-heading) uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
-              Our <span style={{ color: COLORS.yellow }}>Locations</span>
+              Our <span style={{ color: 'var(--color-accent)' }}>Locations</span>
             </h1>
             <p className="text-lg font-inter leading-relaxed max-w-3xl" style={textColor}>
               Visit us at any of our convenient locations. We're here to serve you with quality products and exceptional service.
@@ -79,7 +76,7 @@ const LocationsPage = () => {
             <ShareButton 
               title="Roma Mart Locations"
               text="Find Roma Mart convenience stores near you in Sarnia!"
-              className="bg-yellow-500 text-gray-900 hover:bg-yellow-600"
+              className="bg-[var(--color-accent)] text-[var(--color-primary)] hover:bg-[color-mix(in srgb, var(--color-accent) 85%, transparent)]"
             />
             <NearestStoreButton 
               onLocationFound={(position) => {
@@ -107,11 +104,11 @@ const LocationsPage = () => {
         <div className="space-y-12">
           {locations.map((location) => (
             <div 
-              key={location.id} 
-              id={`location-${location.id}`} 
+              key={location.id}
+              id={`location-${location.id}`}
               className="grid lg:grid-cols-2 gap-8"
               style={{
-                border: location.isPrimary ? `3px solid ${COLORS.yellow}` : 'none',
+                border: location.isPrimary ? '3px solid var(--color-accent)' : 'none',
                 borderRadius: '1rem',
                 padding: location.isPrimary ? '0.5rem' : '0'
               }}
@@ -121,16 +118,16 @@ const LocationsPage = () => {
                 {(location.isPrimary || location.distanceText) && (
                   <div className="flex items-center gap-2 mb-4 flex-wrap">
                     {location.isPrimary && (
-                      <span 
+                      <span
                         className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold"
-                        style={{ backgroundColor: COLORS.yellow, color: COLORS.navy }}
+                        style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)' }}
                       >
                         <Building2 size={14} />
                         HEADQUARTERS
                       </span>
                     )}
                     {location.distanceText && (
-                      <span 
+                      <span
                         className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold"
                         style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)' }}
                       >
@@ -148,8 +145,8 @@ const LocationsPage = () => {
                   <div 
                     className="px-3 py-1 rounded-full text-sm font-bold"
                     style={{
-                      backgroundColor: location.isOpen ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)',
-                      color: location.isOpen ? '#059669' : '#DC2626'
+                      backgroundColor: location.isOpen ? 'var(--color-success-bg)' : 'var(--color-error-bg)',
+                      color: location.isOpen ? 'var(--color-success)' : 'var(--color-error)'
                     }}
                   >
                     {location.isOpen ? 'Open Now' : 'Closed'}
@@ -168,7 +165,7 @@ const LocationsPage = () => {
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-1 font-inter text-sm font-semibold hover:underline"
-                          style={{ color: COLORS.yellow }}
+                          style={{ color: 'var(--color-accent)' }}
                         >
                           Get Directions <ExternalLink size={14} />
                         </a>
@@ -196,7 +193,7 @@ const LocationsPage = () => {
                     <div className="flex-1">
                       <h3 className="font-bold mb-1" style={textColor}>Phone</h3>
                       <div className="flex items-center gap-2 flex-wrap">
-                        <a href={`tel:${location.phone}`} className="font-inter hover:underline" style={{ color: COLORS.yellow }}>
+                        <a href={`tel:${location.phone}`} className="font-inter hover:underline" style={{ color: 'var(--color-accent)' }}>
                           {location.phone}
                         </a>
                       <CopyButton 
@@ -212,10 +209,10 @@ const LocationsPage = () => {
                     <h3 className="font-bold mb-3" style={textColor}>Available Services</h3>
                     <div className="flex flex-wrap gap-2">
                       {location.features.map((feature, idx) => (
-                        <span 
+                        <span
                           key={idx}
                           className="px-3 py-1 rounded-full text-sm font-inter font-semibold"
-                          style={{ backgroundColor: COLORS.yellow + '20', color: 'var(--color-text)' }}
+                          style={{ backgroundColor: 'rgba(228, 179, 64, 0.15)', color: 'var(--color-text)' }}
                         >
                           {feature}
                         </span>
@@ -243,7 +240,7 @@ const LocationsPage = () => {
       </section>
 
       <section className="max-w-7xl mx-auto px-4 mt-20">
-        <div className="p-12 rounded-3xl text-center" style={{ backgroundColor: COLORS.navy }}>
+        <div className="p-12 rounded-3xl text-center" style={{ backgroundColor: 'var(--color-primary)' }}>
           <h2 className="text-3xl md:text-4xl var(--font-heading) uppercase text-white mb-4">
             Visit Us Today
           </h2>
@@ -253,7 +250,7 @@ const LocationsPage = () => {
           <a
             href={`${BASE_URL}#contact`}
             className="inline-block px-8 py-4 rounded-full font-bold font-inter transition-transform hover:scale-105 shadow-lg"
-            style={{ backgroundColor: COLORS.yellow, color: COLORS.navy }}
+            style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)' }}
           >
             Contact Us
           </a>
