@@ -44,6 +44,12 @@ export default function Navbar() {
 
   const handleNavClick = (e, sectionId, subpageUrl) => {
     setIsOpen(false);
+    // Always navigate to About subpage
+    if (subpageUrl && subpageUrl.endsWith('about')) {
+      e.preventDefault();
+      window.location.href = subpageUrl;
+      return;
+    }
     if (isHomePage && sectionId) {
       e.preventDefault();
       const element = document.getElementById(sectionId);
@@ -230,10 +236,11 @@ export default function Navbar() {
                 Locations
               </a>
                 <a
-                  href={isHomePage ? `${BASE_URL}about` : `${BASE_URL}about`}
-                  onClick={(e) => handleNavClick(e, 'about', `${BASE_URL}about`)}
+                  href={`${BASE_URL}about`}
+                  onClick={(e) => handleNavClick(e, null, `${BASE_URL}about`)}
                   className="block px-3 py-4 text-lg font-bold var(--font-heading) uppercase border-b"
                   style={{ color: 'var(--color-heading)', borderColor: 'var(--color-surface)' }}
+                  aria-label="About Roma Mart"
                 >
                   About
                 </a>
@@ -241,7 +248,7 @@ export default function Navbar() {
                 href={isHomePage ? `${BASE_URL}#contact` : `${BASE_URL}contact`}
                 onClick={(e) => handleNavClick(e, 'contact', `${BASE_URL}contact`)}
                 className="block px-3 py-4 text-lg font-bold var(--font-heading) uppercase border-b"
-                  style={{ color: 'var(--color-heading)', borderColor: 'var(--color-surface)' }}
+                style={{ color: 'var(--color-heading)', borderColor: 'var(--color-surface)' }}
               >
                 Contact
               </a>
