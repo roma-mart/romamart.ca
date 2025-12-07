@@ -8,6 +8,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useGeolocation } from '../hooks/useBrowserFeatures';
 import { LocationContext } from '../contexts/LocationContext';
+import { findNearestLocation } from '../utils/locationMath';
 
 const LOCATION_STORAGE_KEY = 'roma_mart_user_location';
 const SESSION_REQUESTED_KEY = 'roma_mart_location_requested';
@@ -87,8 +88,12 @@ export const LocationProvider = ({ children }) => {
     }
   };
 
+  // Compute nearest location from userLocation
+  const nearestLocation = userLocation ? findNearestLocation(userLocation) : null;
+
   const value = {
     userLocation,
+    nearestLocation,
     loading,
     error,
     canUseGeolocation,
