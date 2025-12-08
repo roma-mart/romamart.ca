@@ -14,11 +14,12 @@ export const useAppBadge = () => {
   const canBadge = typeof navigator !== 'undefined' &&
     ('setAppBadge' in navigator || 'clearAppBadge' in navigator);
 
+
   const setAppBadge = useCallback((value) => {
     if (canBadge && navigator.setAppBadge) {
       try {
         navigator.setAppBadge(value);
-      } catch (e) {
+      } catch {
         // Ignore errors (e.g., not supported)
       }
     }
@@ -28,7 +29,7 @@ export const useAppBadge = () => {
     if (canBadge && navigator.clearAppBadge) {
       try {
         navigator.clearAppBadge();
-      } catch (e) {
+      } catch {
         // Ignore errors
       }
     }
