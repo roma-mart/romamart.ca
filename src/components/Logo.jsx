@@ -1,75 +1,72 @@
-import React from 'react';
-import { tokens } from '../design/tokens';
+
+import React, { useState, useEffect } from 'react';
+// import { tokens } from '../design/tokens';
 
 /**
- * Accessible, scalable Roma Mart logo component.
- * Implements horizontal or vertical layout based on prop.
+ * Roma Mart Logo Component
  * Props:
- *  - size: one of tokens.logoSizes or custom number (height in px of emblem circle)
- *  - scheme: one of Object.keys(tokens.logoSchemes)
- *  - layout: 'horizontal' | 'vertical'
- *  - ariaLabel: custom accessible label (defaults to 'Roma Mart')
- *  - wordmark: boolean (show wordmark text)
+ *  - size: height in px (default 32)
+ *  - variant: 'brand' | 'white' | 'black' (default 'brand')
+ *  - layout: 'horizontal' | 'vertical' (default 'vertical')
+ *  - ariaLabel: accessible label (default 'Roma Mart')
+ *  - className, style: for custom styling
  */
 export function Logo({
   size = 32,
-  scheme = 'white',
-  // layout = 'horizontal',
-  // comment out unused var above
+  variant = 'brand',
+  layout = 'vertical',
   ariaLabel = 'Roma Mart',
-  wordmark = true,
   className = '',
-  style = {}
+  style = {},
+  responsive = false
 }) {
-  const cfg = tokens.logoSchemes[scheme] || tokens.logoSchemes.navy;
-  const circleSize = size;
-  const cartStroke = cfg.cart;
-  const textColor = tokens?.fonts?.heading || 'inherit';
-  const fontSize = tokens?.TYPOGRAPHY?.fontSize?.lg || '1rem';
-  const fontWeight = tokens?.TYPOGRAPHY?.fontWeight?.bold || 'bold';
-  const showBorder = false;
+  // Responsive layout switching
+  const [currentLayout, setCurrentLayout] = useState(layout);
 
-  // Emblem uses inline SVG for crisp scaling & color control
-  const Emblem = (
-    <img
-    src="/romamart.ca/white-logo.svg" // Update this path as needed
-    width={circleSize}
-    height={circleSize}
-    alt=""
-    aria-hidden={wordmark ? "true" : "false"}
-    style={{
-      // borderRadius: "50%",
-      border: showBorder ? `2px solid ${cartStroke}` : undefined,
-      objectFit: "cover",
-      background: "transparent"
-    }}
-  />
-  );
+  useEffect(() => {
+    if (!responsive) return;
+    // Use matchMedia for SSR-safe detection
+    const mq = window.matchMedia('(min-width: 768px)');
+    const updateLayout = () => setCurrentLayout(mq.matches ? 'horizontal' : 'vertical');
+    updateLayout();
+    mq.addEventListener('change', updateLayout);
+    return () => mq.removeEventListener('change', updateLayout);
+  }, [responsive, layout]);
+  // Asset mapping
+  const assetBase = '/romamart.ca/';
+  const assets = {
+    vertical: {
+      brand: assetBase + 'logo.svg',
+      white: assetBase + 'logo-white.svg',
+      black: assetBase + 'logo-black.svg',
+    },
+    horizontal: {
+      brand: assetBase + 'Logo-horizontal.svg',
+      white: assetBase + 'Logo-horizontal-white.svg',
+      black: assetBase + 'Logo-horizontal-black.svg',
+    }
+  };
+
+  // Select asset
+  const src = assets[currentLayout]?.[variant] || assets[currentLayout]?.brand;
+  const altText = ariaLabel || 'Roma Mart';
 
   return (
-    <div
+    <img
+      src={src}
+      width={size}
+      height={size}
+      alt={altText}
+      aria-label={altText}
       className={`rm-logo ${className}`.trim()}
-      aria-label={ariaLabel}
-      style={{ display: 'inline-flex', alignItems: 'center', gap: 8, lineHeight: 1, ...style }}
-    >
-      {Emblem}
-      {wordmark && (
-        <span
-          style={{
-            fontFamily: textColor,
-            fontWeight: fontWeight,
-            fontSize: fontSize,
-            color: textColor,
-            letterSpacing: '-0.02em'
-          }}
-        >
-          Roma Mart
-        </span>
-      )}
-      {showBorder && (
-        <span className="sr-only">Visual border variant</span>
-      )}
-    </div>
+      style={{
+        display: 'inline-block',
+        height: size,
+        width: 'auto',
+        objectFit: 'contain',
+        ...style
+      }}
+    />
   );
 }
 
