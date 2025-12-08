@@ -9,6 +9,7 @@ import { ROCAFE_FULL_MENU, MENU_CATEGORIES, ALLERGEN_WARNING } from '../data/roc
 import COMPANY_DATA from '../config/company_data';
 import MenuExcelLoader from '../components/MenuExcelHolder';
 import { useExcelMenu } from '../hooks/useExcelMenu';
+import { groupExcelItemsByCategory, mergeCategoriesWithFallback } from '../utils/excelMenuTransform';
 
 const RoCafePage = () => {
 
@@ -39,14 +40,11 @@ const RoCafePage = () => {
 
   // Group menu items by category
   const menuCategories = useMemo(() => {
-    const categories = [
-      {
-        id: MENU_CATEGORIES.BUBBLE_TEA,
-        name: 'Bubble Tea',
-        icon: <Wine size={24} />,
-        description: 'Classic and creative bubble tea with tapioca pearls',
-        items: ROCAFE_FULL_MENU.filter(item => item.category === MENU_CATEGORIES.BUBBLE_TEA)
-      },
+    // Try to use Excel data first
+    const excelCategories = groupExcelItemsByCategory(menuItems);
+    
+    // Static fallback categories
+    const staticCategories = [
       {
         id: MENU_CATEGORIES.HOT_COFFEE,
         name: 'Hot Coffee',
@@ -82,11 +80,17 @@ const RoCafePage = () => {
         description: 'Unique RoCafé creations',
         items: ROCAFE_FULL_MENU.filter(item => item.category === MENU_CATEGORIES.SPECIALTY)
       }
-    ];
+    ].filter(cat => cat.items.length > 0);
     
-    // Only return categories with items
-    return categories.filter(cat => cat.items.length > 0);
-  }, []);
+    // Merge with fallback - use Excel if available, otherwise use static
+    const finalCategories = mergeCategoriesWithFallback(excelCategories, staticCategories);
+    
+    // Convert icons from components to JSX if needed
+    return finalCategories.map(cat => ({
+      ...cat,
+      icon: typeof cat.icon === 'function' ? React.createElement(cat.icon, { size: 24 }) : cat.icon
+    }));
+  }, [menuItems]);
 
   // create memoized handlers map for categories
   const categoryHandlers = useMemo(() => {
@@ -147,7 +151,9 @@ const RoCafePage = () => {
           {/* Quick stats */}
           <div className="flex flex-wrap justify-center gap-8 mt-12">
             <div className="text-center">
-              <div className="text-4xl var(--font-heading) mb-2" style={{ color: 'var(--color-accent)' }}>{ROCAFE_FULL_MENU.length}+</div>
+              <div className="text-4xl var(--font-heading) mb-2" style={{ color: 'var(--color-accent)' }}>
+                {menuItems.length > 0 ? menuItems.length : ROCAFE_FULL_MENU.length}+
+              </div>
               <div className="text-sm font-inter uppercase tracking-wider" style={mutedTextColor}>Menu Items</div>
             </div>
             <div className="text-center">
