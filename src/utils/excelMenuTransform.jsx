@@ -21,46 +21,61 @@ const EXCEL_ITEM_ID_PREFIX = 'excel-';
  */
 export const EXCEL_CATEGORY_MAP = {
   'RoCafe Hot Coffee': {
-    icon: Coffee,
+    icon: <Coffee size={24} />,
     name: 'Hot Coffee',
     description: 'Freshly brewed coffee made to perfection'
   },
   'RoCafe Iced Coffee': {
-    icon: Coffee,
+    icon: <Coffee size={24} />,
     name: 'Iced Coffee',
     description: 'Refreshing cold coffee beverages'
   },
   'RoCafe Tea': {
-    icon: Wine, // Wine glass icon used for tea/beverage consistency with bubble tea
+    icon: <Wine size={24} />, // Wine glass icon used for tea/beverage consistency with bubble tea
     name: 'Tea & Matcha',
     description: 'Premium tea selections and matcha lattes'
   },
   'RoCafe Fresh Juice': {
-    icon: IceCream,
+    icon: <IceCream size={24} />,
     name: 'Fresh Juice',
     description: 'Healthy fruit beverages made fresh'
   },
   'RoCafe Smoothies': {
-    icon: IceCream,
+    icon: <IceCream size={24} />,
     name: 'Smoothies',
     description: 'Blended fruit smoothies with fresh ingredients'
   },
   'RoCafe Frappe': {
-    icon: Sparkles,
+    icon: <Sparkles size={24} />,
     name: 'Frappés',
     description: 'Blended iced coffee drinks'
   },
   'RoCafe Food': {
-    icon: UtensilsCrossed,
+    icon: <UtensilsCrossed size={24} />,
     name: 'Food',
     description: 'Fresh food options and snacks'
   },
   'RoCafe Ready2Eat': {
-    icon: Beef,
+    icon: <Beef size={24} />,
     name: 'Ready to Eat',
     description: 'Pre-prepared meals ready to enjoy'
   }
 };
+
+
+
+export function normalizeMenuItem(row) {
+  return {
+    id: row.Upc || row.Name,
+    name: row.Name,
+    description: row.Description || "", // or other fields
+    price: row.cents ? row.cents / 100 : 0,
+    size: row.size || "",
+    category: row.oc_page || "Other",   // <------ KEY LINE
+    // add any other fields your UI expects
+  };
+}
+
 
 /**
  * Transform Excel row to StandardizedItem format
@@ -154,7 +169,7 @@ export const groupExcelItemsByCategory = (excelItems) => {
     return {
       id: categoryKey.toLowerCase().replace(/\s+/g, '-'),
       name: metadata.name,
-      icon: metadata.icon,
+      icon: typeof metadata.icon === "function" ? React.createElement(metadata.icon, { size: 24 }) : metadata.icon,
       description: metadata.description,
       items: items,
       _excelCategory: categoryKey
