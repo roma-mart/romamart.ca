@@ -31,7 +31,7 @@ const OrderCTA = ({ orderUrl = getOrderingUrl() }) => {
   return (
     <Button
       variant="order"
-      icon={<ShoppingCart className="w-7 h-7" aria-hidden="true" />}
+      icon={<ShoppingCart className="w-7 h-7" />}
       iconPosition="left"
       analyticsEvent={{ event: 'order_cta_click', cta_location: 'floating_button', cta_text: 'Order Online' }}
       ariaLabel="Order online from Roma Mart"
@@ -45,7 +45,7 @@ const OrderCTA = ({ orderUrl = getOrderingUrl() }) => {
           : 'opacity-0 pointer-events-none animate-fab-out'
       }`}
       style={{ boxShadow: '0 4px 16px var(--color-accent-shadow,rgba(228,179,64,0.15))', minWidth: 56, minHeight: 56, padding: 0, ...((!isVisible) && { pointerEvents: 'none' }) }}
-      aria-hidden={!isVisible}
+      {...(!isVisible ? { inert: true } : {})}
       children={null}
     />
   );

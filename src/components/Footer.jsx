@@ -150,7 +150,7 @@ export default function Footer() {
              className="flex items-center gap-3 mb-6 hover:opacity-80 transition-opacity cursor-pointer w-fit"
              aria-label="Roma Mart - Go to homepage"
            >
-              <Logo />
+              <Logo layout="horizontal" variant="white" size={40} />
            </a>
            <p className="p-1 font-inter max-w-sm mb-6" style={{ color: 'var(--color-on-footer-muted)' }}>
              Your local one-stop shop for everything from daily groceries to premium café drinks. Proudly serving the Sarnia community.

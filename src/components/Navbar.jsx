@@ -5,12 +5,30 @@ import Button from './Button';
 import COMPANY_DATA from '../config/company_data';
 import { Logo } from './Logo';
 import { NAVIGATION_LINKS } from '../config/navigation';
+// Removed duplicate imports of useEffect and useState
 
 export default function Navbar() {
   const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isHomePage, setIsHomePage] = useState(true);
+  const [colorScheme, setColorScheme] = useState('light');
+  const [highContrast, setHighContrast] = useState(false);
+
+  useEffect(() => {
+    const mqDark = window.matchMedia('(prefers-color-scheme: dark)');
+    const mqContrast = window.matchMedia('(forced-colors: active)');
+    const updateScheme = () => setColorScheme(mqDark.matches ? 'dark' : 'light');
+    const updateContrast = () => setHighContrast(mqContrast.matches);
+    updateScheme();
+    updateContrast();
+    mqDark.addEventListener('change', updateScheme);
+    mqContrast.addEventListener('change', updateContrast);
+    return () => {
+      mqDark.removeEventListener('change', updateScheme);
+      mqContrast.removeEventListener('change', updateContrast);
+    };
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -75,7 +93,18 @@ export default function Navbar() {
             className="flex items-center space-x-2 hover:opacity-80 transition-opacity cursor-pointer"
             aria-label="Roma Mart - Go to homepage"
           >
-            <Logo size={48} />
+            <Logo
+              size={40}
+              layout="horizontal"
+              responsive
+              variant={
+                (colorScheme === 'dark' || highContrast)
+                  ? 'white'
+                  : isHomePage
+                    ? (scrolled ? 'brand' : 'white')
+                    : 'brand'
+              }
+            />
           </a>
 
           {/* Desktop Menu */}
@@ -152,6 +181,33 @@ export default function Navbar() {
             style={{ backgroundColor: isHomePage && !scrolled ? 'var(--color-primary)' : 'var(--color-bg)', borderColor: 'var(--color-surface)' }}
           >
             <div className="px-4 pt-2 pb-6 space-y-1">
+              <div className="flex items-center gap-2 mb-2">
+                <Logo
+                  size={32}
+                  layout="vertical"
+                  responsive
+                  variant={
+                    (colorScheme === 'dark' || highContrast)
+                      ? 'white'
+                      : isHomePage
+                        ? (scrolled ? 'brand' : 'white')
+                        : 'brand'
+                  }
+                />
+                <Logo
+                  size={80}
+                  layout="wordmark"
+                  responsive
+                  variant={
+                    (colorScheme === 'dark' || highContrast)
+                      ? 'white'
+                      : isHomePage
+                        ? (scrolled ? 'brand' : 'white')
+                        : 'brand'
+                  }
+                  style={{ maxWidth: 120, height: 'auto' }}
+                />
+              </div>
               {/* Only show Home button if NOT on homepage */}
               {!isHomePage && (
                 <a
