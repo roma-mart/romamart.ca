@@ -101,9 +101,9 @@ const ContactPage = () => {
                 </div>
                 <div>
                   <h4 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Visit Us</h4>
-                  <p style={textColor}>189-3 Wellington Street, Sarnia, ON N7T 1G6</p>
+                  <p style={textColor}>{COMPANY_DATA.location.address.formatted}</p>
                   <a 
-                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(COMPANY_DATA.address)}`}
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(COMPANY_DATA.location.address.formatted)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Get directions to Roma Mart"
@@ -122,11 +122,11 @@ const ContactPage = () => {
                 <div className="flex-1">
                   <h4 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Call Us</h4>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <a href={`tel:${COMPANY_DATA.contact.phone}`} className="hover:underline" style={{ color: 'var(--color-accent)' }}>
-                      {COMPANY_DATA.contact.phone}
+                    <a href={`tel:${COMPANY_DATA.location.contact.phone}`} className="hover:underline" style={{ color: 'var(--color-accent)' }}>
+                      {COMPANY_DATA.location.contact.phone}
                     </a>
                     <CopyButton 
-                      text={COMPANY_DATA.contact.phone}
+                      text={COMPANY_DATA.location.contact.phone}
                       label="Phone number"
                       style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)' }}
                     />
@@ -141,11 +141,11 @@ const ContactPage = () => {
                 <div className="flex-1">
                   <h4 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Email Us</h4>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <a href={`mailto:${COMPANY_DATA.contact.email}`} className="hover:underline" style={{ color: 'var(--color-accent)' }}>
-                      {COMPANY_DATA.contact.email}
+                    <a href={`mailto:${COMPANY_DATA.location.contact.email}`} className="hover:underline" style={{ color: 'var(--color-accent)' }}>
+                      {COMPANY_DATA.location.contact.email}
                     </a>
                     <CopyButton 
-                      text={COMPANY_DATA.contact.email}
+                      text={COMPANY_DATA.location.contact.email}
                       label="Email address"
                       style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)' }}
                     />
@@ -159,15 +159,15 @@ const ContactPage = () => {
                 </div>
                 <div>
                   <h4 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Hours</h4>
-                  <p style={textColor}>Mon-Fri: {COMPANY_DATA.hours.weekdays}</p>
-                  <p style={textColor}>Sat-Sun: {COMPANY_DATA.hours.weekends}</p>
+                  <p style={textColor}>Mon-Fri: {COMPANY_DATA.location.hours.weekdays}</p>
+                  <p style={textColor}>Sat-Sun: {COMPANY_DATA.location.hours.weekends}</p>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Contact Form */}
-          <div className="p-8 rounded-2xl shadow-lg border" style={{ backgroundColor: 'var(--color-bg)', borderColor: 'var(--color-border)' }}>
+          <div className="p-8 rounded-2xl shadow-lg border" style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
             <h3 className="var(--font-heading) text-2xl mb-6" style={{ color: 'var(--color-heading)' }}>
               Send a Message
             </h3>

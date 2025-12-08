@@ -1,4 +1,5 @@
 import React, { useState, useEffect, Suspense, lazy, useCallback, useMemo } from 'react';
+import ErrorBoundary from './components/ErrorBoundary';
 import { motion } from 'framer-motion';
 import {
   ShoppingBasket,
@@ -51,6 +52,7 @@ import COMPANY_DATA from './config/company_data';
 const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
 
 // --- CUSTOM COMPONENTS ---
+
 function Hero({ onTrackOrder }) {
   const handleOrderClick = useCallback(() => {
     if (onTrackOrder) onTrackOrder('hero_section');
@@ -63,10 +65,10 @@ function Hero({ onTrackOrder }) {
       <div className="relative z-10 max-w-7xl mx-auto px-4 w-full pt-20">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <motion.div initial={{ opacity: 0, x: -50 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>
-            <div className="inline-block px-4 py-1 mb-6 rounded-full border border-yellow-500/30 bg-yellow-500/10 backdrop-blur-sm">
+            <div className="inline-block px-4 py-1 mb-6 rounded-full border" style={{ borderColor: 'var(--color-accent-bg)', backgroundColor: 'var(--color-accent-bg)', backdropFilter: 'blur(4px)' }}>
               <span className="text-sm font-inter font-semibold tracking-widest uppercase" style={{ color: 'var(--color-accent)' }}>New In Town</span>
             </div>
-            <h1 className="text-5xl md:text-7xl var(--font-heading) uppercase leading-none text-white mb-6">Your Daily <br/><span style={{ color: 'var(--color-accent)' }}>Stop & Go</span></h1>
+            <h1 className="text-5xl md:text-7xl var(--font-heading) uppercase leading-none" style={{ color: 'var(--color-text-on-primary)', marginBottom: '1.5rem' }}>Your Daily <br/><span style={{ color: 'var(--color-accent)' }}>Stop & Go</span></h1>
             <p className="text-lg md:text-xl font-inter mb-6 max-w-lg leading-relaxed" style={{ color: 'var(--color-text-on-primary)' }}>
               Experience Sarnia's newest convenience destination. From daily essentials to bubble tea, we have what you need.
             </p>
@@ -87,7 +89,6 @@ function Hero({ onTrackOrder }) {
                 ORDER ONLINE NOW
               </Button>
               <Button
-                as="a"
                 href={`${BASE_URL}locations`} // Uses base path for internal link
                 variant="navlink"
                 icon={<ArrowRight size={20} />}
@@ -101,7 +102,7 @@ function Hero({ onTrackOrder }) {
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, delay: 0.2 }} className="relative hidden md:block">
             <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl border-4 border-white/10 rotate-3 hover:rotate-0 transition-transform duration-500">
               <img src="https://images.unsplash.com/photo-1555636222-cae831e670b3?w=1000&h=500&fit=crop" alt="Roma Mart Storefront" className="w-full h-[500px] object-cover" loading="lazy" />
-              <div className="absolute top-6 right-6 w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-lg rotate-12"><div className="text-center"><span className="block var(--font-heading) text-xl leading-none" style={{ color: 'var(--color-primary)' }}>2.5%</span><span className="block text-xs font-bold uppercase" style={{ color: 'var(--color-text)' }}>CASH DISCOUNT</span></div></div>
+              <div className="absolute top-6 right-6 w-24 h-24 rounded-full flex items-center justify-center shadow-lg rotate-12" style={{ background: 'var(--color-accent)' }}><div className="text-center"><span className="block var(--font-heading) text-xl leading-none" style={{ color: 'var(--color-primary)' }}>2.5%</span><span className="block text-xs font-bold uppercase" style={{ color: 'var(--color-text)' }}>CASH DISCOUNT</span></div></div>
             </div>
           </motion.div>
         </div>
@@ -128,18 +129,15 @@ const ServicesSection = () => {
         </div>
         
         <div className="text-center">
-          <motion.div>
-            <Button
-              as="a"
-              href={`${BASE_URL}services`}
-              variant="navlink"
-              icon={<ArrowRight size={20} />}
-              aria-label="View all services"
-              className="px-8 py-4 text-lg"
-            >
-              View All Services
-            </Button>
-          </motion.div>
+          <Button
+            href={`${BASE_URL}services`}
+            variant="navlink"
+            icon={<ArrowRight size={20} />}
+            aria-label="View all services"
+            className="px-8 py-4 text-lg"
+          >
+            View All Services
+          </Button>
         </div>
       </div>
     </section>
@@ -158,8 +156,8 @@ const RoCafeSection = () => {
                 <Coffee size={32} style={{ color: 'var(--color-accent)' }} />
               </div>
               <div>
-                 <h2 className="text-4xl var(--font-heading) text-white">RoCafé</h2>
-                 <p className="text-yellow-400 font-inter tracking-wider uppercase text-sm">Sip. Savor. Repeat.</p>
+                 <h2 className="text-4xl var(--font-heading)" style={{ color: 'var(--color-text-on-primary)' }}>RoCafé</h2>
+                 <p className="font-inter tracking-wider uppercase text-sm" style={{ color: 'var(--color-accent)' }}>Sip. Savor. Repeat.</p>
               </div>
             </div>
             <p className="font-inter text-lg mb-8" style={{ color: 'var(--color-text-on-primary)' }}>
@@ -178,18 +176,15 @@ const RoCafeSection = () => {
             </div>
             
             <div className="mt-8">
-              <motion.div>
-                <Button
-                  as="a"
-                  href={`${BASE_URL}rocafe`}
-                  variant="navlink"
-                  icon={<ArrowRight size={20} />}
-                  aria-label="View full RoCafe menu"
-                  className="px-8 py-4 text-lg"
-                >
-                  View Full Menu
-                </Button>
-              </motion.div>
+              <Button
+                href={`${BASE_URL}rocafe`}
+                variant="navlink"
+                icon={<ArrowRight size={20} />}
+                aria-label="View full RoCafe menu"
+                className="px-8 py-4 text-lg"
+              >
+                View Full Menu
+              </Button>
             </div>
           </div>
           <div className="md:w-1/2 w-full">
@@ -234,7 +229,7 @@ const Locations = () => {
     <section id="locations" className="py-24" style={{ backgroundColor: 'var(--color-bg)' }}>
       <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
-          <span className="text-yellow-500 font-bold uppercase tracking-widest text-sm">Find Us</span>
+          <span className="font-bold uppercase tracking-widest text-sm" style={{ color: 'var(--color-accent)' }}>Find Us</span>
           <h2 className="text-4xl var(--font-heading) mt-2" style={{ color: 'var(--color-heading)' }}>Our Location{locationCount > 1 ? 's' : ''}</h2>
         </div>
 
@@ -254,24 +249,21 @@ const Locations = () => {
                 <h3 className="var(--font-heading) text-lg mb-1" style={{ color: 'var(--color-heading)' }}>{loc.name}</h3>
                 <p className="text-sm font-inter mb-4" style={{ color: 'var(--color-text)', opacity: 0.7 }}>{loc.address}</p>
                 <div className="flex items-center gap-2 text-sm font-semibold" style={{ color: 'var(--color-accent)' }}>
-                  <div className={`w-2 h-2 rounded-full ${loc.isOpen ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: loc.isOpen ? 'var(--color-success)' : 'var(--color-error)' }}></div>
                   {loc.isOpen ? 'Open Now' : 'Closed'}
                 </div>
               </button>
             ))}
             <div className="text-center mt-12">
-              <motion.div>
-                <Button
-                  as="a"
-                  href={`${BASE_URL}locations`}
-                  variant="navlink"
-                  icon={<ArrowRight size={20} />}
-                  aria-label="View all locations"
-                  className="px-8 py-4 text-lg"
-                >
-                  View All Locations
-                </Button>
-              </motion.div>
+              <Button
+                href={`${BASE_URL}locations`}
+                variant="navlink"
+                icon={<ArrowRight size={20} />}
+                aria-label="View all locations"
+                className="px-8 py-4 text-lg"
+              >
+                View All Locations
+              </Button>
             </div>
           </div>
           <div className="lg:col-span-2 rounded-3xl overflow-hidden min-h-[400px] relative shadow-inner" style={{ backgroundColor: 'var(--color-surface)' }}>
@@ -290,8 +282,8 @@ const Locations = () => {
                   href={activeLoc.mapLink}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex items-center gap-2 px-6 py-3 rounded-full text-white font-bold shadow-xl hover:scale-105 transition-transform"
-                  style={{ backgroundColor: 'var(--color-primary)' }}
+                  className="flex items-center gap-2 px-6 py-3 rounded-full font-bold shadow-xl hover:scale-105 transition-transform"
+                  style={{ backgroundColor: 'var(--color-primary)', color: 'var(--color-text-on-primary)' }}
                 >
                   <MapPin size={18} /> Open in Maps
                 </a>
@@ -323,7 +315,7 @@ const ContactSection = () => {
           
           {/* Contact Info Side */}
           <div>
-            <span className="text-yellow-500 font-bold uppercase tracking-widest text-sm">Get in Touch</span>
+            <span className="font-bold uppercase tracking-widest text-sm" style={{ color: 'var(--color-accent)' }}>Get in Touch</span>
             <h2 className="text-4xl var(--font-heading) mt-2 mb-6" style={{ color: 'var(--color-heading)' }}>Contact Us</h2>
             <p className="mb-10 font-inter leading-relaxed" style={mutedTextColor}>
               Have a question about our products, want to suggest a new snack, or interested in a partnership? We'd love to hear from you.
@@ -332,7 +324,7 @@ const ContactSection = () => {
             <div className="space-y-8">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'var(--color-surface)' }}>
-                  <MapPin className="text-navy-900" style={{ color: 'var(--color-icon)' }} />
+                  <MapPin style={{ color: 'var(--color-icon)' }} />
                 </div>
                 <div className="flex-1">
                   <h4 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Visit Us</h4>
@@ -347,17 +339,17 @@ const ContactSection = () => {
               </div>
 
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-full flex items-center justify_center shrink-0" style={{ backgroundColor: 'var(--color-surface)' }}>
-                  <Phone className="text-navy-900" style={{ color: 'var(--color-icon)' }} />
+                <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'var(--color-surface)' }}>
+                  <Phone style={{ color: 'var(--color-icon)' }} />
                 </div>
                 <div className="flex-1">
                   <h4 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Call Us</h4>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <a href={`tel:${COMPANY_DATA.contact.phone}`} className="hover:underline" style={{ color: 'var(--color-accent)' }}>
-                      {COMPANY_DATA.contact.phone}
+                    <a href={`tel:${COMPANY_DATA.location.contact.phone}`} className="hover:underline" style={{ color: 'var(--color-accent)' }}>
+                      {COMPANY_DATA.location.contact.phone}
                     </a>
                     <CopyButton 
-                      text={COMPANY_DATA.contact.phone}
+                      text={COMPANY_DATA.location.contact.phone}
                       label="Phone number"
                       style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)' }}
                     />
@@ -367,7 +359,7 @@ const ContactSection = () => {
 
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'var(--color-surface)' }}>
-                  <Clock className="text-navy-900" style={{ color: 'var(--color-icon)' }} />
+                  <Clock style={{ color: 'var(--color-icon)' }} />
                 </div>
                 <div>
                   <h4 className="font-bold text-lg" style={{ color: 'var(--color-accent)' }}>Hours</h4>
@@ -437,7 +429,7 @@ const ContactSection = () => {
                 variant="action"
                 icon={<Send size={18} />}
                 className="w-full py-4 rounded-xl font-bold font-inter flex items-center justify-center gap-2"
-                style={{ backgroundColor: 'var(--color-accent)' }}
+                style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-text-on-accent)' }}
                 aria-label="Send Message"
               >
                 Send Message
@@ -480,20 +472,40 @@ function App() {
   return (
     <LocationProvider>
       <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--color-bg)' }}>
-        <Navbar />
+        <ErrorBoundary>
+          <Navbar />
+        </ErrorBoundary>
         <main className="flex-1">
           {currentPage !== 'home' ? (
             <Suspense fallback={<div>Loading...</div>}>
               <div id="main-content">
-                {currentPage === 'services' && <ServicesPage />}
-                {currentPage === 'rocafe' && <RoCafePage />}
-                {currentPage === 'locations' && <LocationsPage />}
-                {currentPage === 'contact' && <ContactPage />}
-                {currentPage === 'about' && <AboutPage />}
-                {currentPage === 'accessibility' && <AccessibilityPage />}
-                {currentPage === 'privacy' && <PrivacyPage />}
-                {currentPage === 'terms' && <TermsPage />}
-                {currentPage === 'cookies' && <CookiesPage />}
+                {currentPage === 'services' && (
+                  <ErrorBoundary><ServicesPage /></ErrorBoundary>
+                )}
+                {currentPage === 'rocafe' && (
+                  <ErrorBoundary><RoCafePage /></ErrorBoundary>
+                )}
+                {currentPage === 'locations' && (
+                  <ErrorBoundary><LocationsPage /></ErrorBoundary>
+                )}
+                {currentPage === 'contact' && (
+                  <ErrorBoundary><ContactPage /></ErrorBoundary>
+                )}
+                {currentPage === 'about' && (
+                  <ErrorBoundary><AboutPage /></ErrorBoundary>
+                )}
+                {currentPage === 'accessibility' && (
+                  <ErrorBoundary><AccessibilityPage /></ErrorBoundary>
+                )}
+                {currentPage === 'privacy' && (
+                  <ErrorBoundary><PrivacyPage /></ErrorBoundary>
+                )}
+                {currentPage === 'terms' && (
+                  <ErrorBoundary><TermsPage /></ErrorBoundary>
+                )}
+                {currentPage === 'cookies' && (
+                  <ErrorBoundary><CookiesPage /></ErrorBoundary>
+                )}
               </div>
             </Suspense>
           ) : (
@@ -508,7 +520,9 @@ function App() {
               </div>
             </>
           )}
+        <ErrorBoundary>
           <Footer />
+        </ErrorBoundary>
         </main>
       </div>
       <PWAInstallPrompt />

@@ -101,7 +101,7 @@ const RoCafePage = () => {
           <li>
             <a 
               href={`${BASE_URL}`} 
-              className="hover:text-yellow-500 transition-colors"
+              className="hover:text-accent transition-colors"
               style={mutedTextColor}
             >
               Home

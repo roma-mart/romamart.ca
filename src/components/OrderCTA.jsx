@@ -31,7 +31,7 @@ const OrderCTA = ({ orderUrl = getOrderingUrl() }) => {
   return (
     <Button
       variant="order"
-      icon={<ShoppingCart className="w-6 h-6" aria-hidden="true" />}
+      icon={<ShoppingCart className="w-7 h-7" aria-hidden="true" />}
       iconPosition="left"
       analyticsEvent={{ event: 'order_cta_click', cta_location: 'floating_button', cta_text: 'Order Online' }}
       ariaLabel="Order online from Roma Mart"
@@ -39,16 +39,15 @@ const OrderCTA = ({ orderUrl = getOrderingUrl() }) => {
       target="_blank"
       rel="noopener noreferrer"
       tabIndex={isVisible ? 0 : -1}
-      className={`fixed bottom-6 right-6 md:bottom-6 md:right-6 left-1/2 md:left-auto z-50 font-semibold text-lg flex items-center gap-3 transition-all duration-500 will-change-opacity focus-visible:outline-2 focus-visible:outline-accent ${
+      className={`fixed bottom-[env(safe-area-inset-bottom,1.25rem)] right-4 md:right-6 md:bottom-6 z-50 flex items-center justify-center rounded-full bg-surface shadow-lg transition-all duration-500 will-change-opacity focus-visible:outline-2 focus-visible:outline-accent ${
         isVisible
           ? 'opacity-100 pointer-events-auto animate-fab-in'
           : 'opacity-0 pointer-events-none animate-fab-out'
       }`}
-      style={{ boxShadow: 'none', transform: 'none' }}
+      style={{ boxShadow: '0 4px 16px var(--color-accent-shadow,rgba(228,179,64,0.15))', minWidth: 56, minHeight: 56, padding: 0, ...((!isVisible) && { pointerEvents: 'none' }) }}
       aria-hidden={!isVisible}
-    >
-      <span className="hidden md:inline">Order Online</span>
-    </Button>
+      children={null}
+    />
   );
 };
 

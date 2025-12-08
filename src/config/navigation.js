@@ -32,15 +32,15 @@ export const NAVIGATION_LINKS = [
     showIn: { navbar: true, footer: true, sitemap: true }
   },
   {
-    label: 'About',
-    href: '/about',
-    ariaLabel: 'Learn about Roma Mart',
-    showIn: { navbar: true, footer: true, sitemap: true }
-  },
-  {
     label: 'Contact',
     href: '/contact',
     ariaLabel: 'Contact Roma Mart',
+    showIn: { navbar: true, footer: true, sitemap: true }
+  },
+  {
+    label: 'About',
+    href: '/about',
+    ariaLabel: 'Learn about Roma Mart',
     showIn: { navbar: true, footer: true, sitemap: true }
   },
   // Legal & accessibility links (footer/sitemap only)

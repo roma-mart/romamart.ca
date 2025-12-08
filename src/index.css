@@ -1,8 +1,57 @@
+
 /* Updated font import to include Outfit and Inter */
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&family=Inter:wght@400;700&display=swap');
 
 /* Import Inter and Outfit from Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@600;800&display=swap');
+
+/* Universal Button Variant Fallback Animations (matches Framer Motion intent) */
+.button.order:hover,
+.button.order:focus-visible {
+  transform: scale(1.05);
+  box-shadow: 0 8px 24px rgb(228 179 64 / 18%);
+  transition: transform 0.18s, box-shadow 0.18s;
+}
+
+.button.nav:hover,
+.button.nav:focus-visible {
+  transform: scale(1.03);
+  transition: transform 0.15s;
+}
+
+.button.navlink:hover,
+.button.navlink:focus-visible {
+  transform: scale(1.015);
+  box-shadow: 0 4px 16px rgb(228 179 64 / 15%);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.button.action:hover,
+.button.action:focus-visible {
+  background-color: var(--color-accent-hover, #c99a2b);
+  box-shadow: 0 8px 28px rgb(228 179 64 / 22%);
+  transform: scale(1.01);
+  transition: background 0.18s, box-shadow 0.18s, transform 0.18s;
+}
+
+.button.secondary:hover,
+.button.secondary:focus-visible {
+  transform: scale(1.02);
+  transition: transform 0.13s;
+}
+
+.button.icon:hover,
+.button.icon:focus-visible {
+  transform: scale(1.15);
+  transition: transform 0.12s;
+}
+
+.button.location:hover,
+.button.location:focus-visible {
+  transform: scale(1.05);
+  box-shadow: 0 8px 24px rgb(64 179 228 / 18%);
+  transition: transform 0.18s, box-shadow 0.18s;
+}
 
 /* WCAG 2.2 AA: Keyboard Focus Visible (Operable 2.4.7) */
 
@@ -98,6 +147,7 @@
   --color-bg: #fff;
   --color-surface: #f8f8f8;
   --color-border: #e5e5e5;
+  --color-border-high-contrast: #000;
   --color-footer: #151515;
 
 
@@ -113,7 +163,9 @@
 
   /* Brand colors - semantic usage */
   --color-primary: #020178; /* Navy - headings, primary elements */
-  --color-accent: #E4B340; /* Yellow - CTAs, highlights */;
+  --color-accent: #E4B340; /* Yellow - CTAs, highlights */
+  --color-accent-bg: color-mix(in srgb, #E4B340 12%, transparent); /* Accent background for icons/cards */
+  --color-accent-hover: #C99A2B; /* Slightly darker accent for hover */
 
   /* Location button colors */
   --color-location-bg: #E4F1FB; /* Soft blue, map/location theme */
@@ -267,8 +319,11 @@ body {
 .placeholder-frame.rect { aspect-ratio: 4 / 3; }
 
 /* Restore Tailwind directives with stylelint comment */
+/* stylelint-disable-next-line at-rule-no-unknown */
 @tailwind base;
+/* stylelint-disable-next-line at-rule-no-unknown */
 @tailwind components;
+/* stylelint-disable-next-line at-rule-no-unknown */
 @tailwind utilities;
 
 /* Styles moved from offline.html */

@@ -19,18 +19,18 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
           alternateName: data.alternateName || COMPANY_DATA.dba || 'Roma Mart',
           description: data.description || 'Your daily stop & go convenience store in Sarnia, Ontario. Fresh RoCafé beverages, ATM, Bitcoin ATM, printing, and more.',
           url: 'https://romamart.ca',
-          telephone: data.telephone || COMPANY_DATA.contact.phone || '+1-382-342-2000',
-          email: data.email || COMPANY_DATA.contact.email || 'contact@romamart.ca',
+          telephone: data.telephone || COMPANY_DATA.location.contact.phone || '+1-382-342-2000',
+          email: data.email || COMPANY_DATA.location.contact.email || 'contact@romamart.ca',
           priceRange: '$$',
           image: data.image || 'https://romamart.ca/images/store-front.jpg',
           logo: 'https://romamart.ca/icon-512.svg',
           address: {
             '@type': 'PostalAddress',
-            streetAddress: data.address?.street || COMPANY_DATA.address || '189-3 Wellington Street',
-            addressLocality: data.address?.city || 'Sarnia',
-            addressRegion: data.address?.region || 'ON',
-            postalCode: data.address?.postal || 'N7T 1G6',
-            addressCountry: 'CA'
+            streetAddress: data.address?.street || COMPANY_DATA.location.address.street || '189-3 Wellington Street',
+            addressLocality: data.address?.city || COMPANY_DATA.location.address.city || 'Sarnia',
+            addressRegion: data.address?.province || 'ON',
+            postalCode: data.address?.postalCode || COMPANY_DATA.location.address.postalCode || 'N7T 1G6',
+            addressCountry: COMPANY_DATA.location.address.country || 'CA'
           },
           geo: {
             '@type': 'GeoCoordinates',

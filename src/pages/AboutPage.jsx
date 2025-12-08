@@ -114,7 +114,9 @@ const AboutPage = () => {
             <ShareButton 
               title="About Roma Mart"
               text="Learn about Roma Mart - your trusted convenience store in Sarnia!"
-              className="bg-yellow-500 text-gray-900 hover:bg-yellow-600"
+              style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-text)', transition: 'background-color 0.2s' }}
+              onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--color-accent-hover)'}
+              onMouseOut={e => e.currentTarget.style.backgroundColor = 'var(--color-accent)'}
             />
           </div>
 
@@ -176,7 +178,7 @@ const AboutPage = () => {
             >
               <div 
                 className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center"
-                style={{ backgroundColor: 'rgba(255, 221, 51, 0.12)', color: 'var(--color-icon)' }}
+                style={{ backgroundColor: 'var(--color-accent-bg)', color: 'var(--color-icon)' }}
               >
                 {value.icon}
               </div>
@@ -236,15 +238,15 @@ const AboutPage = () => {
       {/* CTA Section */}
       <section className="max-w-7xl mx-auto px-4">
         <div className="p-12 rounded-3xl text-center" style={{ backgroundColor: 'var(--color-primary)' }}>
-          <h2 className="text-3xl md:text-4xl var(--font-heading) uppercase text-white mb-4">
+          <h2 className="text-3xl md:text-4xl var(--font-heading) uppercase mb-4" style={{ color: 'var(--color-text-on-primary)' }}>
             Visit Us Today
           </h2>
-          <p className="text-white/90 font-inter text-lg mb-8 max-w-2xl mx-auto">
+          <p className="font-inter text-lg mb-8 max-w-2xl mx-auto" style={{ color: 'var(--color-text-on-primary)', opacity: 0.9 }}>
             Come experience the Roma Mart difference. We're here to serve you with a smile!
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <a
-              href={`${BASE_URL}#contact`}
+              href={`${BASE_URL}locations`}
               className="px-8 py-4 rounded-full font-bold font-inter transition-transform hover:scale-105 shadow-lg focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
               style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)', outline: '2px solid var(--color-focus)', outlineOffset: '2px' }}
               tabIndex={0}
@@ -252,9 +254,9 @@ const AboutPage = () => {
               Get Directions
             </a>
             <a
-              href={`${BASE_URL}#contact`}
-              className="px-8 py-4 rounded-full font-bold font-inter transition-transform hover:scale-105 border-2 text-white focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-              style={{ borderColor: 'white', outline: '2px solid var(--color-focus)', outlineOffset: '2px' }}
+              href={`${BASE_URL}contact`}
+              className="px-8 py-4 rounded-full font-bold font-inter transition-transform hover:scale-105 border-2 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+              style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-on-primary)', outline: '2px solid var(--color-focus)', outlineOffset: '2px' }}
               tabIndex={0}
             >
               Contact Us
