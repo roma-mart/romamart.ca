@@ -175,7 +175,7 @@ const Button = React.forwardRef(({
   ...props
 }, ref) => {
   // useVibration removed (unused)
-
+  const isNavlink = variant === 'navlink';
   // Location variant logic
   const isLocation = variant === 'location';
   const { getCurrentLocation, location, loading, error, canUseGeolocation } = useGeolocation();
@@ -253,7 +253,8 @@ const Button = React.forwardRef(({
     }
     return (
       <>
-        {icon && iconPosition === 'left' && <span style={{ marginRight: children ? 10 : 0, display: 'inline-flex', alignItems: 'center' }}>{icon}</span>}
+        {icon && iconPosition === 'left' && !isNavlink && <span style={{ marginRight: children ? 10 : 0, display: 'inline-flex', alignItems: 'center' }}>{icon}</span>}
+        {icon && iconPosition === 'left' && isNavlink && <span style={{ marginRight: children ? 10 : 0, display: 'inline-flex', alignItems: 'center', position: "relative", top: "2px" }}>{icon}</span>}
         {children && <span>{children}</span>}
         {icon && iconPosition === 'right' && <span style={{ marginLeft: 10, display: 'inline-flex', alignItems: 'center' }}>{icon}</span>}
         {loadingProp && <span className="inline-block ml-2 animate-spin" style={{ width: 18, height: 18, border: '2px solid var(--color-accent)', borderTop: '2px solid transparent', borderRadius: '50%' }} aria-hidden="true"></span>}
