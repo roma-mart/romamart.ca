@@ -7,9 +7,19 @@ import StandardizedItem from '../components/StandardizedItem';
 import { useLocationAware } from '../hooks/useLocationContext';
 import { ROCAFE_FULL_MENU, MENU_CATEGORIES, ALLERGEN_WARNING } from '../data/rocafe-menu';
 import COMPANY_DATA from '../config/company_data';
+import MenuExcelLoader from '../components/MenuExcelHolder';
+import { useExcelMenu } from '../hooks/useExcelMenu';
 
 const RoCafePage = () => {
 
+  const { menuItems, loading, error } = useExcelMenu();
+  console.warn('menuItems', menuItems);
+  if (loading) {
+    // console.warn("Loading menu...");
+  }
+  if (error) {
+    console.error(`Error loading menu... ${error}`);
+  }
 
   const textColor = { color: 'var(--color-text)' };
   const mutedTextColor = { color: 'var(--color-text-muted)' };
@@ -125,6 +135,7 @@ const RoCafePage = () => {
             Welcome to RoCafé, where quality meets convenience. Enjoy our premium selection of beverages and food, 
             crafted fresh daily with the finest ingredients.
           </p>
+          {/* <MenuExcelLoader /> */}
           <div className="flex justify-center">
             <ShareButton 
               title="RoCafé Menu"
