@@ -13,14 +13,10 @@ import { groupExcelItemsByCategory, mergeCategoriesWithFallback } from '../utils
 
 const RoCafePage = () => {
 
-  const { menuItems, loading, error } = useExcelMenu();
-  console.warn('menuItems', menuItems);
-  if (loading) {
-    // console.warn("Loading menu...");
-  }
-  if (error) {
-    console.error(`Error loading menu... ${error}`);
-  }
+  const { menuItems } = useExcelMenu();
+  
+  // Note: menuItems will be empty array during loading or on error
+  // The menuCategories useMemo will handle fallback to static menu
 
   const textColor = { color: 'var(--color-text)' };
   const mutedTextColor = { color: 'var(--color-text-muted)' };
