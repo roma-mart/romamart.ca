@@ -13,12 +13,12 @@ import { useExcelMenu } from '../hooks/useExcelMenu';
 const RoCafePage = () => {
 
   const { menuItems, loading, error } = useExcelMenu();
-  console.log(menuItems);
+  console.warn('menuItems', menuItems);
   if (loading) {
-    console.log("Loading menu...");
+    // console.warn("Loading menu...");
   }
   if (error) {
-    console.log(`Error loading menu... ${error}`);
+    console.error(`Error loading menu... ${error}`);
   }
 
   const textColor = { color: 'var(--color-text)' };

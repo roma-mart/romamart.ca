@@ -8,25 +8,30 @@ export function useExcelMenu(path = "./rocafe_menu.xlsx") {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    setLoading(true);
-    fetch(path)
-      .then(res => {
+    let cancelled = false; // to avoid setState after unmount
+  
+    const fetchExcel = async () => {
+      try {
+        if (!cancelled) setLoading(true);
+        const res = await fetch(path);
         if (!res.ok) throw new Error("Failed to fetch Excel file");
-        return res.arrayBuffer();
-      })
-      .then(arrayBuffer => {
+        const arrayBuffer = await res.arrayBuffer();
         const workbook = XLSX.read(arrayBuffer, { type: "array" });
-        const wsname = workbook.SheetNames[0];
-        const ws = workbook.Sheets[wsname];
+        const ws = workbook.Sheets[workbook.SheetNames[0]];
         const data = XLSX.utils.sheet_to_json(ws, { defval: "" });
-        setMenuItems(data);
-        setLoading(false);
-      })
-      .catch(err => {
-        setError(err.message || "Failed to load Excel file");
-        setLoading(false);
-      });
-  }, [path]);
+        if (!cancelled) setMenuItems(data);
+      } catch (err) {
+        if (!cancelled) setError(err.message || "Failed to load Excel file");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+  
+    fetchExcel();
+  
+    return () => { cancelled = true; };
+    }, [path]);
+  
 
   return { menuItems, loading, error };
 }
