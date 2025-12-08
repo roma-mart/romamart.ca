@@ -11,9 +11,14 @@ const PRECACHE_ASSETS = [
   `${BASE_URL}`,
   `${BASE_URL}index.html`,
   `${BASE_URL}offline.html`,
-  `${BASE_URL}icon-192.svg`,
-  `${BASE_URL}icon-512.svg`,
-  `${BASE_URL}manifest.json`
+  `${BASE_URL}manifest.json`,
+  `${BASE_URL}favicon-32x32.png`,
+  `${BASE_URL}favicon-16x16.png`,
+  `${BASE_URL}maskable-icon.png`,
+  `${BASE_URL}android/android-launchericon-192-192.png`,
+  `${BASE_URL}android/android-launchericon-512-512.png`,
+  `${BASE_URL}ios/180.png`,
+  `${BASE_URL}windows11/Square150x150Logo.scale-100.png`
 ];
 
 // Pages to cache on first visit (runtime caching)

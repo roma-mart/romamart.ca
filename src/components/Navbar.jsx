@@ -8,6 +8,16 @@ import { NAVIGATION_LINKS } from '../config/navigation';
 // Removed duplicate imports of useEffect and useState
 
 export default function Navbar() {
+  const [wcoActive, setWcoActive] = useState(false);
+    // Window Controls Overlay detection
+    useEffect(() => {
+      if ('windowControlsOverlay' in navigator) {
+        const updateWco = () => setWcoActive(navigator.windowControlsOverlay.visible);
+        navigator.windowControlsOverlay.addEventListener('geometrychange', updateWco);
+        updateWco();
+        return () => navigator.windowControlsOverlay.removeEventListener('geometrychange', updateWco);
+      }
+    }, []);
   const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -82,15 +92,16 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'shadow-md py-2' : 'py-4'}`}
+      className={`fixed w-full z-50 transition-all duration-300 ${wcoActive ? 'navbar-wco' : ''} ${scrolled ? 'shadow-md py-2' : 'py-4'}`}
       style={{ backgroundColor: isOpen ? (isHomePage && !scrolled ? 'var(--color-primary)' : 'var(--color-bg)') : (scrolled ? 'var(--color-bg)' : 'transparent') }}
+      data-wco={wcoActive ? 'active' : undefined}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
           {/* Logo Area */}
           <a
             href={`${BASE_URL}`}
-            className="flex items-center space-x-2 hover:opacity-80 transition-opacity cursor-pointer"
+            className="flex items-center space-x-2 hover:opacity-80 transition-opacity cursor-pointer no-drag"
             aria-label="Roma Mart - Go to homepage"
           >
             <Logo

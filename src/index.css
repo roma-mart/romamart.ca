@@ -1,3 +1,21 @@
+/* --- Window Controls Overlay (WCO) Support --- */
+.navbar-wco {
+  position: fixed;
+  left: env(titlebar-area-x, 0);
+  top: env(titlebar-area-y, 0);
+  width: env(titlebar-area-width, 100%);
+  height: env(titlebar-area-height, 48px);
+  -webkit-app-region: drag;
+  app-region: drag;
+  z-index: 1050;
+  background: var(--color-bg, #fff);
+  transition: all 0.2s cubic-bezier(.4,0,.2,1);
+}
+
+.navbar-wco .no-drag {
+  -webkit-app-region: no-drag;
+  app-region: no-drag;
+}
 
 /* Updated font import to include Outfit and Inter */
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&family=Inter:wght@400;700&display=swap');
