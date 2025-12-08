@@ -79,13 +79,7 @@ const RoCafePage = () => {
     ].filter(cat => cat.items.length > 0);
     
     // Merge with fallback - use Excel if available, otherwise use static
-    const finalCategories = mergeCategoriesWithFallback(excelCategories, staticCategories);
-    
-    // Convert icons from components to JSX if needed
-    return finalCategories.map(cat => ({
-      ...cat,
-      icon: typeof cat.icon === 'function' ? React.createElement(cat.icon, { size: 24 }) : cat.icon
-    }));
+    return mergeCategoriesWithFallback(excelCategories, staticCategories);
   }, [menuItems]);
 
   // create memoized handlers map for categories
@@ -240,7 +234,7 @@ const RoCafePage = () => {
                     className="w-12 h-12 rounded-xl flex items-center justify-center"
                     style={{ backgroundColor: 'rgba(228, 179, 64, 0.15)', color: 'var(--color-icon)' }}
                   >
-                    {category.icon}
+                    {typeof category.icon === 'function' ? React.createElement(category.icon, { size: 24 }) : category.icon}
                   </div>
                   <div className="text-left">
                     <h3 className="var(--font-heading) text-2xl mb-1" style={{ color: 'var(--color-heading)' }}>
