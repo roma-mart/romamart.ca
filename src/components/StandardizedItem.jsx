@@ -127,7 +127,7 @@ const StandardizedItem = ({ item, defaultExpanded = false }) => {
             left: '50%',
             transform: 'translate(-50%, -50%)',
             fontSize: '6rem',
-            color: 'var(--color-text-muted)',
+            color: 'var(--color-accent-bg)',
             fontWeight: 'bold',
             opacity: 0.15,
             pointerEvents: 'none',

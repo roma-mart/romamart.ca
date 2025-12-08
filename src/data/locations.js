@@ -99,11 +99,11 @@ export const LOCATIONS = [
       parking: true,
       parkingSpots: 15,
       wheelchairAccessible: true,
-      wifi: false,
+      wifi: true,
       wifiPassword: null,
       restroom: true,
-      seating: true,
-      seatingCapacity: 8,
+      seating: false,
+      seatingCapacity: 0,
       outdoorSeating: false,
       driveThrough: false,
       deliveryAvailable: false
@@ -112,20 +112,20 @@ export const LOCATIONS = [
     // === PHOTOS ===
     // Use local paths: /romamart.ca/images/locations/wellington/
     photos: {
-      primary: null,                         // Main exterior shot
-      exterior: [],                          // Array of exterior photos
+      primary: '/images/romamart-opening1.png',                         // Main exterior shot
+      exterior: ['/images/romamart-opening2.png', ],                          // Array of exterior photos
       interior: [],                          // Array of interior photos
-      thumbnail: null                        // Small version for cards
+      thumbnail: '/images/romamart-opening3.png',                        // Small version for cards
     },
     
     // === METADATA ===
     metadata: {
-      openedDate: '2024-01-15',              // Store opening date
-      squareFootage: 2500,
-      employeeCount: 8,
+      openedDate: '2025-11-28',              // Store opening date YYYY-MM-DD
+      squareFootage: 2000,
+      employeeCount: 3,
       isHeadquarters: true,                  // Official business address
       acceptsCrypto: true,
-      languages: ['English', 'French', 'Urdu', 'Arabic']
+      languages: ['English', 'Hindi', 'Urdu',]
     }
   }
   
