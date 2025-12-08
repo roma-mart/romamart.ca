@@ -5,9 +5,10 @@
   "start_url": "/romamart.ca/",
   "scope": "/romamart.ca/",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
   "orientation": "portrait-primary",
   "theme_color": "#020178",
-  "background_color": "#020178",
+  "background_color": "#E4B340",
   "categories": ["shopping", "food", "business"],
   "lang": "en-CA",
   "dir": "ltr",
@@ -47,8 +48,8 @@
     { "src": "windows11/SplashScreen.scale-150.png", "sizes": "930x450" },
     { "src": "windows11/SplashScreen.scale-200.png", "sizes": "1240x600" },
     { "src": "windows11/SplashScreen.scale-400.png", "sizes": "2480x1200" },
-    { "src": "android/android-launchericon-512-512.png", "sizes": "512x512" },
-    { "src": "android/android-launchericon-192-192.png", "sizes": "192x192" },
+    { "src": "android/android-launchericon-512-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "android/android-launchericon-192-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
     { "src": "android/android-launchericon-144-144.png", "sizes": "144x144" },
     { "src": "android/android-launchericon-96-96.png", "sizes": "96x96" },
     { "src": "android/android-launchericon-72-72.png", "sizes": "72x72" },
@@ -79,16 +80,14 @@
     { "src": "ios/256.png", "sizes": "256x256" },
     { "src": "ios/512.png", "sizes": "512x512" },
     { "src": "ios/1024.png", "sizes": "1024x1024" },
-    { "src": "maskable-icon.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
-    { "src": "icon-192.svg", "sizes": "192x192", "type": "image/svg+xml", "purpose": "any" },
-    { "src": "icon-512.svg", "sizes": "512x512", "type": "image/svg+xml", "purpose": "any" }
+    { "src": "maskable-icon.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ],
   "shortcuts": [
     {
-      "name": "Order Online",
-      "short_name": "Order",
-      "description": "Order from Roma Mart",
-      "url": "/romamart.ca/#order",
+      "name": "RoCafe Menu",
+      "short_name": "Menu",
+      "description": "Browse our RoCafé menu",
+      "url": "/rocafe",
       "icons": [
         {
           "src": "android/android-launchericon-192-192.png",
@@ -100,7 +99,7 @@
       "name": "Our Locations",
       "short_name": "Locations",
       "description": "Find our store",
-      "url": "/romamart.ca/locations",
+      "url": "/locations",
       "icons": [
         {
           "src": "android/android-launchericon-192-192.png",
@@ -112,7 +111,7 @@
       "name": "Contact Us",
       "short_name": "Contact",
       "description": "Get in touch",
-      "url": "/romamart.ca/contact",
+      "url": "/contact",
       "icons": [
         {
           "src": "android/android-launchericon-192-192.png",
