@@ -23,7 +23,7 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
           email: data.email || COMPANY_DATA.location.contact.email || 'contact@romamart.ca',
           priceRange: '$$',
           image: data.image || 'https://romamart.ca/images/store-front.jpg',
-          logo: 'https://romamart.ca/icon-512.svg',
+          logo: 'https://romamart.ca/logo.png',
           address: {
             '@type': 'PostalAddress',
             streetAddress: data.address?.street || COMPANY_DATA.location.address.street || '189-3 Wellington Street',
@@ -37,106 +37,62 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
             latitude: data.geo?.latitude || 42.970389,
             longitude: data.geo?.longitude || -82.404589
           },
-          openingHoursSpecification: data.hours || [
-            {
-              '@type': 'OpeningHoursSpecification',
-              dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-              opens: '07:00',
-              closes: '23:00'
-            },
-            {
-              '@type': 'OpeningHoursSpecification',
-              dayOfWeek: ['Saturday', 'Sunday'],
-              opens: '08:00',
-              closes: '23:00'
-            }
-          ],
+          openingHoursSpecification: data.hours || (
+            COMPANY_DATA.location?.hours
+              ? [
+                  {
+                    '@type': 'OpeningHoursSpecification',
+                    dayOfWeek: [
+                      'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'
+                    ],
+                    opens: COMPANY_DATA.location.hours.weekdays?.split('-')[0]?.trim() || '07:00',
+                    closes: COMPANY_DATA.location.hours.weekdays?.split('-')[1]?.trim() || '22:00',
+                    validFrom: undefined,
+                    validThrough: undefined
+                  },
+                  // Add exceptions if present
+                  ...(COMPANY_DATA.location.hours.exceptions?.map(ex => ({
+                    '@type': 'OpeningHoursSpecification',
+                    dayOfWeek: undefined,
+                    opens: ex.hours === 'Closed' ? undefined : ex.hours?.split('-')[0]?.trim(),
+                    closes: ex.hours === 'Closed' ? undefined : ex.hours?.split('-')[1]?.trim(),
+                    validFrom: ex.date,
+                    validThrough: ex.date,
+                    description: ex.reason || undefined
+                  })) || [])
+                ]
+              : []
+          ),
+          timeZone: COMPANY_DATA.location?.hours?.timezone || 'America/Toronto',
           sameAs: data.socialLinks || Object.values(COMPANY_DATA.socialLinks),
           hasOfferCatalog: {
             '@type': 'OfferCatalog',
             name: 'Services & Products',
-            itemListElement: [
-              {
+            itemListElement: (COMPANY_DATA.location?.services || []).map(service => {
+              // Map known service keys to human-friendly names and types
+              const serviceMap = {
+                atm: { name: 'ATM Services', type: 'Service', description: 'Cash withdrawal and banking services available 24/7' },
+                bitcoin_atm: { name: 'Bitcoin ATM', type: 'Service', description: 'Cryptocurrency buying and selling services' },
+                rocafe: { name: 'RoCafé Coffee & Bubble Tea', type: 'Service', description: 'Fresh brewed coffee, signature bubble tea, matcha lattes, and fruit slushes' },
+                halal_meat: { name: 'Halal Meat', type: 'Product', description: 'Certified Zabiha Halal meats' },
+                printing: { name: 'Printing Services', type: 'Service', description: 'Document printing and copying' },
+                package_pickup: { name: 'Package Services', type: 'Service', description: 'Shipping and package handling' },
+                money_transfer: { name: 'Money Transfer', type: 'Service', description: 'Send and receive money worldwide' },
+                gift_cards: { name: 'Gift Cards', type: 'Product', description: 'Prepaid and gift cards for major brands' },
+                perfumes: { name: 'Perfumes', type: 'Product', description: 'Imported and local fragrances' },
+                tobacco: { name: 'Tobacco & Vape Products', type: 'Product', description: 'Wide selection for adult customers (19+)' },
+                lottery: { name: 'OLG Lottery', type: 'Service', description: 'Lottery tickets and scratch cards' }
+              };
+              const mapped = serviceMap[service] || { name: service, type: 'Service', description: '' };
+              return {
                 '@type': 'Offer',
                 itemOffered: {
-                  '@type': 'Service',
-                  name: 'RoCafé Coffee & Bubble Tea',
-                  description: 'Fresh brewed coffee, signature bubble tea, matcha lattes, and fruit slushes'
+                  '@type': mapped.type,
+                  name: mapped.name,
+                  description: mapped.description
                 }
-              },
-              {
-                '@type': 'Offer',
-                itemOffered: {
-                  '@type': 'Service',
-                  name: 'ATM Services',
-                  description: 'Cash withdrawal and banking services available 24/7'
-                }
-              },
-              {
-                '@type': 'Offer',
-                itemOffered: {
-                  '@type': 'Service',
-                  name: 'Bitcoin ATM',
-                  description: 'Cryptocurrency buying and selling services'
-                }
-              },
-              {
-                '@type': 'Offer',
-                itemOffered: {
-                  '@type': 'Product',
-                  name: 'Grocery Essentials',
-                  description: 'Daily staples, milk, bread, and pantry needs'
-                }
-              },
-              {
-                '@type': 'Offer',
-                itemOffered: {
-                  '@type': 'Product',
-                  name: 'Halal Meat',
-                  description: 'Certified Zabiha Halal meats'
-                }
-              },
-              {
-                '@type': 'Offer',
-                itemOffered: {
-                  '@type': 'Product',
-                  name: 'Global Snacks',
-                  description: 'Imported flavors and unique treats from around the world'
-                }
-              },
-              {
-                '@type': 'Offer',
-                itemOffered: {
-                  '@type': 'Product',
-                  name: 'Tobacco & Vape Products',
-                  description: 'Wide selection for adult customers (19+)'
-                }
-              },
-              {
-                '@type': 'Offer',
-                itemOffered: {
-                  '@type': 'Service',
-                  name: 'OLG Lottery',
-                  description: 'Lottery tickets and scratch cards'
-                }
-              },
-              {
-                '@type': 'Offer',
-                itemOffered: {
-                  '@type': 'Service',
-                  name: 'Package Services',
-                  description: 'Shipping and package handling'
-                }
-              },
-              {
-                '@type': 'Offer',
-                itemOffered: {
-                  '@type': 'Service',
-                  name: 'Printing Services',
-                  description: 'Document printing and copying'
-                }
-              }
-            ]
+              };
+            })
           },
           amenityFeature: [
             {
