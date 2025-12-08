@@ -7,6 +7,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { useGeolocation } from '../hooks/useBrowserFeatures';
+import { getPrimaryLocation } from '../data/locations';
 import { LocationContext } from '../contexts/LocationContext';
 import { findNearestLocation } from '../utils/locationMath';
 
@@ -48,6 +49,9 @@ export const LocationProvider = ({ children }) => {
     ? { latitude: location.latitude, longitude: location.longitude }
     : cachedLocation;
 
+  // Compute nearest location: user/cached, else fallback to HQ
+  // ...existing code...
+
   // Store location when received (only updates external systems, no setState)
   useEffect(() => {
     if (!location || !location.latitude || !location.longitude) return;
@@ -88,8 +92,16 @@ export const LocationProvider = ({ children }) => {
     }
   };
 
-  // Compute nearest location from userLocation
-  const nearestLocation = userLocation ? findNearestLocation(userLocation) : null;
+  // Compute nearest location: user/cached, else fallback to HQ
+  let nearestLocation = null;
+  if (userLocation && userLocation.latitude && userLocation.longitude) {
+    nearestLocation = findNearestLocation(userLocation);
+    if (!nearestLocation) {
+      nearestLocation = getPrimaryLocation();
+    }
+  } else {
+    nearestLocation = getPrimaryLocation();
+  }
 
   const value = {
     userLocation,
