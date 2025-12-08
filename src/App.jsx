@@ -70,7 +70,7 @@ function Hero({ onTrackOrder }) {
             </div>
             <h1 className="text-5xl md:text-7xl var(--font-heading) uppercase leading-none" style={{ color: 'var(--color-text-on-primary)', marginBottom: '1.5rem' }}>Your Daily <br/><span style={{ color: 'var(--color-accent)' }}>Stop & Go</span></h1>
             <p className="text-lg md:text-xl font-inter mb-6 max-w-lg leading-relaxed" style={{ color: 'var(--color-text-on-primary)' }}>
-              Experience Sarnia's newest convenience destination. From daily essentials to bubble tea, we have what you need.
+              Experience Sarnia's newest convenience destination. From daily essentials to premium coffee, we have what you need.
             </p>
             <div className="mb-6"><ShareButton title="Roma Mart" text="Check out Roma Mart - Sarnia's newest convenience store!" className="bg-white/10 text-white hover:bg-white/20 border border-white/30" /></div>
             <div className="flex flex-col sm:flex-row gap-4">
@@ -82,11 +82,11 @@ function Hero({ onTrackOrder }) {
                 variant="order"
                 icon={<ExternalLink size={20} />}
                 analyticsEvent="order_cta_hero"
-                aria-label="Order online now from Roma Mart"
+                aria-label="Order online from Roma Mart"
                 onClick={handleOrderClick}
                 className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-bold text-lg"
               >
-                ORDER ONLINE NOW
+                ORDER ONLINE
               </Button>
               <Button
                 href={`${BASE_URL}locations`} // Uses base path for internal link
