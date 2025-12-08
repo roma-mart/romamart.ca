@@ -28,10 +28,14 @@
 - Quality preflight before build
 
 ## Deployment
-- gh-pages from `dist` via `npm run deploy`
 
 ## Conventions
-- Use CSS vars, avoid raw hex
-- Import only needed icons
-- Lazy load pages
-- Helmet for SEO
+
+---
+
+## Company HQ & Location Data Sourcing
+
+- All headquarters (HQ) info (address, hours, contact, GST, etc.) must only be sourced from `src/config/company_data.js` (`COMPANY_DATA`).
+- No hardcoded or duplicated HQ info is allowed in any page or component.
+- Dynamic location info for other stores must only be sourced from `src/data/locations.js` and its helpers.
+- This ensures a single source of truth for overrides, fallbacks, and future scalability.

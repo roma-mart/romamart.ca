@@ -1,4 +1,12 @@
+
 # Components
+
+---
+**HQ & Location Data Sourcing Standard:**
+All headquarters (HQ) info (address, hours, contact, GST, etc.) must ONLY be sourced from `src/config/company_data.js` (`COMPANY_DATA`).
+No hardcoded or duplicated HQ info is allowed in any component.
+Dynamic location info for other stores must ONLY be sourced from `src/data/locations.js` and its helpers.
+This ensures a single source of truth for overrides, fallbacks, and future scalability.
 
 - Reusable UI components.
 - Conventions: accessibility first, CSS variables, small props surface.

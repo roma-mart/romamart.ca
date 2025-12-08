@@ -46,7 +46,7 @@ const LocationsPage = () => {
       <nav aria-label="Breadcrumb" className="max-w-7xl mx-auto px-4 mb-8">
         <ol className="flex items-center gap-2 text-sm font-inter">
           <li>
-            <a href={`${BASE_URL}`} className="hover:text-yellow-500 transition-colors" style={mutedTextColor}>Home</a>
+            <a href={`${BASE_URL}`} className="hover:text-accent transition-colors" style={mutedTextColor}>Home</a>
           </li>
           <li aria-hidden="true"><ChevronRight size={16} style={mutedTextColor} /></li>
           <li aria-current="page" className="font-semibold" style={textColor}>Locations</li>

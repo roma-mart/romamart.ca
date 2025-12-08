@@ -6,11 +6,10 @@ import COMPANY_DATA from '../config/company_data';
 import { Logo } from './Logo';
 import TrustpilotWidget from './TrustpilotWidget';
 import { useLocationContext } from '../hooks/useLocationContext';
-import { LOCATIONS, getActiveLocations, getPrimaryLocation } from '../data/locations';
+import { LOCATIONS, getActiveLocations } from '../data/locations';
 import { NAVIGATION_LINKS } from '../config/navigation';
 import OrderCTA from './OrderCTA';
 import Button from './Button';
-import { useLocationAware } from '../hooks/useLocationContext';
 
 // Social platforms to control display in Footer (label, icon)
 const SOCIAL_LINKS = [
@@ -22,14 +21,13 @@ const SOCIAL_LINKS = [
 ];
 
 export default function Footer() {
+
   const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
   const { userLocation } = useLocationContext();
   const [selectedLocationId, setSelectedLocationId] = useState(() => {
     return localStorage.getItem('roma_mart_selected_location') || 'auto';
   });
 
-  // Trigger automatic location request site-wide
-  useLocationAware();
 
   // Calculate nearest location
   const nearestLocationId = useMemo(() => {
@@ -70,6 +68,7 @@ export default function Footer() {
     return nearest;
   }, [userLocation]);
 
+
   const handleLocationChange = (e) => {
     const newLocationId = e.target.value;
     setSelectedLocationId(newLocationId);
@@ -81,17 +80,53 @@ export default function Footer() {
     }
   };
 
-  const getCurrentLocation = () => {
-    if (selectedLocationId === 'auto') {
-      return nearestLocationId 
-        ? LOCATIONS.find(loc => loc.id === nearestLocationId)
-        : getPrimaryLocation();
-    } else {
-      return LOCATIONS.find(loc => loc.id === selectedLocationId) || getPrimaryLocation();
-    }
-  };
 
+
+
+
+  // Compute currentLocation before rendering (use only one getCurrentLocation definition in this component)
+  const getCurrentLocation = () => {
+    let location = null;
+    if (selectedLocationId === 'auto') {
+      if (nearestLocationId) {
+        location = LOCATIONS.find(loc => loc.id === nearestLocationId);
+      } else {
+        location = COMPANY_DATA.location;
+      }
+    } else {
+      location = LOCATIONS.find(loc => loc.id === selectedLocationId);
+      if (!location) {
+        location = COMPANY_DATA.location;
+      }
+    }
+    if (location) {
+      return {
+        ...location,
+        address: location.address || COMPANY_DATA.hq?.address,
+        contact: location.contact || COMPANY_DATA.hq?.contact,
+        hours: location.hours || COMPANY_DATA.hq?.hours,
+      };
+    }
+    return COMPANY_DATA.hq;
+  };
   const currentLocation = getCurrentLocation();
+
+                  <div className="mt-8 text-sm font-inter" style={{ color: 'var(--color-on-footer)' }}>
+                    {/* Prefer currentLocation, fallback to COMPANY_DATA.hq */}
+                    <div className="mb-2">
+                      <strong>Address:</strong> {currentLocation?.address?.formatted || COMPANY_DATA.hq?.address?.formatted}
+                    </div>
+                    <div className="mb-2">
+                      <strong>Phone:</strong> {currentLocation?.contact?.phone || COMPANY_DATA.hq?.contact?.phone}
+                    </div>
+                    <div className="mb-2">
+                      <strong>Email:</strong> {currentLocation?.contact?.email || COMPANY_DATA.hq?.contact?.email}
+                    </div>
+                    <div className="mb-2">
+                      <strong>Hours:</strong> Mon-Fri: {currentLocation?.hours?.weekdays || COMPANY_DATA.hq?.hours?.weekdays}, Sat-Sun: {currentLocation?.hours?.weekends || COMPANY_DATA.hq?.hours?.weekends}
+                    </div>
+                  </div>
+
   const isAutoMode = selectedLocationId === 'auto';
   const activeLocations = getActiveLocations();
 

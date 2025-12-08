@@ -215,39 +215,17 @@ const Button = React.forwardRef(({
   };
 
   // Add default hover and active effect for 'order' and 'navlink' variants
+  // Only retain manual handlers for variants that require custom logic (e.g., location)
   const handleMouseEnter = (e) => {
-    if (variant === 'order' && !disabled) {
-      e.currentTarget.style.transform = 'scale(1.05)';
-      e.currentTarget.style.boxShadow = '0 8px 24px var(--color-accent-shadow, rgba(228,179,64,0.18))';
-    } else if (variant === 'navlink' && !disabled) {
-      e.currentTarget.style.transform = 'scale(1.0125)';
-      e.currentTarget.style.boxShadow = '0 4px 12px var(--color-accent-shadow, rgba(228,179,64,0.10))';
-    }
     if (props.onMouseEnter) props.onMouseEnter(e);
   };
   const handleMouseLeave = (e) => {
-    if (variant === 'order' && !disabled) {
-      e.currentTarget.style.transform = 'scale(1)';
-      e.currentTarget.style.boxShadow = mergedStyle.boxShadow || '0 4px 16px var(--color-accent-shadow, rgba(228,179,64,0.15))';
-    } else if (variant === 'navlink' && !disabled) {
-      e.currentTarget.style.transform = 'scale(1)';
-      e.currentTarget.style.boxShadow = mergedStyle.boxShadow || '0 4px 16px var(--color-accent-shadow, rgba(228,179,64,0.15))';
-    }
     if (props.onMouseLeave) props.onMouseLeave(e);
   };
-  // Add click/active feedback for navlink
   const handleMouseDown = (e) => {
-    if (variant === 'navlink' && !disabled) {
-      e.currentTarget.style.transform = 'scale(0.99)';
-      e.currentTarget.style.boxShadow = '0 2px 6px var(--color-accent-shadow, rgba(228,179,64,0.07))';
-    }
     if (props.onMouseDown) props.onMouseDown(e);
   };
   const handleMouseUp = (e) => {
-    if (variant === 'navlink' && !disabled) {
-      e.currentTarget.style.transform = 'scale(1.0125)';
-      e.currentTarget.style.boxShadow = '0 4px 12px var(--color-accent-shadow, rgba(228,179,64,0.10))';
-    }
     if (props.onMouseUp) props.onMouseUp(e);
   };
 
@@ -267,9 +245,15 @@ const Button = React.forwardRef(({
         </span>
       );
     }
+    // If icon only (no children), center icon with no margin
+    if (icon && !children) {
+      return (
+        <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>{icon}</span>
+      );
+    }
     return (
       <>
-        {icon && iconPosition === 'left' && <span style={{ marginRight: 10, display: 'inline-flex', alignItems: 'center' }}>{icon}</span>}
+        {icon && iconPosition === 'left' && <span style={{ marginRight: children ? 10 : 0, display: 'inline-flex', alignItems: 'center' }}>{icon}</span>}
         {children && <span>{children}</span>}
         {icon && iconPosition === 'right' && <span style={{ marginLeft: 10, display: 'inline-flex', alignItems: 'center' }}>{icon}</span>}
         {loadingProp && <span className="inline-block ml-2 animate-spin" style={{ width: 18, height: 18, border: '2px solid var(--color-accent)', borderTop: '2px solid transparent', borderRadius: '50%' }} aria-hidden="true"></span>}
@@ -299,11 +283,11 @@ const Button = React.forwardRef(({
         tabIndex={tabIndex}
         className={allClasses}
         style={mergedStyle}
-        onClick={onClick}
+        onClick={handleClick}
         onKeyDown={e => {
-          if ((e.key === 'Enter' || e.key === ' ') && onClick) {
+          if ((e.key === 'Enter' || e.key === ' ') && !disabled && !(isLocation ? loading : loadingProp)) {
             e.preventDefault();
-            onClick(e);
+            handleClick(e);
           }
         }}
         onMouseEnter={handleMouseEnter}
@@ -369,7 +353,7 @@ const Button = React.forwardRef(({
 });
 
 Button.propTypes = {
-  variant: PropTypes.oneOf(['order', 'nav', 'action', 'secondary', 'icon', 'location', 'custom']),
+  variant: PropTypes.oneOf(['order', 'nav', 'navlink', 'action', 'secondary', 'icon', 'location', 'custom']),
   children: PropTypes.node,
   icon: PropTypes.node,
   iconPosition: PropTypes.oneOf(['left', 'right']),

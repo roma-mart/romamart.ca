@@ -1,8 +1,15 @@
 // src/config/company_data.js
+
 // Centralized company data for Roma Mart 2.0
 // Single source of truth for brand info, social links, order platform, etc.
 
+// IMPORTANT:
+// All headquarters (HQ) info (address, hours, contact, GST, etc.) must ONLY be sourced from this file (COMPANY_DATA).
+// No hardcoded or duplicated HQ info is allowed in any page or component.
+// All overrides and fallbacks for HQ data must be handled here for maintainability and resilience.
+
 import { getOrderingUrl } from './ordering';
+import { getPrimaryLocation } from '../data/locations';
 
 const COMPANY_DATA = {
   legalName: 'Roma Mart Corp.',
@@ -16,11 +23,17 @@ const COMPANY_DATA = {
     snapchat: 'https://www.snapchat.com/@romamartca/',
     x: 'https://www.x.com/romamartca/'
   },
+  // Fallback HQ info for resilience
+  address: '189-3 Wellington Street, Sarnia, ON N7T 1G6',
+  // HQ hours are now sourced directly from the (primary) location in LOCATIONS
+  hours: getPrimaryLocation().hours,
   contact: {
-    phone: '+1-519-555-1234',
-    email: 'info@romamart.ca',
+    phone: '+1-382-342-2000',
+    email: 'contact@romamart.ca',
     web3FormsAccessKey: import.meta.env.VITE_WEB3FORMS_ACCESS_KEY || 'YOUR_WEB3FORMS_KEY'
-  }
+  },
+  // Location-dependent info is mapped from the primary location object
+  location: getPrimaryLocation()
   // Add other brand data as needed
 };
 

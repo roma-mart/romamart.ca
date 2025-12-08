@@ -18,6 +18,13 @@
 15. Prevent internal rule conflicts (meta integrity enforcement)
 16. Cohesive design tokens (single source of truth)
 17. Sustainable content integration (data-driven services & locations)
+
+---
+**HQ & Location Data Sourcing Standard:**
+All headquarters (HQ) info (address, hours, contact, GST, etc.) must ONLY be sourced from `src/config/company_data.js` (`COMPANY_DATA`).
+No hardcoded or duplicated HQ info is allowed in any page or component.
+Dynamic location info for other stores must ONLY be sourced from `src/data/locations.js` and its helpers.
+This ensures a single source of truth for overrides, fallbacks, and future scalability.
 18. Minimal duplication (reuse components, avoid ad-hoc markup)
 19. Explicit fallbacks (fonts, images, features)
 20. Secure external integrations (whitelist domains, sanitize payloads)

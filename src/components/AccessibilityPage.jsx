@@ -122,17 +122,17 @@ const AccessibilityPage = () => {
           <div className="p-6 rounded-lg border" style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
             <Mail size={32} className="mb-4" style={{ color: 'var(--color-icon)' }} />
             <h3 className="font-bold text-lg mb-2" style={textColor}>Email</h3>
-            <a href={`mailto:${COMPANY_DATA.contact.email}`} className="hover:underline break-all" style={{ color: 'var(--color-accent)' }}>{COMPANY_DATA.contact.email}</a>
+            <a href={`mailto:${COMPANY_DATA.location.contact.email}`} className="hover:underline break-all" style={{ color: 'var(--color-accent)' }}>{COMPANY_DATA.location.contact.email}</a>
           </div>
           <div className="p-6 rounded-lg border" style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
             <Phone size={32} className="mb-4" style={{ color: 'var(--color-icon)' }} />
             <h3 className="font-bold text-lg mb-2" style={textColor}>Phone</h3>
-            <a href={`tel:${COMPANY_DATA.contact.phone}`} className="hover:underline" style={{ color: 'var(--color-accent)' }}>{COMPANY_DATA.contact.phone}</a>
+            <a href={`tel:${COMPANY_DATA.location.contact.phone}`} className="hover:underline" style={{ color: 'var(--color-accent)' }}>{COMPANY_DATA.location.contact.phone}</a>
           </div>
           <div className="p-6 rounded-lg border" style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
             <MapPin size={32} className="mb-4" style={{ color: 'var(--color-icon)' }} />
             <h3 className="font-bold text-lg mb-2" style={textColor}>Visit Us</h3>
-            <p className="text-sm" style={textColor}>{COMPANY_DATA.address}</p>
+            <p className="text-sm" style={textColor}>{COMPANY_DATA.location.address.formatted}</p>
           </div>
         </div>
         <p className="mt-8 leading-relaxed" style={textColor}>We will make reasonable efforts to provide accommodations and respond to accessibility inquiries within 5 business days.</p>

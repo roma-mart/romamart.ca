@@ -35,8 +35,8 @@ const ServicesPage = () => {
             <a
               href={`${BASE_URL}`}
               style={{ color: 'var(--color-accent)', opacity: 0.7 }}
-              onMouseOver={e => e.currentTarget.style.color = 'rgba(228, 179, 64, 0.85)'}
-              onFocus={e => e.currentTarget.style.color = 'rgba(228, 179, 64, 0.85)'}
+              onMouseOver={e => e.currentTarget.style.color = 'var(--color-accent-hover)'}
+              onFocus={e => e.currentTarget.style.color = 'var(--color-accent-hover)'}
               onMouseOut={e => e.currentTarget.style.color = 'var(--color-accent)'}
               onBlur={e => e.currentTarget.style.color = 'var(--color-accent)'}
             >
@@ -68,8 +68,8 @@ const ServicesPage = () => {
               title="Roma Mart Services"
               text="Check out all the amazing services at Roma Mart in Sarnia!"
               style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)' }}
-              onMouseOver={e => e.currentTarget.style.backgroundColor = 'rgba(228, 179, 64, 0.85)'}
-              onFocus={e => e.currentTarget.style.backgroundColor = 'rgba(228, 179, 64, 0.85)'}
+              onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--color-accent-hover)'}
+              onFocus={e => e.currentTarget.style.backgroundColor = 'var(--color-accent-hover)'}
               onMouseOut={e => e.currentTarget.style.backgroundColor = 'var(--color-accent)'}
               onBlur={e => e.currentTarget.style.backgroundColor = 'var(--color-accent)'}
             />
@@ -140,7 +140,7 @@ const ServicesPage = () => {
 
             {/* Lottery Section */}
             <div>
-              <h4 className="var(--font-heading) font-bold text-lg mb-3" style={{ color: 'var(--color-heading)' }}>Lottery Products (Coming Soon)</h4>
+              <h4 className="var(--font-heading) font-bold text-lg mb-3" style={{ color: 'var(--color-heading)' }}>Lottery Products</h4>
               <div className="p-4 rounded-lg border-2 mb-4" style={{ backgroundColor: 'var(--color-warning-bg)', borderColor: COLORS.yellow }}>
                 <div className="flex items-start gap-3">
                   <div className="text-3xl">🎫</div>
@@ -187,7 +187,7 @@ const ServicesPage = () => {
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <a
-              href={`${BASE_URL}#contact`}
+              href={`${BASE_URL}locations`}
               className="px-8 py-4 rounded-full font-bold font-inter transition-transform hover:scale-105 shadow-lg"
               style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)' }}
               onMouseOver={e => e.currentTarget.style.backgroundColor = 'rgba(228, 179, 64, 0.85)'}
@@ -198,7 +198,7 @@ const ServicesPage = () => {
               Get Directions
             </a>
             <a
-              href={`${BASE_URL}#contact`}
+              href={`${BASE_URL}contact`}
               className="px-8 py-4 rounded-full font-bold font-inter transition-transform hover:scale-105 border-2"
               style={{ borderColor: 'var(--color-accent)', color: 'var(--color-text-on-primary)', backgroundColor: 'transparent' }}
             >

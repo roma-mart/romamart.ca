@@ -1,3 +1,4 @@
+
 /**
  * Centralized Location Management System
  * 
@@ -5,6 +6,11 @@
  * are managed here. Add new locations by copying the structure below.
  * 
  * Zero external dependencies - fully self-contained.
+ *
+ * IMPORTANT:
+ * All dynamic location info for non-HQ stores must ONLY be sourced from this file and its helpers.
+ * No hardcoded or duplicated location data is allowed in any page or component.
+ * This ensures a single source of truth for all location-dependent info and future scalability.
  */
 
 // Location type constants

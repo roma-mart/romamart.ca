@@ -95,8 +95,6 @@ const StandardizedItem = ({ item, defaultExpanded = false }) => {
   const fontSize = tokens?.TYPOGRAPHY?.fontSize?.base || '1rem';
   const lineHeight = tokens?.TYPOGRAPHY?.lineHeight?.relaxed || 1.5;
 
-  // Replace console.log with console.warn
-  console.warn('Debugging tokens:', tokens);
 
   {/* Apply typography tokens explicitly */
       const bodyFont = tokens?.fonts?.body || 'var(--font-body)';
