@@ -51,6 +51,7 @@ export const DIETARY_TAGS = {
 // Full menu items array
 export const ROCAFE_FULL_MENU = [
   {
+    itemType: 'menu',
     id: 'signature-bubble-tea',
     name: 'Signature Bubble Tea',
     tagline: 'Our most popular boba tea with chewy tapioca pearls',
@@ -110,10 +111,13 @@ export const ROCAFE_FULL_MENU = [
     caffeineLevel: 'medium',
     flavorProfile: ['sweet', 'creamy', 'chewy'],
     
-    locationStatus: 'Available at all RoCafé locations',
-    isAvailable: true
+    status: 'available',
+    availableAt: ['loc-wellington-001'],
+    availability: 'store_hours',
+    featured: true,
   },
   {
+    itemType: 'menu',
     id: 'fresh-brewed-coffee',
     name: 'Fresh Brewed Coffee',
     tagline: 'Classic drip coffee, brewed fresh every hour',
@@ -149,10 +153,13 @@ export const ROCAFE_FULL_MENU = [
     caffeineLevel: 'high',
     flavorProfile: ['bold', 'smooth', 'aromatic'],
     
-    locationStatus: 'Available 6 AM - 10 PM',
-    isAvailable: true
+    status: 'available',
+    availableAt: ['loc-wellington-001'],
+    availability: 'store_hours',
+    featured: true,
   },
   {
+    itemType: 'menu',
     id: 'matcha-latte',
     name: 'Matcha Latte',
     tagline: 'Premium ceremonial-grade matcha with steamed milk',
@@ -209,10 +216,13 @@ export const ROCAFE_FULL_MENU = [
     caffeineLevel: 'medium',
     flavorProfile: ['earthy', 'creamy', 'umami'],
     
-    locationStatus: 'Available at all RoCafé locations',
-    isAvailable: true
+    status: 'available',
+    availableAt: ['loc-wellington-001'],
+    availability: 'store_hours',
+    featured: true,
   },
   {
+    itemType: 'menu',
     id: 'mango-fruit-slush',
     name: 'Mango Fruit Slush',
     tagline: 'Refreshing tropical blend with real fruit',
@@ -246,8 +256,10 @@ export const ROCAFE_FULL_MENU = [
     caffeineLevel: 'none',
     flavorProfile: ['tropical', 'sweet', 'tangy'],
     
-    locationStatus: 'Seasonal - Available Spring/Summer',
-    isAvailable: true
+    status: 'available',
+    availableAt: ['loc-wellington-001'],
+    availability: 'store_hours',
+    featured: true,
   }
 ];
 
@@ -277,9 +289,7 @@ export const ALLERGEN_WARNING = {
 };
 
 // Featured items for homepage (4 items currently displayed)
-export const ROCAFE_FEATURED = ROCAFE_FULL_MENU.filter(item => 
-  ['signature-bubble-tea', 'fresh-brewed-coffee', 'matcha-latte', 'mango-fruit-slush'].includes(item.id)
-);
+export const ROCAFE_FEATURED = ROCAFE_FULL_MENU.filter(item => item.featured);
 
 // Helper function to get items by category
 export const getItemsByCategory = (categoryId) => {

@@ -22,6 +22,7 @@ import BrandPatternBackground from './components/BrandPatternBackground';
 import ShareButton from './components/ShareButton';
 import Button from './components/Button';
 import StandardizedItem from './components/StandardizedItem';
+import { useLocationAware } from './hooks/useLocationContext';
 import { ROCAFE_FEATURED } from './data/rocafe-menu';
 import { SERVICES_FEATURED } from './data/services.jsx';
 import Phone from 'lucide-react/dist/esm/icons/phone.js';
@@ -112,6 +113,7 @@ function Hero({ onTrackOrder }) {
 }
 
 const ServicesSection = () => {
+    useLocationAware();
   return (
     <section id="services" className="py-20" style={{ backgroundColor: 'var(--color-surface)' }}>
       <div className="max-w-7xl mx-auto px-4">
@@ -123,6 +125,7 @@ const ServicesSection = () => {
             <StandardizedItem 
               key={service.id}
               item={service}
+              itemType="service"
               defaultExpanded={false}
             />
           ))}
@@ -171,6 +174,7 @@ const RoCafeSection = () => {
                 <StandardizedItem 
                   key={item.id}
                   item={item}
+                  itemType="menu"
                   defaultExpanded={false}
                 />
               ))}

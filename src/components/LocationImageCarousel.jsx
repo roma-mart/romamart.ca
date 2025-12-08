@@ -29,6 +29,11 @@ const LocationImageCarousel = ({ photos, locationName }) => {
   const images = useMemo(() => getImageList(photos, locationName), [photos, locationName]);
   const [current, setCurrent] = useState(0);
 
+  // Memoize handleSelect to avoid inline function in event handler
+  const handleSelect = useCallback(idx => {
+    setCurrent(idx);
+  }, []);
+
   // Auto-advance every 5s
   useEffect(() => {
     if (images.length <= 1) return;
@@ -38,7 +43,7 @@ const LocationImageCarousel = ({ photos, locationName }) => {
     return () => clearInterval(timer);
   }, [images.length]);
 
-  const handleSelect = useCallback(idx => setCurrent(idx), []);
+  // ...existing code...
 
   if (!images.length) return null;
 
@@ -59,7 +64,7 @@ const LocationImageCarousel = ({ photos, locationName }) => {
             <button
               key={idx}
               type="button"
-              onClick={() => handleSelect(idx)}
+              onClick={handleSelect.bind(null, idx)}
               className={`w-2 h-2 rounded-full transition-all focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 ${idx === current ? 'w-6 bg-[var(--color-accent)]' : 'bg-[var(--color-surface)]'}`}
               aria-label={`View image ${idx + 1}`}
               tabIndex={0}
