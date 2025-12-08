@@ -38,6 +38,29 @@ export default defineConfig([
     },
   },
   {
+    files: ['**/*.test.{js,jsx}', '**/__tests__/**/*.{js,jsx}', 'src/test/**/*.js'],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+        global: 'readonly',
+        vi: 'readonly',
+        describe: 'readonly',
+        it: 'readonly',
+        expect: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+      },
+    },
+    rules: {
+      'no-console': 'off', // Tests can use console for debugging
+      'no-undef': 'error',
+    },
+  },
+  {
     files: ['**/*.{js,jsx}'],
     ignores: ['scripts/**', 'public/sw.js'],
     extends: [

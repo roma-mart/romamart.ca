@@ -31,6 +31,11 @@ Thumbs.db
 # Build artifacts
 /build/
 
+# Test coverage
+coverage/
+.nyc_output/
+*.lcov
+
 # Misc
 public/README.md
 full_index_dump.txt
