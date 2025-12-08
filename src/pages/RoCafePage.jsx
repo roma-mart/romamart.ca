@@ -148,7 +148,7 @@ const RoCafePage = () => {
           <div className="flex flex-wrap justify-center gap-8 mt-12">
             <div className="text-center">
               <div className="text-4xl var(--font-heading) mb-2" style={{ color: 'var(--color-accent)' }}>
-                {menuItems.length > 0 ? menuItems.length : ROCAFE_FULL_MENU.length}+
+                {menuItems.length || ROCAFE_FULL_MENU.length}+
               </div>
               <div className="text-sm font-inter uppercase tracking-wider" style={mutedTextColor}>Menu Items</div>
             </div>

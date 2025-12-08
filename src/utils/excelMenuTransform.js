@@ -11,6 +11,11 @@
 import { Coffee, Wine, UtensilsCrossed, IceCream, Sparkles, Beef } from 'lucide-react';
 
 /**
+ * Constant prefix for Excel-generated item IDs
+ */
+const EXCEL_ITEM_ID_PREFIX = 'excel-';
+
+/**
  * Map of oc_page categories to display metadata
  * Icons and descriptions for each Excel category
  */
@@ -26,7 +31,7 @@ export const EXCEL_CATEGORY_MAP = {
     description: 'Refreshing cold coffee beverages'
   },
   'RoCafe Tea': {
-    icon: Wine,
+    icon: Wine, // Wine glass icon used for tea/beverage consistency with bubble tea
     name: 'Tea & Matcha',
     description: 'Premium tea selections and matcha lattes'
   },
@@ -71,13 +76,13 @@ export const transformExcelToMenuItem = (excelRow, index) => {
   const size = excelRow.size || '1 ea';
   const cents = parseInt(excelRow.cents, 10) || 0;
   const category = excelRow.oc_page || excelRow.oc_Page || 'Other';
-  const upc = excelRow.Upc || excelRow['Upc Actual'] || `excel-${index}`;
+  const upc = excelRow.Upc || excelRow['Upc Actual'] || `${EXCEL_ITEM_ID_PREFIX}${index}`;
   
   // Convert cents to dollars
   const price = cents / 100;
   
   return {
-    id: `excel-${upc}`,
+    id: `${EXCEL_ITEM_ID_PREFIX}${upc}`,
     name: name,
     tagline: size,
     description: `${name} - ${size}`,
