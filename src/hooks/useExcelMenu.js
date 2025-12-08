@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
 
 // path: where your Excel file is (e.g. '/data/rocafe_menu.xlsx')
-export function useExcelMenu(path = "./rocafe_menu.xlsx") {
+export function useExcelMenu(path = "/romamart.ca/rocafe_menu.xlsx") {
   const [menuItems, setMenuItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
