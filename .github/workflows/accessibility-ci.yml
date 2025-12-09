@@ -71,6 +71,7 @@ jobs:
 
       - name: Build site
         env:
+          VITE_APP_DOMAIN: ${{ secrets.VITE_APP_DOMAIN }}
           VITE_WEB3FORMS_KEY: ${{ secrets.WEB3FORMS_KEY }}
           VITE_GTM_ID: ${{ secrets.GTM_ID }}
         run: npm run build
@@ -123,13 +124,6 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-
-      - name: Build site
-        env:
-          VITE_APP_DOMAIN: ${{ secrets.VITE_APP_DOMAIN }}
-          VITE_WEB3FORMS_KEY: ${{ secrets.WEB3FORMS_KEY }}
-          VITE_GTM_ID: ${{ secrets.GTM_ID }}
-        run: npm run build
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
