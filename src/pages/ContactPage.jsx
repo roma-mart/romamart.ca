@@ -48,7 +48,7 @@ const ContactPage = () => {
     }
   };
 
-  const formAccessKey = import.meta.env.VITE_WEB3FORMS_KEY || '';
+  const formAccessKey = COMPANY_DATA.contact.web3FormsAccessKey || '';
 
   return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>
