@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useCallback, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ChevronRight, ChevronDown, Coffee, Wine, UtensilsCrossed, IceCream, Sparkles, AlertTriangle } from 'lucide-react';
@@ -9,17 +10,14 @@ import { ROCAFE_FULL_MENU, MENU_CATEGORIES, ALLERGEN_WARNING } from '../data/roc
 import COMPANY_DATA from '../config/company_data';
 import MenuExcelLoader from '../components/MenuExcelHolder';
 import { useExcelMenu } from '../hooks/useExcelMenu';
+import { groupExcelItemsByCategory, mergeCategoriesWithFallback } from '../utils/excelMenuTransform';
 
 const RoCafePage = () => {
 
-  const { menuItems, loading, error } = useExcelMenu();
-  console.warn('menuItems', menuItems);
-  if (loading) {
-    // console.warn("Loading menu...");
-  }
-  if (error) {
-    console.error(`Error loading menu... ${error}`);
-  }
+  const { menuItems } = useExcelMenu();
+  
+  // Note: menuItems will be empty array during loading or on error
+  // The menuCategories useMemo will handle fallback to static menu
 
   const textColor = { color: 'var(--color-text)' };
   const mutedTextColor = { color: 'var(--color-text-muted)' };
@@ -36,57 +34,10 @@ const RoCafePage = () => {
   useLocationAware(() => {
     // Location stored and available for StandardizedItem availability states
   });
-
-  // Group menu items by category
   const menuCategories = useMemo(() => {
-    const categories = [
-      {
-        id: MENU_CATEGORIES.BUBBLE_TEA,
-        name: 'Bubble Tea',
-        icon: <Wine size={24} />,
-        description: 'Classic and creative bubble tea with tapioca pearls',
-        items: ROCAFE_FULL_MENU.filter(item => item.category === MENU_CATEGORIES.BUBBLE_TEA)
-      },
-      {
-        id: MENU_CATEGORIES.HOT_COFFEE,
-        name: 'Hot Coffee',
-        icon: <Coffee size={24} />,
-        description: 'Freshly brewed coffee made to perfection',
-        items: ROCAFE_FULL_MENU.filter(item => item.category === MENU_CATEGORIES.HOT_COFFEE)
-      },
-      {
-        id: MENU_CATEGORIES.ICED_COFFEE,
-        name: 'Iced Coffee',
-        icon: <Coffee size={24} />,
-        description: 'Refreshing cold coffee beverages',
-        items: ROCAFE_FULL_MENU.filter(item => item.category === MENU_CATEGORIES.ICED_COFFEE)
-      },
-      {
-        id: MENU_CATEGORIES.TEA,
-        name: 'Tea & Matcha',
-        icon: <Wine size={24} />,
-        description: 'Premium tea selections and matcha lattes',
-        items: ROCAFE_FULL_MENU.filter(item => item.category === MENU_CATEGORIES.TEA)
-      },
-      {
-        id: MENU_CATEGORIES.SMOOTHIES,
-        name: 'Smoothies & Fresh Juice',
-        icon: <IceCream size={24} />,
-        description: 'Healthy blended fruit beverages made fresh',
-        items: ROCAFE_FULL_MENU.filter(item => item.category === MENU_CATEGORIES.SMOOTHIES)
-      },
-      {
-        id: MENU_CATEGORIES.SPECIALTY,
-        name: 'Specialty Drinks',
-        icon: <Sparkles size={24} />,
-        description: 'Unique RoCafé creations',
-        items: ROCAFE_FULL_MENU.filter(item => item.category === MENU_CATEGORIES.SPECIALTY)
-      }
-    ];
-    
-    // Only return categories with items
-    return categories.filter(cat => cat.items.length > 0);
-  }, []);
+    return groupExcelItemsByCategory(menuItems);
+  }, [menuItems]);
+
 
   // create memoized handlers map for categories
   const categoryHandlers = useMemo(() => {
@@ -147,7 +98,9 @@ const RoCafePage = () => {
           {/* Quick stats */}
           <div className="flex flex-wrap justify-center gap-8 mt-12">
             <div className="text-center">
-              <div className="text-4xl var(--font-heading) mb-2" style={{ color: 'var(--color-accent)' }}>{ROCAFE_FULL_MENU.length}+</div>
+              <div className="text-4xl var(--font-heading) mb-2" style={{ color: 'var(--color-accent)' }}>
+                {menuItems.length || ROCAFE_FULL_MENU.length}+
+              </div>
               <div className="text-sm font-inter uppercase tracking-wider" style={mutedTextColor}>Menu Items</div>
             </div>
             <div className="text-center">
