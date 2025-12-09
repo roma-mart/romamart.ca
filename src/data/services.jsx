@@ -108,10 +108,9 @@ export const SERVICES = [
     availability: 'store_hours',
     features: [
       'Black & white printing only',
-      'Email to print@romamart.ca',
       'Pay at counter',
-      'QR verification required',
-      'Multiple page sizes'
+      'Prints issued after verification',
+      'Ideal for documents & last-minute needs',
     ],
     badge: null,
     ageRestricted: false,
@@ -121,7 +120,7 @@ export const SERVICES = [
       text: 'Email Print Job',
       email: 'print@romamart.ca',
       subject: 'Print Request',
-      body: 'Please attach your document. Include your name and phone number. You will receive a QR code to show at the counter.'
+      body: 'Please attach your document. Include your name and phone number.'
     }
   },
   
@@ -163,7 +162,6 @@ export const SERVICES = [
       'Variety of scents',
       'Unisex options',
       'Gift sets available',
-      'Testers available'
     ],
     badge: null,
     ageRestricted: false,
@@ -185,8 +183,6 @@ export const SERVICES = [
       'Canadian-made products',
       'Support local brands',
       'Authentic quality',
-      'Maple products',
-      'Regional specialties'
     ],
     badge: null,
     ageRestricted: false,
@@ -237,7 +233,7 @@ export const SERVICES = [
     badge: null,
     ageRestricted: false,
     status: 'available',
-    featured: true,
+    featured: false,
   },
   
   {
