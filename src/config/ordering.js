@@ -5,7 +5,6 @@
  * @since December 4, 2025
  */
 
-import COMPANY_DATA from '../config/company_data';
 /**
  * Ordering service URLs
  * Update these when switching between staging/production
@@ -45,7 +44,7 @@ export const ORDERING_CONFIG = {
    * Direct phone ordering
    * @placeholder Update with primary location phone
    */
-  phone: `tel:${COMPANY_DATA.location.contact.phone}`,
+  phone: 'tel:+13823422000',
 };
 
 /**
