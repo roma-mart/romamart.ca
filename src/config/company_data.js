@@ -24,7 +24,7 @@ const COMPANY_DATA = {
     x: 'https://www.x.com/romamartca/'
   },
   // Fallback HQ info for resilience
-  address: '189-3 Wellington Street, Sarnia, ON N7T 1G6',
+  address: '3-189 Wellington Street, Sarnia, ON N7T 1G6',
   // HQ hours are now sourced directly from the (primary) location in LOCATIONS
   hours: getPrimaryLocation().hours,
   contact: {
