@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { ChevronRight, Heart, Users, Award, MapPin } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
 import COMPANY_DATA from '../config/company_data';
+import { getAssetUrl } from "../utils/getAssetUrl";
 
 const AboutPage = () => {
 
@@ -14,9 +15,11 @@ const AboutPage = () => {
   // Hero images carousel
   
   const heroImages = useMemo(() => [
-    '/images/store-front.jpg',
-    '/images/store-interior.jpg',
-    '/images/team.jpg'
+    getAssetUrl('/images/romamart-opening1.png'),
+    getAssetUrl('/images/romamart-interior1.png'),
+    getAssetUrl('/images/romamart-interior3.jpg'),
+    getAssetUrl('/images/romamart-opening2.png'),
+    getAssetUrl('/images/romamart-opening3.png'),
   ], []);
   
 
@@ -40,9 +43,33 @@ const AboutPage = () => {
   const team = [
     {
       name: 'Mohammed Osman Khan',
-      role: 'Owner',
-      image: '/images/team/mohammed-khan.jpg',
-      bio: 'Founder and owner of Roma Mart, dedicated to serving the Sarnia community with quality products and exceptional service.'
+      role: 'Owner/GM',
+      image: getAssetUrl('/images/id-mohammedosmankhan.png'),
+      bio: 'Founder and owner of Roma Mart Corp., dedicated to serving the community with quality products and exceptional service.'
+    },
+    {
+      name: 'Rumana Mohammadi',
+      role: 'Roma',
+      image: getAssetUrl('/images/id-rumanamohammadi.png'),
+      bio: 'Mother, wife, and heart of Roma Mart, ensuring every customer feels at home.'
+    },
+    {
+      name: 'Faizan Osman Khan',
+      role: 'Faizy',
+      image: getAssetUrl('/images/id-faizanosmankhan.png'),
+      bio: 'Dedicated son and team member, passionate about delivering excellent service and supporting our community.'
+    },
+    {
+      name: 'Raaida Malak Khan',
+      role: 'Raaida',
+      image: getAssetUrl('/images/id-raaidamkhan.png'),
+      bio: 'Social media manager and community liaison, connecting Roma Mart with our valued customers online and offline.'
+    },
+    {
+      name: 'Adyan Osman Khan',
+      role: 'Adyan',
+      image: getAssetUrl('/images/id-adyanosmankhan.png'),
+      bio: 'Youngest member of the Roma Mart family, bringing fresh ideas and enthusiasm to our team.'
     }
   ];
 
@@ -65,7 +92,7 @@ const AboutPage = () => {
     {
       icon: <MapPin size={32} />,
       title: 'Local Focus',
-      description: 'Proudly serving Sarnia and the surrounding areas for years.'
+      description: 'Dedicated to serving Sarnia and the surrounding areas for many years to come.'
     }
   ];
 
@@ -128,9 +155,9 @@ const AboutPage = () => {
                 key={index}
                 src={image}
                 alt={(() => {
-                  if (image.includes('store-front')) return 'Roma Mart store front';
-                  if (image.includes('store-interior')) return 'Roma Mart store interior';
-                  if (image.includes('team')) return 'Roma Mart team photo';
+                  if (image.includes('opening1')) return 'Roma Mart store front, opening day';
+                  if (image.includes('interior1')) return 'Roma Mart store interior, counter';
+                  if (image.includes('interior3')) return 'RoCafe area inside Roma Mart';
                   return 'Roma Mart image';
                 })()}
                 className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${

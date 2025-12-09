@@ -13,6 +13,7 @@
  * This ensures a single source of truth for all location-dependent info and future scalability.
  */
 
+import { getAssetUrl } from "../utils/getAssetUrl";
 // Location type constants
 export const LOCATION_TYPES = {
   CONVENIENCE_STORE: 'convenience_store',    // Full-service Roma Mart
@@ -135,13 +136,27 @@ export const LOCATIONS = [
       deliveryAvailable: false
     },
     // === PHOTOS ===
-    // Use local paths: /romamart.ca/images/locations/wellington/
     photos: {
-      primary: '/images/romamart-opening1.png',                         // Main exterior shot
-      exterior: ['/images/romamart-opening2.png'],                      // Array of exterior photos
-      interior: [],                                                    // Array of interior photos
-      thumbnail: '/images/romamart-opening3.png'                       // Small version for cards
+      // Main exterior shot
+      primary: getAssetUrl('/images/romamart-opening1.png'),                         
+      
+      // Array of exterior photos
+      exterior: [
+        getAssetUrl('/images/romamart-opening2.png'), 
+        getAssetUrl('/images/romamart-opening3.png'), 
+      ], 
+        // Array of interior photos
+      interior: [
+        getAssetUrl('/images/romamart-interior1.png'), 
+        getAssetUrl('/images/romamart-interior2.png'), 
+        getAssetUrl('/images/romamart-interior3.png'),
+        getAssetUrl('/images/romamart-interior4.png' )
+      ],  
+      // thumbnail
+      thumbnail: getAssetUrl('/images/romamart-interior1.png') // Small version for cards
     },
+    
+    
     // === METADATA ===
     metadata: {
       openedDate: '2025-11-28',              // Store opening date YYYY-MM-DD
@@ -149,7 +164,7 @@ export const LOCATIONS = [
       employeeCount: 3,
       isHeadquarters: true,                  // Official business address
       acceptsCrypto: true,
-      languages: ['English', 'Hindi', 'Urdu']
+      languages: ['English', 'Hindi', 'Urdu'] 
     }
   },
   

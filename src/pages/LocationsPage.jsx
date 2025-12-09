@@ -88,8 +88,6 @@ const LocationsPage = () => {
               }}
             >
               <div className="p-8 rounded-2xl" style={{ backgroundColor: 'var(--color-surface)' }}>
-                {/* Location Images Carousel */}
-                <LocationImageCarousel photos={location.photos} locationName={location.name} />
                 {/* Location Images */}
                 <div className="flex gap-4 mb-6 items-center">
                   {location.photos?.primary && (
@@ -218,18 +216,25 @@ const LocationsPage = () => {
                 </div>
               </div>
 
-              <div className="rounded-3xl overflow-hidden shadow-2xl h-96">
-                <iframe 
-                  title={`Google Maps - ${location.name}`}
-                  src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=place_id:ChIJCfo3t6SdJYgRIQVbpCppKmY&zoom=15"
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0 }}
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                />
+              <div className="rounded-3xl overflow-hidden shadow-2xl flex flex-col">
+                <div className="w-full h-96">
+                  <iframe 
+                    title={`Google Maps - ${location.name}`}
+                    src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=place_id:ChIJCfo3t6SdJYgRIQVbpCppKmY&zoom=15"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  />
+                </div>
+                <div className="w-full h-96">
+                  {/* Location Images Carousel */}
+                  <LocationImageCarousel photos={location.photos} locationName={location.name} />
+                </div>
               </div>
+
             </div>
           ))}
         </div>
