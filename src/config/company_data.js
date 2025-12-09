@@ -4,7 +4,7 @@
 // Single source of truth for brand info, social links, order platform, etc.
 
 // IMPORTANT:
-// All headquarters (HQ) info (address, hours, contact, GST, etc.) must ONLY be sourced from this file (COMPANY_DATA).
+// All headquarters (HQ) info (address, hours, contact, GST, etc.) sourced from this file (COMPANY_DATA).
 // No hardcoded or duplicated HQ info is allowed in any page or component.
 // All overrides and fallbacks for HQ data must be handled here for maintainability and resilience.
 
@@ -24,13 +24,14 @@ const COMPANY_DATA = {
     x: 'https://www.x.com/romamartca/'
   },
   // Fallback HQ info for resilience
-  address: '3-189 Wellington Street, Sarnia, ON N7T 1G6',
-  // HQ hours are now sourced directly from the (primary) location in LOCATIONS
+  // HQ info is now sourced directly from the (primary) location in LOCATIONS
+  address: getPrimaryLocation().address,
+  
   hours: getPrimaryLocation().hours,
   contact: {
-    phone: '+1-382-342-2000',
-    email: 'contact@romamart.ca',
-    web3FormsAccessKey: import.meta.env.VITE_WEB3FORMS_ACCESS_KEY || 'YOUR_WEB3FORMS_KEY'
+    phone: getPrimaryLocation().contact.phone,
+    email: getPrimaryLocation().email,
+    web3FormsAccessKey: import.meta.env.VITE_WEB3FORMS_KEY || 'YOUR_WEB3FORMS_KEY'
   },
   // Location-dependent info is mapped from the primary location object
   location: getPrimaryLocation()

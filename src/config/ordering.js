@@ -4,7 +4,6 @@
  * 
  * @since December 4, 2025
  */
-
 import COMPANY_DATA from '../config/company_data';
 
 /**

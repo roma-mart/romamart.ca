@@ -51,7 +51,6 @@ const AboutPage = lazy(() => import('./pages/AboutPage'));
 // component imports
 import NetworkStatus from  './components/NetworkStatus';
 import CopyButton from './components/CopyButton';
-
 import COMPANY_DATA from './config/company_data';
 
 const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
