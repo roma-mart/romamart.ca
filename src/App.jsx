@@ -65,7 +65,7 @@ function Hero({ onTrackOrder }) {
 
   return (
     <div id="hero-section" className="relative min-h-[90vh] flex items-center overflow-hidden" style={{ backgroundColor: 'var(--color-primary)' }}>
-      <img src="/images/pattern.png" alt="Brand pattern background" className="absolute inset-0 w-full h-full object-cover opacity-20 z-0" aria-hidden="true"  loading="lazy" />
+      <img src={getAssetUrl('/images/pattern.png')} alt="Brand pattern background" className="absolute inset-0 w-full h-full object-cover opacity-20 z-0" aria-hidden="true"  loading="lazy" />
       <div className="absolute inset-0 bg-gradient-to-r from-blue-950 via-blue-900 to-transparent opacity-90 z-0" />
       <div className="relative z-10 max-w-7xl mx-auto px-4 w-full pt-20">
         <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -106,7 +106,7 @@ function Hero({ onTrackOrder }) {
           </motion.div>
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, delay: 0.2 }} className="relative hidden md:block">
             <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl border-4 border-white/10 rotate-3 hover:rotate-0 transition-transform duration-500">
-              <img src="/images/comeinwereopensign.png" alt="Come in! We're Open Sign" className="w-full h-[500px] object-cover" loading="lazy" />
+              <img src={getAssetUrl('/images/comeinwereopensign.png')} alt="Come in! We're Open Sign" className="w-full h-[500px] object-cover" loading="lazy" />
               <div className="absolute top-6 right-6 w-24 h-24 rounded-full flex items-center justify-center shadow-lg rotate-12" style={{ background: 'var(--color-accent)' }}><div className="text-center"><span className="block var(--font-heading) text-xl leading-none" style={{ color: 'var(--color-primary)' }}>2.5%</span><span className="block text-xs font-bold uppercase" style={{ color: 'var(--color-text)' }}>CASH DISCOUNT</span></div></div>
             </div>
           </motion.div>
@@ -154,7 +154,7 @@ const ServicesSection = () => {
 const RoCafeSection = () => {
   return (
     <section id="rocafe" className="py-24 relative overflow-hidden" style={{ backgroundColor: 'var(--color-primary)' }}>
-      <img src="/images/pattern.png" alt="Brand pattern background" className="absolute inset-0 w-full h-full object-cover opacity-20 z-0" aria-hidden="true"  loading="lazy" />
+      <img src={getAssetUrl('/images/pattern.png')} alt="Brand pattern background" className="absolute inset-0 w-full h-full object-cover opacity-20 z-0" aria-hidden="true"  loading="lazy" />
       <div className="absolute top-0 right-0 w-1/2 h-full bg-black/20 skew-x-12 transform translate-x-20"></div>
       <div className="max-w-7xl mx-auto px-4 relative z-10">
         <div className="flex flex-col md:flex-row gap-16 items-center">
@@ -216,7 +216,6 @@ const Locations = () => {
   const primaryLocation = getPrimaryLocation();
   const locationCount = getActiveLocationCount();
   
-  // Transform to match old format for compatibility
   const displayLocation = useMemo(() => ({
     id: primaryLocation.id,
     name: primaryLocation.name,
