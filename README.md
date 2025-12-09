@@ -1,4 +1,4 @@
-# Roma Mart 2.0
+# Roma Mart 2.0 🔥
 
 > Modern PWA for Sarnia's premier convenience store chain
 
