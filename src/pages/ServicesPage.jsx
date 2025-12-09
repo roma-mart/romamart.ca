@@ -4,7 +4,6 @@ import { ChevronRight } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
 import StandardizedItem from '../components/StandardizedItem';
 import { SERVICES } from '../data/services.jsx';
-import { getPrimaryLocation, isLocationOpenNow } from '../data/locations';
 import COMPANY_DATA from '../config/company_data';
 
 const ServicesPage = () => {
@@ -17,8 +16,20 @@ const ServicesPage = () => {
   const mutedTextColor = { color: 'var(--color-text)', opacity: 0.7 };
 
   const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
-  const primaryLocation = getPrimaryLocation();
-  const locationIsOpen = isLocationOpenNow(primaryLocation);
+
+  // Sort services by availability, then alphabetically
+  const availabilityOrder = {
+    'available': 0,
+    'available_but_closed': 1,
+    'coming_soon': 2,
+    'unavailable': 3
+  };
+  const sortedServices = [...SERVICES].sort((a, b) => {
+    const availA = availabilityOrder[a.status] ?? 99;
+    const availB = availabilityOrder[b.status] ?? 99;
+    if (availA !== availB) return availA - availB;
+    return a.name.localeCompare(b.name);
+  });
 
   return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-surface)' }}>
@@ -80,7 +91,7 @@ const ServicesPage = () => {
       {/* Services Grid */}
       <section className="max-w-7xl mx-auto px-4">
         <div className="grid md:grid-cols-2 gap-6">
-          {SERVICES.map((service, index) => (
+          {sortedServices.map((service, index) => (
             <StandardizedItem
               key={service.id}
               item={{
@@ -92,9 +103,9 @@ const ServicesPage = () => {
                 badge: service.badge,
                 features: service.features,
                 action: service.action,
+                status: service.status,
+                availableAt: service.availableAt,
                 availability: service.availability,
-                isAvailable: service.availableAt.includes(primaryLocation.id),
-                locationStatus: locationIsOpen ? 'Open Now' : 'Closed',
                 ageRestricted: service.ageRestricted,
                 legalNotice: service.legalNotice
               }}
