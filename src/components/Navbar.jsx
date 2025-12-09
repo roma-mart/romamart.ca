@@ -101,21 +101,37 @@ export default function Navbar() {
           {/* Logo Area */}
           <a
             href={`${BASE_URL}`}
-            className="flex items-center space-x-2 hover:opacity-80 transition-opacity cursor-pointer no-drag"
+            className={`flex items-center hover:opacity-80 transition-opacity cursor-pointer no-drag${isOpen ? ' invisible' : ''} md:visible`}
             aria-label="Roma Mart - Go to homepage"
           >
-            <Logo
-              size={40}
-              layout="horizontal"
-              responsive
-              variant={
-                (colorScheme === 'dark' || highContrast)
-                  ? 'white'
-                  : isHomePage
-                    ? (scrolled ? 'brand' : 'white')
-                    : 'brand'
-              }
-            />
+            {/* Mobile: vertical logo */}
+            <span className="md:hidden">
+              <Logo
+                size={40}
+                layout="vertical"
+                variant={
+                  (colorScheme === 'dark' || highContrast)
+                    ? 'white'
+                    : isHomePage
+                      ? (scrolled ? 'brand' : 'white')
+                      : 'brand'
+                }
+              />
+            </span>
+            {/* Desktop: horizontal logo */}
+            <span className="hidden md:block">
+              <Logo
+                size={40}
+                layout="horizontal"
+                variant={
+                  (colorScheme === 'dark' || highContrast)
+                    ? 'white'
+                    : isHomePage
+                      ? (scrolled ? 'brand' : 'white')
+                      : 'brand'
+                }
+              />
+            </span>
           </a>
 
           {/* Desktop Menu */}
@@ -189,36 +205,24 @@ export default function Navbar() {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             className="md:hidden border-t absolute w-full shadow-2xl"
-            style={{ backgroundColor: isHomePage && !scrolled ? 'var(--color-primary)' : 'var(--color-bg)', borderColor: 'var(--color-surface)' }}
+            style={{ backgroundColor: isHomePage && !scrolled ? 'var(--color-primary)' : 'var(--color-bg)', borderColor: 'var(--color-surface)', paddingTop: 0 }}
           >
-            <div className="px-4 pt-2 pb-6 space-y-1">
-              <div className="flex items-center gap-2 mb-2">
-                <Logo
-                  size={32}
-                  layout="vertical"
-                  responsive
-                  variant={
-                    (colorScheme === 'dark' || highContrast)
-                      ? 'white'
-                      : isHomePage
-                        ? (scrolled ? 'brand' : 'white')
-                        : 'brand'
-                  }
-                />
-                <Logo
-                  size={80}
-                  layout="wordmark"
-                  responsive
-                  variant={
-                    (colorScheme === 'dark' || highContrast)
-                      ? 'white'
-                      : isHomePage
-                        ? (scrolled ? 'brand' : 'white')
-                        : 'brand'
-                  }
-                  style={{ maxWidth: 120, height: 'auto' }}
-                />
-              </div>
+            {/* Overlay logo, absolutely positioned top-left for perfect alignment */}
+            <div style={{ position: 'absolute', top: 16, left: 16, zIndex: 10 }}>
+              <Logo
+                size={40}
+                layout="horizontal"
+                variant={
+                  (colorScheme === 'dark' || highContrast)
+                    ? 'white'
+                    : isHomePage
+                      ? (scrolled ? 'brand' : 'white')
+                      : 'brand'
+                }
+                style={{ maxWidth: 120, height: 'auto' }}
+              />
+            </div>
+            <div className="px-4 pt-2 pb-6 space-y-1" style={{ paddingTop: '64px' }}>
               {/* Only show Home button if NOT on homepage */}
               {!isHomePage && (
                 <a
