@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useCallback, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ChevronRight, ChevronDown, Coffee, Wine, UtensilsCrossed, IceCream, Sparkles, AlertTriangle } from 'lucide-react';
@@ -36,59 +37,7 @@ const RoCafePage = () => {
   const menuCategories = useMemo(() => {
     return groupExcelItemsByCategory(menuItems);
   }, [menuItems]);
-  // // Group menu items by category
-  // const menuCategories = useMemo(() => {
-  //   // Try to use Excel data first
-  //   const excelCategories = groupExcelItemsByCategory(menuItems);
-    
-  //   // Static fallback categories
-  //   const staticCategories = [
-  //     {
-  //       id: MENU_CATEGORIES.HOT_COFFEE,
-  //       name: 'Hot Coffee',
-  //       icon: <Coffee size={24} />,
-  //       description: 'Freshly brewed coffee made to perfection',
-  //       items: ROCAFE_FULL_MENU.filter(item => item.category === MENU_CATEGORIES.HOT_COFFEE)
-  //     },
-  //     {
-  //       id: MENU_CATEGORIES.ICED_COFFEE,
-  //       name: 'Iced Coffee',
-  //       icon: <Coffee size={24} />,
-  //       description: 'Refreshing cold coffee beverages',
-  //       items: ROCAFE_FULL_MENU.filter(item => item.category === MENU_CATEGORIES.ICED_COFFEE)
-  //     },
-  //     {
-  //       id: MENU_CATEGORIES.TEA,
-  //       name: 'Tea & Matcha',
-  //       icon: <Wine size={24} />,
-  //       description: 'Premium tea selections and matcha lattes',
-  //       items: ROCAFE_FULL_MENU.filter(item => item.category === MENU_CATEGORIES.TEA)
-  //     },
-  //     {
-  //       id: MENU_CATEGORIES.SMOOTHIES,
-  //       name: 'Smoothies & Fresh Juice',
-  //       icon: <IceCream size={24} />,
-  //       description: 'Healthy blended fruit beverages made fresh',
-  //       items: ROCAFE_FULL_MENU.filter(item => item.category === MENU_CATEGORIES.SMOOTHIES)
-  //     },
-  //     {
-  //       id: MENU_CATEGORIES.SPECIALTY,
-  //       name: 'Specialty Drinks',
-  //       icon: <Sparkles size={24} />,
-  //       description: 'Unique RoCafé creations',
-  //       items: ROCAFE_FULL_MENU.filter(item => item.category === MENU_CATEGORIES.SPECIALTY)
-  //     }
-  //   ].filter(cat => cat.items.length > 0);
-    
-  //   // Merge with fallback - use Excel if available, otherwise use static
-  //   const finalCategories = mergeCategoriesWithFallback(excelCategories, staticCategories);
-    
-  //   // Convert icons from components to JSX if needed
-  //   return finalCategories.map(cat => ({
-  //     ...cat,
-  //     icon: typeof cat.icon === 'function' ? React.createElement(cat.icon, { size: 24 }) : cat.icon
-  //   }));
-  // }, [menuItems]);
+
 
   // create memoized handlers map for categories
   const categoryHandlers = useMemo(() => {

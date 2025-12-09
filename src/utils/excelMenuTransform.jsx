@@ -8,6 +8,7 @@
  * @since December 8, 2025
  */
 
+import React from 'react';
 import { Coffee, Wine, UtensilsCrossed, IceCream, Sparkles, Beef } from 'lucide-react';
 
 /**
