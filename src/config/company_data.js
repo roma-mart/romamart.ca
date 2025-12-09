@@ -8,14 +8,14 @@
 // No hardcoded or duplicated HQ info is allowed in any page or component.
 // All overrides and fallbacks for HQ data must be handled here for maintainability and resilience.
 
-import { getOrderingUrl } from './ordering';
+// import { getOrderingUrl } from './ordering';
 import { getPrimaryLocation } from '../data/locations';
 
 const COMPANY_DATA = {
   legalName: 'Roma Mart Corp.',
   dba: 'Roma Mart Convenience',
   gstNumber: '780971768',
-  onlineStoreUrl: getOrderingUrl(),
+  onlineStoreUrl: null,
   socialLinks: {
     facebook: 'https://www.facebook.com/romamartca',
     instagram: 'https://www.instagram.com/romamartca/',

@@ -6,6 +6,7 @@
  */
 
 import COMPANY_DATA from '../config/company_data';
+
 /**
  * Ordering service URLs
  * Update these when switching between staging/production
@@ -67,6 +68,9 @@ export const getOrderingUrl = (service = 'nrs', _location = null) => {
   
   return ORDERING_CONFIG[serviceLower] || ORDERING_CONFIG.nrs;
 };
+
+// add the computed onlineStoreUrl to COMPANY_DATA
+COMPANY_DATA.onlineStoreUrl = getOrderingUrl();
 
 /**
  * Default ordering service
