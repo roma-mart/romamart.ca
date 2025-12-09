@@ -256,7 +256,7 @@ export const SERVICES = [
     badge: null,
     ageRestricted: false,
     status: 'available',
-    featured: true,
+    featured: false,
   },
   
   {
@@ -302,7 +302,7 @@ export const SERVICES = [
     badge: null,
     ageRestricted: false,
     status: 'coming_soon',
-    featured: true
+    featured: false
   },
   
   {

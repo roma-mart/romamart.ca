@@ -38,12 +38,12 @@ export const LOCATIONS = [
     
     // === ADDRESS ===
     address: {
-      street: '189-3 Wellington Street',
+      street: '3-189 Wellington Street',
       city: 'Sarnia',
       province: 'ON',
       postalCode: 'N7T 1G6',
       country: 'Canada',
-      formatted: '189-3 Wellington Street, Sarnia, ON N7T 1G6'
+      formatted: '3-189 Wellington Street, Sarnia, ON N7T 1G6'
     },
     
     // === GOOGLE INTEGRATION ===
