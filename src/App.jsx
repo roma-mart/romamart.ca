@@ -33,6 +33,10 @@ import { useServiceWorker } from './hooks/useServiceWorker';
 import { usePageVisibility, useBatteryStatus } from './hooks/useBrowserFeatures';
 import PWAInstallPrompt from './components/PWAInstallPrompt';
 
+// dynamically resolve domain for assets
+import { getAssetUrl } from './utils/getAssetUrl';
+
+
 // Code splitting: Lazy load page components
 const AccessibilityPage = lazy(() => import('./components/AccessibilityPage'));
 const PrivacyPage = lazy(() => import('./pages/PrivacyPage'));
@@ -195,7 +199,7 @@ const RoCafeSection = () => {
           <div className="md:w-1/2 w-full">
             <div className="relative aspect-square rounded-full overflow-hidden border-8 border-white/5 shadow-2xl">
                <img 
-                 src="/rocafe-logo.png" 
+                 src={getAssetUrl('/rocafe-logo.png')}
                  alt="RoCafe"
                  className="w-full h-full object-cover hover:scale-110 transition-transform duration-700"
                  loading="lazy"
