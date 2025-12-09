@@ -55,7 +55,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     name: Build & Test
-    environment: github-pages
     needs: [accessibility-lint, test]
 
     steps:
@@ -106,7 +105,6 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     name: Publish to GitHub Pages
-    environment: github-pages
     needs: [accessibility-lint, test, build, html-validation]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
