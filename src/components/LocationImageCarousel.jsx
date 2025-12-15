@@ -48,7 +48,7 @@ const LocationImageCarousel = ({ photos, locationName }) => {
   if (!images.length) return null;
 
   return (
-    <div className="relative h-64 rounded-2xl overflow-hidden shadow-lg mb-4">
+    <div className="relative h-full min-h-[18rem] max-h-[28rem] rounded-2xl overflow-hidden shadow-lg mb-4">
       {/* Left/Right Scroll Buttons for Carousel */}
       {images.length > 1 && current > 0 && (
         <button
