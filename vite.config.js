@@ -12,7 +12,7 @@ export default defineConfig({
   // ----------------------------------------------------
   // IMPORTANT: This sets the correct base path for assets
   // ----------------------------------------------------
-  base: `/${REPO_NAME}/`, 
+  base: `/`, 
   build: {
     sourcemap: false, // Disable source maps to avoid lucide-react corruption issues
     rollupOptions: {
