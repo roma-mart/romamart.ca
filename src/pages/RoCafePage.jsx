@@ -218,6 +218,7 @@ const RoCafePage = () => {
                         <StandardizedItem 
                           key={item.id}
                           item={item}
+                          itemType="menu"
                           defaultExpanded={false}
                         />
                       ))}

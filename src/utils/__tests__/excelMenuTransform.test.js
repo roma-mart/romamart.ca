@@ -36,6 +36,26 @@ describe('excelMenuTransform', () => {
       expect(result.sizes[2].price).toBe(7.49); // 749 cents = $7.49
     });
 
+    it('should preserve API locations array for availability mapping', () => {
+      const apiItem = {
+        id: 1,
+        name: 'Iced Latte',
+        categories: ['RoCafe Iced Coffee'],
+        sizes: [{ name: 'M', size: '16 oz', price: 499 }],
+        locations: [
+          { name: 'Roma Mart 001', id: 1 },
+          { name: 'Roma Mart 002', id: 2 }
+        ]
+      };
+
+      const result = transformExcelToMenuItem(apiItem, 0);
+
+      expect(result).toHaveProperty('locations');
+      expect(result.locations).toHaveLength(2);
+      expect(result.locations[0].name).toBe('Roma Mart 001');
+      expect(result.locations[1].name).toBe('Roma Mart 002');
+    });
+
     it('should handle missing fields gracefully', () => {
       const apiItem = {
         id: 2,

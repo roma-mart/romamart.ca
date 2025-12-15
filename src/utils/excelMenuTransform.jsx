@@ -109,7 +109,11 @@ export const transformExcelToMenuItem = (apiItem, index) => {
     locationStatus: apiItem.locationStatus || 'Available at RoCafé locations',
     isAvailable: apiItem.isAvailable !== false,
     featured: apiItem.featured || false,
-    calories: apiItem.calories || null
+    calories: apiItem.calories || null,
+    // Preserve API locations array for availability mapping
+    locations: apiItem.locations || [],
+    status: 'available', // Default status for API items
+    itemType: 'menu' // Mark as menu item for StandardizedItem
   };
 };
 
