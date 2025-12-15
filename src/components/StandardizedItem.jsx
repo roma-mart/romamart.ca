@@ -193,7 +193,6 @@ const StandardizedItem = ({ item, itemType, defaultExpanded = false }) => {
         selectedSize={selectedSize}
         onSizeChange={setSelectedSize}
         currentPrice={currentPrice}
-        currentCalories={currentCalories}
         availabilityState={availabilityState}
       />
 

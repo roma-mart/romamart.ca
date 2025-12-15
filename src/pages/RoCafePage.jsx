@@ -1,9 +1,10 @@
+import Button from '../components/Button';
 /* eslint-disable no-unused-vars */
 import React, { useState, useCallback, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ChevronRight, ChevronDown, Coffee, Wine, UtensilsCrossed, IceCream, Sparkles, AlertTriangle } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
-import Button from '../components/Button';
+import CategoryAccordionHeader from '../components/CategoryAccordionHeader';
 import StandardizedItem from '../components/StandardizedItem';
 import { useLocationAware } from '../hooks/useLocationContext';
 import { ROCAFE_FULL_MENU, MENU_CATEGORIES, ALLERGEN_WARNING } from '../data/rocafe-menu';
@@ -172,46 +173,19 @@ const RoCafePage = () => {
               }}
             >
               {/* Category Header */}
-              <Button
-                type="button"
-                variant="nav"
-                onClick={categoryHandlers[category.id]}
-                onKeyDown={e => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    categoryHandlers[category.id](e);
-                  }
-                }}
-                className="w-full p-6 flex items-center justify-between"
-                style={{ background: 'none', boxShadow: 'none', border: 'none', textAlign: 'left' }}
-                aria-label={`Expand ${category.name} category`}
-              >
-                <div className="flex items-center gap-4">
-                  <div 
-                    className="w-12 h-12 rounded-xl flex items-center justify-center"
-                    style={{ backgroundColor: 'rgba(228, 179, 64, 0.15)', color: 'var(--color-icon)' }}
-                  >
-                    {category.icon}
-                  </div>
-                  <div className="text-left">
-                    <h3 className="var(--font-heading) text-2xl mb-1" style={{ color: 'var(--color-heading)' }}>
-                      {category.name}
-                    </h3>
-                    <p className="font-inter text-sm" style={mutedTextColor}>
-                      {category.description}
-                    </p>
-                  </div>
-                </div>
-                <ChevronDown 
-                  size={24}
-                  className={`transition-transform ${expandedCategory === category.id ? 'rotate-180' : ''}`}
-                  style={{ color: 'var(--color-accent)' }}
-                />
-              </Button>
+              <CategoryAccordionHeader
+                icon={category.icon}
+                title={category.name}
+                description={category.description}
+                expanded={expandedCategory === category.id}
+                onToggle={() => toggleCategory(category.id)}
+                id={`category-header-${category.id}`}
+                ariaControls={`category-panel-${category.id}`}
+              />
 
               {/* Category Items (Expandable) */}
               {expandedCategory === category.id && (
-                <div className="px-6 pb-6 border-t" style={{ borderColor: 'var(--color-border)' }}>
+                <div className="px-6 pb-6 pt-6 border-t" style={{ borderColor: 'var(--color-border)' }}>
                   {category.items.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                       {category.items.map((item) => (
