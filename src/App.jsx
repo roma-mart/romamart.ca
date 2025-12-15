@@ -27,6 +27,8 @@ import { ROCAFE_FEATURED } from './data/rocafe-menu';
 import { SERVICES_FEATURED } from './data/services.jsx';
 import Phone from 'lucide-react/dist/esm/icons/phone.js';
 import Clock from 'lucide-react/dist/esm/icons/clock.js';
+import { useExcelMenu } from './hooks/useExcelMenu';
+import { transformExcelToMenuItem } from './utils/excelMenuTransform';
 
 // PWA Hooks
 import { useServiceWorker } from './hooks/useServiceWorker';
@@ -151,6 +153,24 @@ const ServicesSection = () => {
 };
 
 const RoCafeSection = () => {
+  const { menuItems, loading } = useExcelMenu();
+  
+  // Filter for featured items and transform them
+  const featuredItems = useMemo(() => {
+    if (!menuItems || menuItems.length === 0) {
+      // Fallback to static featured items if API fails
+      return ROCAFE_FEATURED;
+    }
+    
+    // Filter API items for featured=true and transform to StandardizedItem format
+    const apiFeaturedItems = menuItems
+      .filter(item => item.featured === true)
+      .map((item, index) => transformExcelToMenuItem(item, index));
+    
+    // Use API items if available, otherwise fallback to static
+    return apiFeaturedItems.length > 0 ? apiFeaturedItems : ROCAFE_FEATURED;
+  }, [menuItems]);
+  
   return (
     <section id="rocafe" className="py-24 relative overflow-hidden" style={{ backgroundColor: 'var(--color-primary)' }}>
       <img src={getAssetUrl('/images/pattern.png')} alt="Brand pattern background" className="absolute inset-0 w-full h-full object-cover opacity-20 z-0" aria-hidden="true"  loading="lazy" />
@@ -179,14 +199,21 @@ const RoCafeSection = () => {
             
             {/* Featured Menu Items with StandardizedItem */}
             <div className="space-y-3 mb-8">
-              {ROCAFE_FEATURED.map((item) => (
-                <StandardizedItem 
-                  key={item.id}
-                  item={item}
-                  itemType="menu"
-                  defaultExpanded={false}
-                />
-              ))}
+              {loading ? (
+                <div className="text-center py-4" style={{ color: 'var(--color-text-on-primary)' }}>
+                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2" style={{ borderColor: 'var(--color-accent)' }}></div>
+                  <p className="mt-2 text-sm font-inter">Loading menu...</p>
+                </div>
+              ) : (
+                featuredItems.map((item) => (
+                  <StandardizedItem 
+                    key={item.id}
+                    item={item}
+                    itemType="menu"
+                    defaultExpanded={false}
+                  />
+                ))
+              )}
             </div>
             
             <div className="mt-8">
