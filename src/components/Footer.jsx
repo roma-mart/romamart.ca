@@ -264,52 +264,57 @@ export default function Footer() {
         </div>
 
         <div className="mb-8 max-w-md mx-auto">
-          <div className="rounded-lg p-4" style={{ backgroundColor: 'var(--color-footer)', border: '.5px solid var(--color-border)' }}>
-            <label 
-              htmlFor="location-selector" 
-              className="font-heading text-base mb-2 flex items-center gap-2"
-              style={{ color: 'var(--color-accent)', fontWeight: 600 }}
-            >
-              <MapPin className="inline-block" size={18} aria-hidden="true" />
-              <span>Your Store Location</span>
-            </label>
-            
-            <select
-              id="location-selector"
-              value={selectedLocationId}
-              onChange={handleLocationChange}
-              className="w-full px-4 py-3 rounded-xl font-inter shadow-lg transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:border-accent hover:border-accent focus-visible:z-10 bg-[var(--color-surface)] border border-[var(--color-border)]"
-              style={{
-                backgroundColor: 'var(--color-surface-muted)',
-                border: '1.5px solid var(--color-border-muted)',
-                color: 'var(--color-on-surface)',
-                cursor: 'pointer',
-                boxShadow: '0 2px 8px 0 var(--color-footer-shadow, rgba(21,21,21,0.06))',
-                appearance: 'none',
-                WebkitAppearance: 'none',
-                MozAppearance: 'none',
-                fontSize: '1rem',
-                fontWeight: 500,
-                minHeight: '48px',
-                transition: 'border-color 0.2s, box-shadow 0.2s',
-              }}
-            >
-              <option value="auto">
-                {isAutoMode && nearestLocationId
-                  ? `🎯 Auto-Detected: ${currentLocation.name}`
-                  : '🏢 Auto (HQ - Wellington St.)'}
-              </option>
-              {activeLocations.map(loc => (
-                <option 
-                  key={loc.id}
-                  value={loc.id}
+            <div className="rounded-lg p-4 flex flex-col items-center" style={{ backgroundColor: 'var(--color-footer)', border: '.5px solid var(--color-border)', position: 'relative' }}>
+              <label 
+                htmlFor="location-selector" 
+                className="font-heading text-base mb-2 flex items-center gap-2 justify-center text-center"
+                style={{ color: 'var(--color-accent)', fontWeight: 600, width: '100%' }}
+              >
+                <MapPin className="inline-block" size={18} aria-hidden="true" />
+                <span>Your Store Location</span>
+              </label>
+              <div style={{ position: 'relative', width: '100%' }}>
+                <select
+                  id="location-selector"
+                  value={selectedLocationId}
+                  onChange={handleLocationChange}
+                  className="w-full px-4 py-3 rounded-xl font-inter shadow-lg transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:border-accent hover:border-accent focus-visible:z-10 border border-[var(--color-border)] pr-10 text-center"
+                  style={{
+                    backgroundColor: 'var(--color-surface)',
+                    color: 'var(--color-on-surface)',
+                    cursor: 'pointer',
+                    boxShadow: '0 2px 8px 0 var(--color-footer-shadow, rgba(21,21,21,0.06))',
+                    appearance: 'none',
+                    WebkitAppearance: 'none',
+                    MozAppearance: 'none',
+                    fontSize: '1rem',
+                    fontWeight: 500,
+                    minHeight: '48px',
+                    transition: 'border-color 0.2s, box-shadow 0.2s',
+                  }}
+                  aria-describedby="footer-location-helper"
                 >
-                  {loc.name} {loc.isPrimary ? '(HQ)' : ''}
-                </option>
-              ))}
-            </select>
+                  <option value="auto">
+                    {isAutoMode && nearestLocationId
+                      ? `🎯 Auto-Detected: ${currentLocation.name}`
+                      : '🏢 Auto (HQ - Wellington St.)'}
+                  </option>
+                  {activeLocations.map(loc => (
+                    <option 
+                      key={loc.id}
+                      value={loc.id}
+                    >
+                      {loc.name} {loc.isPrimary ? '(HQ)' : ''}
+                    </option>
+                  ))}
+                </select>
+                {/* Dropdown indicator (chevron) */}
+                <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 20 20" fill="none" style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: 'var(--color-on-surface-muted)' }}>
+                  <path d="M6 8l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
 
-            <div className="mt-2 text-xs font-inter" style={{ color: 'var(--color-on-footer-subtle)' }}>
+            <div className="mt-2 text-xs font-inter text-center" style={{ color: 'var(--color-on-footer-subtle)', width: '100%' }}>
               {isAutoMode ? (
                 nearestLocationId ? (
                   <span>✓ Nearest store: <strong>{currentLocation.name}</strong></span>
