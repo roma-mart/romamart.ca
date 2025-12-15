@@ -10,6 +10,7 @@
 
 import React from 'react';
 import { Coffee, Wine, UtensilsCrossed, IceCream, Sparkles, Beef } from 'lucide-react';
+import { sortSizes } from './menuHelpers';
 
 /**
  * Map of category names to display metadata
@@ -89,6 +90,9 @@ export const transformExcelToMenuItem = (apiItem, index) => {
       }))
     : [];
   
+  // Sort sizes to ensure S, M, L order
+  const sortedSizes = sortSizes(sizes);
+  
   return {
     id: apiItem.id ? `api-${apiItem.id}` : `item-${index}`,
     name: apiItem.name || 'Unnamed Item',
@@ -96,7 +100,7 @@ export const transformExcelToMenuItem = (apiItem, index) => {
     description: apiItem.description || apiItem.name || '',
     image: apiItem.image || null,
     badge: apiItem.badge || null,
-    sizes: sizes,
+    sizes: sortedSizes,
     defaultSize: 0,
     category: category,
     customizations: apiItem.customizations || [],

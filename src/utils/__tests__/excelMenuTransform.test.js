@@ -90,6 +90,50 @@ describe('excelMenuTransform', () => {
         expect(result.sizes[0].price).toBe(expected);
       });
     });
+
+    it('should sort sizes in S, M, L order', () => {
+      const apiItem = {
+        id: 37,
+        name: 'Iced Caramel Macchiato',
+        categories: ['RoCafe Iced Coffee'],
+        sizes: [
+          { name: 'M', size: '16 oz', price: 599 },
+          { name: 'L', size: '20 oz', price: 649 },
+          { name: 'S', size: '12 oz', price: 549 }
+        ]
+      };
+
+      const result = transformExcelToMenuItem(apiItem, 0);
+
+      expect(result.sizes).toHaveLength(3);
+      expect(result.sizes[0].name).toBe('S');
+      expect(result.sizes[1].name).toBe('M');
+      expect(result.sizes[2].name).toBe('L');
+      expect(result.sizes[0].price).toBe(5.49);
+      expect(result.sizes[1].price).toBe(5.99);
+      expect(result.sizes[2].price).toBe(6.49);
+    });
+
+    it('should place S, M, L before other size formats', () => {
+      const apiItem = {
+        id: 1,
+        name: 'Mixed Sizes Drink',
+        categories: ['RoCafe Iced Coffee'],
+        sizes: [
+          { name: '16 oz', size: '16 oz', price: 399 },
+          { name: 'M', size: '16 oz', price: 599 },
+          { name: '20 oz', size: '20 oz', price: 449 },
+          { name: 'S', size: '12 oz', price: 549 }
+        ]
+      };
+
+      const result = transformExcelToMenuItem(apiItem, 0);
+
+      expect(result.sizes[0].name).toBe('S');
+      expect(result.sizes[1].name).toBe('M');
+      expect(result.sizes[2].name).toBe('16 oz');
+      expect(result.sizes[3].name).toBe('20 oz');
+    });
   });
 
   describe('groupExcelItemsByCategory', () => {
