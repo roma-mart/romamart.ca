@@ -209,9 +209,9 @@ export default function Footer() {
                     <a
                       href={`${BASE_URL}${link.href.replace('/', '')}`}
                       className="transition-colors"
-                      style={{ color: 'var(--color-link)' }}
+                      style={{ color: 'var(--color-on-footer-muted)' }}
                       onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'}
-                      onMouseLeave={e => e.currentTarget.style.color = 'var(--color-link)'}
+                      onMouseLeave={e => e.currentTarget.style.color = 'var(--color-on-footer-muted)'}
                     >
                       {link.label}
                     </a>
@@ -239,10 +239,10 @@ export default function Footer() {
                   <li key={link.href}>
                     <a
                       href={`${BASE_URL}${link.href.replace('/', '')}`}
-                      className={link.label.toLowerCase() === 'accessibility' ? 'font-bold transition-colors' : 'transition-colors'}
-                      style={{ color: link.label.toLowerCase() === 'accessibility' ? 'var(--color-accent)' : 'var(--color-link)' }}
+                      className="transition-colors"
+                      style={{ color: 'var(--color-on-footer-muted)' }}
                       onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'}
-                      onMouseLeave={e => e.currentTarget.style.color = link.label.toLowerCase() === 'accessibility' ? 'var(--color-accent)' : 'var(--color-link)'}
+                      onMouseLeave={e => e.currentTarget.style.color = 'var(--color-on-footer-muted)'}
                     >
                       {link.label}
                     </a>
@@ -319,7 +319,8 @@ export default function Footer() {
 
         <div className="text-center font-inter text-sm" style={{ color: 'var(--color-on-footer-subtle)' }}>
           <p>&copy; {new Date().getFullYear()} {COMPANY_DATA.legalName} All rights reserved.</p>
-          <p>GST Number: {COMPANY_DATA.gstNumber}</p>
+          <p>GST#: {COMPANY_DATA.gstNumber}</p>
+          <p>🍁</p>
         </div>
       </div>
     </footer>
