@@ -198,10 +198,10 @@ const PWAInstallPrompt = () => {
               RM
             </div>
             <div>
-              <h3 id="pwa-install-title" className="font-bold text-lg" style={{ color: 'var(--color-on-primary)', fontFamily: 'var(--font-heading)', fontWeight: 'var(--font-weight-bold)' }}>
+              <h3 id="pwa-install-title" className="font-bold text-lg" style={{ color: 'var(--color-text-on-primary)', fontFamily: 'var(--font-heading)', fontWeight: 'var(--font-weight-bold)' }}>
                 Install Roma Mart
               </h3>
-              <p className="text-sm" style={{ color: 'var(--color-on-primary)', opacity: 0.8, fontFamily: 'var(--font-body)', fontWeight: 'var(--font-weight-normal)' }}>Quick access anytime</p>
+              <p className="text-sm" style={{ color: 'var(--color-text-on-primary)', opacity: 0.8, fontFamily: 'var(--font-body)', fontWeight: 'var(--font-weight-normal)' }}>Quick access anytime</p>
             </div>
           </div>
           <button
