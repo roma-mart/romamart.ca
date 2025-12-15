@@ -49,6 +49,27 @@ const LocationImageCarousel = ({ photos, locationName }) => {
 
   return (
     <div className="relative h-64 rounded-2xl overflow-hidden shadow-lg mb-4">
+      {/* Left/Right Scroll Buttons for Carousel */}
+      {images.length > 1 && current > 0 && (
+        <button
+          type="button"
+          aria-label="Previous image"
+          className="absolute left-2 top-1/2 -translate-y-1/2 z-20 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-full shadow p-2 flex items-center justify-center focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+          onClick={() => setCurrent((prev) => (prev - 1 + images.length) % images.length)}
+        >
+          <svg width="28" height="28" viewBox="0 0 24 24" style={{ transform: 'rotate(180deg)', color: 'var(--color-accent)' }} fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 19l-7-7 7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        </button>
+      )}
+      {images.length > 1 && current < images.length - 1 && (
+        <button
+          type="button"
+          aria-label="Next image"
+          className="absolute right-2 top-1/2 -translate-y-1/2 z-20 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-full shadow p-2 flex items-center justify-center focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+          onClick={() => setCurrent((prev) => (prev + 1) % images.length)}
+        >
+          <svg width="28" height="28" viewBox="0 0 24 24" style={{ color: 'var(--color-accent)' }} fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        </button>
+      )}
       {images.map((img, idx) => (
         <LazyImage
           key={idx}

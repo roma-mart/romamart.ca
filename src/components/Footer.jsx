@@ -347,6 +347,18 @@ export default function Footer() {
           </div>
         </div>
 
+        {/* Back to Top Button */}
+        <div className="flex justify-center mb-6">
+          <button
+            type="button"
+            aria-label="Back to top"
+            className="px-6 py-3 rounded-full font-bold font-inter bg-[var(--color-accent)] text-[var(--color-primary)] shadow-lg transition-transform hover:scale-105 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+            style={{ outline: '2px solid var(--color-focus)', outlineOffset: '2px', fontSize: '1rem' }}
+            onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+          >
+            ↑ Back to Top
+          </button>
+        </div>
         <div className="text-center font-inter text-sm" style={{ color: 'var(--color-on-footer-subtle)' }}>
           <p>&copy; {new Date().getFullYear()} {COMPANY_DATA.legalName} All rights reserved.</p>
           <p>GST#: {COMPANY_DATA.gstNumber}</p>

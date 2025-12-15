@@ -175,6 +175,27 @@ const AboutPage = () => {
 
           {/* Image Carousel */}
           <div className="relative h-96 rounded-3xl overflow-hidden shadow-2xl">
+            {/* Left/Right Scroll Buttons for Carousel */}
+            {heroImages.length > 1 && currentImageIndex > 0 && (
+              <button
+                type="button"
+                aria-label="Previous image"
+                className="absolute left-2 top-1/2 -translate-y-1/2 z-20 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-full shadow p-2 flex items-center justify-center focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+                onClick={() => setCurrentImageIndex((prev) => (prev - 1 + heroImages.length) % heroImages.length)}
+              >
+                <ChevronRight size={28} style={{ transform: 'rotate(180deg)', color: 'var(--color-accent)' }} />
+              </button>
+            )}
+            {heroImages.length > 1 && currentImageIndex < heroImages.length - 1 && (
+              <button
+                type="button"
+                aria-label="Next image"
+                className="absolute right-2 top-1/2 -translate-y-1/2 z-20 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-full shadow p-2 flex items-center justify-center focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+                onClick={() => setCurrentImageIndex((prev) => (prev + 1) % heroImages.length)}
+              >
+                <ChevronRight size={28} style={{ color: 'var(--color-accent)' }} />
+              </button>
+            )}
             <div className="absolute inset-0 bg-gradient-to-r from-blue-950 via-transparent to-transparent opacity-40 z-10" />
             {heroImages.map((image, index) => (
               <img
