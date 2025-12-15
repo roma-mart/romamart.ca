@@ -182,11 +182,11 @@ const RoCafePage = () => {
                     categoryHandlers[category.id](e);
                   }
                 }}
-                className="w-full p-6 flex items-center justify-between"
+                className="w-full p-6 flex flex-row-reverse items-center justify-between"
                 style={{ background: 'none', boxShadow: 'none', border: 'none', textAlign: 'left' }}
                 aria-label={`Expand ${category.name} category`}
               >
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4 flex-1 min-w-0">
                   <div 
                     className="w-12 h-12 rounded-xl flex items-center justify-center"
                     style={{ backgroundColor: 'rgba(228, 179, 64, 0.15)', color: 'var(--color-icon)' }}

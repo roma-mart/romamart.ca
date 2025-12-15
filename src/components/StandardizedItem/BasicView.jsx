@@ -28,7 +28,6 @@ export default function BasicView({
   selectedSize,
   onSizeChange,
   currentPrice,
-  currentCalories,
   availabilityState
 }) {
   const {
@@ -169,15 +168,10 @@ export default function BasicView({
 
           {/* Price Display - Only show for menu items (not services) with non-zero pricing */}
           {!item.features && (currentPrice > 0 || (item.price && item.price > 0)) && (
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center mb-3">
               <div className="text-2xl var(--font-heading) font-bold" style={{ color: 'var(--color-accent)' }}>
                 {formatPrice(currentPrice || item.price)}
               </div>
-              {currentCalories && (
-                <div className="text-xs font-inter" style={{ color: 'var(--color-text-muted)' }}>
-                  {currentCalories} cal
-                </div>
-              )}
             </div>
           )}
 
