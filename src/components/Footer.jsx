@@ -1,3 +1,8 @@
+          /**
+           * info @ Location Selector (in Footer)
+           * Accessible, standards-based location selector using native <select> and design tokens.
+           * @returns {JSX.Element}
+           */
 import React, { useState, useMemo } from 'react';
 import { MapPin } from 'lucide-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -209,9 +214,9 @@ export default function Footer() {
                     <a
                       href={`${BASE_URL}${link.href.replace('/', '')}`}
                       className="transition-colors"
-                      style={{ color: 'var(--color-link)' }}
+                      style={{ color: 'var(--color-on-footer-muted)' }}
                       onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'}
-                      onMouseLeave={e => e.currentTarget.style.color = 'var(--color-link)'}
+                      onMouseLeave={e => e.currentTarget.style.color = 'var(--color-on-footer-muted)'}
                     >
                       {link.label}
                     </a>
@@ -239,10 +244,10 @@ export default function Footer() {
                   <li key={link.href}>
                     <a
                       href={`${BASE_URL}${link.href.replace('/', '')}`}
-                      className={link.label.toLowerCase() === 'accessibility' ? 'font-bold transition-colors' : 'transition-colors'}
-                      style={{ color: link.label.toLowerCase() === 'accessibility' ? 'var(--color-accent)' : 'var(--color-link)' }}
+                      className="transition-colors"
+                      style={{ color: 'var(--color-on-footer-muted)' }}
                       onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'}
-                      onMouseLeave={e => e.currentTarget.style.color = link.label.toLowerCase() === 'accessibility' ? 'var(--color-accent)' : 'var(--color-link)'}
+                      onMouseLeave={e => e.currentTarget.style.color = 'var(--color-on-footer-muted)'}
                     >
                       {link.label}
                     </a>
@@ -259,59 +264,84 @@ export default function Footer() {
         </div>
 
         <div className="mb-8 max-w-md mx-auto">
-          <div className="rounded-lg p-4" style={{ backgroundColor: 'var(--color-footer)', border: '.5px solid var(--color-border)' }}>
-            <label 
-              htmlFor="location-selector" 
-              className="block font-heading text-sm mb-3"
-              style={{ color: 'var(--color-accent)' }}
-            >
-              <MapPin className="inline-block mr-2" size={16} />
-              Your Current Store
-            </label>
-            
-            <select
-              id="location-selector"
-              value={selectedLocationId}
-              onChange={handleLocationChange}
-              className="w-full px-4 py-3 rounded-lg font-inter transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
-              style={{ backgroundColor: 'var(--color-surface-muted)', border: '1px solid var(--color-border-muted)', color: 'var(--color-on-surface)', cursor: 'pointer' }}
-            >
-              <option value="auto" style={{ backgroundColor: 'var(--color-footer)', color: 'var(--color-on-footer)' }}>
-                {isAutoMode && nearestLocationId
-                  ? `🎯 Auto-Detected: ${currentLocation.name}`
-                  : '🏢 Auto (HQ - Wellington St.)'}
-              </option>
-              {activeLocations.map(loc => (
-                <option 
-                  key={loc.id}
-                  value={loc.id}
-                  style={{ backgroundColor: 'var(--color-footer)', color: 'var(--color-on-footer)' }}
+            <div className="rounded-lg p-4 flex flex-col items-center" style={{ backgroundColor: 'var(--color-footer)', border: '.5px solid var(--color-border)', position: 'relative' }}>
+              <label 
+                htmlFor="location-selector" 
+                className="font-heading text-base mb-2 flex items-center gap-2 justify-center text-center"
+                style={{ color: 'var(--color-accent)', fontWeight: 600, width: '100%' }}
+              >
+                <MapPin className="inline-block" size={18} aria-hidden="true" />
+                <span>Your Store Location</span>
+              </label>
+              <div style={{ position: 'relative', width: '100%' }}>
+                <select
+                  id="location-selector"
+                  value={selectedLocationId}
+                  onChange={handleLocationChange}
+                  className="w-full px-4 py-3 rounded-xl font-inter shadow-lg transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:border-accent hover:border-accent focus-visible:z-10 border border-[var(--color-border)] pr-10 text-center"
+                  style={{
+                    backgroundColor: 'var(--color-surface)',
+                    color: 'var(--color-on-surface)',
+                    cursor: 'pointer',
+                    boxShadow: '0 2px 8px 0 var(--color-footer-shadow, rgba(21,21,21,0.06))',
+                    appearance: 'none',
+                    WebkitAppearance: 'none',
+                    MozAppearance: 'none',
+                    fontSize: '1rem',
+                    fontWeight: 500,
+                    minHeight: '48px',
+                    transition: 'border-color 0.2s, box-shadow 0.2s',
+                  }}
+                  aria-describedby="footer-location-helper"
                 >
-                  {loc.name} {loc.isPrimary ? '(HQ)' : ''}
-                </option>
-              ))}
-            </select>
+                  <option value="auto">
+                    {isAutoMode && nearestLocationId
+                      ? `🎯 Auto-Detected: ${currentLocation.name}`
+                      : '🏢 Auto (HQ - Wellington St.)'}
+                  </option>
+                  {activeLocations.map(loc => (
+                    <option 
+                      key={loc.id}
+                      value={loc.id}
+                    >
+                      {loc.name} {loc.isPrimary ? '(HQ)' : ''}
+                    </option>
+                  ))}
+                </select>
+                {/* Dropdown indicator (chevron) */}
+                <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 20 20" fill="none" style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: 'var(--color-on-surface-muted)' }}>
+                  <path d="M6 8l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
 
-            <div className="mt-3 text-xs font-inter" style={{ color: 'var(--color-on-footer-subtle)' }}>
+            <div className="mt-2 text-xs font-inter text-center" style={{ color: 'var(--color-on-footer-subtle)', width: '100%' }}>
               {isAutoMode ? (
                 nearestLocationId ? (
-                  <span>✓ Using nearest location based on your current position</span>
+                  <span>✓ Nearest store: <strong>{currentLocation.name}</strong></span>
                 ) : (
-                  <span>Using headquarters as default • Grant location access for nearest store</span>
+                  <span>Defaulting to headquarters. Enable location for nearest store.</span>
                 )
               ) : (
-                <span>✓ Manually selected: {currentLocation.name}</span>
+                <span>✓ Selected: <strong>{currentLocation.name}</strong></span>
               )}
               <div className="mt-8 flex justify-center">
                 <Button
                   variant="location"
-                  onLocationFound={loc => {
-                    // Update nearest location selection
-                    if (loc && loc.coords) {
+                  aria-label="Detect Nearest Store"
+                  onClick={e => {
+                    if (e.type === 'click' || (e.type === 'keydown' && (e.key === 'Enter' || e.key === ' '))) {
                       setSelectedLocationId('auto');
                     }
                   }}
-                />
+                  onKeyDown={e => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      setSelectedLocationId('auto');
+                    }
+                  }}
+                  tabIndex={0}
+                >
+                  Detect Nearest Store
+                </Button>
               </div>
             </div>
           </div>
@@ -319,7 +349,8 @@ export default function Footer() {
 
         <div className="text-center font-inter text-sm" style={{ color: 'var(--color-on-footer-subtle)' }}>
           <p>&copy; {new Date().getFullYear()} {COMPANY_DATA.legalName} All rights reserved.</p>
-          <p>GST Number: {COMPANY_DATA.gstNumber}</p>
+          <p>GST#: {COMPANY_DATA.gstNumber}</p>
+          <p>🍁</p>
         </div>
       </div>
     </footer>
