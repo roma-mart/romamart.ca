@@ -16,8 +16,8 @@ export const useServiceWorker = () => {
     // Register Service Worker
     const registerServiceWorker = async () => {
       try {
-        const reg = await navigator.serviceWorker.register('/romamart.ca/sw.js', {
-          scope: '/romamart.ca/'
+        const reg = await navigator.serviceWorker.register('/sw.js', {
+          scope: '/'
         });
 
         setRegistration(reg);
