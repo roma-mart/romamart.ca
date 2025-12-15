@@ -1,24 +1,19 @@
 /**
- * Excel Menu Transformation Utilities
- * Converts Excel data to StandardizedItem-compatible format
+ * API Menu Transformation Utilities
+ * Converts API menu data to StandardizedItem-compatible format
  * 
  * Used by:
  * - pages/RoCafePage.jsx
  * 
- * @since December 8, 2025
+ * @since December 15, 2025
  */
 
 import React from 'react';
 import { Coffee, Wine, UtensilsCrossed, IceCream, Sparkles, Beef } from 'lucide-react';
 
 /**
- * Constant prefix for Excel-generated item IDs
- */
-const EXCEL_ITEM_ID_PREFIX = 'excel-';
-
-/**
- * Map of oc_page categories to display metadata
- * Icons and descriptions for each Excel category
+ * Map of category names to display metadata
+ * Icons and descriptions for each category
  */
 export const EXCEL_CATEGORY_MAP = {
   'RoCafe Hot Coffee': {
@@ -63,95 +58,80 @@ export const EXCEL_CATEGORY_MAP = {
   }
 };
 
-
-
-export function normalizeMenuItem(row) {
-  return {
-    id: row.Upc || row.Name,
-    name: row.Name,
-    description: row.Description || "", // or other fields
-    price: row.cents ? row.cents / 100 : 0,
-    size: row.size || "",
-    category: row.oc_page || "Other",   // <------ KEY LINE
-    // add any other fields your UI expects
-  };
-}
-
-
 /**
- * Transform Excel row to StandardizedItem format
- * Converts Excel fields (Name, size, cents, oc_page) to menu item object
+ * Transform API menu item to StandardizedItem format
+ * Converts API fields to menu item object compatible with StandardizedItem component
  * 
- * @param {Object} excelRow - Raw Excel row data
- * @param {number} index - Row index (for generating unique IDs)
+ * API format:
+ * {
+ *   id, name, tagline, description, badge, featured, calories,
+ *   categories: ["RoCafe Iced Coffee"],
+ *   sizes: [{ name: "S", size: "12 oz", price: 599 }]
+ * }
+ * 
+ * @param {Object} apiItem - Menu item from API
+ * @param {number} index - Item index (for fallback IDs)
  * @returns {Object} Menu item in StandardizedItem format
  */
-export const transformExcelToMenuItem = (excelRow, index) => {
-  // Extract and normalize fields
-  const name = excelRow.Name || excelRow.name || 'Unnamed Item';
-  const size = excelRow.size || '1 ea';
-  const cents = parseInt(excelRow.cents, 10) || 0;
-  const category = excelRow.oc_page || excelRow.oc_Page || 'Other';
-  const upc = excelRow.Upc || excelRow['Upc Actual'] || `${EXCEL_ITEM_ID_PREFIX}${index}`;
+export const transformExcelToMenuItem = (apiItem, index) => {
+  // Extract category from categories array (use first category)
+  const category = Array.isArray(apiItem.categories) && apiItem.categories.length > 0
+    ? apiItem.categories[0]
+    : 'Other';
   
-  // Convert cents to dollars
-  const price = cents / 100;
+  // Convert sizes array - prices are in cents, convert to dollars
+  const sizes = Array.isArray(apiItem.sizes)
+    ? apiItem.sizes.map(size => ({
+        name: size.name || size.size,
+        size: size.size,
+        price: (size.price || 0) / 100, // Convert cents to dollars
+        calories: size.calories || null
+      }))
+    : [];
   
   return {
-    id: `${EXCEL_ITEM_ID_PREFIX}${upc}`,
-    name: name,
-    tagline: size,
-    description: `${name} - ${size}`,
-    image: null,
-    badge: null,
-    sizes: [
-      {
-        name: size,
-        price: price,
-        calories: null
-      }
-    ],
+    id: apiItem.id ? `api-${apiItem.id}` : `item-${index}`,
+    name: apiItem.name || 'Unnamed Item',
+    tagline: apiItem.tagline || null,
+    description: apiItem.description || apiItem.name || '',
+    image: apiItem.image || null,
+    badge: apiItem.badge || null,
+    sizes: sizes,
     defaultSize: 0,
     category: category,
-    customizations: [],
-    allergens: [],
-    dietary: [],
-    prepTime: '2-5 min',
-    temperature: [],
-    caffeineLevel: null,
-    flavorProfile: [],
-    locationStatus: 'Available at RoCafé locations',
-    isAvailable: true,
-    // Store original Excel data for reference
-    _excelData: {
-      oc_page: category,
-      oc_color: excelRow.oc_color,
-      oc_key: excelRow.oc_key,
-      oc_relpos: excelRow.oc_relpos,
-      upc: upc
-    }
+    customizations: apiItem.customizations || [],
+    allergens: apiItem.allergens || [],
+    dietary: apiItem.dietary || [],
+    prepTime: apiItem.prepTime || '2-5 min',
+    temperature: apiItem.temperature || [],
+    caffeineLevel: apiItem.caffeineLevel || null,
+    flavorProfile: apiItem.flavorProfile || [],
+    locationStatus: apiItem.locationStatus || 'Available at RoCafé locations',
+    isAvailable: apiItem.isAvailable !== false,
+    featured: apiItem.featured || false,
+    calories: apiItem.calories || null
   };
 };
 
 /**
- * Group Excel menu items by oc_page category
+ * Group menu items by category
  * Returns array of category objects with items
  * 
- * @param {Array} excelItems - Array of Excel row objects
+ * @param {Array} menuItems - Array of menu item objects from API
  * @returns {Array} Array of category objects
  */
-export const groupExcelItemsByCategory = (excelItems) => {
-  if (!Array.isArray(excelItems) || excelItems.length === 0) {
+export const groupExcelItemsByCategory = (menuItems) => {
+  if (!Array.isArray(menuItems) || menuItems.length === 0) {
     return [];
   }
   
-  // Transform Excel rows to menu items
-  const menuItems = excelItems.map((row, index) => transformExcelToMenuItem(row, index));
+  // Transform API items to StandardizedItem format
+  const transformedItems = menuItems.map((item, index) => transformExcelToMenuItem(item, index));
   
   // Group by category
   const categoryMap = {};
   
-  menuItems.forEach(item => {
+  transformedItems.forEach(item => {
     const category = item.category || 'Other';
     if (!categoryMap[category]) {
       categoryMap[category] = [];
@@ -210,17 +190,17 @@ export const groupExcelItemsByCategory = (excelItems) => {
 };
 
 /**
- * Merge Excel categories with static menu categories
- * Allows fallback to static menu while preferring Excel data
+ * Merge API categories with static menu categories
+ * Allows fallback to static menu while preferring API data
  * 
- * @param {Array} excelCategories - Categories from Excel data
+ * @param {Array} apiCategories - Categories from API data
  * @param {Array} staticCategories - Static fallback categories
  * @returns {Array} Merged category array
  */
-export const mergeCategoriesWithFallback = (excelCategories, staticCategories) => {
-  // If Excel has data, use it exclusively
-  if (excelCategories && excelCategories.length > 0) {
-    return excelCategories;
+export const mergeCategoriesWithFallback = (apiCategories, staticCategories) => {
+  // If API has data, use it exclusively
+  if (apiCategories && apiCategories.length > 0) {
+    return apiCategories;
   }
   
   // Otherwise fallback to static
