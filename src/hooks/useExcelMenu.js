@@ -1,8 +1,15 @@
 import { useEffect, useState } from "react";
-import * as XLSX from "xlsx";
 
-// path: where your Excel file is (e.g. '/data/rocafe_menu.xlsx')
-export function useExcelMenu(path = "/romamart.ca/rocafe_menu.xlsx") {
+/**
+ * Custom hook to fetch menu data from the public API.
+ * 
+ * Fetches menu data from https://romamart.netlify.app/api/public-menu
+ * and returns the menu items along with loading and error states.
+ * 
+ * @param {string} apiUrl - The API endpoint URL (default: public-menu API)
+ * @returns {Object} - { menuItems: Array, loading: boolean, error: string }
+ */
+export function useExcelMenu(apiUrl = "https://romamart.netlify.app/api/public-menu") {
   const [menuItems, setMenuItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -10,27 +17,27 @@ export function useExcelMenu(path = "/romamart.ca/rocafe_menu.xlsx") {
   useEffect(() => {
     let cancelled = false; // to avoid setState after unmount
   
-    const fetchExcel = async () => {
+    const fetchMenuData = async () => {
       try {
         if (!cancelled) setLoading(true);
-        const res = await fetch(path);
-        if (!res.ok) throw new Error("Failed to fetch Excel file");
-        const arrayBuffer = await res.arrayBuffer();
-        const workbook = XLSX.read(arrayBuffer, { type: "array" });
-        const ws = workbook.Sheets[workbook.SheetNames[0]];
-        const data = XLSX.utils.sheet_to_json(ws, { defval: "" });
-        if (!cancelled) setMenuItems(data);
+        const res = await fetch(apiUrl);
+        if (!res.ok) throw new Error("Failed to fetch menu data");
+        const data = await res.json();
+        
+        // Extract the menu array from the API response
+        const menu = data.menu || [];
+        if (!cancelled) setMenuItems(menu);
       } catch (err) {
-        if (!cancelled) setError(err.message || "Failed to load Excel file");
+        if (!cancelled) setError(err.message || "Failed to load menu data");
       } finally {
         if (!cancelled) setLoading(false);
       }
     };
   
-    fetchExcel();
+    fetchMenuData();
   
     return () => { cancelled = true; };
-    }, [path]);
+    }, [apiUrl]);
   
 
   return { menuItems, loading, error };
