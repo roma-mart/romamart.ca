@@ -211,15 +211,17 @@ const RoCafePage = () => {
 
               {/* Category Items (Expandable) */}
               {expandedCategory === category.id && (
-                <div className="px-6 pb-6 space-y-3 border-t" style={{ borderColor: 'var(--color-border)' }}>
+                <div className="px-6 pb-6 border-t" style={{ borderColor: 'var(--color-border)' }}>
                   {category.items.length > 0 ? (
-                    category.items.map((item) => (
-                      <StandardizedItem 
-                        key={item.id}
-                        item={item}
-                        defaultExpanded={false}
-                      />
-                    ))
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                      {category.items.map((item) => (
+                        <StandardizedItem 
+                          key={item.id}
+                          item={item}
+                          defaultExpanded={false}
+                        />
+                      ))}
+                    </div>
                   ) : (
                     <div className="text-center py-8" style={mutedTextColor}>
                       <p className="font-inter">Menu items coming soon! Check back for updates.</p>
