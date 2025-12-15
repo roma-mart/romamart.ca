@@ -281,15 +281,16 @@ export default function Footer() {
                   className="w-full px-4 py-3 rounded-xl font-inter shadow-lg transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:border-accent hover:border-accent focus-visible:z-10 border border-[var(--color-border)] pr-10 text-center"
                   style={{
                     backgroundColor: 'var(--color-surface)',
-                    color: 'var(--color-on-surface)',
+                    color: 'var(--color-text)',
                     cursor: 'pointer',
                     boxShadow: '0 2px 8px 0 var(--color-footer-shadow, rgba(21,21,21,0.06))',
                     appearance: 'none',
                     WebkitAppearance: 'none',
                     MozAppearance: 'none',
-                    fontSize: '1rem',
-                    fontWeight: 500,
+                    fontSize: '1.08rem',
+                    fontWeight: 600,
                     minHeight: '48px',
+                    letterSpacing: '0.01em',
                     transition: 'border-color 0.2s, box-shadow 0.2s',
                   }}
                   aria-describedby="footer-location-helper"
