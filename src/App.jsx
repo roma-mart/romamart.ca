@@ -106,7 +106,6 @@ function Hero({ onTrackOrder }) {
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, delay: 0.2 }} className="relative hidden md:block">
             <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl border-4 border-white/10 rotate-3 hover:rotate-0 transition-transform duration-500">
               <img src={getAssetUrl('/images/comeinwereopensign.png')} alt="Come in! We're Open Sign" className="w-full h-[500px] object-cover" loading="lazy" />
-              <div className="absolute top-6 right-6 w-24 h-24 rounded-full flex items-center justify-center shadow-lg rotate-12" style={{ background: 'var(--color-accent)' }}><div className="text-center"><span className="block var(--font-heading) text-xl leading-none" style={{ color: 'var(--color-primary)' }}>2.5%</span><span className="block text-xs font-bold uppercase" style={{ color: 'var(--color-text)' }}>CASH DISCOUNT</span></div></div>
             </div>
           </motion.div>
         </div>
