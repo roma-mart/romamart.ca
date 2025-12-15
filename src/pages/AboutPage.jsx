@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ChevronRight, Heart, Users, Award, MapPin } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
@@ -96,6 +96,32 @@ const AboutPage = () => {
     }
   ];
 
+  // --- Team Section Scroll State ---
+  const teamScrollRef = useRef(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  // Check scrollability and update chevron visibility
+  const updateTeamScrollButtons = useCallback(() => {
+    const el = teamScrollRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 8); // allow for rounding
+    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 8);
+  }, []);
+
+  useEffect(() => {
+    const el = teamScrollRef.current;
+    if (!el) return;
+    updateTeamScrollButtons();
+    el.addEventListener('scroll', updateTeamScrollButtons);
+    window.addEventListener('resize', updateTeamScrollButtons);
+    // On mount, check after a tick (for images)
+    setTimeout(updateTeamScrollButtons, 200);
+    return () => {
+      el.removeEventListener('scroll', updateTeamScrollButtons);
+      window.removeEventListener('resize', updateTeamScrollButtons);
+    };
+  }, [updateTeamScrollButtons]);
   return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>
       <Helmet>
@@ -230,32 +256,35 @@ const AboutPage = () => {
         </h2>
 
         <div className="relative">
-          {/* Scroll Buttons (show only if overflow-x-auto is active) */}
-          <button
-            type="button"
-            aria-label="Scroll left"
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-full shadow p-2 flex items-center justify-center focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 md:hidden"
-            style={{ display: 'block' }}
-            onClick={() => {
-              const el = document.getElementById('team-scroll-container');
-              if (el) el.scrollBy({ left: -window.innerWidth * 0.7, behavior: 'smooth' });
-            }}
-          >
-            <ChevronRight size={28} style={{ transform: 'rotate(180deg)', color: 'var(--color-accent)' }} />
-          </button>
-          <button
-            type="button"
-            aria-label="Scroll right"
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-full shadow p-2 flex items-center justify-center focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 md:hidden"
-            style={{ display: 'block' }}
-            onClick={() => {
-              const el = document.getElementById('team-scroll-container');
-              if (el) el.scrollBy({ left: window.innerWidth * 0.7, behavior: 'smooth' });
-            }}
-          >
-            <ChevronRight size={28} style={{ color: 'var(--color-accent)' }} />
-          </button>
+          {/* Scroll Buttons (conditionally visible) */}
+          {canScrollLeft && (
+            <button
+              type="button"
+              aria-label="Scroll left"
+              className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-full shadow p-2 flex items-center justify-center focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 md:hidden"
+              onClick={() => {
+                const el = teamScrollRef.current;
+                if (el) el.scrollBy({ left: -window.innerWidth * 0.7, behavior: 'smooth' });
+              }}
+            >
+              <ChevronRight size={28} style={{ transform: 'rotate(180deg)', color: 'var(--color-accent)' }} />
+            </button>
+          )}
+          {canScrollRight && (
+            <button
+              type="button"
+              aria-label="Scroll right"
+              className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-full shadow p-2 flex items-center justify-center focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 md:hidden"
+              onClick={() => {
+                const el = teamScrollRef.current;
+                if (el) el.scrollBy({ left: window.innerWidth * 0.7, behavior: 'smooth' });
+              }}
+            >
+              <ChevronRight size={28} style={{ color: 'var(--color-accent)' }} />
+            </button>
+          )}
           <div
+            ref={teamScrollRef}
             id="team-scroll-container"
             className="flex gap-6 overflow-x-auto pb-4 -mx-4 px-4 md:grid md:grid-cols-3 md:gap-8 md:overflow-x-visible md:mx-0 md:px-0 lg:grid-cols-5"
             role="region"
