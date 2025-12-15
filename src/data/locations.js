@@ -43,7 +43,7 @@ export const LOCATIONS = [
       province: 'ON',
       postalCode: 'N7T 1G6',
       country: 'Canada',
-      formatted: '3-189 Wellington Street, Sarnia, ON N7T 1G6'
+      formatted: '3-189 Wellington Street, Sarnia, ON  N7T 1G6'
     },
     
     // === GOOGLE INTEGRATION ===

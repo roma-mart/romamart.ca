@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ChevronRight, Heart, Users, Award, MapPin } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
@@ -49,25 +49,25 @@ const AboutPage = () => {
     },
     {
       name: 'Rumana Mohammadi',
-      role: 'Roma',
+      role: 'RoCafé Manager',
       image: getAssetUrl('/images/id-rumanamohammadi.png'),
       bio: 'Mother, wife, and heart of Roma Mart, ensuring every customer feels at home.'
     },
     {
       name: 'Faizan Osman Khan',
-      role: 'Faizy',
+      role: 'Management',
       image: getAssetUrl('/images/id-faizanosmankhan.png'),
       bio: 'Dedicated son and team member, passionate about delivering excellent service and supporting our community.'
     },
     {
       name: 'Raaida Malak Khan',
-      role: 'Raaida',
+      role: 'Social Media Manager',
       image: getAssetUrl('/images/id-raaidamkhan.png'),
       bio: 'Social media manager and community liaison, connecting Roma Mart with our valued customers online and offline.'
     },
     {
       name: 'Adyan Osman Khan',
-      role: 'Adyan',
+      role: 'Team Member',
       image: getAssetUrl('/images/id-adyanosmankhan.png'),
       bio: 'Youngest member of the Roma Mart family, bringing fresh ideas and enthusiasm to our team.'
     }
@@ -96,6 +96,32 @@ const AboutPage = () => {
     }
   ];
 
+  // --- Team Section Scroll State ---
+  const teamScrollRef = useRef(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  // Check scrollability and update chevron visibility
+  const updateTeamScrollButtons = useCallback(() => {
+    const el = teamScrollRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 8); // allow for rounding
+    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 8);
+  }, []);
+
+  useEffect(() => {
+    const el = teamScrollRef.current;
+    if (!el) return;
+    updateTeamScrollButtons();
+    el.addEventListener('scroll', updateTeamScrollButtons);
+    window.addEventListener('resize', updateTeamScrollButtons);
+    // On mount, check after a tick (for images)
+    setTimeout(updateTeamScrollButtons, 200);
+    return () => {
+      el.removeEventListener('scroll', updateTeamScrollButtons);
+      window.removeEventListener('resize', updateTeamScrollButtons);
+    };
+  }, [updateTeamScrollButtons]);
   return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>
       <Helmet>
@@ -149,6 +175,27 @@ const AboutPage = () => {
 
           {/* Image Carousel */}
           <div className="relative h-96 rounded-3xl overflow-hidden shadow-2xl">
+            {/* Left/Right Scroll Buttons for Carousel */}
+            {heroImages.length > 1 && currentImageIndex > 0 && (
+              <button
+                type="button"
+                aria-label="Previous image"
+                className="absolute left-2 top-1/2 -translate-y-1/2 z-20 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-full shadow p-2 flex items-center justify-center focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+                onClick={() => setCurrentImageIndex((prev) => (prev - 1 + heroImages.length) % heroImages.length)}
+              >
+                <ChevronRight size={28} style={{ transform: 'rotate(180deg)', color: 'var(--color-accent)' }} />
+              </button>
+            )}
+            {heroImages.length > 1 && currentImageIndex < heroImages.length - 1 && (
+              <button
+                type="button"
+                aria-label="Next image"
+                className="absolute right-2 top-1/2 -translate-y-1/2 z-20 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-full shadow p-2 flex items-center justify-center focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+                onClick={() => setCurrentImageIndex((prev) => (prev + 1) % heroImages.length)}
+              >
+                <ChevronRight size={28} style={{ color: 'var(--color-accent)' }} />
+              </button>
+            )}
             <div className="absolute inset-0 bg-gradient-to-r from-blue-950 via-transparent to-transparent opacity-40 z-10" />
             {heroImages.map((image, index) => (
               <img
@@ -229,36 +276,68 @@ const AboutPage = () => {
           Meet Our <span style={{ color: 'var(--color-accent)' }}>Team</span>
         </h2>
 
-        <div className="flex justify-center">
-          {team.map((member, index) => (
-            <div 
-              key={index}
-              className="max-w-sm p-8 rounded-2xl text-center hover:shadow-xl transition-shadow"
-              style={{ backgroundColor: 'var(--color-surface)' }}
+        <div className="relative">
+          {/* Scroll Buttons (conditionally visible) */}
+          {canScrollLeft && (
+            <button
+              type="button"
+              aria-label="Scroll left"
+              className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-full shadow p-2 flex items-center justify-center focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 md:hidden"
+              onClick={() => {
+                const el = teamScrollRef.current;
+                if (el) el.scrollBy({ left: -window.innerWidth * 0.7, behavior: 'smooth' });
+              }}
             >
-              {/* Circular headshot */}
-              <div className="w-48 h-48 rounded-full mx-auto mb-6 overflow-hidden border-4 shadow-lg" style={{ borderColor: 'var(--color-accent)' }}>
-                <img
-                  src={member.image}
-                  alt={`${member.name}, ${member.role}`}
-                  className="w-full h-full object-cover"
-                  style={{ backgroundColor: 'var(--color-primary)' }}
-                />
+              <ChevronRight size={28} style={{ transform: 'rotate(180deg)', color: 'var(--color-accent)' }} />
+            </button>
+          )}
+          {canScrollRight && (
+            <button
+              type="button"
+              aria-label="Scroll right"
+              className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-full shadow p-2 flex items-center justify-center focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 md:hidden"
+              onClick={() => {
+                const el = teamScrollRef.current;
+                if (el) el.scrollBy({ left: window.innerWidth * 0.7, behavior: 'smooth' });
+              }}
+            >
+              <ChevronRight size={28} style={{ color: 'var(--color-accent)' }} />
+            </button>
+          )}
+          <div
+            ref={teamScrollRef}
+            id="team-scroll-container"
+            className="flex gap-6 overflow-x-auto pb-4 -mx-4 px-4 md:grid md:grid-cols-3 md:gap-8 md:overflow-x-visible md:mx-0 md:px-0 lg:grid-cols-5"
+            role="region"
+            aria-label="Meet our team"
+          >
+            {team.map((member, index) => (
+              <div
+                key={index}
+                className="min-w-[80vw] max-w-xs md:min-w-0 md:max-w-sm p-8 rounded-2xl text-center hover:shadow-xl transition-shadow flex-shrink-0 md:flex-shrink md:w-auto"
+                style={{ backgroundColor: 'var(--color-surface)' }}
+              >
+                {/* Circular headshot */}
+                <div className="w-40 h-40 md:w-48 md:h-48 rounded-full mx-auto mb-6 overflow-hidden border-4 shadow-lg" style={{ borderColor: 'var(--color-accent)' }}>
+                  <img
+                    src={member.image}
+                    alt={`${member.name}, ${member.role}`}
+                    className="w-full h-full object-cover"
+                    style={{ backgroundColor: 'var(--color-primary)' }}
+                  />
+                </div>
+                <h3 className="var(--font-heading) text-2xl mb-2" style={{ color: 'var(--color-heading)' }}>
+                  {member.name}
+                </h3>
+                <p className="text-sm font-inter font-bold uppercase tracking-wider mb-4" style={{ color: 'var(--color-accent)' }}>
+                  {member.role}
+                </p>
+                <p className="font-inter leading-relaxed" style={mutedTextColor}>
+                  {member.bio}
+                </p>
               </div>
-              
-              <h3 className="var(--font-heading) text-2xl mb-2" style={{ color: 'var(--color-heading)' }}>
-                {member.name}
-              </h3>
-              
-              <p className="text-sm font-inter font-bold uppercase tracking-wider mb-4" style={{ color: 'var(--color-accent)' }}>
-                {member.role}
-              </p>
-              
-              <p className="font-inter leading-relaxed" style={mutedTextColor}>
-                {member.bio}
-              </p>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 
