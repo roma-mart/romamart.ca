@@ -218,19 +218,18 @@ const LocationsPage = () => {
               </div>
 
               {/* Right column: Carousel above Map on desktop, stacked on mobile */}
-              <div className="flex flex-col gap-6 rounded-3xl overflow-hidden shadow-2xl">
-                {/* Carousel always first in right column (desktop), after info (mobile) */}
-                <div className="w-full h-72 md:h-80 lg:h-72 xl:h-80 order-1">
+              <div className="flex flex-col rounded-3xl overflow-hidden shadow-2xl">
+                {/* Carousel and map now share the same height and border radius handling */}
+                <div className="w-full aspect-[4/3] min-h-[18rem] max-h-[28rem] order-1">
                   <LocationImageCarousel photos={location.photos} locationName={location.name} />
                 </div>
-                {/* Map always after carousel (desktop), after carousel/info (mobile) */}
-                <div className="w-full h-72 md:h-80 lg:h-96 xl:h-96 order-2">
+                <div className="w-full aspect-[4/3] min-h-[18rem] max-h-[28rem] order-2">
                   <iframe 
                     title={`Google Maps - ${location.name}`}
                     src={location.mapUrl}
                     width="100%"
                     height="100%"
-                    style={{ border: 0 }}
+                    style={{ border: 0, borderRadius: 0 }}
                     allowFullScreen
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
