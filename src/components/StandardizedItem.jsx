@@ -55,7 +55,7 @@ const StandardizedItem = ({ item, itemType, defaultExpanded = false }) => {
     availabilityState = 'select_location';
   } else {
     if (itemType === 'menu') {
-      const result = getMenuItemStatusAtLocation(item.id, nearestLocation, ROCAFE_FULL_MENU);
+      const result = getMenuItemStatusAtLocation(item.id, nearestLocation, ROCAFE_FULL_MENU, item);
       effectiveStatus = result.status;
     } else if (itemType === 'service') {
       const result = getServiceStatusAtLocation(item.id, nearestLocation, SERVICES);
