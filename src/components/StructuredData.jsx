@@ -45,8 +45,8 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
                     dayOfWeek: [
                       'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'
                     ],
-                    opens: COMPANY_DATA.location.hours.weekdays?.split('-')[0]?.trim() || '07:00',
-                    closes: COMPANY_DATA.location.hours.weekdays?.split('-')[1]?.trim() || '22:00',
+                    opens: COMPANY_DATA.location.hours.weekdays?.split('-')[0]?.trim() || '08:00',
+                    closes: COMPANY_DATA.location.hours.weekdays?.split('-')[1]?.trim() || '21:00',
                     validFrom: undefined,
                     validThrough: undefined
                   },

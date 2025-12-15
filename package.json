@@ -7,6 +7,10 @@
     "dev": "vite",
     "build": "vite build --mode production && node scripts/prerender.js",
     "build:ssg": "vite-ssg build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
     "lint": "eslint .",
     "lint:css": "stylelint \"src/**/*.css\"",
     "check:quality": "node scripts/check-quality.js",
@@ -28,10 +32,15 @@
     "react-dom": "^18.3.1",
     "react-helmet-async": "^2.0.5",
     "vite-plugin-pages": "^0.33.1",
-    "vite-ssg": "^28.2.2"
+    "vite-ssg": "^28.2.2",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
@@ -42,11 +51,13 @@
     "eslint-plugin-react-refresh": "^0.4.24",
     "gh-pages": "^6.3.0",
     "globals": "^16.5.0",
+    "jsdom": "^27.3.0",
     "postcss": "^8.5.6",
     "stylelint": "^16.9.0",
     "stylelint-config-standard": "^36.0.1",
     "tailwindcss": "^3.4.18",
-    "vite": "^7.2.6"
+    "vite": "^7.2.6",
+    "vitest": "^4.0.15"
   },
   "overrides": {
     "react-helmet-async": {

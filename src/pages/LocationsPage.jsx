@@ -5,6 +5,7 @@ import ShareButton from '../components/ShareButton';
 import CopyButton from '../components/CopyButton';
 import Button from '../components/Button';
 import { getActiveLocations, formatDistance } from '../data/locations';
+import LocationImageCarousel from '../components/LocationImageCarousel';
 import COMPANY_DATA from '../config/company_data';
 
 const LocationsPage = () => {
@@ -86,7 +87,28 @@ const LocationsPage = () => {
                 padding: location.isPrimary ? '0.5rem' : '0'
               }}
             >
-              <div className="p-8 rounded-2xl" style={{ backgroundColor: 'var(--color-surface)' }}>
+              {/* Info column (always first on mobile, left on desktop) */}
+              <div className="p-8 rounded-2xl flex flex-col" style={{ backgroundColor: 'var(--color-surface)' }}>
+                {/* Location Images */}
+                <div className="flex gap-4 mb-6 items-center">
+                  {location.photos?.primary && (
+                    <img
+                      src={location.photos.primary}
+                      alt={`${location.name} exterior`}
+                      className="rounded-2xl w-40 h-32 object-cover shadow-lg"
+                      loading="lazy"
+                      aria-hidden={location.photos.thumbnail ? "true" : "false"}
+                    />
+                  )}
+                  {location.photos?.thumbnail && (
+                    <img
+                      src={location.photos.thumbnail}
+                      alt={`${location.name} thumbnail`}
+                      className="rounded-xl w-20 h-20 object-cover border-2 border-[var(--color-accent)] shadow"
+                      loading="lazy"
+                    />
+                  )}
+                </div>
                 {/* HQ Badge + Distance */}
                 {(location.isPrimary || location.distanceText) && (
                   <div className="flex items-center gap-2 mb-4 flex-wrap">
@@ -195,18 +217,26 @@ const LocationsPage = () => {
                 </div>
               </div>
 
-              <div className="rounded-3xl overflow-hidden shadow-2xl h-96">
-                <iframe 
-                  title={`Google Maps - ${location.name}`}
-                  src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=place_id:ChIJCfo3t6SdJYgRIQVbpCppKmY&zoom=15"
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0 }}
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                />
+              {/* Right column: Carousel above Map on desktop, stacked on mobile */}
+              <div className="flex flex-col rounded-3xl overflow-hidden shadow-2xl">
+                {/* Carousel and map now share the same height and border radius handling */}
+                <div className="w-full aspect-[4/3] min-h-[18rem] max-h-[28rem] order-1">
+                  <LocationImageCarousel photos={location.photos} locationName={location.name} />
+                </div>
+                <div className="w-full aspect-[4/3] min-h-[18rem] max-h-[28rem] order-2">
+                  <iframe 
+                    title={`Google Maps - ${location.name}`}
+                    src={location.mapUrl}
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0, borderRadius: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  />
+                </div>
               </div>
+
             </div>
           ))}
         </div>

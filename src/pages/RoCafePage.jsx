@@ -1,15 +1,24 @@
+import Button from '../components/Button';
+/* eslint-disable no-unused-vars */
 import React, { useState, useCallback, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ChevronRight, ChevronDown, Coffee, Wine, UtensilsCrossed, IceCream, Sparkles, AlertTriangle } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
-import Button from '../components/Button';
+import CategoryAccordionHeader from '../components/CategoryAccordionHeader';
 import StandardizedItem from '../components/StandardizedItem';
 import { useLocationAware } from '../hooks/useLocationContext';
 import { ROCAFE_FULL_MENU, MENU_CATEGORIES, ALLERGEN_WARNING } from '../data/rocafe-menu';
 import COMPANY_DATA from '../config/company_data';
+import MenuExcelLoader from '../components/MenuExcelHolder';
+import { useExcelMenu } from '../hooks/useExcelMenu';
+import { groupExcelItemsByCategory, mergeCategoriesWithFallback } from '../utils/excelMenuTransform';
 
 const RoCafePage = () => {
 
+  const { menuItems } = useExcelMenu();
+  
+  // Note: menuItems will be empty array during loading or on error
+  // The menuCategories useMemo will handle fallback to static menu
 
   const textColor = { color: 'var(--color-text)' };
   const mutedTextColor = { color: 'var(--color-text-muted)' };
@@ -26,57 +35,10 @@ const RoCafePage = () => {
   useLocationAware(() => {
     // Location stored and available for StandardizedItem availability states
   });
-
-  // Group menu items by category
   const menuCategories = useMemo(() => {
-    const categories = [
-      {
-        id: MENU_CATEGORIES.BUBBLE_TEA,
-        name: 'Bubble Tea',
-        icon: <Wine size={24} />,
-        description: 'Classic and creative bubble tea with tapioca pearls',
-        items: ROCAFE_FULL_MENU.filter(item => item.category === MENU_CATEGORIES.BUBBLE_TEA)
-      },
-      {
-        id: MENU_CATEGORIES.HOT_COFFEE,
-        name: 'Hot Coffee',
-        icon: <Coffee size={24} />,
-        description: 'Freshly brewed coffee made to perfection',
-        items: ROCAFE_FULL_MENU.filter(item => item.category === MENU_CATEGORIES.HOT_COFFEE)
-      },
-      {
-        id: MENU_CATEGORIES.ICED_COFFEE,
-        name: 'Iced Coffee',
-        icon: <Coffee size={24} />,
-        description: 'Refreshing cold coffee beverages',
-        items: ROCAFE_FULL_MENU.filter(item => item.category === MENU_CATEGORIES.ICED_COFFEE)
-      },
-      {
-        id: MENU_CATEGORIES.TEA,
-        name: 'Tea & Matcha',
-        icon: <Wine size={24} />,
-        description: 'Premium tea selections and matcha lattes',
-        items: ROCAFE_FULL_MENU.filter(item => item.category === MENU_CATEGORIES.TEA)
-      },
-      {
-        id: MENU_CATEGORIES.SMOOTHIES,
-        name: 'Smoothies & Fresh Juice',
-        icon: <IceCream size={24} />,
-        description: 'Healthy blended fruit beverages made fresh',
-        items: ROCAFE_FULL_MENU.filter(item => item.category === MENU_CATEGORIES.SMOOTHIES)
-      },
-      {
-        id: MENU_CATEGORIES.SPECIALTY,
-        name: 'Specialty Drinks',
-        icon: <Sparkles size={24} />,
-        description: 'Unique RoCafé creations',
-        items: ROCAFE_FULL_MENU.filter(item => item.category === MENU_CATEGORIES.SPECIALTY)
-      }
-    ];
-    
-    // Only return categories with items
-    return categories.filter(cat => cat.items.length > 0);
-  }, []);
+    return groupExcelItemsByCategory(menuItems);
+  }, [menuItems]);
+
 
   // create memoized handlers map for categories
   const categoryHandlers = useMemo(() => {
@@ -125,6 +87,7 @@ const RoCafePage = () => {
             Welcome to RoCafé, where quality meets convenience. Enjoy our premium selection of beverages and food, 
             crafted fresh daily with the finest ingredients.
           </p>
+          {/* <MenuExcelLoader /> */}
           <div className="flex justify-center">
             <ShareButton 
               title="RoCafé Menu"
@@ -136,7 +99,9 @@ const RoCafePage = () => {
           {/* Quick stats */}
           <div className="flex flex-wrap justify-center gap-8 mt-12">
             <div className="text-center">
-              <div className="text-4xl var(--font-heading) mb-2" style={{ color: 'var(--color-accent)' }}>{ROCAFE_FULL_MENU.length}+</div>
+              <div className="text-4xl var(--font-heading) mb-2" style={{ color: 'var(--color-accent)' }}>
+                {menuItems.length || ROCAFE_FULL_MENU.length}+
+              </div>
               <div className="text-sm font-inter uppercase tracking-wider" style={mutedTextColor}>Menu Items</div>
             </div>
             <div className="text-center">
@@ -208,54 +173,30 @@ const RoCafePage = () => {
               }}
             >
               {/* Category Header */}
-              <Button
-                type="button"
-                variant="nav"
-                onClick={categoryHandlers[category.id]}
-                onKeyDown={e => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    categoryHandlers[category.id](e);
-                  }
-                }}
-                className="w-full p-6 flex items-center justify-between"
-                style={{ background: 'none', boxShadow: 'none', border: 'none', textAlign: 'left' }}
-                aria-label={`Expand ${category.name} category`}
-              >
-                <div className="flex items-center gap-4">
-                  <div 
-                    className="w-12 h-12 rounded-xl flex items-center justify-center"
-                    style={{ backgroundColor: 'rgba(228, 179, 64, 0.15)', color: 'var(--color-icon)' }}
-                  >
-                    {category.icon}
-                  </div>
-                  <div className="text-left">
-                    <h3 className="var(--font-heading) text-2xl mb-1" style={{ color: 'var(--color-heading)' }}>
-                      {category.name}
-                    </h3>
-                    <p className="font-inter text-sm" style={mutedTextColor}>
-                      {category.description}
-                    </p>
-                  </div>
-                </div>
-                <ChevronDown 
-                  size={24}
-                  className={`transition-transform ${expandedCategory === category.id ? 'rotate-180' : ''}`}
-                  style={{ color: 'var(--color-accent)' }}
-                />
-              </Button>
+              <CategoryAccordionHeader
+                icon={category.icon}
+                title={category.name}
+                description={category.description}
+                expanded={expandedCategory === category.id}
+                onToggle={() => toggleCategory(category.id)}
+                id={`category-header-${category.id}`}
+                ariaControls={`category-panel-${category.id}`}
+              />
 
               {/* Category Items (Expandable) */}
               {expandedCategory === category.id && (
-                <div className="px-6 pb-6 space-y-3 border-t" style={{ borderColor: 'var(--color-border)' }}>
+                <div className="px-6 pb-6 pt-6 border-t" style={{ borderColor: 'var(--color-border)' }}>
                   {category.items.length > 0 ? (
-                    category.items.map((item) => (
-                      <StandardizedItem 
-                        key={item.id}
-                        item={item}
-                        defaultExpanded={false}
-                      />
-                    ))
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                      {category.items.map((item) => (
+                        <StandardizedItem 
+                          key={item.id}
+                          item={item}
+                          itemType="menu"
+                          defaultExpanded={false}
+                        />
+                      ))}
+                    </div>
                   ) : (
                     <div className="text-center py-8" style={mutedTextColor}>
                       <p className="font-inter">Menu items coming soon! Check back for updates.</p>

@@ -13,6 +13,7 @@
  * This ensures a single source of truth for all location-dependent info and future scalability.
  */
 
+import { getAssetUrl } from "../utils/getAssetUrl";
 // Location type constants
 export const LOCATION_TYPES = {
   CONVENIENCE_STORE: 'convenience_store',    // Full-service Roma Mart
@@ -27,22 +28,22 @@ export const LOCATION_TYPES = {
 // All locations data
 export const LOCATIONS = [
   {
-    // === BASIC INFO ===
+        // === BASIC INFO ===
     id: 'loc-wellington-001',
     type: LOCATION_TYPES.CONVENIENCE_STORE,
-    name: 'Roma Mart Wellington',
-    shortName: 'Wellington St.',
+    name: 'Roma Mart Convenience',
+    shortName: 'Roma Mart 001',
     isPrimary: true,                         // Featured on homepage, HQ address
     status: 'open',                          // open | closed | coming_soon | temporarily_closed
     
     // === ADDRESS ===
     address: {
-      street: '189-3 Wellington Street',
+      street: '3-189 Wellington Street',
       city: 'Sarnia',
       province: 'ON',
       postalCode: 'N7T 1G6',
       country: 'Canada',
-      formatted: '189-3 Wellington Street, Sarnia, ON N7T 1G6'
+      formatted: '3-189 Wellington Street, Sarnia, ON  N7T 1G6'
     },
     
     // === GOOGLE INTEGRATION ===
@@ -68,9 +69,9 @@ export const LOCATIONS = [
     // === HOURS ===
     hours: {
       timezone: 'America/Toronto',
-      weekdays: '7:00 AM - 10:00 PM',
-      weekends: '7:00 AM - 10:00 PM',
-      display: 'Open Daily 7:00 AM - 10:00 PM',
+      weekdays: '8:00 AM - 9:00 PM',
+      weekends: '8:00 AM - 9:00 PM',
+      display: 'Open Daily 8:00 AM - 9:00 PM',
       is24Hours: false,
       isSeasonal: false,
       // Special hours/exceptions (optional)
@@ -78,7 +79,8 @@ export const LOCATIONS = [
         // Example: { date: '2025-12-25', hours: 'Closed', reason: 'Christmas Day' }
       ]
     },
-    
+    // IMPORTANT:
+    // - The 'services' array below is the single source of truth (SSOT) for which services are available at this location.
     // === SERVICES AVAILABLE ===
     services: [
       'atm',
@@ -86,48 +88,85 @@ export const LOCATIONS = [
       'rocafe',
       'halal_meat',
       'printing',
-      'package_pickup',
+      'package_services',
       'money_transfer',
       'gift_cards',
       'perfumes',
       'tobacco',
-      'lottery'
+      'lottery',
+      'canadian_products',
+      'international_products',
+      'groceries',
+      'snacks',
     ],
     
+    // - Do NOT use serviceOverrides or menuOverrides to add new services/menu items to a location. Only use them to override status/availability of items already present in 'services'.
+    // - Always check 'services' first, then apply overrides if present.
+    // === OVERRIDES ===
+    serviceOverrides: {
+      // Example: Override ATM status for this location
+      //'atm': {
+      //  status: 'temporarily_closed',
+      //  availableAt: ['loc-wellington-001'],
+      //  availability: 'store_hours'
+      //}
+      // Add more service overrides as needed
+    },
+    menuOverrides: {
+      // Example: Override Bubble Tea status for this location
+      //'signature-bubble-tea': {
+      //  status: 'unavailable',
+      //  availableAt: ['loc-wellington-001'],
+      //  availability: 'store_hours'
+      // },
+      // Add more menu overrides as needed
+    },
     // === FEATURES & AMENITIES ===
     features: {
       parking: true,
       parkingSpots: 15,
       wheelchairAccessible: true,
-      wifi: false,
+      wifi: true,
       wifiPassword: null,
       restroom: true,
-      seating: true,
-      seatingCapacity: 8,
+      seating: false,
+      seatingCapacity: 0,
       outdoorSeating: false,
       driveThrough: false,
       deliveryAvailable: false
     },
-    
     // === PHOTOS ===
-    // Use local paths: /romamart.ca/images/locations/wellington/
     photos: {
-      primary: null,                         // Main exterior shot
-      exterior: [],                          // Array of exterior photos
-      interior: [],                          // Array of interior photos
-      thumbnail: null                        // Small version for cards
+      // Main exterior shot
+      primary: getAssetUrl('/images/romamart-opening1.png'),                         
+      
+      // Array of exterior photos
+      exterior: [
+        getAssetUrl('/images/romamart-opening2.png'), 
+        getAssetUrl('/images/romamart-opening3.png'), 
+      ], 
+        // Array of interior photos
+      interior: [
+        getAssetUrl('/images/romamart-interior1.png'), 
+        getAssetUrl('/images/romamart-interior2.png'), 
+        getAssetUrl('/images/romamart-interior3.png'),
+        getAssetUrl('/images/romamart-interior4.png' )
+      ],  
+      // thumbnail
+      thumbnail: getAssetUrl('/images/romamart-interior1.png') // Small version for cards
     },
+    
     
     // === METADATA ===
     metadata: {
-      openedDate: '2024-01-15',              // Store opening date
-      squareFootage: 2500,
-      employeeCount: 8,
+      openedDate: '2025-11-28',              // Store opening date YYYY-MM-DD
+      squareFootage: 2000,
+      employeeCount: 3,
       isHeadquarters: true,                  // Official business address
       acceptsCrypto: true,
-      languages: ['English', 'French', 'Urdu', 'Arabic']
+      languages: ['English', 'Hindi', 'Urdu'] 
     }
-  }
+  },
   
   // Add more locations here by copying the structure above
   // Example for second location:

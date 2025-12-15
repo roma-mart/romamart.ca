@@ -4,6 +4,7 @@
  * 
  * @since December 4, 2025
  */
+import COMPANY_DATA from '../config/company_data';
 
 /**
  * Ordering service URLs
@@ -16,7 +17,7 @@ export const ORDERING_CONFIG = {
    * Single source of truth for all ordering CTAs site-wide
    * @production Update to actual NRS store URL when available
    */
-  nrs: 'https://nrsplus.com/orders/your-store-link',
+  nrs: ' https://nrsgo.com/romamartca',
   
   /**
    * UberEats ordering URL
@@ -44,7 +45,7 @@ export const ORDERING_CONFIG = {
    * Direct phone ordering
    * @placeholder Update with primary location phone
    */
-  phone: 'tel:+1234567890',
+  phone: `tel:${COMPANY_DATA.location.contact.phone}`,
 };
 
 /**
@@ -66,6 +67,9 @@ export const getOrderingUrl = (service = 'nrs', _location = null) => {
   
   return ORDERING_CONFIG[serviceLower] || ORDERING_CONFIG.nrs;
 };
+
+// add the computed onlineStoreUrl to COMPANY_DATA
+COMPANY_DATA.onlineStoreUrl = getOrderingUrl();
 
 /**
  * Default ordering service

@@ -3,6 +3,10 @@ import { ShoppingCart } from 'lucide-react';
 import { getRoleColors } from '../design/tokens';
 import { formatPrice, calculateItemPrice, getDefaultSelections, getCaloriesForSize } from '../utils/menuHelpers';
 import { getOrderingUrl } from '../config/ordering';
+// ...existing imports...
+import { getServiceStatusAtLocation, getMenuItemStatusAtLocation, isLocationOpen } from '../utils/availability';
+import { SERVICES } from '../data/services.jsx';
+import { ROCAFE_FULL_MENU } from '../data/rocafe-menu';
 import { useLocationContext } from '../hooks/useLocationContext';
 import BasicView from './StandardizedItem/BasicView';
 import CustomizationSection from './StandardizedItem/CustomizationSection';
@@ -33,13 +37,41 @@ import tokens from '../design/tokens';
  * 
  * @param {Object} props
  * @param {Object} props.item - Item data object (menu item or service)
+ * @param {'service'|'menu'} props.itemType - Type of item ('service' or 'menu')
  * @param {boolean} [props.defaultExpanded=false] - Start in expanded state
  */
 
-const StandardizedItem = ({ item, defaultExpanded = false }) => {
+const StandardizedItem = ({ item, itemType, defaultExpanded = false }) => {
+    // ...existing code...
+    const { nearestLocation } = useLocationContext();
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
-  // Use nearestLocation from context (now computed from userLocation)
-  const { nearestLocation } = useLocationContext();
+
+  // Compute effective status for item at nearest location
+  let effectiveStatus = item.status;
+  let locationIsOpen = nearestLocation ? isLocationOpen(nearestLocation) : false;
+
+  let availabilityState = 'unavailable';
+  if (!nearestLocation) {
+    availabilityState = 'select_location';
+  } else {
+    if (itemType === 'menu') {
+      const result = getMenuItemStatusAtLocation(item.id, nearestLocation, ROCAFE_FULL_MENU, item);
+      effectiveStatus = result.status;
+    } else if (itemType === 'service') {
+      const result = getServiceStatusAtLocation(item.id, nearestLocation, SERVICES);
+      effectiveStatus = result.status;
+    }
+    locationIsOpen = isLocationOpen(nearestLocation);
+    if (effectiveStatus === 'available' && locationIsOpen) {
+      availabilityState = 'available';
+    } else if (effectiveStatus === 'available' && !locationIsOpen) {
+      availabilityState = 'available_but_closed';
+    } else if (effectiveStatus === 'coming_soon') {
+      availabilityState = 'coming_soon';
+    } else {
+      availabilityState = 'unavailable';
+    }
+  }
 
   // Destructure item data  
   const {
@@ -49,8 +81,6 @@ const StandardizedItem = ({ item, defaultExpanded = false }) => {
     ingredients,          // Optional: ingredient list
     action,               // Optional: CTA button config {text, email, url, subject, body}
     features = [],        // Optional: List of features (for services)
-    isAvailable,          // Optional: Boolean (for services) - false means grey/unavailable
-    locationStatus,       // Optional: 'Open Now' or 'Closed'
     legalNotice,          // Optional: {text, law, url} for age-restricted items
     partner,              // Optional: {name, url, logo} for partner services
   } = item;
@@ -72,23 +102,18 @@ const StandardizedItem = ({ item, defaultExpanded = false }) => {
 
   // 4-state availability system for services
   const getAvailabilityColor = () => {
-    if (isAvailable === 'coming-soon') {
-      return 'var(--color-accent)';
+    switch (availabilityState) {
+      case 'available':
+        return getRoleColors('open').bg;
+      case 'available_but_closed':
+        return getRoleColors('closed').bg;
+      case 'coming_soon':
+        return 'var(--color-accent)';
+      case 'unavailable':
+      default:
+        return 'var(--color-text-muted)';
     }
-    if (isAvailable === false) {
-      return 'var(--color-text-muted)';
-    }
-    if (locationStatus === 'Open Now') {
-      return getRoleColors('open').bg;
-    }
-    if (locationStatus === 'Closed') {
-      return getRoleColors('closed').bg;
-    }
-    return 'var(--color-border)';
   };
-
-  const isUnavailable = isAvailable === false;
-  const isComingSoon = isAvailable === 'coming-soon';
 
   // Defensive checks for tokens properties
   const fontFamily = tokens?.TYPOGRAPHY?.fontFamily?.body || 'inherit';
@@ -111,15 +136,15 @@ const StandardizedItem = ({ item, defaultExpanded = false }) => {
     <div 
       className="rounded-xl border transition-all duration-300"
       style={{ 
-        backgroundColor: isUnavailable ? 'var(--color-bg)' : 'var(--color-bg)',
+        backgroundColor: 'var(--color-bg)',
         borderColor: isExpanded ? 'var(--color-accent)' : getAvailabilityColor(),
         borderWidth: isExpanded ? '2px' : '2px',
-        opacity: isUnavailable ? 0.6 : (isComingSoon ? 0.85 : 1),
+        opacity: availabilityState === 'unavailable' ? 0.6 : (availabilityState === 'coming_soon' ? 0.85 : 1),
         position: 'relative'
       }}
     >
       {/* Unavailable Overlay - Large X */}
-      {isUnavailable && (
+      {availabilityState === 'unavailable' && (
         <div 
           style={{
             position: 'absolute',
@@ -127,7 +152,7 @@ const StandardizedItem = ({ item, defaultExpanded = false }) => {
             left: '50%',
             transform: 'translate(-50%, -50%)',
             fontSize: '6rem',
-            color: 'var(--color-text-muted)',
+            color: 'var(--color-accent-bg)',
             fontWeight: 'bold',
             opacity: 0.15,
             pointerEvents: 'none',
@@ -139,7 +164,7 @@ const StandardizedItem = ({ item, defaultExpanded = false }) => {
       )}
       
       {/* Coming Soon Overlay */}
-      {isComingSoon && (
+      {availabilityState === 'coming_soon' && (
         <div 
           style={{
             position: 'absolute',
@@ -168,9 +193,7 @@ const StandardizedItem = ({ item, defaultExpanded = false }) => {
         selectedSize={selectedSize}
         onSizeChange={setSelectedSize}
         currentPrice={currentPrice}
-        currentCalories={currentCalories}
-        isUnavailable={isUnavailable}
-        isComingSoon={isComingSoon}
+        availabilityState={availabilityState}
       />
 
       {/* DETAILED VIEW (Expanded) */}
@@ -229,7 +252,8 @@ const StandardizedItem = ({ item, defaultExpanded = false }) => {
           )}
 
           {/* Availability Status */}
-          <AvailabilityIndicator nearestLocation={nearestLocation} />
+          <AvailabilityIndicator nearestLocation={nearestLocation} availabilityState={availabilityState} />
+          {/* Pass explicit availabilityState for smart display */}
 
           {/* Partner Info */}
           <PartnerInfo partner={partner} />
@@ -263,7 +287,7 @@ const StandardizedItem = ({ item, defaultExpanded = false }) => {
           )}
 
           {/* Order Now Button (for Menu Items) */}
-          {customizations.length > 0 && (
+          {customizations.length > 0 && availabilityState === 'available' && (
             <button
               type="button"
               onClick={(e) => {
@@ -291,7 +315,7 @@ const StandardizedItem = ({ item, defaultExpanded = false }) => {
           )}
 
           {/* Action Button (for Services) */}
-          {action && !isUnavailable && !isComingSoon && (
+          {action && availabilityState === 'available' && (
             <a
               href={action.email ? `mailto:${action.email}?subject=${encodeURIComponent(action.subject || '')}&body=${encodeURIComponent(action.body || '')}` : action.url}
               target={action.url ? "_blank" : undefined}

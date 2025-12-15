@@ -28,9 +28,7 @@ export default function BasicView({
   selectedSize,
   onSizeChange,
   currentPrice,
-  currentCalories,
-  isUnavailable,
-  isComingSoon
+  availabilityState
 }) {
   const {
     name,
@@ -48,6 +46,19 @@ export default function BasicView({
     : null;
 
   const ageRestrictedBadge = badges.ageRestricted ? { label: '19+' } : null;
+
+  // Smart filter and label logic
+  let imageFilter = 'none';
+  const headingStyle = { color: 'var(--color-heading)', textDecoration: 'none', opacity: 1 };
+  if (availabilityState === 'unavailable') {
+    imageFilter = 'grayscale(100%)';
+  } else if (availabilityState === 'coming_soon') {
+    imageFilter = 'brightness(0.8)';
+    headingStyle.opacity = 0.8;
+  } else if (availabilityState === 'available_but_closed') {
+    imageFilter = 'grayscale(60%)';
+    headingStyle.opacity = 0.7;
+  }
 
   return (
     <div 
@@ -73,7 +84,7 @@ export default function BasicView({
                 width: isExpanded ? '120px' : '80px',
                 height: isExpanded ? '120px' : '80px',
                 transition: 'all 0.3s ease',
-                filter: isUnavailable ? 'grayscale(100%)' : (isComingSoon ? 'brightness(0.8)' : 'none')
+                filter: imageFilter
               }}
             >
               <img 
@@ -97,26 +108,12 @@ export default function BasicView({
           <div className="flex items-start justify-between gap-2 mb-2">
             <div className="flex-1">
               <h3 
-                className="var(--font-heading) text-lg font-bold flex items-center gap-2 flex-wrap"
-                style={{ 
-                  color: 'var(--color-heading)',
-                  textDecoration: isUnavailable ? 'line-through' : 'none',
-                  opacity: isComingSoon ? 0.8 : 1
-                }}
-              >
-                {icon && <span className="flex-shrink-0">{icon}</span>}
-                {name}
-                {isUnavailable && (
-                  <span className="text-xs font-inter font-normal" style={{ color: 'var(--color-text-muted)' }}>
-                    (Not Available)
-                  </span>
-                )}
-                {isComingSoon && (
-                  <span className="text-xs font-inter font-bold" style={{ color: 'var(--color-accent)' }}>
-                    (Coming Soon)
-                  </span>
-                )}
-              </h3>
+                 className="var(--font-heading) text-lg font-bold flex items-center gap-2 flex-wrap"
+                 style={headingStyle}
+               >
+                 {icon && <span className="flex-shrink-0">{icon}</span>}
+                 {name}
+               </h3>
               
               {/* Badges */}
               <div className="flex gap-2 mt-1 flex-wrap">
@@ -171,15 +168,10 @@ export default function BasicView({
 
           {/* Price Display - Only show for menu items (not services) with non-zero pricing */}
           {!item.features && (currentPrice > 0 || (item.price && item.price > 0)) && (
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center mb-3">
               <div className="text-2xl var(--font-heading) font-bold" style={{ color: 'var(--color-accent)' }}>
                 {formatPrice(currentPrice || item.price)}
               </div>
-              {currentCalories && (
-                <div className="text-xs font-inter" style={{ color: 'var(--color-text-muted)' }}>
-                  {currentCalories} cal
-                </div>
-              )}
             </div>
           )}
 

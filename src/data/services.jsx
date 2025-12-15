@@ -19,10 +19,11 @@ export const SERVICE_CATEGORIES = {
 // All services data
 export const SERVICES = [
   {
+    itemType: 'service',
     id: 'atm',
     name: 'ATM',
     tagline: 'Cash when you need it',
-    description: 'Convenient ATM access with competitive fees. Withdraw cash anytime during store hours. Supports all major bank networks with secure transactions.',
+    description: 'Convenient ATM access with competitive fees. Withdraw cash safely and securely. Supports all major bank networks with secure transactions.',
     icon: <Banknote size={20} />,
     category: SERVICE_CATEGORIES.FINANCIAL,
     availableAt: ['loc-wellington-001'], // Location IDs where available
@@ -36,10 +37,12 @@ export const SERVICES = [
     ],
     badge: null,
     ageRestricted: false,
-    comingSoon: false
+    status: 'available',
+    featured: true
   },
   
   {
+    itemType: 'service',
     id: 'bitcoin_atm',
     name: 'Bitcoin ATM',
     tagline: 'Buy & sell crypto instantly',
@@ -53,15 +56,16 @@ export const SERVICES = [
       'Multiple cryptocurrencies',
       'Instant transactions',
       'Secure & private',
-      'No account needed'
+      'Managed by Bitcoin4U'
     ],
     badge: null,
     ageRestricted: false,
-    comingSoon: false,
+    status: 'available',
+    featured: true,
     partner: {
       name: 'Bitcoin4U',
       url: 'https://bitcoin4u.ca/atm/sarnia/',
-      logo: null // Can add logo path later
+      logo: '/images/b4u-logo.png' // Can add logo path later
     },
     action: {
       text: 'View Rates',
@@ -70,6 +74,7 @@ export const SERVICES = [
   },
   
   {
+    itemType: 'service',
     id: 'gift_cards',
     name: 'Gift Cards',
     tagline: 'Perfect for any occasion',
@@ -87,10 +92,12 @@ export const SERVICES = [
     ],
     badge: null,
     ageRestricted: false,
-    comingSoon: false
+    status: 'available',
+    featured: true,
   },
   
   {
+    itemType: 'service',
     id: 'printing',
     name: 'Printing Services',
     tagline: 'Black & white printing on demand',
@@ -101,23 +108,24 @@ export const SERVICES = [
     availability: 'store_hours',
     features: [
       'Black & white printing only',
-      'Email to print@romamart.ca',
       'Pay at counter',
-      'QR verification required',
-      'Multiple page sizes'
+      'Prints issued after verification',
+      'Ideal for documents & last-minute needs',
     ],
     badge: null,
     ageRestricted: false,
-    comingSoon: false,
+    status: 'coming_soon',
+    featured: false,
     action: {
       text: 'Email Print Job',
       email: 'print@romamart.ca',
       subject: 'Print Request',
-      body: 'Please attach your document. Include your name and phone number. You will receive a QR code to show at the counter.'
+      body: 'Please attach your document. Include your name and phone number.'
     }
   },
   
   {
+    itemType: 'service',
     id: 'halal_meat',
     name: 'Halal Meat',
     tagline: '100% certified halal',
@@ -135,10 +143,12 @@ export const SERVICES = [
     ],
     badge: 'halal',
     ageRestricted: false,
-    comingSoon: false
+    status: 'available',
+    featured: true
   },
   
   {
+    itemType: 'service',
     id: 'perfumes',
     name: 'Perfumes & Fragrances',
     tagline: 'Find your signature scent',
@@ -152,17 +162,18 @@ export const SERVICES = [
       'Variety of scents',
       'Unisex options',
       'Gift sets available',
-      'Testers available'
     ],
     badge: null,
     ageRestricted: false,
-    comingSoon: false
+    status: 'available',
+    featured: false,
   },
   
   {
+    itemType: 'service',
     id: 'canadian_products',
     name: 'Canadian Products',
-    tagline: 'Proudly Canadian',
+    tagline: 'Support Local 🍁',
     description: 'Selection of proudly Canadian-made products. Support local brands and enjoy authentic Canadian flavors and quality.',
     icon: <ShoppingBag size={20} />,
     category: SERVICE_CATEGORIES.RETAIL,
@@ -172,15 +183,15 @@ export const SERVICES = [
       'Canadian-made products',
       'Support local brands',
       'Authentic quality',
-      'Maple products',
-      'Regional specialties'
     ],
     badge: null,
     ageRestricted: false,
-    comingSoon: false
+    status: 'available',
+    featured: true,
   },
   
   {
+    itemType: 'service',
     id: 'international_products',
     name: 'International Products',
     tagline: 'Global flavors at home',
@@ -198,14 +209,16 @@ export const SERVICES = [
     ],
     badge: null,
     ageRestricted: false,
-    comingSoon: false
+    status: 'available',
+    featured: true
   },
   
   {
+    itemType: 'service',
     id: 'groceries',
     name: 'Pantry Essentials & Groceries',
     tagline: 'Your daily essentials',
-    description: 'Complete selection of pantry staples and grocery essentials. Milk, bread, eggs, canned goods, and everyday items you need.',
+    description: 'Expansive selection of pantry staples and grocery essentials. Milk, bread, eggs, canned goods, and everyday items you need.',
     icon: <ShoppingBasket size={20} />,
     category: SERVICE_CATEGORIES.RETAIL,
     availableAt: ['loc-wellington-001'],
@@ -219,10 +232,12 @@ export const SERVICES = [
     ],
     badge: null,
     ageRestricted: false,
-    comingSoon: false
+    status: 'available',
+    featured: false,
   },
   
   {
+    itemType: 'service',
     id: 'snacks',
     name: 'Snacks & Confectionery',
     tagline: 'Sweet & savory treats',
@@ -240,10 +255,12 @@ export const SERVICES = [
     ],
     badge: null,
     ageRestricted: false,
-    comingSoon: false
+    status: 'available',
+    featured: false,
   },
   
   {
+    itemType: 'service',
     id: 'package_services',
     name: 'Package Pickup & Dropoff',
     tagline: 'Your package hub',
@@ -261,10 +278,12 @@ export const SERVICES = [
     ],
     badge: null,
     ageRestricted: false,
-    comingSoon: false
+    status: 'coming_soon',
+    featured: false
   },
   
   {
+    itemType: 'service',
     id: 'money_transfer',
     name: 'Money Transfer',
     tagline: 'Send money anywhere',
@@ -282,10 +301,12 @@ export const SERVICES = [
     ],
     badge: null,
     ageRestricted: false,
-    comingSoon: false
+    status: 'coming_soon',
+    featured: false
   },
   
   {
+    itemType: 'service',
     id: 'tobacco',
     name: 'Tobacco & Vape',
     tagline: '19+ Only - ID Required',
@@ -303,7 +324,8 @@ export const SERVICES = [
     ],
     badge: null,
     ageRestricted: true,
-    comingSoon: false,
+    status: 'available',
+    featured: false,
     legalNotice: {
       text: 'It is illegal to sell or supply tobacco or e-cigarettes to anyone under 19 years of age.',
       law: 'Smoke-Free Ontario Act, 2017',
@@ -312,24 +334,25 @@ export const SERVICES = [
   },
   
   {
+    itemType: 'service',
     id: 'lottery',
     name: 'Lottery',
-    tagline: 'Coming soon',
-    description: 'Provincial lottery tickets coming soon! Play your favorite OLG games including instant tickets and draw games. Must be 19 or older.',
+    tagline: 'Play your favorite games!',
+    description: 'Provincial lottery tickets! Play your favorite OLG games including instant tickets and draw games. Must be 19 or older.',
     icon: <Ticket size={20} />,
     category: SERVICE_CATEGORIES.AGE_RESTRICTED,
-    availableAt: [], // Empty until live
+    availableAt: ['loc-wellington-001'], // Empty until live
     availability: 'store_hours',
     features: [
-      'Coming soon',
       '19+ Only (Ontario law)',
       'Instant tickets',
       'Draw games',
       'OLG authorized'
     ],
-    badge: 'comingSoon',
+    badge: null,
     ageRestricted: true,
-    comingSoon: true,
+    status: 'coming_soon',
+    featured: false,
     legalNotice: {
       text: 'Must be 19 or older to purchase lottery tickets in Ontario.',
       law: 'Ontario Lottery and Gaming Corporation',
@@ -403,9 +426,7 @@ export const getServiceAvailabilityText = (service, locationStatus) => {
 };
 
 // Featured services for homepage (6 items displayed)
-export const SERVICES_FEATURED = SERVICES.filter(service => 
-  ['groceries', 'snacks', 'atm', 'tobacco', 'halal_meat', 'lottery'].includes(service.id)
-);
+export const SERVICES_FEATURED = SERVICES.filter(service => service.featured);
 
 export default {
   SERVICES,

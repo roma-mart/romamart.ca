@@ -155,3 +155,45 @@ export const validateSelections = (customizations = [], selectedOptions = {}) =>
     errors
   };
 };
+
+/**
+ * Sort menu item sizes to standardized order
+ * Always displays S, M, L first (if present) from small to large,
+ * followed by other sizes in their original order
+ * 
+ * @param {Array} sizes - Array of size objects [{name, price, calories}]
+ * @returns {Array} Sorted sizes array
+ */
+export const sortSizes = (sizes) => {
+  if (!sizes || sizes.length === 0) {
+    return sizes;
+  }
+  
+  // Define the priority order for standard sizes (case-insensitive)
+  const standardSizeOrder = ['s', 'm', 'l'];
+  
+  // Separate standard sizes (S, M, L) from other sizes
+  const standardSizes = [];
+  const otherSizes = [];
+  
+  sizes.forEach(size => {
+    const sizeName = (size.name || '').toLowerCase().trim();
+    
+    // Check if this is a standard S, M, or L size
+    if (standardSizeOrder.includes(sizeName)) {
+      standardSizes.push(size);
+    } else {
+      otherSizes.push(size);
+    }
+  });
+  
+  // Sort standard sizes by their priority order (S, M, L)
+  standardSizes.sort((a, b) => {
+    const aIndex = standardSizeOrder.indexOf(a.name.toLowerCase().trim());
+    const bIndex = standardSizeOrder.indexOf(b.name.toLowerCase().trim());
+    return aIndex - bIndex;
+  });
+  
+  // Return standard sizes first, then other sizes in original order
+  return [...standardSizes, ...otherSizes];
+};
