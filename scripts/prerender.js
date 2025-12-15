@@ -22,7 +22,7 @@ const routes = [
 ];
 
 const REPO_NAME = 'romamart.ca';
-const BASE_PATH = `/${REPO_NAME}/`;
+const BASE_PATH = `/`;
 
 async function prerender() {
   const distPath = path.resolve(__dirname, '../dist');
