@@ -159,8 +159,14 @@ const RoCafeSection = () => {
         <div className="flex flex-col md:flex-row gap-16 items-center">
           <div className="md:w-1/2">
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-16 h-16 rounded-full flex items-center justify-center border-2" style={{ backgroundColor: 'rgba(var(--color-surface), 0.1)', borderColor: 'var(--color-accent)' }}>
-                <Coffee size={32} style={{ color: 'var(--color-accent)' }} />
+              <div className="w-16 h-16 rounded-full flex items-center justify-center border-2 bg-white/80" style={{ backgroundColor: 'rgba(var(--color-surface), 0.1)', borderColor: 'var(--color-accent)' }}>
+                <img 
+                  src={getAssetUrl('/rocafe-logo.png')}
+                  alt="RoCafe logo"
+                  className="w-12 h-12 object-contain"
+                  loading="lazy"
+                  aria-hidden="true"
+                />
               </div>
               <div>
                  <h2 className="text-4xl var(--font-heading)" style={{ color: 'var(--color-text-on-primary)' }}>RoCafé</h2>
@@ -198,7 +204,7 @@ const RoCafeSection = () => {
           <div className="md:w-1/2 w-full">
             <div className="relative aspect-square rounded-full overflow-hidden border-8 border-white/5 shadow-2xl">
                <img 
-                 src={getAssetUrl('/rocafe-logo.png')}
+                 src={getAssetUrl('/stickers-rocafe-lightblue.png')}
                  alt="RoCafe"
                  className="w-full h-full object-cover hover:scale-110 transition-transform duration-700"
                  loading="lazy"

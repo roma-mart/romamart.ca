@@ -67,6 +67,10 @@ export const getOrderingUrl = (service = 'nrs', _location = null) => {
   return ORDERING_CONFIG[serviceLower] || ORDERING_CONFIG.nrs;
 };
 
+
+// add the computed online store URL to COMPANY_DATA
+COMPANY_DATA.onlineStoreUrl = getOrderingUrl();
+
 /**
  * Default ordering service
  * Used when user hasn't selected a preferred service
