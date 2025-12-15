@@ -49,25 +49,25 @@ const AboutPage = () => {
     },
     {
       name: 'Rumana Mohammadi',
-      role: 'Roma',
+      role: 'RoCafé Manager',
       image: getAssetUrl('/images/id-rumanamohammadi.png'),
       bio: 'Mother, wife, and heart of Roma Mart, ensuring every customer feels at home.'
     },
     {
       name: 'Faizan Osman Khan',
-      role: 'Faizy',
+      role: 'Management',
       image: getAssetUrl('/images/id-faizanosmankhan.png'),
       bio: 'Dedicated son and team member, passionate about delivering excellent service and supporting our community.'
     },
     {
       name: 'Raaida Malak Khan',
-      role: 'Raaida',
+      role: 'Social Media Manager',
       image: getAssetUrl('/images/id-raaidamkhan.png'),
       bio: 'Social media manager and community liaison, connecting Roma Mart with our valued customers online and offline.'
     },
     {
       name: 'Adyan Osman Khan',
-      role: 'Adyan',
+      role: 'Team Member',
       image: getAssetUrl('/images/id-adyanosmankhan.png'),
       bio: 'Youngest member of the Roma Mart family, bringing fresh ideas and enthusiasm to our team.'
     }
@@ -229,36 +229,65 @@ const AboutPage = () => {
           Meet Our <span style={{ color: 'var(--color-accent)' }}>Team</span>
         </h2>
 
-        <div className="flex justify-center">
-          {team.map((member, index) => (
-            <div 
-              key={index}
-              className="max-w-sm p-8 rounded-2xl text-center hover:shadow-xl transition-shadow"
-              style={{ backgroundColor: 'var(--color-surface)' }}
-            >
-              {/* Circular headshot */}
-              <div className="w-48 h-48 rounded-full mx-auto mb-6 overflow-hidden border-4 shadow-lg" style={{ borderColor: 'var(--color-accent)' }}>
-                <img
-                  src={member.image}
-                  alt={`${member.name}, ${member.role}`}
-                  className="w-full h-full object-cover"
-                  style={{ backgroundColor: 'var(--color-primary)' }}
-                />
+        <div className="relative">
+          {/* Scroll Buttons (show only if overflow-x-auto is active) */}
+          <button
+            type="button"
+            aria-label="Scroll left"
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-full shadow p-2 flex items-center justify-center focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 md:hidden"
+            style={{ display: 'block' }}
+            onClick={() => {
+              const el = document.getElementById('team-scroll-container');
+              if (el) el.scrollBy({ left: -window.innerWidth * 0.7, behavior: 'smooth' });
+            }}
+          >
+            <ChevronRight size={28} style={{ transform: 'rotate(180deg)', color: 'var(--color-accent)' }} />
+          </button>
+          <button
+            type="button"
+            aria-label="Scroll right"
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-full shadow p-2 flex items-center justify-center focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 md:hidden"
+            style={{ display: 'block' }}
+            onClick={() => {
+              const el = document.getElementById('team-scroll-container');
+              if (el) el.scrollBy({ left: window.innerWidth * 0.7, behavior: 'smooth' });
+            }}
+          >
+            <ChevronRight size={28} style={{ color: 'var(--color-accent)' }} />
+          </button>
+          <div
+            id="team-scroll-container"
+            className="flex gap-6 overflow-x-auto pb-4 -mx-4 px-4 md:grid md:grid-cols-3 md:gap-8 md:overflow-x-visible md:mx-0 md:px-0 lg:grid-cols-5"
+            role="region"
+            aria-label="Meet our team"
+          >
+            {team.map((member, index) => (
+              <div
+                key={index}
+                className="min-w-[80vw] max-w-xs md:min-w-0 md:max-w-sm p-8 rounded-2xl text-center hover:shadow-xl transition-shadow flex-shrink-0 md:flex-shrink md:w-auto"
+                style={{ backgroundColor: 'var(--color-surface)' }}
+              >
+                {/* Circular headshot */}
+                <div className="w-40 h-40 md:w-48 md:h-48 rounded-full mx-auto mb-6 overflow-hidden border-4 shadow-lg" style={{ borderColor: 'var(--color-accent)' }}>
+                  <img
+                    src={member.image}
+                    alt={`${member.name}, ${member.role}`}
+                    className="w-full h-full object-cover"
+                    style={{ backgroundColor: 'var(--color-primary)' }}
+                  />
+                </div>
+                <h3 className="var(--font-heading) text-2xl mb-2" style={{ color: 'var(--color-heading)' }}>
+                  {member.name}
+                </h3>
+                <p className="text-sm font-inter font-bold uppercase tracking-wider mb-4" style={{ color: 'var(--color-accent)' }}>
+                  {member.role}
+                </p>
+                <p className="font-inter leading-relaxed" style={mutedTextColor}>
+                  {member.bio}
+                </p>
               </div>
-              
-              <h3 className="var(--font-heading) text-2xl mb-2" style={{ color: 'var(--color-heading)' }}>
-                {member.name}
-              </h3>
-              
-              <p className="text-sm font-inter font-bold uppercase tracking-wider mb-4" style={{ color: 'var(--color-accent)' }}>
-                {member.role}
-              </p>
-              
-              <p className="font-inter leading-relaxed" style={mutedTextColor}>
-                {member.bio}
-              </p>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 
