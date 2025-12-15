@@ -164,7 +164,7 @@ const RoCafeSection = () => {
     
     // Filter API items for featured=true and transform to StandardizedItem format
     const apiFeaturedItems = menuItems
-      .filter(item => item.featured === true)
+      .filter(item => item.featured)
       .map((item, index) => transformExcelToMenuItem(item, index));
     
     // Use API items if available, otherwise fallback to static
