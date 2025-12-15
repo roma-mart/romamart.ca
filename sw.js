@@ -4,7 +4,7 @@
  */
 
 const CACHE_VERSION = 'roma-mart-v1';
-const BASE_URL = '/romamart.ca/';
+const BASE_URL = '/';
 
 // Assets to cache immediately on install
 const PRECACHE_ASSETS = [
