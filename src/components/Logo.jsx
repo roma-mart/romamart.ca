@@ -33,7 +33,7 @@ export function Logo({
     return () => mq.removeEventListener('change', updateLayout);
   }, [responsive, layout]);
   // Asset mapping
-  const assetBase = '/romamart.ca/';
+  const assetBase = '/';
   const assets = {
     vertical: {
       brand: assetBase + 'logo.svg',

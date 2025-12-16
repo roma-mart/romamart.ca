@@ -58,7 +58,7 @@ async function prerender() {
       )
       .replace(
         /<meta property="og:url" content="[^"]*" \/>/,
-        `<meta property="og:url" content="https://romamart.ca${BASE_PATH}${route.path.slice(1)}" />`
+        `<meta property="og:url" content="${BASE_PATH}${route.path.slice(1)}" />`
       );
 
     fs.writeFileSync(outputPath, html);
