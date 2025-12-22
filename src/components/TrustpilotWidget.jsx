@@ -17,6 +17,7 @@ const TrustpilotWidget = () => {
       data-businessunit-id="682725e77d7d518b035c1d50"
       data-style-height="52px"
       data-style-width="100%"
+      data-token="3288fd45-abe5-4601-8917-95dd184ba986"
     >
       <a href="https://www.trustpilot.com/review/romamart.ca" target="_blank" rel="noopener noreferrer">
         Trustpilot
