@@ -158,7 +158,7 @@ export default function Footer() {
           data-featurable-async
         ></div>
       </div>
-      // imported ReactGoogleReviews component. update with custom places api implementation in future
+      {/* imported ReactGoogleReviews component. update with custom places api implementation in future */}
         {/* Featurable Google Reviews Carousel */}
         <div className="mt-8 flex justify-center">
           <div id="featurable-76132ca0-5c7c-45fc-a8ac-e87ed22caf6f" data-featurable-async></div>
