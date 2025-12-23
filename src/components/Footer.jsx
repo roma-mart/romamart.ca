@@ -174,7 +174,7 @@ export default function Footer() {
             ></div>
           ) : (
             <div className="text-center text-base font-inter text-[var(--color-on-footer-muted)]">
-              <span>We value your feedback!:&nbsp;</span>
+              <span>We value your feedback!&nbsp;</span>
               <a
                 href="https://www.google.com/maps/place/Roma+Mart/@42.9785,-82.3882,17z/data=!4m7!3m6!1s0x882583e2e2e2e2e2:0x123456789abcdef!8m2!3d42.9785!4d-82.3882!9m1!1b1"
                 target="_blank"
