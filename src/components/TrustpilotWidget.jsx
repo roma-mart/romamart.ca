@@ -16,6 +16,60 @@ const TrustpilotWidget = () => {
   const token = import.meta.env.VITE_TRUSTPILOT_TOKEN;
   const reviewUrl = COMPANY_DATA.trustpilotReviewUrl;
 
+  // Inject TrustBox script if not present
+  React.useEffect(() => {
+    if (typeof window !== 'undefined' && businessUnitId && templateId) {
+      if (!document.getElementById('trustbox-script')) {
+        const script = document.createElement('script');
+        script.src = 'https://widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js';
+        script.async = true;
+        script.id = 'trustbox-script';
+        document.body.appendChild(script);
+      }
+    }
+  }, [businessUnitId, templateId]);
+
+  // Fallback if widget fails to render
+  const [failed, setFailed] = React.useState(false);
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      const el = document.querySelector('.trustpilot-widget iframe');
+      if (!el) setFailed(true);
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!businessUnitId || !templateId) {
+    return (
+      <div className="text-center text-base font-inter text-[var(--color-on-footer-muted)]">
+        <span>Review us on&nbsp;</span>
+        <a
+          href={reviewUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline text-[var(--color-accent)] hover:text-[var(--color-accent)]"
+        >
+          Trustpilot
+        </a>
+      </div>
+    );
+  }
+  if (failed) {
+    return (
+      <div className="text-center text-base font-inter text-[var(--color-on-footer-muted)]">
+        <span>Review us on&nbsp;</span>
+        <a
+          href={reviewUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline text-[var(--color-accent)] hover:text-[var(--color-accent)]"
+        >
+          Trustpilot
+        </a>
+        .
+      </div>
+    );
+  }
   return (
     <div
       className="trustpilot-widget"
@@ -26,6 +80,7 @@ const TrustpilotWidget = () => {
       data-style-width="100%"
       data-token={token}
     >
+      {/* TrustBox will render here if script loads */}
       <a href={reviewUrl} target="_blank" rel="noopener noreferrer">
         Trustpilot
       </a>

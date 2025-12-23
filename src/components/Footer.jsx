@@ -146,25 +146,48 @@ export default function Footer() {
     return handlers;
   }, []);
 
+  React.useEffect(() => {
+    // Dynamically load Featurable carousel script after mount
+    if (typeof window !== 'undefined' && import.meta.env.VITE_FEATURABLE_KEY) {
+      if (!document.getElementById('featurable-carousel-script')) {
+        const script = document.createElement('script');
+        script.src = 'https://featurable.com/assets/v2/carousel_default.min.js';
+        script.defer = true;
+        script.charset = 'UTF-8';
+        script.id = 'featurable-carousel-script';
+        document.body.appendChild(script);
+      }
+    }
+  }, []);
+
   return (
-    <React.Fragment>
-    {/* Persistent floating OrderCTA button for site-wide visibility */}
-    <OrderCTA />
-    <footer className="pt-16 pb-8" style={{ backgroundColor: 'var(--color-footer)', color: 'var(--color-on-footer)' }}>
-      {/* Featurable Google Reviews Carousel*/}
-      <div className="mb-8 flex justify-center">
-        <div
-          id={`featurable-${import.meta.env.VITE_FEATURABLE_KEY}`}
-          data-featurable-async
-        ></div>
-      </div>
-      {/* For future: Google Places API reviews integration goes here instead of featureable. See ARCHITECTURE.md for details. */}
-      {/* Load Featurable carousel script (client-side only) */}
-      <script
-        src="https://featurable.com/assets/v2/carousel_default.min.js"
-        defer
-        charSet="UTF-8"
-      ></script>
+      <React.Fragment>
+      {/* Persistent floating OrderCTA button for site-wide visibility */}
+      <OrderCTA />
+      <footer className="pt-16 pb-8" style={{ backgroundColor: 'var(--color-footer)', color: 'var(--color-on-footer)' }}>
+        {/* Featurable Google Reviews Carousel*/}
+        <div className="mb-8 flex justify-center">
+          {import.meta.env.VITE_FEATURABLE_KEY ? (
+            <div
+              id={`featurable-${import.meta.env.VITE_FEATURABLE_KEY}`}
+              data-featurable-async
+            ></div>
+          ) : (
+            <div className="text-center text-base font-inter text-[var(--color-on-footer-muted)]">
+              <span>We value your feedback!&nbsp;</span>
+                       <a
+                         href={LOCATIONS[0].google.mapLink}
+                         target="_blank"
+                         rel="noopener noreferrer"
+                         className="underline text-[var(--color-accent)] hover:text-[var(--color-accent)]"
+                       >
+                         View Google Reviews
+                       </a>
+            </div>
+          )}
+        </div>
+        {/* For future: Google Places API reviews integration goes here instead of featureable. See ARCHITECTURE.md for details. */}
+        {/* Featurable carousel script is loaded via useEffect above */}
       <div className="max-w-7xl mx-auto p-4 grid md:grid-cols-4 gap-12 mb-12">
         <div className="p-1 col-span-1 md:col-span-2">
            <a 
