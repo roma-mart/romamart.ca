@@ -1,4 +1,5 @@
 import React from 'react';
+import COMPANY_DATA from '../config/company_data';
 
 /**
  * TrustpilotWidget
@@ -9,17 +10,23 @@ import React from 'react';
  */
 
 const TrustpilotWidget = () => {
+  // Use environment variables for Trustpilot widget IDs and token
+  const businessUnitId = import.meta.env.VITE_TRUSTPILOT_BUSINESSUNIT_ID;
+  const templateId = import.meta.env.VITE_TRUSTPILOT_TEMPLATE_ID;
+  const token = import.meta.env.VITE_TRUSTPILOT_TOKEN;
+  const reviewUrl = COMPANY_DATA.trustpilotReviewUrl;
+
   return (
     <div
       className="trustpilot-widget"
       data-locale="en-US"
-      data-template-id="56278e9abfbbba0bdcd568bc"
-      data-businessunit-id="682725e77d7d518b035c1d50"
+      data-template-id={templateId}
+      data-businessunit-id={businessUnitId}
       data-style-height="52px"
       data-style-width="100%"
-      data-token="3288fd45-abe5-4601-8917-95dd184ba986"
+      data-token={token}
     >
-      <a href="https://www.trustpilot.com/review/romamart.ca" target="_blank" rel="noopener noreferrer">
+      <a href={reviewUrl} target="_blank" rel="noopener noreferrer">
         Trustpilot
       </a>
     </div>
