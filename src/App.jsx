@@ -610,7 +610,7 @@ function App() {
                 <ServicesSection />
                 <RoCafeSection />
                 <Locations />
-                <ContactSection />
+                <ErrorBoundary><ContactSection /></ErrorBoundary>
               </div>
             </>
           )}
