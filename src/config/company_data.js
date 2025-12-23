@@ -34,7 +34,8 @@ const COMPANY_DATA = {
     web3FormsAccessKey: import.meta.env.VITE_WEB3FORMS_KEY || 'YOUR_WEB3FORMS_KEY'
   },
   // Location-dependent info is mapped from the primary location object
-  location: getPrimaryLocation()
+  location: getPrimaryLocation(),
+  trustpilotReviewUrl: 'https://www.trustpilot.com/review/romamart.ca'
   // Add other brand data as needed
 };
 

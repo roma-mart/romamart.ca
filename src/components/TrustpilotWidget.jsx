@@ -1,4 +1,5 @@
 import React from 'react';
+import COMPANY_DATA from '../config/company_data';
 
 /**
  * TrustpilotWidget
@@ -13,7 +14,7 @@ const TrustpilotWidget = () => {
   const businessUnitId = import.meta.env.VITE_TRUSTPILOT_BUSINESSUNIT_ID;
   const templateId = import.meta.env.VITE_TRUSTPILOT_TEMPLATE_ID;
   const token = import.meta.env.VITE_TRUSTPILOT_TOKEN;
-  const reviewUrl = import.meta.env.VITE_TRUSTPILOT_REVIEW_URL || "https://www.trustpilot.com/review/romamart.ca";
+  const reviewUrl = COMPANY_DATA.trustpilotReviewUrl;
 
   return (
     <div
