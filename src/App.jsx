@@ -30,7 +30,7 @@ import Clock from 'lucide-react/dist/esm/icons/clock.js';
 import { useExcelMenu } from './hooks/useExcelMenu';
 import { transformExcelToMenuItem } from './utils/excelMenuTransform';
 import HCaptchaWidget from './components/HCaptchaWidget';
-import { getHCaptchaTheme } from './design/hcaptchaTheme';
+// import { getHCaptchaTheme } from './design/hcaptchaTheme'; // Uncomment if upgrading to Pro/Enterprise for custom themes
 import { useColorScheme } from './hooks/useColorScheme';
 
 // PWA Hooks
