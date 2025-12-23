@@ -15,6 +15,9 @@ import { LOCATIONS, getActiveLocations } from '../data/locations';
 import { NAVIGATION_LINKS } from '../config/navigation';
 import OrderCTA from './OrderCTA';
 import Button from './Button';
+import { ReactGoogleReviews } from "react-google-reviews";
+import "react-google-reviews/dist/index.css";
+
 
 // Social platforms to control display in Footer (label, icon)
 const SOCIAL_LINKS = [
@@ -148,6 +151,24 @@ export default function Footer() {
     {/* Persistent floating OrderCTA button for site-wide visibility */}
     <OrderCTA />
     <footer className="pt-16 pb-8" style={{ backgroundColor: 'var(--color-footer)', color: 'var(--color-on-footer)' }}>
+      {/* Featurable Google Reviews Carousel*/}
+      <div className="mb-8 flex justify-center">
+        <div
+          id={`featurable-${import.meta.env.VITE_FEATURABLE_KEY}`}
+          data-featurable-async
+        ></div>
+      </div>
+      // imported ReactGoogleReviews component. update with custom places api implementation in future
+        {/* Featurable Google Reviews Carousel */}
+        <div className="mt-8 flex justify-center">
+          <div id="featurable-76132ca0-5c7c-45fc-a8ac-e87ed22caf6f" data-featurable-async></div>
+        </div>
+        {/* Load Featurable carousel script (client-side only) */}
+        <script
+          src="https://featurable.com/assets/v2/carousel_default.min.js"
+          defer
+          charSet="UTF-8"
+        ></script>
       <div className="max-w-7xl mx-auto p-4 grid md:grid-cols-4 gap-12 mb-12">
         <div className="p-1 col-span-1 md:col-span-2">
            <a 
