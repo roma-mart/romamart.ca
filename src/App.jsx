@@ -30,6 +30,7 @@ import Clock from 'lucide-react/dist/esm/icons/clock.js';
 import { useExcelMenu } from './hooks/useExcelMenu';
 import { transformExcelToMenuItem } from './utils/excelMenuTransform';
 import HCaptchaWidget from './components/HCaptchaWidget';
+import { getHCaptchaTheme } from './design/hcaptchaTheme';
 
 // PWA Hooks
 import { useServiceWorker } from './hooks/useServiceWorker';
@@ -513,7 +514,11 @@ const ContactSection = () => {
               {/* hCaptcha Widget */}
               <React.Suspense fallback={<div>Loading captcha...</div>}>
                 {typeof window !== 'undefined' && (
-                  <HCaptchaWidget onVerify={setCaptchaToken} />
+                  <HCaptchaWidget 
+                    onVerify={setCaptchaToken}
+                    theme={getHCaptchaTheme()}
+                    scriptHost="https://js.hcaptcha.com/1/api.js?custom=true"
+                  />
                 )}
               </React.Suspense>
 
