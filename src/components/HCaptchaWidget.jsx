@@ -16,7 +16,7 @@ export default function HCaptchaWidget({ onVerify, theme, scriptHost }) {
         onVerify={onVerify}
         theme={theme}
         scriptHost={scriptHost}
-        size="compact"
+        // size="compact" // Uncomment to enable compact mode for hCaptcha
       />
     </div>
   );
