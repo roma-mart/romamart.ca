@@ -388,6 +388,8 @@ const ContactSection = () => {
     }
   }, [captchaToken]);
 
+  const colorScheme = useColorScheme();
+
   return (
     <section id="contact" className="py-24" style={{ backgroundColor: 'var(--color-surface)' }}>
       <div className="max-w-7xl mx-auto px-4">
@@ -568,8 +570,6 @@ function App() {
   const handleTrackOrderClick = useCallback((location = 'hero_section') => { try { if (typeof window.trackOrderClick === 'function') { window.trackOrderClick(location); } } catch (e) {
     console.warn('trackOrderClick failed:', e);
   } if (window.dataLayer) { window.dataLayer.push({ event: 'order_cta_click', cta_location: location, cta_text: 'Order Online' }); } }, []);
-
-  const colorScheme = useColorScheme();
 
   return (
     <LocationProvider>
