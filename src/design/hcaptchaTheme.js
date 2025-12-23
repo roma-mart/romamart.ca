@@ -1,6 +1,9 @@
 // src/design/hcaptchaTheme.js
 // Dynamically generates hCaptcha theme based on prefers-color-scheme
 
+// NOTE: hCaptcha custom themes require Pro/Enterprise. On free tier, always pass string 'dark' or 'light'.
+// To enable custom themes in the future, switch to passing getHCaptchaTheme(colorScheme) as the theme prop.
+
 const lightTheme = {
   palette: {
     mode: 'light',

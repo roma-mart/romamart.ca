@@ -259,7 +259,8 @@ const ContactPage = () => {
                 {typeof window !== 'undefined' && (
                   <HCaptchaWidget 
                     onVerify={setCaptchaToken}
-                    theme={typeof getHCaptchaTheme === 'function' && colorScheme ? (getHCaptchaTheme(colorScheme) || colorScheme) : colorScheme}
+                    // On free tier, only string 'dark' or 'light' is supported. For custom themes, see hcaptchaTheme.js
+                    theme={colorScheme}
                     scriptHost="https://js.hcaptcha.com/1/api.js?custom=true"
                   />
                 )}
