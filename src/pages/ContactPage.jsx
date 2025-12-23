@@ -9,6 +9,7 @@ import { useToast } from '../components/ToastContainer';
 // import { queueFormSubmission, getPendingCount } from '../utils/indexedDB'; // Disabled offline queue
 import Button from '../components/Button';
 import COMPANY_DATA from '../config/company_data';
+import HCaptchaWidget from '../components/HCaptchaWidget';
 
 const ContactPage = () => {
   const textColor = { color: 'var(--color-text)' };
@@ -16,28 +17,32 @@ const ContactPage = () => {
   const BASE_URL = import.meta.env.BASE_URL || '/';
 
   const [formStatus, setFormStatus] = useState('');
+  const [captchaToken, setCaptchaToken] = useState('');
   const { syncSupported } = useBackgroundSync();
   const { showInfo, showSuccess, showError } = useToast();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-    const formObject = Object.fromEntries(formData.entries());
-    
+    if (!captchaToken) {
+      setFormStatus('error');
+      showError('Please complete the captcha.');
+      return;
+    }
+    formData.append('h-captcha-response', captchaToken);
     // Check if online
     const isOnline = navigator.onLine;
-    
     // Online - submit immediately
     try {
       const response = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         body: formData
       });
-
       if (response.ok) {
         setFormStatus('success');
         showSuccess('Message sent successfully!');
         e.target.reset();
+        setCaptchaToken('');
       } else {
         setFormStatus('error');
         showError('Failed to send message. Please try again.');
@@ -193,6 +198,7 @@ const ContactPage = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
               <input type="hidden" name="access_key" value={formAccessKey} />
               <input type="hidden" name="subject" value="New Contact Form Submission from romamart.ca" />
+              <input type="hidden" name="h-captcha-response" value={captchaToken} />
 
               <div>
                 <label htmlFor="name" className="block font-inter font-semibold mb-2" style={textColor}>Name *</label>
@@ -245,6 +251,13 @@ const ContactPage = () => {
                 />
               </div>
 
+              {/* hCaptcha Widget */}
+              <React.Suspense fallback={<div>Loading captcha...</div>}>
+                {typeof window !== 'undefined' && (
+                  <HCaptchaWidget onVerify={setCaptchaToken} />
+                )}
+              </React.Suspense>
+
               <Button
                 type="submit"
                 variant="action"
@@ -252,6 +265,7 @@ const ContactPage = () => {
                 className="w-full py-4 rounded-lg font-bold font-inter flex items-center justify-center gap-2"
                 style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-on-accent)' }}
                 aria-label="Send Message"
+                disabled={!captchaToken}
               >
                 Send Message
               </Button>
