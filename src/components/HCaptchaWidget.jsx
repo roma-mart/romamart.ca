@@ -16,6 +16,7 @@ export default function HCaptchaWidget({ onVerify, theme, scriptHost }) {
         onVerify={onVerify}
         theme={theme}
         scriptHost={scriptHost}
+        size="compact"
       />
     </div>
   );
