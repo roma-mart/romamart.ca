@@ -607,9 +607,9 @@ function App() {
               <a href="#main-content" className="skip-link">Skip to main content</a>
               <Hero onTrackOrder={handleTrackOrderClick} />
               <div id="main-content">
-                <ServicesSection />
-                <RoCafeSection />
-                <Locations />
+                <ErrorBoundary><ServicesSection /></ErrorBoundary>
+                <ErrorBoundary><RoCafeSection /></ErrorBoundary>
+                <ErrorBoundary><Locations /></ErrorBoundary>
                 <ErrorBoundary><ContactSection /></ErrorBoundary>
               </div>
             </>
