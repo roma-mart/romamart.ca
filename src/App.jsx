@@ -519,7 +519,7 @@ const ContactSection = () => {
                 {typeof window !== 'undefined' && (
                   <HCaptchaWidget 
                     onVerify={setCaptchaToken}
-                    theme={getHCaptchaTheme(colorScheme)}
+                    theme={typeof getHCaptchaTheme === 'function' && colorScheme ? (getHCaptchaTheme(colorScheme) || colorScheme) : colorScheme}
                     scriptHost="https://js.hcaptcha.com/1/api.js?custom=true"
                   />
                 )}
