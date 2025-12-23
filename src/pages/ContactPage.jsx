@@ -10,6 +10,7 @@ import { useToast } from '../components/ToastContainer';
 import Button from '../components/Button';
 import COMPANY_DATA from '../config/company_data';
 import HCaptchaWidget from '../components/HCaptchaWidget';
+import { getHCaptchaTheme } from '../design/hcaptchaTheme';
 
 const ContactPage = () => {
   const textColor = { color: 'var(--color-text)' };
@@ -254,7 +255,11 @@ const ContactPage = () => {
               {/* hCaptcha Widget */}
               <React.Suspense fallback={<div>Loading captcha...</div>}>
                 {typeof window !== 'undefined' && (
-                  <HCaptchaWidget onVerify={setCaptchaToken} />
+                  <HCaptchaWidget 
+                    onVerify={setCaptchaToken}
+                    theme={getHCaptchaTheme()}
+                    scriptHost="https://js.hcaptcha.com/1/api.js?custom=true"
+                  />
                 )}
               </React.Suspense>
 
