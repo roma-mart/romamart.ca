@@ -29,6 +29,7 @@ import Phone from 'lucide-react/dist/esm/icons/phone.js';
 import Clock from 'lucide-react/dist/esm/icons/clock.js';
 import { useExcelMenu } from './hooks/useExcelMenu';
 import { transformExcelToMenuItem } from './utils/excelMenuTransform';
+import HCaptchaWidget from './components/HCaptchaWidget';
 
 // PWA Hooks
 import { useServiceWorker } from './hooks/useServiceWorker';
@@ -349,13 +350,41 @@ const ContactSection = () => {
   const textColor = { color: 'var(--color-text)' };
   const mutedTextColor = { color: 'var(--color-text)', opacity: 0.7 };
   const primaryLocation = getPrimaryLocation();
-  
-  const handleContactSubmit = useCallback(() => {
+  const [captchaToken, setCaptchaToken] = React.useState('');
+  const [formStatus, setFormStatus] = React.useState('');
+  const [formMessage, setFormMessage] = React.useState('');
+  const handleContactSubmit = useCallback(async (e) => {
+    e.preventDefault();
     if (window.dataLayer) {
       window.dataLayer.push({ event: 'contact_form_submit', form_location: 'contact_section' });
     }
-    // allow normal form submission to proceed
-  }, []);
+    const form = e.target;
+    const formData = new FormData(form);
+    if (!captchaToken) {
+      setFormStatus('error');
+      setFormMessage('Please complete the captcha.');
+      return;
+    }
+    formData.set('h-captcha-response', captchaToken);
+    try {
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        body: formData
+      });
+      if (response.ok) {
+        setFormStatus('success');
+        setFormMessage('Message sent successfully!');
+        form.reset();
+        setCaptchaToken('');
+      } else {
+        setFormStatus('error');
+        setFormMessage('Failed to send message. Please try again.');
+      }
+    } catch {
+      setFormStatus('error');
+      setFormMessage('Failed to send message. Please try again.');
+    }
+  }, [captchaToken]);
 
   return (
     <section id="contact" className="py-24" style={{ backgroundColor: 'var(--color-surface)' }}>
@@ -423,16 +452,24 @@ const ContactSection = () => {
           <div className="p-8 rounded-2xl shadow-lg border" style={{ backgroundColor: 'var(--color-bg)', borderColor: 'var(--color-border)' }}>
             <h3 className="var(--font-heading) text-2xl mb-6" style={{ color: 'var(--color-heading)' }}>Send a Message</h3>
             
+            {formStatus === 'success' && (
+              <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'var(--color-success-bg)', borderColor: 'var(--color-success)' }}>
+                <p className="font-inter" style={{ color: 'var(--color-success)' }}>{formMessage}</p>
+              </div>
+            )}
+            {formStatus === 'error' && (
+              <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'var(--color-error-bg)', borderColor: 'var(--color-error)' }}>
+                <p className="font-inter" style={{ color: 'var(--color-error)' }}>{formMessage}</p>
+              </div>
+            )}
             <form 
-              action="https://api.web3forms.com/submit" 
-              method="POST" 
               className="space-y-6"
               onSubmit={handleContactSubmit}
             >
-              {/* Web3Forms Access Key is set in COMPANY_DATA */}
               <input type="hidden" name="access_key" value={COMPANY_DATA.contact.web3FormsAccessKey} />
               <input type="hidden" name="subject" value="New Contact from Roma Mart Website" />
               <input type="hidden" name="from_name" value="Roma Mart Website" />
+              <input type="hidden" name="h-captcha-response" value={captchaToken} />
 
               <div>
                 <label htmlFor="name" className="block text_sm font-bold mb-2" style={textColor}>Full Name</label>
@@ -473,6 +510,13 @@ const ContactSection = () => {
                 ></textarea>
               </div>
 
+              {/* hCaptcha Widget */}
+              <React.Suspense fallback={<div>Loading captcha...</div>}>
+                {typeof window !== 'undefined' && (
+                  <HCaptchaWidget onVerify={setCaptchaToken} />
+                )}
+              </React.Suspense>
+
               <Button
                 type="submit"
                 variant="action"
@@ -480,6 +524,7 @@ const ContactSection = () => {
                 className="w-full py-4 rounded-xl font-bold font-inter flex items-center justify-center gap-2"
                 style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-text-on-accent)' }}
                 aria-label="Send Message"
+                disabled={!captchaToken}
               >
                 Send Message
               </Button>
