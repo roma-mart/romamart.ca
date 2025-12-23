@@ -11,6 +11,7 @@ import Button from '../components/Button';
 import COMPANY_DATA from '../config/company_data';
 import HCaptchaWidget from '../components/HCaptchaWidget';
 import { getHCaptchaTheme } from '../design/hcaptchaTheme';
+import { useColorScheme } from '../hooks/useColorScheme';
 
 const ContactPage = () => {
   const textColor = { color: 'var(--color-text)' };
@@ -21,6 +22,7 @@ const ContactPage = () => {
   const [captchaToken, setCaptchaToken] = useState('');
   const { syncSupported } = useBackgroundSync();
   const { showInfo, showSuccess, showError } = useToast();
+  const colorScheme = useColorScheme();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -257,7 +259,7 @@ const ContactPage = () => {
                 {typeof window !== 'undefined' && (
                   <HCaptchaWidget 
                     onVerify={setCaptchaToken}
-                    theme={getHCaptchaTheme()}
+                    theme={getHCaptchaTheme(colorScheme)}
                     scriptHost="https://js.hcaptcha.com/1/api.js?custom=true"
                   />
                 )}

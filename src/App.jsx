@@ -31,6 +31,7 @@ import { useExcelMenu } from './hooks/useExcelMenu';
 import { transformExcelToMenuItem } from './utils/excelMenuTransform';
 import HCaptchaWidget from './components/HCaptchaWidget';
 import { getHCaptchaTheme } from './design/hcaptchaTheme';
+import { useColorScheme } from './hooks/useColorScheme';
 
 // PWA Hooks
 import { useServiceWorker } from './hooks/useServiceWorker';
@@ -516,7 +517,7 @@ const ContactSection = () => {
                 {typeof window !== 'undefined' && (
                   <HCaptchaWidget 
                     onVerify={setCaptchaToken}
-                    theme={getHCaptchaTheme()}
+                    theme={getHCaptchaTheme(colorScheme)}
                     scriptHost="https://js.hcaptcha.com/1/api.js?custom=true"
                   />
                 )}
@@ -567,6 +568,8 @@ function App() {
   const handleTrackOrderClick = useCallback((location = 'hero_section') => { try { if (typeof window.trackOrderClick === 'function') { window.trackOrderClick(location); } } catch (e) {
     console.warn('trackOrderClick failed:', e);
   } if (window.dataLayer) { window.dataLayer.push({ event: 'order_cta_click', cta_location: location, cta_text: 'Order Online' }); } }, []);
+
+  const colorScheme = useColorScheme();
 
   return (
     <LocationProvider>

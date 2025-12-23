@@ -47,9 +47,7 @@ const darkTheme = {
   }
 };
 
-export function getHCaptchaTheme() {
-  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    return darkTheme;
-  }
-  return lightTheme;
+export function getHCaptchaTheme(mode) {
+  const scheme = mode || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  return scheme === 'dark' ? darkTheme : lightTheme;
 }
