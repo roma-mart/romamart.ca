@@ -293,6 +293,18 @@ export default function Footer() {
                     </a>
                   </li>
                 ))}
+                <li>
+                  <a
+                    href={`${BASE_URL}ai.txt`}
+                    className="transition-colors text-xs"
+                    style={{ color: 'var(--color-on-footer-muted)' }}
+                    onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'}
+                    onMouseLeave={e => e.currentTarget.style.color = 'var(--color-on-footer-muted)'}
+                    title="AI Crawler Guidelines"
+                  >
+                    AI Guidelines
+                  </a>
+                </li>
               </ul>
             </div>
         </div>
