@@ -8,6 +8,7 @@ import { useBackgroundSync } from '../hooks/useServiceWorker';
 import { useToast } from '../components/ToastContainer';
 // import { queueFormSubmission, getPendingCount } from '../utils/indexedDB'; // Disabled offline queue
 import Button from '../components/Button';
+import LiveHoursDisplay from '../components/LiveHoursDisplay';
 import COMPANY_DATA from '../config/company_data';
 import HCaptchaWidget from '../components/HCaptchaWidget';
 import { getHCaptchaTheme } from '../design/hcaptchaTheme';
@@ -165,10 +166,17 @@ const ContactPage = () => {
                 <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'var(--color-surface)' }}>
                   <Clock style={{ color: 'var(--color-icon)' }} />
                 </div>
-                <div>
+                <div className="flex-1">
                   <h4 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Hours</h4>
-                  <p style={textColor}>Mon-Fri: {COMPANY_DATA.location.hours.weekdays}</p>
-                  <p style={textColor}>Sat-Sun: {COMPANY_DATA.location.hours.weekends}</p>
+                  <LiveHoursDisplay 
+                    placeId={COMPANY_DATA.location.google.placeId}
+                    fallbackHours={{
+                      weekdays: COMPANY_DATA.location.hours.weekdays,
+                      weekends: COMPANY_DATA.location.hours.weekends
+                    }}
+                    showStatus={true}
+                    compact={true}
+                  />
                 </div>
               </div>
             </div>

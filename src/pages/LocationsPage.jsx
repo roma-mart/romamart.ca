@@ -1,14 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { ChevronRight, MapPin, Clock, Phone, ExternalLink, Building2 } from 'lucide-react';
+import { ChevronRight, MapPin, Phone, ExternalLink, Building2 } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
 import CopyButton from '../components/CopyButton';
 import Button from '../components/Button';
-import { getActiveLocations, formatDistance } from '../data/locations';
+import { getActiveLocations, formatDistance, getPreferredLocations } from '../data/locations';
 import LocationImageCarousel from '../components/LocationImageCarousel';
-import COMPANY_DATA from '../config/company_data';
+import LiveHoursDisplay from '../components/LiveHoursDisplay';
+import { useAutoLocation } from '../hooks/useAutoLocation';
 
 const LocationsPage = () => {
+  const [loadedMaps, setLoadedMaps] = useState(() => new Set());
+  const [userCoords, setUserCoords] = useState(null);
 
 
   const textColor = { color: 'var(--color-text)' };
@@ -16,12 +19,18 @@ const LocationsPage = () => {
 
   const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
 
-  // Default sort: HQ first, then rest
-  const sortedLocations = getActiveLocations().sort((a, b) => {
-    if (a.isPrimary) return -1;
-    if (b.isPrimary) return 1;
-    return 0;
+  useAutoLocation((pos) => {
+    const coords = pos?.coords;
+    if (coords?.latitude && coords?.longitude) {
+      setUserCoords({ latitude: coords.latitude, longitude: coords.longitude });
+    }
   });
+
+  const sortedLocations = getPreferredLocations({
+    userCoords,
+    locations: getActiveLocations()
+  });
+  const preferredLocationId = sortedLocations[0]?.id;
 
   const locations = sortedLocations.map(loc => ({
     ...loc,
@@ -33,8 +42,16 @@ const LocationsPage = () => {
     isOpen: loc.status === 'open',
     mapUrl: loc.google.embedUrl,
     features: loc.services.map(s => s.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())),
-    distanceText: loc.distance ? formatDistance(loc.distance) : null
+    distanceText: Number.isFinite(loc.distance) ? formatDistance(loc.distance) : null
   }));
+
+  const handleLoadMap = (locationId) => {
+    setLoadedMaps(prev => {
+      const next = new Set(prev);
+      next.add(locationId);
+      return next;
+    });
+  };
 
   return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>
@@ -82,9 +99,9 @@ const LocationsPage = () => {
               id={`location-${location.id}`}
               className="grid lg:grid-cols-2 gap-8"
               style={{
-                border: location.isPrimary ? '3px solid var(--color-accent)' : 'none',
+                border: location.id === preferredLocationId ? '3px solid var(--color-accent)' : 'none',
                 borderRadius: '1rem',
-                padding: location.isPrimary ? '0.5rem' : '0'
+                padding: location.id === preferredLocationId ? '0.5rem' : '0'
               }}
             >
               {/* Info column (always first on mobile, left on desktop) */}
@@ -174,14 +191,14 @@ const LocationsPage = () => {
                     </div>
                   </div>
 
-                  <div className="flex gap-4">
-                    <Clock size={24} style={{ color: 'var(--color-icon)' }} className="flex-shrink-0 mt-1" />
-                    <div>
-                      <h3 className="font-bold mb-1" style={textColor}>Hours</h3>
-                      <p className="font-inter" style={mutedTextColor}>Mon-Fri: {location.hours.weekdays}</p>
-                      <p className="font-inter" style={mutedTextColor}>Sat-Sun: {location.hours.weekends}</p>
-                    </div>
-                  </div>
+                  <LiveHoursDisplay 
+                    placeId={location.google.placeId}
+                    fallbackHours={{
+                      weekdays: location.hours.weekdays,
+                      weekends: location.hours.weekends
+                    }}
+                    showStatus={true}
+                  />
 
                   <div className="flex gap-4">
                     <Phone size={24} style={{ color: 'var(--color-icon)' }} className="flex-shrink-0 mt-1" />
@@ -224,16 +241,68 @@ const LocationsPage = () => {
                   <LocationImageCarousel photos={location.photos} locationName={location.name} />
                 </div>
                 <div className="w-full aspect-[4/3] min-h-[18rem] max-h-[28rem] order-2">
-                  <iframe 
-                    title={`Google Maps - ${location.name}`}
-                    src={location.mapUrl}
-                    width="100%"
-                    height="100%"
-                    style={{ border: 0, borderRadius: 0 }}
-                    allowFullScreen
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                  />
+                  {location.id === preferredLocationId ? (
+                    location.mapUrl && loadedMaps.has(location.id) ? (
+                      <iframe 
+                        title={`Google Maps - ${location.name}`}
+                        src={location.mapUrl}
+                        width="100%"
+                        height="100%"
+                        style={{ border: 0, borderRadius: 0 }}
+                        allowFullScreen
+                        loading="lazy"
+                        referrerPolicy="no-referrer-when-downgrade"
+                      />
+                    ) : (
+                      <div
+                        className="w-full h-full flex flex-col items-center justify-center gap-4 text-center px-6"
+                        style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)' }}
+                      >
+                        <p className="font-inter text-sm" style={{ color: 'var(--color-text-muted)' }}>
+                          {location.mapUrl
+                            ? 'Load the interactive map to view directions and details.'
+                            : 'Open this location in Google Maps for directions.'}
+                        </p>
+                        {location.mapUrl ? (
+                          <button
+                            type="button"
+                            onClick={() => handleLoadMap(location.id)}
+                            className="px-4 py-2 rounded-full text-sm font-semibold"
+                            style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)' }}
+                          >
+                            Load Map
+                          </button>
+                        ) : null}
+                        <a
+                          href={location.google.mapLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs font-semibold hover:underline"
+                          style={{ color: 'var(--color-accent)' }}
+                        >
+                          Open in Google Maps
+                        </a>
+                      </div>
+                    )
+                  ) : (
+                    <div
+                      className="w-full h-full flex flex-col items-center justify-center gap-4 text-center px-6"
+                      style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)' }}
+                    >
+                      <p className="font-inter text-sm" style={{ color: 'var(--color-text-muted)' }}>
+                        Open this location in Google Maps for directions.
+                      </p>
+                      <a
+                        href={location.google.mapLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-4 py-2 rounded-full text-sm font-semibold"
+                        style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)' }}
+                      >
+                        Open Map
+                      </a>
+                    </div>
+                  )}
                 </div>
               </div>
 

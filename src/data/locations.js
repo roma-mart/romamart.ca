@@ -14,6 +14,8 @@
  */
 
 import { getAssetUrl } from "../utils/getAssetUrl";
+
+const MAPS_EMBED_KEY = import.meta.env.VITE_GOOGLE_PLACES_API_KEY;
 // Location type constants
 export const LOCATION_TYPES = {
   CONVENIENCE_STORE: 'convenience_store',    // Full-service Roma Mart
@@ -50,7 +52,9 @@ export const LOCATIONS = [
     google: {
       placeId: 'ChIJCfo3t6SdJYgRIQVbpCppKmY',
       mapLink: 'https://maps.google.com/?q=place_id:ChIJCfo3t6SdJYgRIQVbpCppKmY',
-      embedUrl: 'https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=place_id:ChIJCfo3t6SdJYgRIQVbpCppKmY&zoom=15',
+      embedUrl: MAPS_EMBED_KEY
+        ? `https://www.google.com/maps/embed/v1/place?key=${MAPS_EMBED_KEY}&q=place_id:ChIJCfo3t6SdJYgRIQVbpCppKmY&zoom=15`
+        : null,
       rating: null,                          // Can be manually updated or fetched
       reviewCount: null,
       coordinates: {
@@ -69,9 +73,9 @@ export const LOCATIONS = [
     // === HOURS ===
     hours: {
       timezone: 'America/Toronto',
-      weekdays: '8:00 AM - 9:00 PM',
-      weekends: '8:00 AM - 9:00 PM',
-      display: 'Open Daily 8:00 AM - 9:00 PM',
+      weekdays: '8:30 AM - 9:00 PM',
+      weekends: '8:30 AM - 9:00 PM',
+      display: 'Open Daily 9:00 AM - 9:00 PM',
       is24Hours: false,
       isSeasonal: false,
       // Special hours/exceptions (optional)
@@ -395,6 +399,42 @@ export const getLocationsByDistance = (userLat, userLng, locations = null) => {
 };
 
 /**
+ * Get all locations sorted by proximity to user (if coordinates available)
+ * Falls back to all active locations if no coordinates provided
+ * @param {Object} params - Parameters object
+ * @param {Object} params.userCoords - User coordinates {latitude, longitude}
+ * @param {Array} params.locations - Array of location objects (optional, defaults to active)
+ * @returns {Array} Sorted locations with distance property
+ */
+export const getPreferredLocations = ({ userCoords, locations = null } = {}) => {
+  const locs = locations || getActiveLocations();
+  
+  // If no user coordinates, return all active locations with HQ first
+  if (!userCoords?.latitude || !userCoords?.longitude) {
+    return locs.sort((a, b) => {
+      if (a.isPrimary) return -1;
+      if (b.isPrimary) return 1;
+      return 0;
+    });
+  }
+  
+  // Sort by distance from user's location
+  return getLocationsByDistance(userCoords.latitude, userCoords.longitude, locs);
+};
+
+/**
+ * Get the preferred (closest) location for the user
+ * @param {Object} params - Parameters object
+ * @param {Object} params.userCoords - User coordinates {latitude, longitude}
+ * @param {Array} params.locations - Array of location objects (optional, defaults to active)
+ * @returns {Object|null} Preferred location object or null if no locations available
+ */
+export const getPreferredLocation = ({ userCoords, locations = null } = {}) => {
+  const preferred = getPreferredLocations({ userCoords, locations });
+  return preferred.length > 0 ? preferred[0] : null;
+};
+
+/**
  * Format distance for display
  * @param {number} distance - Distance in kilometers
  * @returns {string} Formatted distance string
@@ -496,6 +536,8 @@ export default {
   getFormattedAddress,
   calculateDistance,
   getLocationsByDistance,
+  getPreferredLocations,
+  getPreferredLocation,
   formatDistance,
   isLocationOpenNow
 };
