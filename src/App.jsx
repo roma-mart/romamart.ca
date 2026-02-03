@@ -271,6 +271,11 @@ const Locations = () => {
   
   const [activeLoc, setActiveLoc] = useState(displayLocation);
 
+  // Sync activeLoc when displayLocation changes (e.g., when geolocation resolves)
+  useEffect(() => {
+    setActiveLoc(displayLocation);
+  }, [displayLocation]);
+
   // create memoized handlers for each location to avoid inline closures
   const locationHandlers = React.useMemo(() => {
     const map = {};

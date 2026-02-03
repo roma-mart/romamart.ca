@@ -10,7 +10,6 @@
 import React from 'react';
 import { Clock, RefreshCw, AlertCircle } from 'lucide-react';
 import useGooglePlaceHours from '../hooks/useGooglePlaceHours';
-import { semanticColors } from '../design/tokens';
 
 /**
  * Displays location hours with live Google Places data
@@ -72,11 +71,17 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
             <span 
               className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-semibold mb-1"
               style={{
-                backgroundColor: isOpenNow ? semanticColors.success.surface : semanticColors.error.surface,
-                color: isOpenNow ? semanticColors.success.base : semanticColors.error.base
+                backgroundColor: isOpenNow ? 'var(--color-success-bg)' : 'var(--color-error-bg)',
+                color: isOpenNow ? 'var(--color-success)' : 'var(--color-error)'
               }}
             >
-              <span className={`w-1.5 h-1.5 rounded-full ${isOpenNow ? 'bg-green-500' : 'bg-red-500'}`}></span>
+              <span style={{
+                width: '6px',
+                height: '6px',
+                borderRadius: '50%',
+                backgroundColor: isOpenNow ? 'var(--color-success)' : 'var(--color-error)',
+                display: 'inline-block'
+              }}></span>
               {isOpenNow ? 'Open Now' : 'Closed'}
             </span>
           )}
@@ -93,11 +98,17 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
           <span 
             className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-semibold mb-1"
             style={{
-              backgroundColor: isOpenNow ? semanticColors.success.surface : semanticColors.error.surface,
-              color: isOpenNow ? semanticColors.success.base : semanticColors.error.base
+              backgroundColor: isOpenNow ? 'var(--color-success-bg)' : 'var(--color-error-bg)',
+              color: isOpenNow ? 'var(--color-success)' : 'var(--color-error)'
             }}
           >
-            <span className={`w-1.5 h-1.5 rounded-full ${isOpenNow ? 'bg-green-500' : 'bg-red-500'}`}></span>
+            <span style={{
+              width: '6px',
+              height: '6px',
+              borderRadius: '50%',
+              backgroundColor: isOpenNow ? 'var(--color-success)' : 'var(--color-error)',
+              display: 'inline-block'
+            }}></span>
             {isOpenNow ? 'Open Now' : 'Closed'}
           </span>
         )}

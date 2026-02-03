@@ -269,6 +269,7 @@ const LocationsPage = () => {
                             onClick={() => handleLoadMap(location.id)}
                             className="px-4 py-2 rounded-full text-sm font-semibold"
                             style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)' }}
+                            aria-label={`Load interactive map for ${location.name}`}
                           >
                             Load Map
                           </button>
@@ -279,6 +280,7 @@ const LocationsPage = () => {
                           rel="noopener noreferrer"
                           className="text-xs font-semibold hover:underline"
                           style={{ color: 'var(--color-accent)' }}
+                          aria-label={`Open ${location.name} in Google Maps`}
                         >
                           Open in Google Maps
                         </a>

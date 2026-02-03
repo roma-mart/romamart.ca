@@ -9,13 +9,17 @@
 
 import { useState, useEffect, useCallback } from 'react';
 
-// Extract API key from environment variable or fallback to embedded key
+// Extract API key from environment variable
 // This key powers: Places API (New), Google Maps Embed API, Maps JavaScript API
 // SECURITY: In Google Cloud Console, restrict key to only these APIs
-const GOOGLE_API_KEY = import.meta.env.VITE_GOOGLE_PLACES_API_KEY || 'YOUR_API_KEY_HERE';
+const GOOGLE_API_KEY = import.meta.env.VITE_GOOGLE_PLACES_API_KEY;
+
+if (!GOOGLE_API_KEY || GOOGLE_API_KEY === 'YOUR_API_KEY_HERE') {
+  console.warn('Google Places API key not configured. Set VITE_GOOGLE_PLACES_API_KEY environment variable for live hours integration.');
+}
 
 // Cache duration from env or default to 1 hour
-const CACHE_DURATION = parseInt(import.meta.env.VITE_PLACES_CACHE_DURATION) || 60 * 60 * 1000;
+const CACHE_DURATION = parseInt(import.meta.env.VITE_PLACES_CACHE_DURATION, 10) || 60 * 60 * 1000;
 
 // In-memory cache to avoid redundant API calls
 const hoursCache = new Map();
