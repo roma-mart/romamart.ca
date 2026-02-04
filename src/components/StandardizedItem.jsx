@@ -54,7 +54,7 @@ const StandardizedItem = ({ item, itemType, defaultExpanded = false }) => {
 
   // Compute effective status for item at nearest location
   let effectiveStatus = item.status;
-  let locationIsOpen = nearestLocation ? isLocationOpen(nearestLocation, liveOpenStatus) : false;
+  let locationIsOpen = false;
 
   let availabilityState = 'unavailable';
   if (!nearestLocation) {

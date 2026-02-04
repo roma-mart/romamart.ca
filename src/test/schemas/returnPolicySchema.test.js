@@ -5,6 +5,7 @@
  * @since February 4, 2026
  */
 
+import { describe, it, expect } from 'vitest';
 import { buildReturnPolicySchema } from '../../schemas/returnPolicySchema';
 
 describe('buildReturnPolicySchema', () => {

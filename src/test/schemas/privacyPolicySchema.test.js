@@ -5,6 +5,7 @@
  * @since February 4, 2026
  */
 
+import { describe, it, expect } from 'vitest';
 import { buildPrivacyPolicySchema } from '../../schemas/privacyPolicySchema';
 import COMPANY_DATA from '../../config/company_data';
 
