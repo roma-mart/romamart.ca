@@ -204,6 +204,7 @@ const LocationsPage = () => {
                       exceptions: location.hours.exceptions
                     }}
                     showStatus={true}
+                    showRefreshOnError={true}
                   />
 
                   <div className="flex gap-4">

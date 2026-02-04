@@ -76,11 +76,17 @@ export function getMenuItemStatusAtLocation(menuItemId, location, menuData, menu
 }
 
 /**
- * Checks if a location is open based on its status and hours.
+ * Checks if a location is open based on live data (preferred) or static status (fallback).
+ * Uses live Google Places API data when available, falls back to hardcoded location.status.
  * @param {object} location - The location object.
- * @returns {boolean}
+ * @param {boolean} [isOpenNow] - Live open/closed status from Google Places API (optional).
+ * @returns {boolean} True if location is open (live) or marked as open (fallback).
  */
-export function isLocationOpen(location) {
+export function isLocationOpen(location, isOpenNow = undefined) {
+  // Prefer live data from Google Places API
+  if (isOpenNow !== undefined) {
+    return isOpenNow;
+  }
+  // Fallback to static location status
   return location.status === 'open';
-  // For more advanced logic, check current time against location.hours
 }

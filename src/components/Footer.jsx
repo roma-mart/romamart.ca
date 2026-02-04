@@ -15,6 +15,7 @@ import { LOCATIONS, getActiveLocations } from '../data/locations';
 import { NAVIGATION_LINKS } from '../config/navigation';
 import OrderCTA from './OrderCTA';
 import Button from './Button';
+import CurrentLocalTime from './CurrentLocalTime';
 
 
 // Social platforms to control display in Footer (label, icon)
@@ -388,6 +389,7 @@ export default function Footer() {
         <div className="text-center font-inter text-sm" style={{ color: 'var(--color-on-footer-subtle)' }}>
           <p>&copy; {new Date().getFullYear()} {COMPANY_DATA.legalName} All rights reserved.</p>
           <p>GST#: {COMPANY_DATA.gstNumber}</p>
+          <CurrentLocalTime location={getCurrentLocation()} />
           <p>🍁</p>
         </div>
       </div>
