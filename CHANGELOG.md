@@ -1,150 +1,212 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+All notable changes to the Roma Mart 2.0 project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-### Added - Phase 2: Structured Data Implementation
-- **Product schemas** for menu items (homepage featured + /rocafe full menu)
-  - Multi-size pricing with PriceSpecification
-  - Dietary tag mapping to schema.org URIs
-  - Allergen warnings and age-restricted flags
-  - Dynamic data from Toolpad API (no static fallbacks)
-- **Policy schemas** (Privacy, Return Policy)
-  - PrivacyPolicy schema with PIPEDA compliance
-  - ReturnPolicy schema with 24-hour faulty product exception
-  - Return Policy page (`/return-policy`) with structured data
-- **Organization schema** enhancements
-  - NAICS code 4541 (Grocery Stores classification)
-  - Complete business information (address, email, phone, GST#)
-  - numberOfEmployees (3) from location metadata
-  - Social media links (sameAs property)
-- **Schema utilities** (`src/utils/schemaHelpers.js`)
-  - CodeQL-hardened HTML sanitization (iterative regex + DOMParser)
-  - Currency conversion (cents → dollars)
-  - Address formatting for PostalAddress
-  - AggregateRating placeholder for future reviews
-- **Testing infrastructure**
-  - Menu item schema tests (90%+ coverage)
-  - Test fixtures for schema validation
-  - Vitest configuration
-- **Google Places API integration**
-  - Migrated from Featurable (3rd-party) to official Google Places API
-  - react-google-reviews component with carousel layout
-  - Circuit breaker protection (5-failure threshold, 1-hour lockout)
-  - Automatic fallback to static "View Google Reviews" link
-  - API quota protection per api-quota-protection.md
-- **Documentation**
-  - STRUCTURED_DATA_MASTER_PLAN.md (Phase 2 complete, Phase 3 roadmap)
-  - PHASE-2-WEEK-2-SUMMARY.md (410 lines implementation summary)
-  - schema-validation.md (validation procedures)
+### In Progress
 
-### Changed
-- **Privacy Policy** content updated (effective July 28, 2025)
-  - Added PIPEDA rights (access, correction, deletion, complaint)
-  - Data retention policies (CCTV auto-deletion, purchase history)
-  - Consent clauses for in-store and checkout display
-- **Footer** reviews integration
-  - Removed proprietary Featurable embed
-  - Now uses Google Places API with circuit breaker protection
-  - Maintains dark theme, autoplay (5s speed), max 3 items
-- **Homepage** structured data strategy
-  - Featured menu items only (6-8 products)
-  - Primary crawl target for Google indexing
-- **RoCafé page** menu rendering
-  - Removed static menu fallback (API-only strategy)
-  - Full menu ItemList with Product schemas
-- **Navigation**
-  - Added Return Policy to footer legal section
-  - Centralized in `src/config/navigation.js`
+- Phase 2: Structured data implementation (SEO branch - 50% complete)
+- Service schemas and multi-location structured data
+- Google Rich Results validation
 
-### Fixed
-- **Security: CodeQL HIGH vulnerability**
-  - Sanitization incomplete-loop issue resolved
-  - Multi-character tag sequences now handled correctly
-  - Both DOMParser and iterative regex fallback paths secured
-- **Performance: API call deduplication**
-  - useExcelMenu hoisted to App level
-  - Passed as props to RoCafeSection
-  - Eliminates duplicate Toolpad API fetch
+## [2.2.0] - 2025-12-07
 
-### Security
-- Circuit breaker prevents Google Places API quota exhaustion
-- No Featurable API keys in codebase (migrated to Google)
-- HTML sanitization hardened against multi-character injection
+### Features
+
+- Unified Button component system with navlink/action/order/mini variants
+- Centralized company data in `src/config/company_data.js`
+- Centralized navigation links in `src/config/navigation.js`
+- Dynamic GST/HST display from company data
+- Location-aware StandardizedItem component
+- About page with team section
+
+### Improvements
+
+- Refactored all CTAs to use unified Button component
+- Navbar and Footer now use centralized config data
+- Typography system: Outfit + Inter replace Poppins
+- Improved mobile menu overlay with stronger drop shadow
+- Enhanced order button animation system-wide
+
+### Fixes
+
+- Navigation link accessibility and ordering
+- Mobile menu button responsiveness
+- Logo display in light/dark modes
+- Footer tag hierarchy and responsive grid layout
+- Offline page text contrast
+
+## [2.1.0] - 2025-12-04
+
+### Features
+
+- RoCafé standardized menu system with dynamic pricing
+- StandardizedItem component with expand/collapse details
+- Full menu data integration from Toolpad API
+- Multi-size pricing display with customization options
+- Allergen warnings and dietary tags
+- Featured menu items on homepage
+- Menu item helper utilities
+- Services data consolidation
+
+### Improvements
+
+- RoCafé page uses full menu data (no static fallbacks)
+- Extracted sub-components from StandardizedItem
+- Centralized NRS ordering system
+- Consolidated ordering URL to single source of truth
+
+### Fixes
+
+- StandardizedItem accessibility and dark mode
+- Chevron icon click propagation
+- Zero price display handling
+- Phase 0 urgent quality fixes
 
 ### Documentation
-- Documentation system overhaul
-  - New `/docs/` directory structure
-  - Centralized guides, checklists, and architecture docs
-  - CODE_OF_CONDUCT.md for community standards
-  - SECURITY.md for security policy
-  - CHANGELOG.md for version history
-- Reorganized documentation for better discoverability
-- Archived historical implementation summaries
-- Consolidated duplicate documentation files
+
+- Comprehensive StandardizedItem analysis
+- RoCafé menu implementation summary
+- Menu photography and placement guides
+- Excel menu integration guide
 
 ## [2.0.0] - 2025-12-03
 
-### Added
-- React 19 + Vite 7 architecture
-- Progressive Web App (PWA) functionality
-- Universal quality checker system (1000+ rules)
-- Meta-checker for quality system validation
-- Dark mode native support with CSS custom properties
-- WCAG 2.2 Level AA accessibility compliance
-- Multi-location management system
-- RoCafé menu system
-- Google Tag Manager integration
-- Consent management system (Clickio CMP)
-- Background sync for offline form submission
-- Intersection Observer lazy loading
-- Network-aware image quality
-- Geolocation nearest store finder
-- LocalBusiness structured data (JSON-LD)
+### Initial Release
 
-### Changed
+Roma Mart 2.0 launched with complete rewrite using modern React architecture.
+
+### Core Architecture
+
+- React 19 + Vite 7 build system
+- ESM modules with manual chunking
+- Progressive Web App (PWA) with service worker
+- GitHub Pages deployment with prerendering
+
+### Quality Systems
+
+- Universal quality checker (1000+ rules)
+- Meta-checker for quality system validation
+- ESLint with React Hooks + JSX a11y plugins
+- Stylelint for CSS validation
+
+### Accessibility
+
+- WCAG 2.2 Level AA compliance
+- Keyboard navigation support
+- Screen reader optimization
+- Focus indicators
+- Skip links
+- Semantic HTML throughout
+
+### Theming
+
+- Dark mode native support (CSS custom properties)
+- High contrast mode compatibility
+- Forced-colors support
+- Design token system (colors, typography, spacing)
+
+### Features
+
+- Multi-location management system
+- Auto-location detection with geolocation
+- Google Maps integration
+- Business hours calculation
+- Contact form with offline queuing
+- Web Share API integration
+- Clipboard API for copying
+- Toast notification system
+- PWA install prompts
+
+### Analytics and Tracking
+
+- Google Tag Manager integration
+- Consent management (Clickio CMP)
+- Google Analytics 4
+- Trustpilot integration
+- Snap Pixel tracking
+
+### SEO
+
+- LocalBusiness structured data (JSON-LD)
+- Meta tags with react-helmet-async
+- Sitemap generation
+- robots.txt
+- Prerendered static HTML
+
+### Documentation
+
+- Comprehensive `/docs/` structure
+- Development ethos (25 principles)
+- Architecture documentation
+- Quality system guides
+- Deployment guides
+- Contributing guidelines
+- Code of conduct
+- Security policy
+- Branching strategy
+- PR templates
+
+### Migration from v1
+
 - Migrated from Create React App to Vite 7
-- Refactored to functional components only (no class components)
-- Centralized design token system
-- Improved bundle splitting (react-vendor, icons, motion)
+- React 18 → React 19
+- Class components → Functional components with Hooks
+- Hardcoded values → Design token system
+- Single file CSS → Modular Tailwind + CSS variables
+
+### Performance
+
+- Bundle splitting (react-vendor, icons, motion)
+- Lazy loading for routes
+- Intersection Observer for images
+- Network-aware image quality
+- Background sync for forms
+- Service worker caching
 
 ### Security
-- Environment variable management for secrets
+
+- Environment variable management
 - CSP headers configuration
 - Secret scanning in quality checks
-- No exposed API keys in source code
+- No exposed API keys
+- XSS prevention
+- HTTPS enforcement
 
-## [1.x] - Legacy
+## [1.x] - 2025-11 (Legacy)
 
-Previous Create React App version. No longer supported.
+Initial Create React App implementation. Deprecated and replaced by v2.0.0.
 
 ---
 
 ## Version History
 
-| Version | Date | Description |
-|---------|------|-------------|
-| 2.0.0 | Dec 2025 | Major rewrite with React 19 + Vite 7 |
-| 1.x | Legacy | Create React App version (deprecated) |
+| Version | Date         | Description                           |
+|---------|--------------|---------------------------------------|
+| 2.2.0   | Dec 7, 2025  | Unified components, centralized data  |
+| 2.1.0   | Dec 4, 2025  | RoCafé menu system                    |
+| 2.0.0   | Dec 3, 2025  | Major rewrite with React 19 + Vite 7  |
+| 1.x     | Nov 2025     | Create React App version (deprecated) |
 
 ## How to Update
 
 When making changes:
 
 1. Add entry under `[Unreleased]` section
-2. Use appropriate category (Added, Changed, Fixed, etc.)
+2. Use appropriate category (Features, Improvements, Fixes, etc.)
 3. On release, move entries to new version section
 4. Update version in `package.json`
 
 ### Categories
 
-- **Added** - New features
-- **Changed** - Changes in existing functionality
-- **Deprecated** - Soon-to-be removed features
-- **Removed** - Removed features
-- **Fixed** - Bug fixes
+- **Features** - New features and capabilities
+- **Improvements** - Enhancements to existing functionality
+- **Fixes** - Bug fixes and corrections
+- **Documentation** - Documentation updates
 - **Security** - Security-related changes
+- **Performance** - Performance improvements
+- **Migration** - Breaking changes or migrations
