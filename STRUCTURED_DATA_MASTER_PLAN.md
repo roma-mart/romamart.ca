@@ -17,7 +17,9 @@ Roma Mart 2.0 needs structured data (JSON-LD schemas) to improve Google Search v
 - ✅ LocalBusiness schema exists (basic)
 - ✅ Product schemas for menu items (homepage featured + /rocafe full, API-only)
 - ❌ Service schemas hardcoded in StructuredData.jsx instead of imported from SERVICES (data duplication problem)
-- ❌ Return Policy schema missing
+- ✅ Return Policy schema builder implemented (page pending)
+- ✅ Privacy policy content updated (per in-store policy)
+- ✅ Privacy policy schema builder implemented
 - ❌ Location schema incomplete (missing services details)
 - ✅ safeString sanitization hardened (DOMParser + iterative fallback)
 

@@ -7,6 +7,8 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import COMPANY_DATA from '../config/company_data';
 import { buildMenuItemSchema } from '../schemas/menuItemSchema';
+import { buildPrivacyPolicySchema } from '../schemas/privacyPolicySchema';
+import { buildReturnPolicySchema } from '../schemas/returnPolicySchema';
 
 const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
   const generateSchema = () => {
@@ -49,7 +51,8 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
           '@context': 'https://schema.org',
           '@type': 'LocalBusiness',
           '@id': 'https://romamart.ca/#business',
-          name: data.name || COMPANY_DATA.legalName || 'Roma Mart Convenience',
+          name: data.name || COMPANY_DATA.dba || COMPANY_DATA.legalName || 'Roma Mart Convenience',
+          legalName: COMPANY_DATA.legalName || undefined,
           alternateName: data.alternateName || COMPANY_DATA.dba || 'Roma Mart',
           description: data.description || 'Your daily stop & go convenience store in Sarnia, Ontario. Fresh RoCafé beverages, ATM, Bitcoin ATM, printing, and more.',
           url: 'https://romamart.ca',
@@ -58,6 +61,10 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
           priceRange: '$$',
           image: data.image || 'https://romamart.ca/images/store-front.jpg',
           logo: 'https://romamart.ca/logo.png',
+          brand: {
+            '@type': 'Brand',
+            name: COMPANY_DATA.dba || 'Roma Mart Convenience'
+          },
           address: {
             '@type': 'PostalAddress',
             streetAddress: data.address?.street || COMPANY_DATA.location.address.street || '189-3 Wellington Street',
@@ -68,9 +75,10 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
           },
           geo: {
             '@type': 'GeoCoordinates',
-            latitude: data.geo?.latitude || 42.970389,
-            longitude: data.geo?.longitude || -82.404589
+            latitude: data.geo?.latitude || COMPANY_DATA.location?.google?.coordinates?.lat || 42.970389,
+            longitude: data.geo?.longitude || COMPANY_DATA.location?.google?.coordinates?.lng || -82.404589
           },
+          hasMap: COMPANY_DATA.location?.google?.mapLink || undefined,
           openingHoursSpecification: data.hours || (
             COMPANY_DATA.location?.hours
               ? [
@@ -99,6 +107,16 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
           ),
           timeZone: COMPANY_DATA.location?.hours?.timezone || 'America/Toronto',
           sameAs: data.socialLinks || Object.values(COMPANY_DATA.socialLinks),
+          contactPoint: {
+            '@type': 'ContactPoint',
+            contactType: 'customer service',
+            telephone: COMPANY_DATA.location?.contact?.phone || '+1-382-342-2000',
+            email: COMPANY_DATA.location?.contact?.email || 'contact@romamart.ca'
+          },
+          areaServed: {
+            '@type': 'City',
+            name: COMPANY_DATA.location?.address?.city || 'Sarnia'
+          },
           hasOfferCatalog: {
             '@type': 'OfferCatalog',
             name: 'Services & Products',
@@ -191,6 +209,12 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
 
         return buildMenuItemSchema(menuItem, itemUrl, options);
       }
+
+      case 'PrivacyPolicy':
+        return buildPrivacyPolicySchema(data);
+
+      case 'ReturnPolicy':
+        return buildReturnPolicySchema(data);
 
       default:
         return data;
