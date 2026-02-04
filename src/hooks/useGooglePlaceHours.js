@@ -181,7 +181,7 @@ async function fetchPlaceDetails(placeId) {
     const data = await response.json();
     return data;
   } catch (error) {
-    // Record network errors with circuit breaker too
+    // Record network errors (note: circuit breaker only counts quota-related statuses)
     circuitBreakers.googlePlaces.recordFailure(error);
     
     if (import.meta.env.DEV) {

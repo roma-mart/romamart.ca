@@ -71,7 +71,7 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
             '@type': 'PostalAddress',
             streetAddress: data.address?.street || COMPANY_DATA.address?.street || COMPANY_DATA.location.address.street || '189-3 Wellington Street',
             addressLocality: data.address?.city || COMPANY_DATA.address?.city || COMPANY_DATA.location.address.city || 'Sarnia',
-            addressRegion: data.address?.province || 'ON',
+            addressRegion: data.address?.province || COMPANY_DATA.address?.province || COMPANY_DATA.location.address.province || 'ON',
             postalCode: data.address?.postalCode || COMPANY_DATA.address?.postalCode || COMPANY_DATA.location.address.postalCode || 'N7T 1G6',
             addressCountry: COMPANY_DATA.address?.country || COMPANY_DATA.location.address.country || 'CA'
           },

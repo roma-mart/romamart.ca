@@ -33,7 +33,7 @@ const COMPANY_DATA = {
   hours: getPrimaryLocation().hours,
   contact: {
     phone: getPrimaryLocation().contact.phone,
-    email: getPrimaryLocation().email,
+    email: getPrimaryLocation().contact.email,
     web3FormsAccessKey: getEnvVar('VITE_WEB3FORMS_KEY', 'YOUR_WEB3FORMS_KEY')
   },
   // Contextual email addresses for specialized pages

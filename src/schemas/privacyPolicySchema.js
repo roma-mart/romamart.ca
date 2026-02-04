@@ -19,7 +19,7 @@ export const buildPrivacyPolicySchema = (data = {}) => {
     'Roma Mart Corp. values your privacy and collects personal information in compliance with Canadian privacy laws (PIPEDA).'
   );
 
-  const contactEmail = data.contactEmail || 'privacy@romamart.ca';
+  const contactEmail = data.contactEmail || COMPANY_DATA.contextualEmails?.privacy || COMPANY_DATA.contact?.email || 'privacy@romamart.ca';
   const contactPhone = data.contactPhone || COMPANY_DATA.contact?.phone || '+1-382-342-2000';
 
   return {

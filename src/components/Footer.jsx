@@ -117,22 +117,6 @@ export default function Footer() {
   };
   const currentLocation = getCurrentLocation();
 
-                  <div className="mt-8 text-sm font-inter" style={{ color: 'var(--color-on-footer)' }}>
-                    {/* Prefer currentLocation, fallback to COMPANY_DATA.location (HQ) */}
-                    <div className="mb-2">
-                      <strong>Address:</strong> {currentLocation?.address?.formatted || COMPANY_DATA.location?.address?.formatted}
-                    </div>
-                    <div className="mb-2">
-                      <strong>Phone:</strong> {currentLocation?.contact?.phone || COMPANY_DATA.location?.contact?.phone}
-                    </div>
-                    <div className="mb-2">
-                      <strong>Email:</strong> {currentLocation?.contact?.email || COMPANY_DATA.location?.contact?.email}
-                    </div>
-                    <div className="mb-2">
-                      <strong>Hours:</strong> {currentLocation?.hours?.display || COMPANY_DATA.location?.hours?.display}
-                    </div>
-                  </div>
-
   const isAutoMode = selectedLocationId === 'auto';
   const activeLocations = getActiveLocations();
 

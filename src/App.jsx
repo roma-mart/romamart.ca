@@ -599,7 +599,10 @@ function App() {
   const { batteryLevel, isCharging } = useBatteryStatus();
   
   // Fetch menu data from API for homepage featured schemas + RoCafe section
-  // Single API call shared across homepage schema and RoCafe display section
+  // PERF: useExcelMenu is called unconditionally here (even on non-home routes),
+  // and also in RoCafePage, causing duplicate API calls.
+  // TODO: Consider moving menu state to a shared context provider (e.g., MenuProvider)
+  // to deduplicate API calls and share cache between App + RoCafePage routes.
   const { menuItems, loading } = useExcelMenu();
   
   // Only include featured items for homepage schemas (limited selection)

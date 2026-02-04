@@ -11,6 +11,12 @@ const TermsPage = () => {
 
   const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
 
+  // Normalize phone to E.164 format for tel: URI (remove spaces, parentheses, dashes except leading +)
+  const normalizePhoneForTel = (phone) => {
+    if (!phone) return '';
+    return phone.replace(/[\s()-]/g, '');
+  };
+
   return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>
       <Helmet>
@@ -127,10 +133,10 @@ const TermsPage = () => {
             </p>
             <div className="p-6 rounded-lg" style={{ backgroundColor: 'var(--color-surface)' }}>
               <p style={textColor}><strong>{COMPANY_DATA.legalName}</strong></p>
-              <p style={textColor}>{COMPANY_DATA.location.address.streetAddress}</p>
-              <p style={textColor}>{COMPANY_DATA.location.address.addressLocality}, {COMPANY_DATA.location.address.addressRegion} {COMPANY_DATA.location.address.postalCode}</p>
+              <p style={textColor}>{COMPANY_DATA.location.address.street}</p>
+              <p style={textColor}>{COMPANY_DATA.location.address.city}, {COMPANY_DATA.location.address.province} {COMPANY_DATA.location.address.postalCode}</p>
               <p style={textColor}>Email: <a href={`mailto:${getContextualEmail('legal')}`} style={{ color: 'var(--color-accent)' }}>{getContextualEmail('legal')}</a></p>
-              <p style={textColor}>Phone: <a href={`tel:${COMPANY_DATA.location.contact.phone}`} style={{ color: 'var(--color-accent)' }}>{COMPANY_DATA.location.contact.phoneDisplay || COMPANY_DATA.location.contact.phone}</a></p>
+              <p style={textColor}>Phone: <a href={`tel:${normalizePhoneForTel(COMPANY_DATA.location.contact.phone)}`} style={{ color: 'var(--color-accent)' }}>{COMPANY_DATA.location.contact.phone}</a></p>
               <p className="text-sm mt-4" style={mutedTextColor}>GST/HST#: {COMPANY_DATA.gstNumber}</p>
             </div>
           </section>
