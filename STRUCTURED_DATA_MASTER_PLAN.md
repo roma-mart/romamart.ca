@@ -1625,23 +1625,20 @@ Build schema builders that:
 
 ### WebApplication Schema (Implemented ✅)
 
-**Implementation Location:** Homepage (`App.jsx`)
+**Implementation Source (SSOT):** `COMPANY_DATA.pwa.webApplication` in `src/config/company_data.js`
+**Implementation Location:** Homepage (`App.jsx`) uses SSOT config
 
 ```jsx
 <StructuredData
   type="WebApplication"
   data={{
-    name: "Roma Mart Convenience",
-    url: "https://romamart.ca",
-    description: "Shop Roma Mart online - groceries, global snacks, halal meat, RoCafé coffee, and more. Available 24/7 from any device.",
-    applicationCategory: "Shopping",
-    operatingSystem: "Any (Web Browser)",
-    offers: {
-      price: "0",
-      priceCurrency: "CAD"
-    },
-    browserRequirements: "Requires JavaScript. Modern browsers (Chrome, Firefox, Safari, Edge) recommended.",
-    permissions: "Location (optional, for nearest store)"
+    ...COMPANY_DATA.pwa.webApplication,
+    name: COMPANY_DATA.pwa.webApplication.name || COMPANY_DATA.dba,
+    url: COMPANY_DATA.pwa.webApplication.url || "https://romamart.ca",
+    author: {
+      name: COMPANY_DATA.legalName,
+      url: "https://romamart.ca"
+    }
   }}
 />
 ```
