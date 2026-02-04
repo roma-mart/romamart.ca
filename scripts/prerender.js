@@ -23,7 +23,6 @@ const routes = [
 ];
 
 const BASE_URL = 'https://romamart.ca';
-const BASE_PATH = `/`;
 
 const serviceMap = {
   atm: { name: 'ATM Services', type: 'Service', description: 'Cash withdrawal and banking services available 24/7' },
@@ -113,8 +112,9 @@ const buildStructuredData = () => {
       {
         '@type': 'LocalBusiness',
         '@id': `${BASE_URL}/#business`,
-        name: COMPANY_DATA.legalName || 'Roma Mart Convenience',
-        alternateName: COMPANY_DATA.dba || 'Roma Mart',
+        name: COMPANY_DATA.dba || COMPANY_DATA.legalName || 'Roma Mart Convenience',
+        legalName: COMPANY_DATA.legalName || undefined,
+        alternateName: COMPANY_DATA.dba ? COMPANY_DATA.legalName : 'Roma Mart',
         description: 'Your daily stop & go convenience store in Sarnia, Ontario. Fresh RoCafé beverages, ATM, Bitcoin ATM, printing, and more.',
         url: BASE_URL,
         telephone: contact.phone || '+1-382-342-2000',
@@ -172,6 +172,24 @@ const buildStructuredData = () => {
   return JSON.stringify(schema);
 };
 
+const buildSitemapXml = (routeList, lastModDate) => {
+  const urls = routeList.map(route => {
+    const priority = route.path === '/' ? '1.0' : '0.8';
+    const changefreq = route.path === '/' || route.path === '/rocafe' ? 'weekly' : 'monthly';
+    return `  <url>\n` +
+      `    <loc>${BASE_URL}${route.path}</loc>\n` +
+      `    <lastmod>${lastModDate}</lastmod>\n` +
+      `    <changefreq>${changefreq}</changefreq>\n` +
+      `    <priority>${priority}</priority>\n` +
+      `  </url>`;
+  }).join('\n');
+
+  return `<?xml version="1.0" encoding="UTF-8"?>\n` +
+    `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
+    `${urls}\n` +
+    `</urlset>\n`;
+};
+
 async function prerender() {
   const distPath = path.resolve(__dirname, '../dist');
   const indexPath = path.join(distPath, 'index.html');
@@ -206,6 +224,14 @@ async function prerender() {
         `<title>Roma Mart - ${route.title} | Groceries, Coffee & More in Sarnia, ON</title>`
       )
       .replace(
+        /<meta property="og:title" content="[^"]*" \/>/,
+        `<meta property="og:title" content="Roma Mart - ${route.title} | Groceries, Coffee & More in Sarnia, ON" />`
+      )
+      .replace(
+        /<meta property="twitter:title" content="[^"]*" \/>/,
+        `<meta property="twitter:title" content="Roma Mart - ${route.title} | Groceries, Coffee & More in Sarnia, ON" />`
+      )
+      .replace(
         /<meta name="description" content="[^"]*" \/>/,
         `<meta name="description" content="${route.description}" />`
       )
@@ -237,6 +263,11 @@ async function prerender() {
     fs.writeFileSync(outputPath, html);
     console.log(`  ✓ ${outputPath}`);
   }
+
+  const today = new Date().toISOString().slice(0, 10);
+  const sitemapXml = buildSitemapXml(routes, today);
+  const sitemapPath = path.join(distPath, 'sitemap.xml');
+  fs.writeFileSync(sitemapPath, sitemapXml);
 
   console.log('\n✓ Prerendering complete!');
 }
