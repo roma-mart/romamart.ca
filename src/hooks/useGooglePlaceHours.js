@@ -13,6 +13,66 @@
 import { useState, useEffect, useCallback } from 'react';
 import { circuitBreakers } from '../utils/apiCircuitBreaker';
 
+const pad2 = (value) => value.toString().padStart(2, '0');
+
+const toDateString = (dateValue) => {
+  if (!dateValue) return null;
+  if (typeof dateValue === 'string') {
+    return dateValue.length >= 10 ? dateValue.slice(0, 10) : null;
+  }
+  if (typeof dateValue === 'object' && dateValue.year && dateValue.month && dateValue.day) {
+    return `${dateValue.year}-${pad2(dateValue.month)}-${pad2(dateValue.day)}`;
+  }
+  return null;
+};
+
+const formatTime = (time) => {
+  if (!time || typeof time !== 'string') return null;
+  const digits = time.replace(':', '');
+  if (digits.length < 3) return null;
+  const rawHours = parseInt(digits.slice(0, 2), 10);
+  const rawMinutes = parseInt(digits.slice(2, 4), 10);
+  if (Number.isNaN(rawHours) || Number.isNaN(rawMinutes)) return null;
+  const period = rawHours >= 12 ? 'PM' : 'AM';
+  const hours = rawHours % 12 || 12;
+  return `${hours}:${pad2(rawMinutes)} ${period}`;
+};
+
+const formatPeriods = (periods = []) => {
+  if (!Array.isArray(periods) || periods.length === 0) return null;
+  return periods.map(period => {
+    const openTime = formatTime(period?.open?.time || period?.open?.truncatedTime);
+    const closeTime = formatTime(period?.close?.time || period?.close?.truncatedTime);
+    if (openTime && closeTime) return `${openTime} – ${closeTime}`;
+    if (openTime && !closeTime) return `${openTime} – Close`;
+    return null;
+  }).filter(Boolean).join(', ');
+};
+
+const extractSpecialHours = (placeData) => {
+  const sources = [
+    placeData?.currentOpeningHours?.specialDays,
+    placeData?.regularOpeningHours?.specialDays,
+    placeData?.opening_hours?.special_days,
+    placeData?.openingHours?.specialDays
+  ].filter(Boolean);
+
+  const specialDays = sources.flat();
+  if (!Array.isArray(specialDays) || specialDays.length === 0) return [];
+
+  return specialDays.map(entry => {
+    const date = toDateString(entry?.date || entry?.startDate || entry?.date?.date);
+    const closed = entry?.closed || entry?.isClosed || entry?.openClosed === 'CLOSED';
+    const periods = entry?.exceptionalHours?.periods || entry?.periods || entry?.openingHours?.periods;
+    const hoursText = closed ? 'Closed' : (entry?.hours || formatPeriods(periods) || 'Special hours');
+    const reason = entry?.reason || entry?.description || entry?.name || null;
+
+    return date
+      ? { date, hours: hoursText, reason }
+      : null;
+  }).filter(Boolean);
+};
+
 // Extract API key from environment variable
 // This key powers: Places API (New), Google Maps Embed API, Maps JavaScript API
 // SECURITY: In Google Cloud Console, restrict key to only these APIs
@@ -124,10 +184,57 @@ function parseOpeningHours(placeData) {
     isOpenNow: openNow ?? false,
     weekdayText: weekdayDescriptions || [],
     periods: periods || [],
-    display: formatHoursDisplay(weekdayDescriptions)
+    display: {
+      ...formatHoursDisplay(weekdayDescriptions),
+      exceptions: extractSpecialHours(placeData)
+    }
   };
 
   return formatted;
+}
+
+const DAY_ORDER = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const DAY_SHORT = {
+  Monday: 'Mon',
+  Tuesday: 'Tue',
+  Wednesday: 'Wed',
+  Thursday: 'Thu',
+  Friday: 'Fri',
+  Saturday: 'Sat',
+  Sunday: 'Sun'
+};
+
+function groupDayMap(dayMap) {
+  if (!Array.isArray(dayMap) || dayMap.length === 0) return [];
+  const byDay = new Map(dayMap.map(entry => [entry.day, entry.hours]));
+  const ordered = DAY_ORDER.map(day => ({ day, hours: byDay.get(day) || 'Closed' }));
+
+  const groups = [];
+  let current = { start: ordered[0].day, end: ordered[0].day, hours: ordered[0].hours };
+
+  for (let i = 1; i < ordered.length; i += 1) {
+    const next = ordered[i];
+    if (next.hours === current.hours) {
+      current.end = next.day;
+      continue;
+    }
+    groups.push({
+      label: current.start === current.end
+        ? DAY_SHORT[current.start]
+        : `${DAY_SHORT[current.start]}–${DAY_SHORT[current.end]}`,
+      hours: current.hours
+    });
+    current = { start: next.day, end: next.day, hours: next.hours };
+  }
+
+  groups.push({
+    label: current.start === current.end
+      ? DAY_SHORT[current.start]
+      : `${DAY_SHORT[current.start]}–${DAY_SHORT[current.end]}`,
+    hours: current.hours
+  });
+
+  return groups;
 }
 
 /**
@@ -196,12 +303,15 @@ function formatHoursDisplay(weekdayText) {
 
   // Check if ALL days (Mon–Sun) have identical hours using validated dayMap
   const allSame = dayMap.length > 0 && dayMap.every(entry => entry.hours === dayMap[0].hours);
+  const grouped = groupDayMap(dayMap);
 
   return {
     weekdays: sameWeekdayHours && weekdayHours.length > 0 ? weekdayHours[0] : 'Varies',
     weekends: sameWeekendHours && weekendHours.length > 0 ? weekendHours[0] : 'Varies',
     full: weekdayText,
-    allSame
+    allSame,
+    dayMap,
+    grouped
   };
 }
 

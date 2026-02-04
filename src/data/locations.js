@@ -80,8 +80,19 @@ export const LOCATIONS = [
     // === HOURS ===
     hours: {
       timezone: 'America/Toronto',
+      // Backward-compatible summary strings
       weekdays: '8:30 AM - 9:00 PM',
       weekends: '8:30 AM - 9:00 PM',
+      // Per-day hours (source of truth for display grouping)
+      daily: {
+        Monday: '8:30 AM - 9:00 PM',
+        Tuesday: '8:30 AM - 9:00 PM',
+        Wednesday: '8:30 AM - 9:00 PM',
+        Thursday: '8:30 AM - 9:00 PM',
+        Friday: '3:00 PM - 9:00 PM',
+        Saturday: '8:30 AM - 9:00 PM',
+        Sunday: '8:30 AM - 9:00 PM'
+      },
       display: 'Open Daily 8:30 AM - 9:00 PM',
       is24Hours: false,
       isSeasonal: false,
