@@ -415,7 +415,7 @@ export function clearHoursCache() {
  * 
  * Usage in DevTools Console:
  *   import { getPlacesQuotaStatus } from '@/hooks/useGooglePlaceHours'
- *   console.log(getPlacesQuotaStatus())
+ *   getPlacesQuotaStatus()
  */
 export function getPlacesQuotaStatus() {
   return circuitBreakers.googlePlaces.getStatus();

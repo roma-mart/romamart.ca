@@ -118,7 +118,7 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
     allSame: fallbackDayMap.length > 0 && fallbackDayMap.every(entry => entry.hours === fallbackDayMap[0].hours)
   }, [hours?.display, fallbackDayMap, fallbackGrouped]);
 
-  const renderGroupedLines = (groups) => (
+  const renderGroupedLines = useCallback((groups) => (
     <div className="space-y-1">
       {groups.map(group => (
         <p key={group.label} className="font-inter" style={{ color: 'var(--color-text-muted)' }}>
@@ -126,7 +126,7 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
         </p>
       ))}
     </div>
-  );
+  ), []);
 
   const exceptionItems = useMemo(() => {
     const fromDisplay = normalizeExceptions(displayHours?.exceptions);
@@ -148,7 +148,7 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
       }));
   }, [displayHours?.exceptions, fallbackHours?.exceptions]);
 
-  const renderExceptions = () => {
+  const renderExceptions = useCallback(() => {
     if (exceptionItems.length === 0) return null;
     return (
       <div className="mt-2 space-y-1">
@@ -163,7 +163,7 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
         ))}
       </div>
     );
-  };
+  }, [exceptionItems]);
 
   const renderHoursContent = useCallback(() => {
     if (error) {
@@ -268,7 +268,7 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
         {renderExceptions()}
       </div>
     );
-  }, [error, isLoading, displayHours, showStatus, isOpenNow, fallbackHours, fallbackGrouped, exceptionItems, renderExceptions, renderGroupedLines]);
+  }, [error, isLoading, displayHours, showStatus, isOpenNow, fallbackGrouped, renderExceptions, renderGroupedLines]);
 
   const refreshButton = showRefresh && (hours || error) ? (
     <button

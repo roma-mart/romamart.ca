@@ -21,7 +21,7 @@
  *       breaker.recordFailure(error);
  *     }
  *   }
- *   console.log(breaker.getStatus());
+ *   breaker.getStatus();
  * 
  * @module utils/apiCircuitBreaker
  */
