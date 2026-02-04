@@ -41,6 +41,8 @@
 | [Theming & Tokens](./architecture/theming-tokens.md) | Design token system |
 | [Routing](./architecture/routing.md) | Client-side routing |
 | [Quality Checkers](./architecture/quality-checkers.md) | Meta-checker system |
+| [Circuit Breaker Pattern](./architecture/circuit-breaker-pattern.md) | API protection strategy |
+| [Availability & Live Data System](./architecture/availability-live-data-system.md) | Live data with static fallback |
 
 ### Checklists
 
