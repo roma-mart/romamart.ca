@@ -1,8 +1,15 @@
 /**
  * LiveHoursDisplay Component
  * 
- * Displays live opening hours fetched from Google Places API.
- * Falls back to static hours if API fails or is loading.
+ * Displays live opening hours fetched from Google Places API with circuit breaker protection.
+ * Falls back silently to static hours if API fails. Errors only displayed on manual refresh.
+ * 
+ * Features:
+ * - Circuit breaker pattern for API quota protection
+ * - Silent fallback to static hours on initial error
+ * - Manual refresh with error visibility
+ * - 1-hour client-side caching
+ * - Grouped day display (e.g., Mon-Fri)
  * 
  * @module components/LiveHoursDisplay
  */
@@ -297,7 +304,9 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
 }
 
 LiveHoursDisplay.propTypes = {
+  /** Google Place ID for the location */
   placeId: PropTypes.string.isRequired,
+  /** Fallback hours to display if API fails (shown silently) */
   fallbackHours: PropTypes.shape({
     display: PropTypes.string,
     daily: PropTypes.oneOfType([
@@ -307,9 +316,13 @@ LiveHoursDisplay.propTypes = {
     dayMap: PropTypes.array,
     exceptions: PropTypes.array
   }),
+  /** Show "Live from Google" status badge */
   showStatus: PropTypes.bool,
+  /** Use compact layout for smaller displays */
   compact: PropTypes.bool,
+  /** Show clock icon in header */
   showIcon: PropTypes.bool,
+  /** Show refresh button when error occurs (allows manual retry) */
   showRefresh: PropTypes.bool
 };
 

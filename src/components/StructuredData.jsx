@@ -6,6 +6,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import COMPANY_DATA from '../config/company_data';
+import { SERVICES } from '../data/services';
 import { buildMenuItemSchema } from '../schemas/menuItemSchema';
 import { buildPrivacyPolicySchema } from '../schemas/privacyPolicySchema';
 import { buildReturnPolicySchema } from '../schemas/returnPolicySchema';
@@ -133,35 +134,14 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
           hasOfferCatalog: {
             '@type': 'OfferCatalog',
             name: 'Services & Products',
-            itemListElement: (COMPANY_DATA.location?.services || []).map(service => {
-              // Map known service keys to human-friendly names and types
-              const serviceMap = {
-                atm: { name: 'ATM Services', type: 'Service', description: 'Cash withdrawal and banking services available 24/7' },
-                bitcoin_atm: { name: 'Bitcoin ATM', type: 'Service', description: 'Cryptocurrency buying and selling services' },
-                rocafe: { name: 'RoCafé Coffee & Bubble Tea', type: 'Service', description: 'Fresh brewed coffee, signature bubble tea, matcha lattes, and fruit slushes' },
-                halal_meat: { name: 'Halal Meat', type: 'Product', description: 'Certified Zabiha Halal meats' },
-                printing: { name: 'Printing Services', type: 'Service', description: 'Document printing and copying' },
-                package_services: { name: 'Package Services', type: 'Service', description: 'Shipping and package handling' },
-                package_pickup: { name: 'Package Services', type: 'Service', description: 'Shipping and package handling' },
-                money_transfer: { name: 'Money Transfer', type: 'Service', description: 'Send and receive money worldwide' },
-                gift_cards: { name: 'Gift Cards', type: 'Product', description: 'Prepaid and gift cards for major brands' },
-                perfumes: { name: 'Perfumes', type: 'Product', description: 'Imported and local fragrances' },
-                canadian_products: { name: 'Canadian Products', type: 'Product', description: 'Quality products sourced from Canadian manufacturers' },
-                international_products: { name: 'International Products', type: 'Product', description: 'Imported specialty products from around the world' },
-                tobacco: { name: 'Tobacco & Vape Products', type: 'Product', description: 'Wide selection for adult customers (19+)' },
-                lottery: { name: 'OLG Lottery', type: 'Service', description: 'Lottery tickets and scratch cards' }
-              };
-              const mapped = serviceMap[service] || { name: service, type: 'Service', description: '' };
-              // Emit each service as a simple Offer with itemOffered (no nested offers)
-              return {
-                '@type': 'Offer',
-                itemOffered: {
-                  '@type': mapped.type,
-                  name: mapped.name,
-                  description: mapped.description
-                }
-              };
-            })
+            itemListElement: SERVICES.map(service => ({
+              '@type': 'Offer',
+              itemOffered: {
+                '@type': 'Service',
+                name: service.name,
+                description: service.description
+              }
+            }))
           },
           amenityFeature: [
             {

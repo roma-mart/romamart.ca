@@ -36,10 +36,27 @@ const COMPANY_DATA = {
     email: getPrimaryLocation().email,
     web3FormsAccessKey: getEnvVar('VITE_WEB3FORMS_KEY', 'YOUR_WEB3FORMS_KEY')
   },
+  // Contextual email addresses for specialized pages
+  contextualEmails: {
+    general: 'contact@romamart.ca',
+    privacy: 'privacy@romamart.ca',
+    accessibility: 'accessibility@romamart.ca',
+    technology: 'technology@romamart.ca',
+    legal: 'legal@romamart.ca'
+  },
   // Location-dependent info is mapped from the primary location object
   location: getPrimaryLocation(),
   trustpilotReviewUrl: 'https://www.trustpilot.com/review/romamart.ca'
   // Add other brand data as needed
 };
+
+/**
+ * Get the appropriate email address for a given page context
+ * @param {'general' | 'privacy' | 'accessibility' | 'technology' | 'legal'} context - Page context
+ * @returns {string} Contextual email address
+ */
+export function getContextualEmail(context = 'general') {
+  return COMPANY_DATA.contextualEmails[context] || COMPANY_DATA.contextualEmails.general;
+}
 
 export default COMPANY_DATA;
