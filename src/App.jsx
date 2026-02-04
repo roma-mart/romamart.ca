@@ -23,6 +23,7 @@ import ShareButton from './components/ShareButton';
 import Button from './components/Button';
 import StandardizedItem from './components/StandardizedItem';
 import { useLocationAware } from './hooks/useLocationContext';
+import StructuredData from './components/StructuredData';
 import { ROCAFE_FEATURED } from './data/rocafe-menu';
 import { SERVICES_FEATURED } from './data/services.jsx';
 import Phone from 'lucide-react/dist/esm/icons/phone.js';
@@ -600,6 +601,10 @@ function App() {
 
   return (
     <LocationProvider>
+        {/* Structured Data for SEO - LocalBusiness and WebSite schemas */}
+        <StructuredData type="LocalBusiness" />
+        <StructuredData type="WebSite" />
+      
       <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--color-bg)' }}>
         <ErrorBoundary>
           <Navbar />
