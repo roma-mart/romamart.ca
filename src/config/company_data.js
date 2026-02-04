@@ -10,6 +10,7 @@
 
 // import { getOrderingUrl } from './ordering';
 import { getPrimaryLocation } from '../data/locations.js';
+import { getEnvVar } from '../utils/getAssetUrl.js';
 
 const COMPANY_DATA = {
   legalName: 'Roma Mart Corp.',

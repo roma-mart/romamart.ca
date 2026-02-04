@@ -7,7 +7,7 @@
  * @module components/LiveHoursDisplay
  */
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { Clock, RefreshCw, AlertCircle } from 'lucide-react';
 import useGooglePlaceHours from '../hooks/useGooglePlaceHours';
@@ -25,27 +25,25 @@ import useGooglePlaceHours from '../hooks/useGooglePlaceHours';
 function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact = false }) {
   const { hours, isLoading, error, refetch, isOpenNow } = useGooglePlaceHours(placeId);
 
-  const textColor = { color: 'var(--color-text)' };
-  const mutedTextColor = { color: 'var(--color-text-muted)' };
-  const iconColor = { color: 'var(--color-icon)' };
+  const iconColor = useMemo(() => ({ color: 'var(--color-icon)' }), []);
 
   // Use live hours if available, otherwise fallback
-  const displayHours = hours?.display || {
+  const displayHours = useMemo(() => hours?.display || {
     weekdays: fallbackHours?.weekdays || 'Hours not available',
     weekends: fallbackHours?.weekends || 'Hours not available',
     full: null
-  };
+  }, [hours?.display, fallbackHours?.weekdays, fallbackHours?.weekends]);
 
   const renderHoursContent = useCallback(() => {
     if (error) {
       return (
         <div className="space-y-2">
-          <div className="flex items-center gap-2" style={mutedTextColor}>
+          <div className="flex items-center gap-2" style={{ color: 'var(--color-text-muted)' }}>
             <AlertCircle size={16} />
             <span className="text-sm">Unable to load live hours</span>
           </div>
-          <p className="font-inter" style={mutedTextColor}>Mon-Fri: {fallbackHours?.weekdays}</p>
-          <p className="font-inter" style={mutedTextColor}>Sat-Sun: {fallbackHours?.weekends}</p>
+          <p className="font-inter" style={{ color: 'var(--color-text-muted)' }}>Mon-Fri: {fallbackHours?.weekdays}</p>
+          <p className="font-inter" style={{ color: 'var(--color-text-muted)' }}>Sat-Sun: {fallbackHours?.weekends}</p>
         </div>
       );
     }
@@ -53,12 +51,12 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
     if (isLoading) {
       return (
         <div className="space-y-2">
-          <div className="flex items-center gap-2" style={mutedTextColor}>
+          <div className="flex items-center gap-2" style={{ color: 'var(--color-text-muted)' }}>
             <RefreshCw size={16} className="animate-spin" />
             <span className="text-sm">Loading hours...</span>
           </div>
-          <p className="font-inter" style={mutedTextColor}>Mon-Fri: {fallbackHours?.weekdays}</p>
-          <p className="font-inter" style={mutedTextColor}>Sat-Sun: {fallbackHours?.weekends}</p>
+          <p className="font-inter" style={{ color: 'var(--color-text-muted)' }}>Mon-Fri: {fallbackHours?.weekdays}</p>
+          <p className="font-inter" style={{ color: 'var(--color-text-muted)' }}>Sat-Sun: {fallbackHours?.weekends}</p>
         </div>
       );
     }
@@ -92,7 +90,7 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
                 {isOpenNow ? 'Open Now' : 'Closed'}
               </span>
             )}
-            <p className="font-inter font-semibold" style={textColor}>
+            <p className="font-inter font-semibold" style={{ color: 'var(--color-text)' }}>
               Open Daily: {sameHours}
             </p>
           </div>
@@ -122,11 +120,11 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
             {isOpenNow ? 'Open Now' : 'Closed'}
           </span>
         )}
-        <p className="font-inter" style={mutedTextColor}>Mon-Fri: {displayHours.weekdays}</p>
-        <p className="font-inter" style={mutedTextColor}>Sat-Sun: {displayHours.weekends}</p>
+        <p className="font-inter" style={{ color: 'var(--color-text-muted)' }}>Mon-Fri: {displayHours.weekdays}</p>
+        <p className="font-inter" style={{ color: 'var(--color-text-muted)' }}>Sat-Sun: {displayHours.weekends}</p>
       </div>
     );
-  }, [error, isLoading, displayHours, showStatus, isOpenNow, fallbackHours, textColor, mutedTextColor]);
+  }, [error, isLoading, displayHours, showStatus, isOpenNow, fallbackHours]);
 
   if (compact) {
     return (
@@ -143,7 +141,7 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
     <div className="flex gap-4">
       <Clock size={24} style={iconColor} className="flex-shrink-0 mt-1" />
       <div className="flex-1">
-        <h3 className="font-bold mb-1" style={textColor}>Hours</h3>
+        <h3 className="font-bold mb-1" style={{ color: 'var(--color-text)' }}>Hours</h3>
         {renderHoursContent()}
         {(hours || error) && (
           <button
