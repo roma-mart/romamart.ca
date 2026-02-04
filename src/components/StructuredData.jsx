@@ -9,6 +9,7 @@ import COMPANY_DATA from '../config/company_data';
 import { buildMenuItemSchema } from '../schemas/menuItemSchema';
 import { buildPrivacyPolicySchema } from '../schemas/privacyPolicySchema';
 import { buildReturnPolicySchema } from '../schemas/returnPolicySchema';
+import { parse12hTo24h } from '../utils/dateHelpers';
 
 const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
   const generateSchema = () => {
