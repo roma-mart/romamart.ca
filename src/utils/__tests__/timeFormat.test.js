@@ -26,9 +26,11 @@ describe('timeFormat', () => {
 
   it('uses locale preference when stored value is auto', () => {
     window.localStorage.setItem('timeFormat', 'auto');
-    Intl.DateTimeFormat = vi.fn(() => ({
-      resolvedOptions: () => ({ hour12: false })
-    }));
+    vi.spyOn(Intl, 'DateTimeFormat').mockImplementation(function () {
+      return {
+        resolvedOptions: () => ({ hour12: false })
+      };
+    });
 
     expect(getUserHour12Preference()).toBe(false);
   });
@@ -37,18 +39,22 @@ describe('timeFormat', () => {
     vi.spyOn(window.localStorage, 'getItem').mockImplementation(() => {
       throw new Error('storage error');
     });
-    Intl.DateTimeFormat = vi.fn(() => ({
-      resolvedOptions: () => ({})
-    }));
+    vi.spyOn(Intl, 'DateTimeFormat').mockImplementation(function () {
+      return {
+        resolvedOptions: () => ({})
+      };
+    });
 
     expect(getUserHour12Preference()).toBe(true);
   });
 
   it('handles SSR with window undefined', () => {
     vi.stubGlobal('window', undefined);
-    Intl.DateTimeFormat = vi.fn(() => ({
-      resolvedOptions: () => ({ hour12: false })
-    }));
+    vi.spyOn(Intl, 'DateTimeFormat').mockImplementation(function () {
+      return {
+        resolvedOptions: () => ({ hour12: false })
+      };
+    });
 
     expect(getUserHour12Preference()).toBe(false);
   });

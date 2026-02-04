@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ChevronRight, MapPin, Phone, ExternalLink, Building2 } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
@@ -10,7 +10,7 @@ import LiveHoursDisplay from '../components/LiveHoursDisplay';
 import { useAutoLocation } from '../hooks/useAutoLocation';
 
 const LocationsPage = () => {
-  const [userLoadedMaps, setUserLoadedMaps] = useState(() => new Set());
+  const [userLoadedMaps, setUserLoadedMaps] = useState(() => []);
   const [userCoords, setUserCoords] = useState(null);
 
 
@@ -33,13 +33,13 @@ const LocationsPage = () => {
     locations: getActiveLocations()
   });
   const preferredLocationId = sortedLocations[0]?.id;
-  const loadedMaps = useMemo(() => {
+  const loadedMaps = (() => {
     const combined = new Set(userLoadedMaps);
     if (preferredLocationId) {
       combined.add(preferredLocationId);
     }
     return combined;
-  }, [userLoadedMaps, preferredLocationId]);
+  })();
 
   const locations = sortedLocations.map(loc => ({
     ...loc,
@@ -55,11 +55,7 @@ const LocationsPage = () => {
   }));
 
   const handleLoadMap = (locationId) => {
-    setUserLoadedMaps(prev => {
-      const next = new Set(prev);
-      next.add(locationId);
-      return next;
-    });
+    setUserLoadedMaps(prev => (prev.includes(locationId) ? prev : [...prev, locationId]));
   };
 
   return (
