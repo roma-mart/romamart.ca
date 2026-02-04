@@ -1,7 +1,6 @@
 import React, { useState, useEffect, Suspense, lazy, useCallback, useMemo } from 'react';
 import ErrorBoundary from './components/ErrorBoundary';
 import { motion } from 'framer-motion';
-import { MenuProvider } from './contexts/MenuContext.jsx';
 import {
   ShoppingBasket,
   Star,
