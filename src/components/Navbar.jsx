@@ -48,29 +48,44 @@ export default function Navbar() {
 
   useEffect(() => {
     const checkPath = () => {
-      const path = window.location.pathname;
-      setIsHomePage(path === '/' || path === BASE_URL || path === BASE_URL + '/');
+      const normalizePath = (value) => {
+        if (!value) return '/';
+        const trimmed = value.replace(/\/+$/, '');
+        return trimmed === '' ? '/' : trimmed;
+      };
+      const path = normalizePath(window.location.pathname);
+      const basePath = normalizePath(BASE_URL);
+      setIsHomePage(path === '/' || path === basePath);
     };
     checkPath();
     window.addEventListener('popstate', checkPath);
     return () => window.removeEventListener('popstate', checkPath);
   }, [BASE_URL]);
 
+  const scrollToSection = (sectionId) => {
+    if (!sectionId) return false;
+    const element = document.getElementById(sectionId);
+    if (!element) return false;
+    const navHeight = document.querySelector('nav')?.offsetHeight || 0;
+    const top = element.getBoundingClientRect().top + window.scrollY - navHeight - 12;
+    window.scrollTo({ top, behavior: 'smooth' });
+    return true;
+  };
+
   const handleNavClick = (e, sectionId, subpageUrl) => {
     setIsOpen(false);
-    // Always navigate to About subpage
-    if (subpageUrl && subpageUrl.endsWith('about')) {
+    if (sectionId) {
       e.preventDefault();
-      window.location.assign(subpageUrl);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if (!scrollToSection(sectionId) && subpageUrl) {
+            window.location.assign(subpageUrl);
+          }
+        });
+      });
       return;
     }
-    if (isHomePage && sectionId) {
-      e.preventDefault();
-      const element = document.getElementById(sectionId);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
-    } else if (subpageUrl) {
+    if (subpageUrl) {
       e.preventDefault();
       window.location.assign(subpageUrl);
     }

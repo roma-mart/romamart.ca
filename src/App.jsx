@@ -471,8 +471,17 @@ const ContactSection = () => {
                 </div>
                 <div>
                   <h4 className="font-bold text-lg" style={{ color: 'var(--color-accent)' }}>Hours</h4>
-                  <p style={textColor}>Mon-Fri: {getPrimaryLocation().hours.weekdays}</p>
-                  <p style={textColor}>Sat-Sun: {getPrimaryLocation().hours.weekends}</p>
+                  <LiveHoursDisplay
+                    placeId={primaryLocation.google.placeId}
+                    fallbackHours={{
+                      weekdays: primaryLocation.hours.weekdays,
+                      weekends: primaryLocation.hours.weekends
+                    }}
+                    showStatus={true}
+                    compact={true}
+                    showIcon={false}
+                    showRefresh={true}
+                  />
                 </div>
               </div>
             </div>

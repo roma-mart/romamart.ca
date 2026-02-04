@@ -20,9 +20,11 @@ import useGooglePlaceHours from '../hooks/useGooglePlaceHours';
  * @param {Object} props.fallbackHours - Fallback hours object { weekdays, weekends, display }
  * @param {boolean} props.showStatus - Show open/closed status badge
  * @param {boolean} props.compact - Compact display mode
+ * @param {boolean} props.showIcon - Show clock icon
+ * @param {boolean} props.showRefresh - Show refresh button when live hours/error are available
  * @returns {JSX.Element}
  */
-function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact = false }) {
+function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact = false, showIcon = true, showRefresh = true }) {
   const { hours, isLoading, error, refetch, isOpenNow } = useGooglePlaceHours(placeId);
 
   const iconColor = useMemo(() => ({ color: 'var(--color-icon)' }), []);
@@ -126,12 +128,27 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
     );
   }, [error, isLoading, displayHours, showStatus, isOpenNow, fallbackHours]);
 
+  const refreshButton = showRefresh && (hours || error) ? (
+    <button
+      onClick={refetch}
+      className={compact ? 'mt-2 text-xs hover:underline flex items-center gap-1' : 'mt-2 text-xs hover:underline flex items-center gap-1'}
+      style={{ color: 'var(--color-accent)' }}
+      aria-label="Refresh hours"
+    >
+      <RefreshCw size={12} />
+      Refresh
+    </button>
+  ) : null;
+
   if (compact) {
     return (
       <div className="flex items-start gap-2">
-        <Clock size={18} style={iconColor} className="flex-shrink-0 mt-0.5" />
+        {showIcon ? (
+          <Clock size={18} style={iconColor} className="flex-shrink-0 mt-0.5" />
+        ) : null}
         <div className="flex-1">
           {renderHoursContent()}
+          {refreshButton}
         </div>
       </div>
     );
@@ -139,21 +156,13 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
 
   return (
     <div className="flex gap-4">
-      <Clock size={24} style={iconColor} className="flex-shrink-0 mt-1" />
+      {showIcon ? (
+        <Clock size={24} style={iconColor} className="flex-shrink-0 mt-1" />
+      ) : null}
       <div className="flex-1">
         <h3 className="font-bold mb-1" style={{ color: 'var(--color-text)' }}>Hours</h3>
         {renderHoursContent()}
-        {(hours || error) && (
-          <button
-            onClick={refetch}
-            className="mt-2 text-xs hover:underline flex items-center gap-1"
-            style={{ color: 'var(--color-accent)' }}
-            aria-label="Refresh hours"
-          >
-            <RefreshCw size={12} />
-            Refresh
-          </button>
-        )}
+        {refreshButton}
       </div>
     </div>
   );
@@ -167,7 +176,9 @@ LiveHoursDisplay.propTypes = {
     display: PropTypes.string
   }),
   showStatus: PropTypes.bool,
-  compact: PropTypes.bool
+  compact: PropTypes.bool,
+  showIcon: PropTypes.bool,
+  showRefresh: PropTypes.bool
 };
 
 export default LiveHoursDisplay;

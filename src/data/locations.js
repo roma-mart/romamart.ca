@@ -16,6 +16,13 @@
 import { getAssetUrl, getEnvVar } from "../utils/getAssetUrl.js";
 
 const MAPS_EMBED_KEY = getEnvVar('VITE_GOOGLE_PLACES_API_KEY');
+const buildGoogleMapsLink = (placeId, address) => {
+  const query = encodeURIComponent(address || 'Roma Mart');
+  if (placeId) {
+    return `https://www.google.com/maps/search/?api=1&query=${query}&query_place_id=${placeId}`;
+  }
+  return `https://www.google.com/maps/search/?api=1&query=${query}`;
+};
 // Location type constants
 export const LOCATION_TYPES = {
   CONVENIENCE_STORE: 'convenience_store',    // Full-service Roma Mart
@@ -51,7 +58,7 @@ export const LOCATIONS = [
     // === GOOGLE INTEGRATION ===
     google: {
       placeId: 'ChIJCfo3t6SdJYgRIQVbpCppKmY',
-      mapLink: 'https://maps.google.com/?q=place_id:ChIJCfo3t6SdJYgRIQVbpCppKmY',
+      mapLink: buildGoogleMapsLink('ChIJCfo3t6SdJYgRIQVbpCppKmY', '3-189 Wellington Street, Sarnia, ON N7T 1G6'),
       embedUrl: MAPS_EMBED_KEY
         ? `https://www.google.com/maps/embed/v1/place?key=${MAPS_EMBED_KEY}&q=place_id:ChIJCfo3t6SdJYgRIQVbpCppKmY&zoom=15`
         : null,

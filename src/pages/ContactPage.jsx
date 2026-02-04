@@ -176,6 +176,8 @@ const ContactPage = () => {
                     }}
                     showStatus={true}
                     compact={true}
+                    showIcon={false}
+                    showRefresh={true}
                   />
                 </div>
               </div>
