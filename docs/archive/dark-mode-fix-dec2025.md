@@ -13,9 +13,11 @@
 ## Why This Error Was Skipped
 
 ### 1. **Pattern Inconsistency**
+
 The codebase uses **two different styling approaches:**
 
 **✅ Correct Pattern (CSS Variables):**
+
 ```jsx
 const textColor = { color: 'var(--color-text)' };
 const mutedTextColor = { color: 'var(--color-text)', opacity: 0.7 };
@@ -25,17 +27,20 @@ const mutedTextColor = { color: 'var(--color-text)', opacity: 0.7 };
 ```
 
 **❌ Incorrect Pattern (Hardcoded Tailwind):**
+
 ```jsx
 <p className="text-gray-600">Secondary text</p>
 <p className="text-gray-400">Muted text</p>
 ```
 
 ### 2. **Mixed Implementation**
+
 - **AccessibilityPage.jsx:** Used `style={textColor}` for paragraphs, but `text-gray-600` for subtitles
 - **App.jsx Footer:** Used `text-gray-400` and `text-gray-500` despite being on dark background
 - **LazyImage.jsx:** Used `text-gray-500` for error message
 
 ### 3. **Why It Happened**
+
 1. **Incremental Development:** Sections added/edited at different times without pattern enforcement
 2. **Copy-Paste:** Tailwind classes copied from examples or other projects
 3. **No Linting Rule:** ESLint doesn't flag Tailwind utility classes for dark mode compatibility
@@ -46,18 +51,22 @@ const mutedTextColor = { color: 'var(--color-text)', opacity: 0.7 };
 ## Files Fixed
 
 ### 1. **AccessibilityPage.jsx** (4 instances)
+
 **Location:** Standards & Certifications section subtitles  
 **Before:**
+
 ```jsx
 <p className="text-sm text-gray-600">Web Content Accessibility Guidelines</p>
 ```
 
 **After:**
+
 ```jsx
 <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>Web Content Accessibility Guidelines</p>
 ```
 
 **Fixed:**
+
 - Line 88: WCAG 2.2 Level AA subtitle
 - Line 111: AODA Compliant subtitle
 - Line 134: ISO/IEC 40500:2025 subtitle
@@ -66,8 +75,10 @@ const mutedTextColor = { color: 'var(--color-text)', opacity: 0.7 };
 ---
 
 ### 2. **LazyImage.jsx** (1 instance)
+
 **Location:** Error state message  
 **Before:**
+
 ```jsx
 <div className="flex items-center justify-center bg-gray-200">
   <span className="text-gray-500 text-sm">Failed to load image</span>
@@ -75,6 +86,7 @@ const mutedTextColor = { color: 'var(--color-text)', opacity: 0.7 };
 ```
 
 **After:**
+
 ```jsx
 <div className="flex items-center justify-center" style={{ backgroundColor: 'var(--color-surface)' }}>
   <span className="text-sm" style={{ color: 'var(--color-text-muted)' }}>Failed to load image</span>
@@ -88,7 +100,9 @@ const mutedTextColor = { color: 'var(--color-text)', opacity: 0.7 };
 ### 3. **App.jsx** (5 instances)
 
 #### **RoCafé Section (Line 532)**
+
 **Before:**
+
 ```jsx
 <p className="text-gray-400 font-inter text-lg mb-8">
   Step into our dedicated café corner...
@@ -96,6 +110,7 @@ const mutedTextColor = { color: 'var(--color-text)', opacity: 0.7 };
 ```
 
 **After:**
+
 ```jsx
 <p className="font-inter text-lg mb-8" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
   Step into our dedicated café corner...
@@ -107,7 +122,9 @@ const mutedTextColor = { color: 'var(--color-text)', opacity: 0.7 };
 ---
 
 #### **Footer - Description (Line 795)**
+
 **Before:**
+
 ```jsx
 <p className="text-gray-400 font-inter max-w-sm mb-6">
   Your local one-stop shop...
@@ -115,6 +132,7 @@ const mutedTextColor = { color: 'var(--color-text)', opacity: 0.7 };
 ```
 
 **After:**
+
 ```jsx
 <p className="font-inter max-w-sm mb-6" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
   Your local one-stop shop...
@@ -126,12 +144,15 @@ const mutedTextColor = { color: 'var(--color-text)', opacity: 0.7 };
 ---
 
 #### **Footer - Pages Menu (Line 854)**
+
 **Before:**
+
 ```jsx
 <ul className="space-y-3 font-inter text-gray-400">
 ```
 
 **After:**
+
 ```jsx
 <ul className="space-y-3 font-inter" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
 ```
@@ -139,12 +160,15 @@ const mutedTextColor = { color: 'var(--color-text)', opacity: 0.7 };
 ---
 
 #### **Footer - Legal Menu (Line 866)**
+
 **Before:**
+
 ```jsx
 <ul className="space-y-2 font-inter text-gray-400">
 ```
 
 **After:**
+
 ```jsx
 <ul className="space-y-2 font-inter" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
 ```
@@ -152,13 +176,16 @@ const mutedTextColor = { color: 'var(--color-text)', opacity: 0.7 };
 ---
 
 #### **Footer - Copyright (Line 880)**
+
 **Before:**
+
 ```jsx
 <div className="text-center text-gray-500 font-inter text-sm">
   <p>&copy; {new Date().getFullYear()}...
 ```
 
 **After:**
+
 ```jsx
 <div className="text-center font-inter text-sm" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
   <p>&copy; {new Date().getFullYear()}...
@@ -171,7 +198,9 @@ const mutedTextColor = { color: 'var(--color-text)', opacity: 0.7 };
 ## Site-Wide Audit Results
 
 ### ✅ Clean Components (No Issues)
+
 All page components in `src/pages/` folder:
+
 - **ContactPage.jsx** ✅
 - **LocationsPage.jsx** ✅
 - **RoCafePage.jsx** ✅
@@ -188,6 +217,7 @@ All page components in `src/pages/` folder:
 ## Prevention Strategy
 
 ### 1. **ESLint Rule (Recommended)**
+
 Add custom ESLint rule to flag Tailwind gray utility classes:
 
 **File:** `eslint.config.js`
@@ -210,6 +240,7 @@ rules: {
 ---
 
 ### 2. **Pre-Commit Hook**
+
 **File:** `.husky/pre-commit` (if using Husky)
 
 ```bash
@@ -225,6 +256,7 @@ fi
 ---
 
 ### 3. **CSS Variable Reference**
+
 **Use these instead of Tailwind gray classes:**
 
 | Tailwind Class | CSS Variable | Use Case | Light Mode | Dark Mode |
@@ -238,6 +270,7 @@ fi
 | `border-gray-300` | `var(--color-border)` | Borders | `#e5e5e5` | `#2a2a2a` |
 
 **Special Cases:**
+
 - **On Always-Dark Backgrounds** (Footer, RoCafé section): Use `rgba(255, 255, 255, 0.8)` or `rgba(255, 255, 255, 0.6)`
 - **Icons:** `var(--color-icon)` (Navy → Yellow)
 - **Headings:** `var(--color-heading)` (Navy → Yellow)
@@ -245,6 +278,7 @@ fi
 ---
 
 ### 4. **Component Template**
+
 **Use this pattern for all new components:**
 
 ```jsx
@@ -269,11 +303,13 @@ export default MyComponent;
 ```
 
 **✅ DO:**
+
 ```jsx
 <p style={{ color: 'var(--color-text-muted)' }}>Subtitle</p>
 ```
 
 **❌ DON'T:**
+
 ```jsx
 <p className="text-gray-600">Subtitle</p>
 ```
@@ -281,6 +317,7 @@ export default MyComponent;
 ---
 
 ### 5. **Testing Checklist**
+
 Before committing, verify dark mode on:
 
 - [ ] **Navigation** (skip link, breadcrumbs, menu)
@@ -294,6 +331,7 @@ Before committing, verify dark mode on:
 - [ ] **Error states** (form errors, 404, lazy load failures)
 
 **Browser Testing:**
+
 - Chrome DevTools: `Ctrl+Shift+I` → Rendering → Emulate CSS prefers-color-scheme: dark
 - Firefox: about:config → `ui.systemUsesDarkTheme` → `1`
 - Safari: Develop → Experimental Features → Dark Mode CSS Support
@@ -305,6 +343,7 @@ Before committing, verify dark mode on:
 ### CSS Variable System (index.css)
 
 #### Light Mode
+
 ```css
 :root {
   --color-text: #151515;
@@ -317,6 +356,7 @@ Before committing, verify dark mode on:
 ```
 
 #### Dark Mode
+
 ```css
 @media (prefers-color-scheme: dark) {
   :root {
@@ -333,11 +373,13 @@ Before committing, verify dark mode on:
 ### Contrast Ratios (WCAG 2.2 AA Compliant)
 
 #### Light Mode
+
 - **Navy on White:** 12.6:1 (AAA ✅)
 - **Primary Text (#151515) on White:** 16:1 (AAA ✅)
 - **Muted Text (#5a5a5a) on White:** 7.3:1 (AAA ✅)
 
 #### Dark Mode
+
 - **Yellow on Black (#E4B340 on #0b0b0b):** 8.4:1 (AAA ✅)
 - **White on Black (#f4f4f4 on #0b0b0b):** 19.2:1 (AAA ✅)
 - **Muted Gray (#a8a8a8) on Black:** 9.1:1 (AAA ✅)
@@ -349,14 +391,18 @@ Before committing, verify dark mode on:
 ## Verification
 
 ### Before Fix
+
 **Accessibility Page in Dark Mode:**
+
 ```
 WCAG 2.2 Level AA
 Web Content Accessibility Guidelines ← Barely visible (2.1:1 contrast ❌)
 ```
 
 ### After Fix
+
 **Accessibility Page in Dark Mode:**
+
 ```
 WCAG 2.2 Level AA (Yellow #E4B340)
 Web Content Accessibility Guidelines (Gray #a8a8a8 - 9.1:1 contrast ✅)
@@ -367,6 +413,7 @@ Web Content Accessibility Guidelines (Gray #a8a8a8 - 9.1:1 contrast ✅)
 ## Related Issues
 
 ### Other Dark Mode Concerns Fixed Previously
+
 1. **Navigation background** - Uses CSS variables ✅
 2. **Button states** - Hover/focus with CSS variables ✅
 3. **Form inputs** - Background and text colors dynamic ✅
@@ -374,6 +421,7 @@ Web Content Accessibility Guidelines (Gray #a8a8a8 - 9.1:1 contrast ✅)
 5. **PWA Install Prompt** - Background and text responsive ✅
 
 ### Known Limitations
+
 1. **External Images:** Stock photos may not have dark mode variants (acceptable)
 2. **Google Maps Embed:** Uses Google's theme (no control)
 3. **Trustpilot Widget:** External iframe (no control)
@@ -383,6 +431,7 @@ Web Content Accessibility Guidelines (Gray #a8a8a8 - 9.1:1 contrast ✅)
 ## Future Improvements
 
 ### 1. Dark Mode Toggle (Optional)
+
 Allow users to override system preference:
 
 ```jsx
@@ -402,6 +451,7 @@ useEffect(() => {
 ---
 
 ### 2. High Contrast Mode (Already Implemented ✅)
+
 ```css
 @media (prefers-contrast: high) {
   :root {
@@ -415,6 +465,7 @@ useEffect(() => {
 ---
 
 ### 3. Forced Colors Mode (Already Implemented ✅)
+
 ```css
 @media (forced-colors: active) {
   * {
@@ -449,11 +500,13 @@ Pattern: Enforce CSS variable usage site-wide
 ## Summary
 
 **Total Instances Fixed:** 10
+
 - **AccessibilityPage.jsx:** 4 (subtitles)
 - **LazyImage.jsx:** 1 (error message)
 - **App.jsx:** 5 (RoCafé + Footer)
 
 **Prevention Measures:**
+
 1. ✅ CSS variable system documented
 2. ✅ Component template provided
 3. ✅ Testing checklist created
@@ -461,6 +514,7 @@ Pattern: Enforce CSS variable usage site-wide
 5. 🔄 Pre-commit hook recommended (to implement)
 
 **Verification:**
+
 - ✅ Site-wide grep search: 0 remaining `text-gray-[456]00` instances
 - ✅ All pages tested in Chrome dark mode
 - ✅ WCAG 2.2 AA contrast maintained

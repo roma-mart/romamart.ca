@@ -1,9 +1,11 @@
 # Unified Color System Implementation Guide
 
 ## Overview
+
 This guide outlines the steps to implement a unified color system for the Roma Mart website. The goal is to ensure consistent, accessible, and scalable color usage that complements the typography system and aligns with the brand's identity and development ethos.
 
 ## Objectives
+
 1. **Consistency**:
    - Define a single source of truth for all colors in `src/design/tokens.js`.
    - Use semantic names for colors (e.g., `primary`, `secondary`, `background`, `text-primary`).
@@ -20,9 +22,11 @@ This guide outlines the steps to implement a unified color system for the Roma M
 ## Implementation Plan
 
 ### Phase 1: Define Color Tokens
+
 1. **Expand `src/design/tokens.js`**:
    - Add a `COLORS` object to define all brand colors.
    - Include light and dark mode variants for each color.
+
    ```javascript
    export const COLORS = {
      primary: '#FFD700', // Brand yellow
@@ -64,6 +68,7 @@ This guide outlines the steps to implement a unified color system for the Roma M
 2. **Map Tokens to CSS Variables**:
    - Update `src/index.css` to include color tokens as CSS variables.
    - Ensure variables adapt to `prefers-color-scheme`.
+
    ```css
    :root {
      --color-primary: #FFD700;
@@ -86,9 +91,11 @@ This guide outlines the steps to implement a unified color system for the Roma M
    ```
 
 ### Phase 2: Refactor Components
+
 1. **Replace Hardcoded Colors**:
    - Identify components with hardcoded colors.
    - Replace with CSS variables or theme utilities.
+
    ```jsx
    <div style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text-primary)' }}>
      Welcome to Roma Mart
@@ -104,6 +111,7 @@ This guide outlines the steps to implement a unified color system for the Roma M
 #### Example: Replacing Hardcoded Colors
 
 Before (❌ Incorrect):
+
 ```jsx
 <div style={{ backgroundColor: '#FFFFFF', color: '#020178' }}>
   Welcome to Roma Mart
@@ -111,6 +119,7 @@ Before (❌ Incorrect):
 ```
 
 After (✅ Correct):
+
 ```jsx
 // Using CSS variables
 <div style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-primary)' }}>
@@ -128,6 +137,7 @@ const colors = useThemeColors();
 #### Example: Aligning Colors with Typography
 
 Before (❌ Incorrect):
+
 ```jsx
 <h1 style={{ color: '#FFD700' }}>
   Our Values
@@ -135,6 +145,7 @@ Before (❌ Incorrect):
 ```
 
 After (✅ Correct):
+
 ```jsx
 <h1 style={{ color: 'var(--color-primary)' }}>
   Our Values
@@ -146,9 +157,11 @@ const colors = useThemeColors();
 ```
 
 ### Phase 3: Automate Quality Checks
+
 1. **Enhance `check-quality.js`**:
    - Add rules to flag hardcoded colors.
    - Validate token usage and contrast ratios.
+
    ```javascript
    if (/#[0-9A-Fa-f]{6}/.test(line)) {
      issues.push({
@@ -162,12 +175,14 @@ const colors = useThemeColors();
    - Ensure all text meets WCAG 2.2 AA+ contrast ratios.
 
 ### Expanded Automation Details
+
 1. **Contrast Validation**:
    - Use tools like `axe-core` or `pa11y` to automate contrast checks.
    - Ensure all text meets a minimum contrast ratio of 4.5:1.
 
 2. **Token Usage Validation**:
    - Enhance `check-quality.js` to flag hardcoded colors and validate token usage.
+
    ```javascript
    if (/#[0-9A-Fa-f]{6}/.test(line)) {
      issues.push({
@@ -181,6 +196,7 @@ const colors = useThemeColors();
    - Validate that colors adapt correctly across breakpoints and themes (light/dark modes).
 
 ### Phase 4: Documentation
+
 1. **Create Developer Guides**:
    - Document the color system and its benefits.
    - Include examples and best practices for implementing tokens.
@@ -189,11 +205,13 @@ const colors = useThemeColors();
    - Update guides as new tokens or styles are added.
 
 ## Validation
+
 - Run `npm run check:all` to ensure quality compliance.
 - Test all components in staging and production environments.
 - Validate colors for accessibility, responsiveness, and brand consistency.
 
 ## Next Steps
+
 1. Assign team members to specific tasks.
 2. Establish a timeline for completing the implementation.
 3. Monitor progress and ensure alignment with the development ethos.

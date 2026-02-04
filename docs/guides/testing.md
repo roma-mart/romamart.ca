@@ -85,6 +85,7 @@ PRs cannot merge if checks fail.
 ### Core Web Vitals
 
 Monitor in production:
+
 - LCP (Largest Contentful Paint)
 - FID (First Input Delay)
 - CLS (Cumulative Layout Shift)
@@ -92,6 +93,7 @@ Monitor in production:
 ### Bundle Size
 
 Current targets (gzipped):
+
 - JavaScript: < 150 KB
 - CSS: < 10 KB
 - Total: < 200 KB

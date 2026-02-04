@@ -3,7 +3,10 @@
 
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /api
 
+Sitemap: https://romamart.ca/sitemap.xml
 # Point to sitemap
 Sitemap: https://romamart.ca/sitemap.xml
 

@@ -86,6 +86,7 @@ Upc: "176223301234"
 ```
 
 This renders as:
+
 - Item Name: "Espresso"
 - Price: $3.50
 - Category: Hot Coffee
@@ -118,6 +119,7 @@ If you need a category not in EXCEL_CATEGORY_MAP:
 
 1. Add items with new `oc_page` value in Excel
 2. Update `src/utils/excelMenuTransform.js`:
+
    ```javascript
    export const EXCEL_CATEGORY_MAP = {
      // ... existing categories
@@ -128,6 +130,7 @@ If you need a category not in EXCEL_CATEGORY_MAP:
      }
    };
    ```
+
 3. Commit code changes
 4. New category appears automatically
 
@@ -156,6 +159,7 @@ Located in `src/utils/__tests__/excelMenuTransform.test.js`:
 - Tests edge cases (empty data, missing fields)
 
 Run tests:
+
 ```bash
 npm test src/utils/__tests__/excelMenuTransform.test.js
 ```
@@ -211,6 +215,7 @@ npm test src/utils/__tests__/excelMenuTransform.test.js
 **Symptoms**: Static menu always displays
 
 **Fixes**:
+
 1. Check file location: Must be in `public/` directory
 2. Check file name: Must match path in useExcelMenu call
 3. Check console for errors
@@ -221,6 +226,7 @@ npm test src/utils/__tests__/excelMenuTransform.test.js
 **Symptoms**: All items in one category or wrong categories
 
 **Fixes**:
+
 1. Check oc_page values in Excel match EXCEL_CATEGORY_MAP keys exactly (case-sensitive)
 2. Verify no extra spaces in oc_page values
 3. Check Excel file structure matches expected format
@@ -230,6 +236,7 @@ npm test src/utils/__tests__/excelMenuTransform.test.js
 **Symptoms**: Prices too high/low or showing as NaN
 
 **Fixes**:
+
 1. Ensure cents field contains integers only (no decimals)
 2. Check for non-numeric values in cents column
 3. Verify Excel file format (not CSV with formatted currency)
@@ -239,6 +246,7 @@ npm test src/utils/__tests__/excelMenuTransform.test.js
 **Symptoms**: Items missing from page
 
 **Fixes**:
+
 1. Add category to EXCEL_CATEGORY_MAP in excelMenuTransform.js
 2. Or accept generic appearance for unknown category
 3. Check oc_page spelling matches Excel exactly

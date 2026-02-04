@@ -17,6 +17,7 @@ This guide describes the build and deployment process for the Roma Mart website 
 **Workflow:** `.github/workflows/accessibility-ci.yml`
 
 The workflow runs on:
+
 - Pull requests to `main`
 - Pushes to `main`
 
