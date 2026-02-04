@@ -39,7 +39,7 @@ const OrderCTA = ({ orderUrl = getOrderingUrl() }) => {
       target="_blank"
       rel="noopener noreferrer"
       tabIndex={isVisible ? 0 : -1}
-      className={`fixed bottom-[env(safe-area-inset-bottom,0.75rem)] right-4 md:right-6 md:bottom-6 z-50 flex items-center justify-center rounded-full bg-surface shadow-lg transition-all duration-500 will-change-opacity focus-visible:outline-2 focus-visible:outline-accent ${
+      className={`fixed bottom-[env(safe-area-inset-bottom,1rem)] right-4 md:right-6 md:bottom-6 z-50 flex items-center justify-center rounded-full bg-surface shadow-lg transition-all duration-500 will-change-opacity focus-visible:outline-2 focus-visible:outline-accent ${
         isVisible
           ? 'opacity-100 pointer-events-auto animate-fab-in'
           : 'opacity-0 pointer-events-none animate-fab-out'
