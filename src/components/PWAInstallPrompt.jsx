@@ -179,7 +179,7 @@ const PWAInstallPrompt = () => {
 
   return (
     <div
-      className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:max-w-md z-[10000] animate-slide-up"
+      className="fixed bottom-[calc(56px+env(safe-area-inset-bottom,0.75rem))] md:bottom-[calc(56px+1.5rem)] left-4 right-4 md:left-auto md:right-4 md:max-w-md z-[10000] animate-slide-up"
       role="dialog"
       aria-labelledby="pwa-install-title"
       aria-describedby="pwa-install-description"
