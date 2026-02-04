@@ -29,20 +29,34 @@ export const safeString = (value) => {
     return '';
   }
 
-  // Use native browser DOMParser to strip HTML tags
-  // Falls back to regex for SSR/prerender
+  // Use native browser DOMParser to strip HTML tags (most secure)
+  // Falls back to iterative regex for SSR/prerender or DOMParser failure
   let withoutTags;
   if (typeof window !== 'undefined' && window.DOMParser) {
     try {
       const doc = new DOMParser().parseFromString(value, 'text/html');
       withoutTags = doc.body.textContent || '';
     } catch {
-      // Fallback if DOMParser fails
-      withoutTags = value.replace(/<[^>]*>/g, '');
+      // Fallback if DOMParser fails - repeatedly strip tags until stable
+      // Prevents incomplete sanitization (e.g., <<script>script> -> <script>)
+      let previous;
+      let current = value;
+      do {
+        previous = current;
+        current = current.replace(/<[^>]*>/g, '');
+      } while (current !== previous);
+      withoutTags = current;
     }
   } else {
-    // SSR/prerender fallback
-    withoutTags = value.replace(/<[^>]*>/g, '');
+    // SSR/prerender fallback - repeatedly strip tags until stable
+    // Prevents incomplete sanitization (e.g., <<script>script> -> <script>)
+    let previous;
+    let current = value;
+    do {
+      previous = current;
+      current = current.replace(/<[^>]*>/g, '');
+    } while (current !== previous);
+    withoutTags = current;
   }
 
   return withoutTags
