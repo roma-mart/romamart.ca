@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 // ...existing code...
 import { LocationProvider } from './components/LocationProvider';
-import { getPrimaryLocation, getActiveLocationCount, LOCATIONS, isLocationOpenNow } from './data/locations';
+import { getPrimaryLocation, getActiveLocationCount, getPreferredLocation, LOCATIONS, isLocationOpenNow } from './data/locations';
 import { Logo } from './components/Logo';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -32,6 +32,7 @@ import { transformExcelToMenuItem } from './utils/excelMenuTransform';
 import HCaptchaWidget from './components/HCaptchaWidget';
 // import { getHCaptchaTheme } from './design/hcaptchaTheme'; // Uncomment if upgrading to Pro/Enterprise for custom themes
 import { useColorScheme } from './hooks/useColorScheme';
+import { useAutoLocation } from './hooks/useAutoLocation';
 
 // PWA Hooks
 import { useServiceWorker } from './hooks/useServiceWorker';
@@ -247,25 +248,32 @@ const RoCafeSection = () => {
 };
 
 const Locations = () => {
+  const [userCoords, setUserCoords] = useState(null);
   const primaryLocation = getPrimaryLocation();
+  const preferredLocation = getPreferredLocation({ userCoords }) || primaryLocation;
   const locationCount = getActiveLocationCount();
   
-  const displayLocation = useMemo(() => ({
-    id: primaryLocation.id,
-    name: primaryLocation.name,
-    address: primaryLocation.address.formatted,
-    mapLink: primaryLocation.google.mapLink,
-    isOpen: isLocationOpenNow(primaryLocation)
-  }), [primaryLocation]);
-  
-  const [activeLoc, setActiveLoc] = useState(displayLocation);
+  const handleAutoLocation = useCallback((pos) => {
+    const coords = pos?.coords;
+    if (coords?.latitude && coords?.longitude) {
+      setUserCoords({ latitude: coords.latitude, longitude: coords.longitude });
+    }
+  }, []);
 
-  // create memoized handlers for each location to avoid inline closures
-  const locationHandlers = React.useMemo(() => {
-    const map = {};
-    [displayLocation].forEach(loc => { map[loc.id] = () => setActiveLoc(loc); });
-    return map;
-  }, [displayLocation]);
+  useAutoLocation(handleAutoLocation);
+
+  const displayLocation = useMemo(() => ({
+    id: preferredLocation.id,
+    name: preferredLocation.name,
+    address: preferredLocation.address.formatted,
+    mapLink: preferredLocation.google.mapLink,
+    embedUrl: preferredLocation.google.embedUrl,
+    isOpen: isLocationOpenNow(preferredLocation)
+  }), [preferredLocation]);
+  
+  // Note: Homepage only displays one location (the preferred/closest one)
+  // so we don't need user selection logic here. Use displayLocation directly.
+  const activeLoc = displayLocation;
 
   return (
     <section id="locations" className="py-24" style={{ backgroundColor: 'var(--color-bg)' }}>
@@ -278,19 +286,17 @@ const Locations = () => {
         <div className="grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-1 space-y-4">
             {[displayLocation].map(loc => (
-              <button
-                type="button"
+              <div
                 key={loc.id}
-                onClick={locationHandlers[loc.id]}
-                className="w-full text-left p-6 rounded-xl border-2 transition-all flex items-center gap-4"
+                className="w-full text-left p-6 rounded-xl border-2 flex items-center gap-4"
                 style={{ 
-                  borderColor: activeLoc.id === loc.id ? 'var(--color-accent)' : 'var(--color-surface)',
-                  backgroundColor: activeLoc.id === loc.id ? 'var(--color-surface)' : 'transparent'
+                  borderColor: 'var(--color-accent)',
+                  backgroundColor: 'var(--color-surface)'
                 }}
               >
-                {primaryLocation.photos?.thumbnail && (
+                {preferredLocation.photos?.thumbnail && (
                   <img
-                    src={primaryLocation.photos.thumbnail}
+                    src={preferredLocation.photos.thumbnail}
                     alt={`${loc.name} thumbnail`}
                     className="w-16 h-16 rounded-lg object-cover border border-[var(--color-accent)] shadow"
                     loading="lazy"
@@ -304,20 +310,40 @@ const Locations = () => {
                     {loc.isOpen ? 'Open Now' : 'Closed'}
                   </div>
                 </div>
-              </button>
+              </div>
             ))}
           </div>
           <div className="lg:col-span-2 rounded-3xl overflow-hidden min-h-[400px] relative shadow-inner" style={{ backgroundColor: 'var(--color-surface)' }}>
-             <iframe
-               title={`Google Maps - ${primaryLocation.name}`}
-               src={primaryLocation.google.embedUrl}
-               width="100%"
-               height="100%"
-               style={{ border: 0 }}
-               allowFullScreen="" 
-               loading="lazy"
-               className="absolute inset-0"
-             ></iframe>
+             {displayLocation.embedUrl ? (
+               <iframe
+                 title={`Google Maps - ${displayLocation.name}`}
+                 src={displayLocation.embedUrl}
+                 width="100%"
+                 height="100%"
+                 style={{ border: 0 }}
+                 allowFullScreen="" 
+                 loading="lazy"
+                 className="absolute inset-0"
+               ></iframe>
+             ) : (
+               <div
+                 className="absolute inset-0 flex flex-col items-center justify-center gap-4 text-center px-6"
+                 style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)' }}
+               >
+                 <p className="font-inter text-sm" style={{ color: 'var(--color-text-muted)' }}>
+                   Open this location in Google Maps for directions.
+                 </p>
+                 <a
+                   href={displayLocation.mapLink}
+                   target="_blank"
+                   rel="noreferrer"
+                   className="px-4 py-2 rounded-full text-sm font-semibold"
+                   style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)' }}
+                 >
+                   Open Map
+                 </a>
+               </div>
+             )}
              <div className="absolute bottom-6 right-6">
                 <a 
                   href={activeLoc.mapLink}

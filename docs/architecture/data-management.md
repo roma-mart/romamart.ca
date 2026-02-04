@@ -17,7 +17,7 @@ export const locations = [
   {
     id: 'wellington-st',
     name: 'Wellington St. Location',
-    address: '189-3 Wellington St',
+    address: '3-189 Wellington St',
     city: 'Sarnia',
     province: 'ON',
     postalCode: 'N7T 1G7',

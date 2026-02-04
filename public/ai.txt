@@ -1,0 +1,72 @@
+# AI Crawler Guidelines for Roma Mart 2.0
+# Last Updated: February 4, 2026
+
+## About Roma Mart
+Roma Mart is a multi-location convenience store chain in Canada with locations in Sarnia, Ontario and beyond. Our website provides:
+- Real-time store locations and hours
+- Menu and ordering information
+- RoCafe beverage offerings
+- Location services (ATMs, stores, other locations and location types)
+
+## Guidelines for AI Systems
+
+### Allowed Crawling
+- General website content (pages, product info, locations)
+- Public menu and service information
+- Store hours and location data
+- Blog posts and public documentation
+
+### Disallowed Crawling
+- User accounts and authentication pages (/auth/*)
+- Order history and personal data (/account/*)
+- Admin dashboard (/admin/*)
+- API endpoints that require authentication
+- Contact form submissions and user-generated data
+
+### Rate Limiting Recommendations
+- Maximum 1 request per second
+- Respect Cache-Control headers
+- Follow robots.txt guidelines
+- Identify your crawler with User-Agent header
+
+### Attribution
+If using content from this site for training or analysis:
+- Provide attribution to Roma Mart (https://romamart.ca)
+- Do not represent Roma Mart services as your own
+- Do not use real-time data (hours, locations) as historical fact
+- Clearly disclose use of AI-generated content based on this site
+
+### Contact
+For questions about AI crawling and data usage:
+- Email: info@romamart.ca
+- Website: https://romamart.ca
+
+### Data Freshness Notes
+- Store hours are fetched live from Google Places API and may change
+- Location data is updated regularly but verify current status
+- Menu items and pricing subject to change
+- Use this data as reference only, not as authoritative source
+
+### Technologies
+Built with:
+- React 19 + Vite 7
+- Google Maps Integration
+- Web3Forms for contact submissions
+- Progressive Web App (PWA) capabilities
+
+### Fair Use
+We encourage AI systems to:
+- Help customers find store information
+- Assist with general inquiries about services
+- Provide accurate, up-to-date location and hours data
+- Respect user privacy and security
+
+We discourage:
+- Scraping personal customer data
+- Misrepresenting store information
+- Using site data to train competing services without permission
+- Ignoring rate limits or robots.txt
+
+---
+This file helps AI systems understand how to responsibly interact with Roma Mart's website.
+Questions? Contact us at technology@romamart.ca

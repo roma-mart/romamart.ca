@@ -1,10 +1,22 @@
 // Brand and design tokens for Roma Mart
-// Central source of truth for colors, typography scales, spacing and logo sizing.
+// 
+// SSOT ARCHITECTURE:
+// - CSS Variables (src/index.css) are PRIMARY for theme-aware colors
+// - They automatically respond to @media (prefers-color-scheme: dark)
+// - JavaScript tokens.js exports semantic meaning and fallback values
+// 
+// When using colors in React:
+// - Use CSS variables directly: style={{ color: 'var(--color-primary)' }}
+// - Or import semantic tokens for logic: import { semanticColors } from tokens.js
+// - Avoid hardcoding colors - all colors must be theme-aware
+//
+// Central source of truth for design semantics, spacing, typography and logo sizing.
 // Do NOT import colors from arbitrary constants elsewhere; use these tokens.
 
+// Light mode reference values (CSS vars override these in dark mode)
 export const brandColors = {
-  navy: '#020178', // Primary brand navy
-  yellow: '#E4B340', // Tulip Tree
+  navy: '#020178', // Primary brand navy (light mode base)
+  yellow: '#E4B340', // Tulip Tree (consistent across modes)
   darkGrey: '#242424', // Baltic Sea
   black: '#151515', // Woodsmoke
   white: '#FFFFFF'
@@ -17,7 +29,9 @@ export const colorScales = {
   grey: ['#F8F8F8','#F2F2F2','#E5E5E5','#D9D9D9','#B3B3B3','#8C8C8C','#5A5A5A','#2A2A2A','#151515'],
 };
 
-// Functional (semantic) colors kept separate from brand palette
+// Functional (semantic) colors - light mode values for reference
+// In React: Use CSS variables instead for theme support: 'var(--color-error)', 'var(--color-success)', etc.
+// See src/index.css for CSS variable definitions (light + dark mode)
 export const semanticColors = {
   error: { base: '#DC2626', surface: '#FEE2E2', textStrong: '#991B1B' },
   warning: { base: '#F59E0B', surface: '#FFFBEB', textStrong: '#78350F' },

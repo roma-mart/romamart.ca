@@ -23,16 +23,66 @@
     <meta property="og:title" content="Roma Mart Convenience | Groceries, Coffee & More in Sarnia, ON" />
     <meta property="og:description" content="Your local one-stop shop for everything from daily essentials to premium cafe drinks in Sarnia, ON." />
     <meta property="og:image" content="https://romamart.ca/og-image.jpg" />
+    <meta property="og:image:alt" content="Roma Mart storefront and branding" />
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content="https://romamart.ca/" />
     <meta property="twitter:title" content="Roma Mart Convenience | Groceries, Coffee & More" />
     <meta property="twitter:description" content="Your local one-stop shop for everything from daily essentials to premium cafe drinks." />
     <meta property="twitter:image" content="https://romamart.ca/twitter-card.jpg" />
+    <meta property="twitter:image:alt" content="Roma Mart storefront and branding" />
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&family=Inter:wght@400;700&display=swap" rel="stylesheet" />
+    <!-- Structured Data for SEO (JSON-LD) - LocalBusiness & WebSite schemas -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "LocalBusiness",
+          "@id": "https://romamart.ca/#business",
+          "name": "Roma Mart Convenience",
+          "alternateName": "Roma Mart",
+          "description": "Your daily stop & go convenience store in Sarnia, Ontario. Fresh RoCafé beverages, ATM, Bitcoin ATM, printing, and more.",
+          "url": "https://romamart.ca",
+          "telephone": "+1-382-342-2000",
+          "email": "contact@romamart.ca",
+          "priceRange": "$$",
+          "image": "https://romamart.ca/images/store-front.jpg",
+          "logo": "https://romamart.ca/logo.png",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "3-189 Wellington Street",
+            "addressLocality": "Sarnia",
+            "addressRegion": "ON",
+            "postalCode": "N7T 1G6",
+            "addressCountry": "CA"
+          },
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": 42.970389,
+            "longitude": -82.404589
+          },
+          "openingHoursSpecification": [
+            {"@type": "OpeningHoursSpecification","dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens": "08:30","closes": "21:00"},
+            {"@type": "OpeningHoursSpecification","dayOfWeek": ["Saturday","Sunday"],"opens": "08:30","closes": "21:00"}
+          ],
+          "sameAs": ["https://www.facebook.com/romamartca","https://www.instagram.com/romamartca/","https://www.tiktok.com/@romamartca/","https://www.x.com/romamartca/"],
+          "paymentAccepted": ["Cash","Credit Card","Debit Card","Interac","Visa","Mastercard","American Express","Bitcoin"]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://romamart.ca/#website",
+          "url": "https://romamart.ca",
+          "name": "Roma Mart Convenience",
+          "publisher": {"@id": "https://romamart.ca/#business"}
+        }
+      ]
+    }
+    </script>
+
 
     <!-- Dynamically inject Google Tag Manager when VITE_GTM_ID is provided at build time -->
     <script type="module">

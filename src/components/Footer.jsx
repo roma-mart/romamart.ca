@@ -15,8 +15,8 @@ import { LOCATIONS, getActiveLocations } from '../data/locations';
 import { NAVIGATION_LINKS } from '../config/navigation';
 import OrderCTA from './OrderCTA';
 import Button from './Button';
-// Dynamic import for react-google-reviews (Vite/Rollup compatibility)
-// Placeholder: For future Google Places API integration, see ARCHITECTURE.md.
+import { ReactGoogleReviews } from 'react-google-reviews';
+import 'react-google-reviews/dist/index.css';
 
 
 // Social platforms to control display in Footer (label, icon)
@@ -146,32 +146,25 @@ export default function Footer() {
     return handlers;
   }, []);
 
-  React.useEffect(() => {
-    // Dynamically load Featurable carousel script after mount
-    if (typeof window !== 'undefined' && import.meta.env.VITE_FEATURABLE_KEY) {
-      if (!document.getElementById('featurable-carousel-script')) {
-        const script = document.createElement('script');
-        script.src = 'https://featurable.com/assets/v2/carousel_default.min.js';
-        script.defer = true;
-        script.charset = 'UTF-8';
-        script.id = 'featurable-carousel-script';
-        document.body.appendChild(script);
-      }
-    }
-  }, []);
-
   return (
       <React.Fragment>
       {/* Persistent floating OrderCTA button for site-wide visibility */}
       <OrderCTA />
       <footer className="pt-16 pb-8" style={{ backgroundColor: 'var(--color-footer)', color: 'var(--color-on-footer)' }}>
-        {/* Featurable Google Reviews Carousel*/}
+        {/* Featurable Google Reviews Carousel */}
         <div className="mb-8 flex justify-center">
           {import.meta.env.VITE_FEATURABLE_KEY ? (
-            <div
-              id={`featurable-${import.meta.env.VITE_FEATURABLE_KEY}`}
-              data-featurable-async
-            ></div>
+            <ReactGoogleReviews 
+              layout="carousel"
+              featurableId={import.meta.env.VITE_FEATURABLE_KEY}
+              theme="dark"
+              carouselAutoplay={true}
+              carouselSpeed={5000}
+              maxItems={3}
+              reviewVariant="card"
+              structuredData={false}
+              brandName={COMPANY_DATA.name}
+            />
           ) : (
             <div className="text-center text-base font-inter text-[var(--color-on-footer-muted)]">
               <span>We value your feedback!&nbsp;</span>
@@ -186,8 +179,6 @@ export default function Footer() {
             </div>
           )}
         </div>
-        {/* For future: Google Places API reviews integration goes here instead of featureable. See ARCHITECTURE.md for details. */}
-        {/* Featurable carousel script is loaded via useEffect above */}
       <div className="max-w-7xl mx-auto p-4 grid md:grid-cols-4 gap-12 mb-12">
         <div className="p-1 col-span-1 md:col-span-2">
            <a 
@@ -293,6 +284,18 @@ export default function Footer() {
                     </a>
                   </li>
                 ))}
+                <li>
+                  <a
+                    href={`${BASE_URL}ai.txt`}
+                    className="transition-colors text-xs"
+                    style={{ color: 'var(--color-on-footer-muted)' }}
+                    onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'}
+                    onMouseLeave={e => e.currentTarget.style.color = 'var(--color-on-footer-muted)'}
+                    title="AI Crawler Guidelines"
+                  >
+                    AI Guidelines
+                  </a>
+                </li>
               </ul>
             </div>
         </div>
