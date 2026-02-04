@@ -240,7 +240,7 @@ export default function Footer() {
             <div className="p-1">
               <h4 className="font-heading text-lg mb-6" style={{ color: 'var(--color-on-footer)' }}>Pages</h4>
               <ul className="space-y-3 font-inter" style={{ color: 'var(--color-on-footer-muted)' }}>
-                {NAVIGATION_LINKS.filter(link => link.showIn.footer && !['privacy','terms','cookies','accessibility'].includes(link.label.toLowerCase())).map(link => (
+                {NAVIGATION_LINKS.filter(link => link.showIn.footer && !['privacy','terms','cookies','accessibility','return-policy'].includes(link.label.toLowerCase())).map(link => (
                   <li key={link.href}>
                     <a
                       href={`${BASE_URL}${link.href.replace('/', '')}`}
@@ -271,7 +271,7 @@ export default function Footer() {
             <div className="p-1">
               <h4 className="font-heading text-lg mb-6" style={{ color: 'var(--color-on-footer)' }}>Legal & Accessibility</h4>
               <ul className="space-y-2 font-inter" style={{ color: 'var(--color-on-footer-muted)' }}>
-                {NAVIGATION_LINKS.filter(link => link.showIn.footer && ['privacy','terms','cookies','accessibility'].includes(link.label.toLowerCase())).map(link => (
+                {NAVIGATION_LINKS.filter(link => link.showIn.footer && ['privacy','terms','cookies','accessibility','return-policy'].includes(link.label.toLowerCase())).map(link => (
                   <li key={link.href}>
                     <a
                       href={`${BASE_URL}${link.href.replace('/', '')}`}
