@@ -21,7 +21,7 @@
  */
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Star, ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react';
-import { getPrimaryLocation } from '../data/locations';
+import { useLocationContext } from '../hooks/useLocationContext';
 import { circuitBreakers } from '../utils/apiCircuitBreaker';
 
 const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours (reviews don't change frequently)
@@ -288,10 +288,13 @@ function ReviewCard({ review }) {
 /**
  * Main GoogleReviews Component
  * Modern carousel with smooth animations and proper accessibility
+ * 
+ * Automatically fetches reviews for the nearest location to the user,
+ * or falls back to primary (HQ) location if user location unavailable.
  */
 export default function GoogleReviews() {
-  const location = getPrimaryLocation();
-  const placeId = location?.google?.placeId;
+  const { nearestLocation } = useLocationContext();
+  const placeId = nearestLocation?.google?.placeId;
 
   const [reviews, setReviews] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -403,7 +406,7 @@ export default function GoogleReviews() {
         >
           <span>We value your feedback!&nbsp;</span>
           <a
-            href={location?.google?.mapLink}
+            href={nearestLocation?.google?.mapLink}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1 underline hover:opacity-80 transition-opacity"
@@ -532,7 +535,7 @@ export default function GoogleReviews() {
       {/* View All Link */}
       <div className="text-center mt-8">
         <a
-          href={location?.google?.mapLink}
+          href={nearestLocation?.google?.mapLink}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all focus:outline-none"
