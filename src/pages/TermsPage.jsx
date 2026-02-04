@@ -78,7 +78,7 @@ const TermsPage = () => {
               3. Age Restrictions
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
-              Certain products (tobacco, vape products, lottery tickets, etc where applicable) are restricted to customers 19 years of age or older in Ontario. Valid government-issued photo ID is required for purchase.
+              Certain products (tobacco, vape products, lottery tickets, etc. where applicable) are restricted to customers 19 years of age or older in Ontario. Valid government-issued photo ID is required for purchase.
             </p>
           </section>
 

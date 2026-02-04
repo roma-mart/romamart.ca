@@ -271,7 +271,7 @@ Ensure consistency everywhere:
 | Property | Value | Locations |
 |----------|-------|-----------|
 | Business Name | Roma Mart | GSC, GMB, Google Maps, local directories |
-| Address | 189-3 Wellington Street, Sarnia, ON N7T 1G6 | Website, GMB, directory listings |
+| Address | 3-189 Wellington Street, Sarnia, ON N7T 1G6 | Website, GMB, directory listings |
 | Phone | From config/company_data.js | Website footer, GMB, directory listings |
 
 **Audit Action Items:**

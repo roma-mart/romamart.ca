@@ -261,23 +261,30 @@ function SingleSelectionMode({ customization, selectedOptions, onOptionsChange }
 
   const handleKeyDown = (e, currentIdx) => {
     const options = customization.options;
-    let nextIdx = currentIdx;
     
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
       e.preventDefault();
-      nextIdx = (currentIdx + 1) % options.length;
+      const nextIdx = (currentIdx + 1) % options.length;
+      handleSelect(options[nextIdx].name);
+      // Move focus to next button
+      setTimeout(() => {
+        const buttons = document.querySelectorAll('[role="radio"]');
+        buttons[nextIdx]?.focus();
+      }, 0);
     } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
       e.preventDefault();
-      nextIdx = (currentIdx - 1 + options.length) % options.length;
-    } else {
-      return;
+      const nextIdx = (currentIdx - 1 + options.length) % options.length;
+      handleSelect(options[nextIdx].name);
+      // Move focus to previous button
+      setTimeout(() => {
+        const buttons = document.querySelectorAll('[role="radio"]');
+        buttons[nextIdx]?.focus();
+      }, 0);
     }
-    
-    handleSelect(options[nextIdx].name);
   };
 
   return (
-    <div className="flex gap-2 flex-wrap" role="radiogroup">
+    <div className="flex gap-2 flex-wrap" role="radiogroup" aria-label={customization.type}>
       {customization.options.map((option, optIdx) => {
         const isSelected = selectedOptions[customization.type] === option.name;
         
@@ -299,6 +306,7 @@ function SingleSelectionMode({ customization, selectedOptions, onOptionsChange }
             }}
             role="radio"
             aria-checked={isSelected}
+            tabIndex={isSelected ? 0 : -1}
           >
             {option.name}
             {option.price > 0 && (

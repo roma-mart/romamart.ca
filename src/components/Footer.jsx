@@ -381,10 +381,8 @@ export default function Footer() {
         <button
           type="button"
           aria-label="Back to top of page"
-          className="px-8 py-4 min-w-[44px] min-h-[44px] rounded-full font-bold font-inter bg-[var(--color-accent)] text-[var(--color-primary)] shadow-lg transition-all focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
-          style={{ WebkitTapHighlightColor: 'transparent', transform: 'translateZ(0)', outline: '2px solid var(--color-focus)', outlineOffset: '2px', fontSize: '1rem' }}
-          onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05) translateZ(0)'}
-          onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1) translateZ(0)'}
+          className="px-8 py-4 min-w-[44px] min-h-[44px] rounded-full font-bold font-inter bg-[var(--color-accent)] text-[var(--color-primary)] shadow-lg transition-all transform hover:scale-105 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+          style={{ WebkitTapHighlightColor: 'transparent', outline: '2px solid var(--color-focus)', outlineOffset: '2px', fontSize: '1rem' }}
           onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }}
         >
           ↑ Back to Top

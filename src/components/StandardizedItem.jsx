@@ -302,10 +302,8 @@ const StandardizedItem = ({ item, itemType, defaultExpanded = false }) => {
                 }
                 window.open(getOrderingUrl(), '_blank', 'noopener,noreferrer');
               }}
-              className="w-full py-3 px-4 rounded-lg font-bold font-inter text-center transition-all mb-2 flex items-center justify-center gap-2"
-              style={{ WebkitTapHighlightColor: 'transparent', transform: 'translateZ(0)', backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)' }}
-              onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05) translateZ(0)'}
-              onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1) translateZ(0)'}
+              className="w-full py-3 px-4 rounded-lg font-bold font-inter text-center transition-all mb-2 flex items-center justify-center gap-2 transform hover:scale-105"
+              style={{ WebkitTapHighlightColor: 'transparent', backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)' }}
               aria-label={`Order this item for ${formatPrice(currentPrice)}`}
             >
               <ShoppingCart className="w-5 h-5" aria-hidden="true" />
@@ -320,10 +318,8 @@ const StandardizedItem = ({ item, itemType, defaultExpanded = false }) => {
               target={action.url ? "_blank" : undefined}
               rel={action.url ? "noopener noreferrer" : undefined}
               onClick={(e) => e.stopPropagation()}
-              className="block w-full py-3 px-4 rounded-lg font-bold font-inter text-center transition-all"
-              style={{ WebkitTapHighlightColor: 'transparent', transform: 'translateZ(0)', backgroundColor: 'var(--color-primary)', color: 'var(--color-accent)', textDecoration: 'none' }}
-              onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05) translateZ(0)'}
-              onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1) translateZ(0)'}
+              className="block w-full py-3 px-4 rounded-lg font-bold font-inter text-center transition-all transform hover:scale-105"
+              style={{ WebkitTapHighlightColor: 'transparent', backgroundColor: 'var(--color-primary)', color: 'var(--color-accent)', textDecoration: 'none' }}
             >
               {action.text}
             </a>
