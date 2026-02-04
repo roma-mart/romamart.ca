@@ -2,7 +2,7 @@
 
 ## Current System Overview
 
-### What We Have Now:
+### What We Have Now
 
 **Data Location:** `src/App.jsx` - `STORE_DATA.locations` array
 
@@ -25,10 +25,12 @@ locations: [
 ```
 
 **Used In:**
+
 1. **Homepage** - Location section (single active location display)
 2. **LocationsPage** - Full locations list with maps
 
 **Limitations:**
+
 - Hardcoded in JavaScript
 - No type differentiation (all treated as stores)
 - No primary/featured flag
@@ -39,7 +41,8 @@ locations: [
 
 ## Proposed Enhanced System
 
-### 🎯 Goals:
+### 🎯 Goals
+
 1. Support **multiple location types** (stores, vending, ATMs, minimarts)
 2. **Mark one as primary** (featured on homepage, HQ address)
 3. **Auto-generate** location cards for homepage and locations page
@@ -50,7 +53,8 @@ locations: [
 
 ## 🏗️ Proposed Data Structure
 
-### Location Types:
+### Location Types
+
 ```javascript
 const LOCATION_TYPES = {
   CONVENIENCE_STORE: 'convenience_store',    // Full-service Roma Mart
@@ -63,7 +67,8 @@ const LOCATION_TYPES = {
 };
 ```
 
-### Enhanced Location Object:
+### Enhanced Location Object
+
 ```javascript
 {
   // Basic Info
@@ -193,6 +198,7 @@ const LOCATION_TYPES = {
 ## 🎨 Implementation Approach
 
 ### Option 1: Single JavaScript File (Current - Enhanced)
+
 **Location:** `src/data/locations.js`
 
 ```javascript
@@ -221,6 +227,7 @@ export const getLocationsByType = (type) => LOCATIONS.filter(loc => loc.type ===
 ```
 
 **Pros:**
+
 - ✅ Easy to manage
 - ✅ No backend needed
 - ✅ Fast (no API calls)
@@ -228,6 +235,7 @@ export const getLocationsByType = (type) => LOCATIONS.filter(loc => loc.type ===
 - ✅ Simple deployment
 
 **Cons:**
+
 - ❌ Requires code deploy to update
 - ❌ No live updates
 - ❌ Can't update from phone/tablet
@@ -235,6 +243,7 @@ export const getLocationsByType = (type) => LOCATIONS.filter(loc => loc.type ===
 ---
 
 ### Option 2: JSON Configuration File
+
 **Location:** `public/data/locations.json`
 
 ```json
@@ -252,11 +261,13 @@ export const getLocationsByType = (type) => LOCATIONS.filter(loc => loc.type ===
 ```
 
 **Pros:**
+
 - ✅ Easy to edit (just JSON)
 - ✅ Can be updated without rebuild
 - ✅ Can use online JSON editor
 
 **Cons:**
+
 - ❌ Still requires file upload to update
 - ❌ No validation until runtime
 - ❌ Manual JSON editing (error-prone)
@@ -264,9 +275,11 @@ export const getLocationsByType = (type) => LOCATIONS.filter(loc => loc.type ===
 ---
 
 ### Option 3: Headless CMS (Sanity, Contentful, Strapi)
+
 **External service** for content management
 
 **Pros:**
+
 - ✅ Beautiful admin UI
 - ✅ Update from anywhere (phone, tablet, computer)
 - ✅ Real-time updates
@@ -276,12 +289,14 @@ export const getLocationsByType = (type) => LOCATIONS.filter(loc => loc.type ===
 - ✅ API-driven
 
 **Cons:**
+
 - ❌ Additional service to maintain
 - ❌ Potential monthly cost (free tiers exist)
 - ❌ More complexity
 - ❌ Requires internet for admin
 
 **Best Options:**
+
 1. **Sanity.io** - Free tier: 3 users, unlimited documents, 10GB bandwidth
 2. **Contentful** - Free tier: 1 user, 25K records
 3. **Strapi** - Self-hosted, fully free but needs server
@@ -289,9 +304,11 @@ export const getLocationsByType = (type) => LOCATIONS.filter(loc => loc.type ===
 ---
 
 ### Option 4: Google Sheets + API (Budget-Friendly)
+
 **Use Google Sheets as database**
 
 **Pros:**
+
 - ✅ Free forever
 - ✅ Familiar interface (Excel-like)
 - ✅ Edit from phone (Google Sheets app)
@@ -300,6 +317,7 @@ export const getLocationsByType = (type) => LOCATIONS.filter(loc => loc.type ===
 - ✅ Easy data validation
 
 **Cons:**
+
 - ❌ Not as elegant as CMS
 - ❌ Rate limits (100 requests/100 seconds)
 - ❌ Manual column setup
@@ -309,9 +327,11 @@ export const getLocationsByType = (type) => LOCATIONS.filter(loc => loc.type ===
 ## 📊 Recommended Approach
 
 ### **For Now: Option 1 (JavaScript File)**
+
 **Why:** You have 1 location, planning expansion but not immediate. Simple, fast, no extra dependencies.
 
 **Implementation:**
+
 ```javascript
 // src/data/locations.js
 export const LOCATIONS = [
@@ -330,7 +350,9 @@ export const LOCATIONS = [
 ---
 
 ### **For Future (10+ locations): Option 3 (Sanity CMS)**
-**Why:** 
+
+**Why:**
+
 - Professional admin interface
 - Multi-location management becomes complex
 - Image management critical (exterior/interior photos per location)
@@ -341,13 +363,15 @@ export const LOCATIONS = [
 
 ## 🚀 Homepage Integration
 
-### Current Homepage Location Section:
+### Current Homepage Location Section
+
 ```javascript
 // Currently shows single location
 <Locations />
 ```
 
-### Proposed Dynamic System:
+### Proposed Dynamic System
+
 ```javascript
 // Auto-displays primary location + quick access to all
 const primaryLocation = getPrimaryLocation();
@@ -370,6 +394,7 @@ const primaryLocation = getPrimaryLocation();
 ## 📍 Locations Page Auto-Generation
 
 ### Current: Hardcoded single location
+
 ### Proposed: Auto-generated from LOCATIONS array
 
 ```javascript
@@ -408,6 +433,7 @@ const LocationsPage = () => {
 ## 🎯 Example Usage Scenarios
 
 ### Scenario 1: Add Second Convenience Store
+
 ```javascript
 // src/data/locations.js
 export const LOCATIONS = [
@@ -433,6 +459,7 @@ export const LOCATIONS = [
 ```
 
 **Result:**
+
 - Homepage still features Wellington (primary)
 - Locations page now shows 2 stores automatically
 - Both have maps, hours, services
@@ -440,6 +467,7 @@ export const LOCATIONS = [
 ---
 
 ### Scenario 2: Add Vending Machine Network
+
 ```javascript
 {
   id: "vend-courthouse-001",
@@ -464,6 +492,7 @@ export const LOCATIONS = [
 ```
 
 **Result:**
+
 - Locations page shows vending machines in separate section
 - Different card design (smaller, simpler)
 - No map embed needed (just "Get Directions" link)
@@ -471,6 +500,7 @@ export const LOCATIONS = [
 ---
 
 ### Scenario 3: Coming Soon Location
+
 ```javascript
 {
   id: "loc-downtown-003",
@@ -485,6 +515,7 @@ export const LOCATIONS = [
 ```
 
 **Result:**
+
 - Shows "Coming Soon" badge
 - No hours/services displayed
 - Shows "Opening March 2026"
@@ -495,7 +526,9 @@ export const LOCATIONS = [
 ## 💡 Additional Features We Can Add
 
 ### 1. **Nearest Location Finder**
+
 Uses browser geolocation to find closest location
+
 ```javascript
 <button onClick={findNearestLocation}>
   📍 Find Nearest Roma Mart
@@ -503,6 +536,7 @@ Uses browser geolocation to find closest location
 ```
 
 ### 2. **Location Filtering**
+
 ```javascript
 <select onChange={filterLocations}>
   <option>All Locations</option>
@@ -514,18 +548,21 @@ Uses browser geolocation to find closest location
 ```
 
 ### 3. **Location Comparison**
+
 ```javascript
 // Compare 2-3 locations side-by-side
 <CompareLocations locations={[loc1, loc2]} />
 ```
 
 ### 4. **Hours Status Widget**
+
 ```javascript
 // Shows real-time "Open Now" / "Closed" / "Opens at 7am"
 <LocationStatus location={primaryLocation} />
 ```
 
 ### 5. **Service Availability Search**
+
 ```javascript
 // Find all locations with Bitcoin ATM
 const btmLocations = LOCATIONS.filter(loc => 
@@ -538,22 +575,26 @@ const btmLocations = LOCATIONS.filter(loc =>
 ## 🛠️ Implementation Steps
 
 ### Phase 1: Structure Setup (Today)
+
 1. Create `src/data/locations.js`
 2. Move Wellington location data to new structure
 3. Add helper functions (getPrimaryLocation, etc.)
 4. Update App.jsx to import from locations.js
 
 ### Phase 2: Homepage Integration (Today)
+
 1. Update homepage Locations component
 2. Auto-display primary location
 3. Add "View All Locations" link if multiple exist
 
 ### Phase 3: LocationsPage Enhancement (Today)
+
 1. Auto-generate location cards from LOCATIONS array
 2. Group by type (stores, vending, ATMs)
 3. Add filtering/sorting
 
 ### Phase 4: Future Features (As Needed)
+
 1. Google Business Profile API integration (live hours)
 2. Geolocation nearest finder
 3. Service availability search
@@ -564,10 +605,12 @@ const btmLocations = LOCATIONS.filter(loc =>
 ## 📝 Summary
 
 **Current State:**
+
 - 1 hardcoded location in App.jsx
 - Basic display on homepage and locations page
 
 **Proposed System:**
+
 - Centralized location data in `src/data/locations.js`
 - Rich metadata (type, services, features, photos)
 - Primary location flag (featured on homepage)
@@ -575,11 +618,13 @@ const btmLocations = LOCATIONS.filter(loc =>
 - Auto-generates location pages
 
 **Immediate Action:**
+
 1. I can implement Phase 1-3 today (structured data + auto-generation)
 2. Add your Wellington location with full details
 3. You can easily add new locations by copying the structure
 
 **Future Scalability:**
+
 - Add locations by editing one JavaScript file
 - When you hit 5+ locations, we migrate to Sanity CMS
 - System supports 100+ locations without changes

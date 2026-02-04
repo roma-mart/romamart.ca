@@ -21,7 +21,7 @@
  *       breaker.recordFailure(error);
  *     }
  *   }
- *   console.log(breaker.getStatus());
+ *   breaker.getStatus();
  * 
  * @module utils/apiCircuitBreaker
  */
@@ -141,6 +141,18 @@ export class ApiCircuitBreaker {
   }
 
   /**
+   * Record successful API call (clears failure count)
+   * Safe to use in production
+   */
+  recordSuccess() {
+    if (this.failureCount > 0 || this.isOpen) {
+      this.failureCount = 0;
+      this.lastFailureTime = null;
+      this.isOpen = false;
+    }
+  }
+
+  /**
    * Manually reset circuit breaker (dev/testing only)
    * 
    * @internal
@@ -175,6 +187,7 @@ export function createApiCircuitBreaker(apiName, options = {}) {
 export const circuitBreakers = {
   googlePlaces: createApiCircuitBreaker('Google Places API'),
   web3Forms: createApiCircuitBreaker('Web3Forms API'),
+  reviews: createApiCircuitBreaker('Reviews API')
 };
 
 export default ApiCircuitBreaker;

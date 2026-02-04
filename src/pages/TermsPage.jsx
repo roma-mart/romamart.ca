@@ -78,7 +78,7 @@ const TermsPage = () => {
               3. Age Restrictions
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
-              Certain products (tobacco, vape products, lottery tickets, and alcohol where applicable) are restricted to customers 19 years of age or older in Ontario. Valid government-issued photo ID is required for purchase.
+              Certain products (tobacco, vape products, lottery tickets, etc. where applicable) are restricted to customers 19 years of age or older in Ontario. Valid government-issued photo ID is required for purchase.
             </p>
           </section>
 
@@ -87,7 +87,7 @@ const TermsPage = () => {
               4. Payment Terms
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
-              We accept cash, debit, and credit card payments. A 2.5% discount is applied to all cash purchases. All prices include applicable taxes unless otherwise stated.
+              We accept cash, debit, and credit card payments. All prices exclude applicable taxes unless otherwise stated.
             </p>
           </section>
 
@@ -127,9 +127,9 @@ const TermsPage = () => {
             </p>
             <div className="p-6 rounded-lg" style={{ backgroundColor: 'var(--color-surface)' }}>
               <p style={textColor}><strong>Roma Mart Corp.</strong></p>
-              <p style={textColor}>189-3 Wellington Street</p>
+              <p style={textColor}>3-189 Wellington Street</p>
               <p style={textColor}>Sarnia, ON N7T 1G6</p>
-              <p style={textColor}>Email: <a href="mailto:contact@romamart.ca" style={{ color: 'var(--color-accent)' }}>contact@romamart.ca</a></p>
+              <p style={textColor}>Email: <a href="mailto:legal@romamart.ca" style={{ color: 'var(--color-accent)' }}>legal@romamart.ca</a></p>
               <p style={textColor}>Phone: <a href="tel:+13823422000" style={{ color: 'var(--color-accent)' }}>+1 (382) 342-2000</a></p>
               <p className="text-sm mt-4" style={mutedTextColor}>GST/HST#: {COMPANY_DATA.gstNumber}</p>
             </div>

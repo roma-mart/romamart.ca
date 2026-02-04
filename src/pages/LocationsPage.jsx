@@ -10,7 +10,7 @@ import LiveHoursDisplay from '../components/LiveHoursDisplay';
 import { useAutoLocation } from '../hooks/useAutoLocation';
 
 const LocationsPage = () => {
-  const [loadedMaps, setLoadedMaps] = useState(() => new Set());
+  const [userLoadedMaps, setUserLoadedMaps] = useState(() => []);
   const [userCoords, setUserCoords] = useState(null);
 
 
@@ -33,6 +33,13 @@ const LocationsPage = () => {
     locations: getActiveLocations()
   });
   const preferredLocationId = sortedLocations[0]?.id;
+  const loadedMaps = (() => {
+    const combined = new Set(userLoadedMaps);
+    if (preferredLocationId) {
+      combined.add(preferredLocationId);
+    }
+    return combined;
+  })();
 
   const locations = sortedLocations.map(loc => ({
     ...loc,
@@ -48,11 +55,7 @@ const LocationsPage = () => {
   }));
 
   const handleLoadMap = (locationId) => {
-    setLoadedMaps(prev => {
-      const next = new Set(prev);
-      next.add(locationId);
-      return next;
-    });
+    setUserLoadedMaps(prev => (prev.includes(locationId) ? prev : [...prev, locationId]));
   };
 
   return (
@@ -196,8 +199,8 @@ const LocationsPage = () => {
                   <LiveHoursDisplay 
                     placeId={location.google.placeId}
                     fallbackHours={{
-                      weekdays: location.hours.weekdays,
-                      weekends: location.hours.weekends
+                      daily: location.hours.daily,
+                      exceptions: location.hours.exceptions
                     }}
                     showStatus={true}
                   />
@@ -242,19 +245,31 @@ const LocationsPage = () => {
                 <div className="w-full aspect-[4/3] min-h-[18rem] max-h-[28rem] order-1">
                   <LocationImageCarousel photos={location.photos} locationName={location.name} />
                 </div>
-                <div className="w-full aspect-[4/3] min-h-[18rem] max-h-[28rem] order-2">
+                <div className="w-full aspect-[4/3] min-h-[18rem] max-h-[28rem] order-2 relative">
                   {location.id === preferredLocationId ? (
                     location.mapUrl && loadedMaps.has(location.id) ? (
-                      <iframe 
-                        title={`Google Maps - ${location.name}`}
-                        src={location.mapUrl}
-                        width="100%"
-                        height="100%"
-                        style={{ border: 0, borderRadius: 0 }}
-                        allowFullScreen
-                        loading="lazy"
-                        referrerPolicy="no-referrer-when-downgrade"
-                      />
+                      <>
+                        <iframe 
+                          title={`Google Maps - ${location.name}`}
+                          src={location.mapUrl}
+                          width="100%"
+                          height="100%"
+                          style={{ border: 0, borderRadius: 0 }}
+                          allowFullScreen
+                          loading="lazy"
+                          referrerPolicy="no-referrer-when-downgrade"
+                        />
+                        <a
+                          href={location.google.mapLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="absolute bottom-4 right-4 px-4 py-2 rounded-full text-xs font-semibold shadow-lg"
+                          style={{ backgroundColor: 'var(--color-primary)', color: 'var(--color-text-on-primary)' }}
+                          aria-label={`Open ${location.name} in Google Maps`}
+                        >
+                          Open in Google Maps
+                        </a>
+                      </>
                     ) : (
                       <div
                         className="w-full h-full flex flex-col items-center justify-center gap-4 text-center px-6"

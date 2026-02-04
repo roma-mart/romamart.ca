@@ -9,6 +9,7 @@
 ## Executive Summary
 
 Phase 5 is now complete. The site includes:
+
 - ✅ Accessible consent banner with localStorage persistence
 - ✅ Google Tag Manager (GTM-N4FWPSRF) with consent gating
 - ✅ Snap Pixel integration (marketing consent gated)
@@ -19,17 +20,18 @@ Phase 5 is now complete. The site includes:
 - ✅ Ready for domain switch to romamart.ca
 
 **Build metrics:**
+
 - JavaScript: 436.57 KB (136.33 KB gzipped)
 - CSS: 22.79 KB (4.82 KB gzipped)
 - HTML: 3.41 KB (1.20 KB gzipped)
 - Total: ~462 KB uncompressed, ~141 KB gzipped
-
 
 ## What Was Implemented
 
 ### 1. Consent Manager Component (`src/components/ConsentManager.jsx`)
 
 **Features:**
+
 - ✅ Accessible consent banner (WCAG 2.2 AA)
 - ✅ Persistent localStorage (key: `romamart_consent`)
 - ✅ Three consent categories:
@@ -42,12 +44,14 @@ Phase 5 is now complete. The site includes:
   - **Customize:** Per-category toggle
 
 **How it works:**
+
 1. User visits → Banner appears (if no prior consent stored)
 2. User selects option → Preference saved to localStorage
 3. GTM/Snap Pixel injected based on consent choice
 4. User can change settings anytime via "Customize" option
 
 **Consent object structure:**
+
 ```json
 {
   "necessary": true,
@@ -56,10 +60,10 @@ Phase 5 is now complete. The site includes:
 }
 ```
 
-
 ### 2. Trustpilot Widget Component (`src/components/TrustpilotWidget.jsx`)
 
 **Configuration:**
+
 - Template ID: `56278e9abfbbba0bdcd568bc` (Review Collector)
 - Business Unit ID: `682725e77d7d518b035c1d50`
 - Token: `972780a0-fc17-4446-9d3b-0119d066d488`
@@ -67,16 +71,17 @@ Phase 5 is now complete. The site includes:
 - Display height: 52px (full width)
 
 **Integration:**
+
 - Loads Trustpilot script dynamically
 - Shows in footer above copyright
-- Link: https://www.trustpilot.com/review/romamart.ca
-
+- Link: <https://www.trustpilot.com/review/romamart.ca>
 
 ### 3. Google Tag Manager Integration
 
 **Container ID:** `GTM-N4FWPSRF`
 
 **Active tags in GTM:**
+
 - ✅ Consent Initialization (all pages)
 - ✅ Google Analytics: GA4 Event (all pages)
 - ✅ Google Tag (GA)
@@ -84,11 +89,13 @@ Phase 5 is now complete. The site includes:
 - ✅ Snap Pixel GTM (3bb90c8b-139c-4586-8a59-329ba3bb52f1)
 
 **Consent gating:**
+
 - GTM injects **only if** user consents (stores in `dataLayer` before script load)
 - `allow_ad_personalization_signals` set based on `consent.marketing`
 - IP anonymization: enabled (`anonymize_ip: true`)
 
 **How it works:**
+
 ```javascript
 // In ConsentManager.jsx
 window.dataLayer = [];
@@ -106,6 +113,7 @@ gtag('config', 'GTM-N4FWPSRF', {
 **Pixel ID:** `3bb90c8b-139c-4586-8a59-329ba3bb52f1`
 
 **Status:**
+
 - ⏳ Loads only if `consent.marketing === true`
 - ⏳ Placeholder for user email injection (currently `__INSERT_USER_EMAIL__`)
 - ✅ Tracks `PAGE_VIEW` event
@@ -113,9 +121,10 @@ gtag('config', 'GTM-N4FWPSRF', {
 **Implementation:**
 // ConsentManager.jsx: injectSnapPixel()
 window.snaptr('init', '3bb90c8b-139c-4586-8a59-329ba3bb52f1', {
-  'user_email': '__INSERT_USER_EMAIL__' // Update when you have user data
+  'user_email': '**INSERT_USER_EMAIL**' // Update when you have user data
 });
 window.snaptr('track', 'PAGE_VIEW');
+
 ```
 
 ---
@@ -167,6 +176,7 @@ window.snaptr('track', 'PAGE_VIEW');
 ### 7. SEO Files
 
 **`public/robots.txt`**
+
 ```txt
 User-agent: *
 Allow: /
@@ -178,6 +188,7 @@ Sitemap: https://romamart.ca/sitemap.xml
 ```txt
 romamart.ca
 ```
+
 (Ready for GitHub Pages DNS configuration when you switch domains)
 
 ---
@@ -185,13 +196,14 @@ romamart.ca
 ## Workflow: From GitHub Pages to romamart.ca
 
 ### Current State (GitHub Pages)
-- Hosted at: https://khanoflegend.github.io/romamart.ca/
+
+- Hosted at: <https://khanoflegend.github.io/romamart.ca/>
 - Vite base: `/romamart.ca/`
-- Canonical: https://romamart.ca/ (will be corrected on deploy)
+- Canonical: <https://romamart.ca/> (will be corrected on deploy)
 - All links use `BASE_URL` (works on subpath)
 
-
 **Step 1: Update Vite base**
+
 ```javascript
 // vite.config.js
 // Change from:
@@ -201,6 +213,7 @@ base: '/',
 ```
 
 **Step 2: Rebuild and verify**
+
 ```bash
 npm run build
 npm run lint
@@ -208,6 +221,7 @@ npm run lint:css
 ```
 
 **Step 3: Update GitHub Pages deployment**
+
 - Ensure CNAME file (`public/CNAME`) has `romamart.ca`
 - Commit and push to main branch
 - GitHub Pages will automatically use the CNAME
@@ -217,14 +231,16 @@ npm run lint:css
 - Verify: `curl -I https://romamart.ca`
 
 **Step 5: Verify SSL/HTTPS**
+
 - GitHub Pages auto-generates SSL cert (takes a few min)
-- Update GTM canonical URLs if different from https://romamart.ca/
+- Update GTM canonical URLs if different from <https://romamart.ca/>
 
 ---
 
 ## Accessibility & Compliance
 
 ✅ **Consent banner:**
+
 - ✅ Semantic HTML with `role="region"` and `aria-label`
 - ✅ Keyboard accessible (Tab, Enter, Escape)
 - ✅ Screen reader compatible (all buttons labeled)
@@ -232,20 +248,24 @@ npm run lint:css
 - ✅ High contrast (navy #020178, yellow #E4B340, white text)
 
 ✅ **Settings modal:**
+
 - ✅ Dialog role with `aria-modal="true"`
 - ✅ Proper focus management
 - ✅ Escape key closes
 - ✅ Click outside to close
 
 ✅ **Links & CTAs:**
+
 - ✅ All buttons have descriptive aria-labels
 - ✅ Legal links styled consistently
 - ✅ No inaccessible click handlers
+
 ---
 
 ## Testing Checklist
 
 ### Local Testing
+
 ```bash
 npm run lint      # ✅ 0 errors, 0 warnings
 npm run lint:css  # ✅ 0 errors, 0 warnings
@@ -315,6 +335,7 @@ npm run dev       # ✅ Dev server responsive
 
 ### New Files Created
 ```
+
 src/components/ConsentManager.jsx      (348 lines, fully accessible)
 src/components/TrustpilotWidget.jsx    (33 lines)
 public/privacy/index.html              (Accessible privacy policy)
@@ -323,20 +344,25 @@ public/cookies/index.html              (Accessible cookie policy)
 public/robots.txt                      (SEO + sitemap reference)
 public/CNAME                           (romamart.ca for GitHub Pages)
 PHASE_5_SUMMARY.md                     (This document)
+
 ```
 
 ### Modified Files
 ```
+
 src/App.jsx                            (Added ConsentManager + TrustpilotWidget imports/usage)
 index.html                             (Added canonical, OG/Twitter meta, LocalBusiness schema)
+
 ```
 
 ### Preserved Files
 ```
+
 vite.config.js                         (base: '/romamart.ca/' for now)
 eslint.config.js                       (20+ accessibility rules)
 tailwind.config.js                     (brand colors, fonts)
 .github/workflows/accessibility-ci.yml (CI/CD protection)
+
 ```
 
 ---
@@ -348,7 +374,9 @@ tailwind.config.js                     (brand colors, fonts)
    # Navigate to http://localhost:5173
    # Test consent banner, GTM, Trustpilot
    ```
+
 2. **Deploy to GitHub Pages:**
+
    ```bash
    npm run build
    npm run deploy
@@ -359,7 +387,7 @@ tailwind.config.js                     (brand colors, fonts)
    - Update `vite.config.js` base to `/`
    - Rebuild and deploy
    - Update DNS for romamart.ca
-   - Verify https://romamart.ca works
+   - Verify <https://romamart.ca> works
 
 4. **Monitor in Google analytics:**
    - Check for traffic from romamart.ca
@@ -373,7 +401,7 @@ tailwind.config.js                     (brand colors, fonts)
 
 ## Support & Questions
 
-- **GTM issues:** Check https://tagassistant.google.com
+- **GTM issues:** Check <https://tagassistant.google.com>
 - **Consent not persisting:** Check browser localStorage (DevTools → Application)
 - **Trustpilot not loading:** Verify business unit ID in TrustpilotWidget.jsx
 - **Links broken after domain switch:** Ensure BASE_URL is correctly set in vite.config.js

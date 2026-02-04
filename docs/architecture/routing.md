@@ -6,7 +6,6 @@
 
 Roma Mart uses client-side routing with pathname matching in `App.jsx`, combined with static site generation (SSG) via Vite.
 
-
 ## Route Configuration
 
 ### App.jsx Routing

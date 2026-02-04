@@ -1,11 +1,14 @@
 # Location Availability Mapping - Implementation Notes
 
 ## Problem
+
 The RoCafeMenu was showing items as 'unavailable' even when the API indicated they were available at specific locations. This was caused by a mismatch between:
+
 - API's `locations[].name` field (e.g., "Roma Mart 001")
 - Internal location `shortName` field (e.g., "Roma Mart 001")
 
 ## Solution
+
 Updated the availability checking logic to properly map between API location names and internal location shortNames.
 
 ### Changes Made
@@ -44,6 +47,7 @@ Updated the availability checking logic to properly map between API location nam
 ```
 
 ## Testing
+
 - Added 10 unit tests in `src/utils/__tests__/availability.test.js`
 - Tests cover:
   - Location name mapping (objects and strings)
@@ -53,11 +57,13 @@ Updated the availability checking logic to properly map between API location nam
   - Edge cases (empty arrays, missing items)
 
 ## Backward Compatibility
+
 - Legacy static menu items continue to work using `availableAt` field
 - Location overrides (`menuOverrides`) still take precedence
 - No breaking changes to existing code
 
 ## Future Enhancements
+
 - Could map by location.id instead of name for more robust matching
 - Could support location aliases/alternative names
 - Could add caching for performance optimization

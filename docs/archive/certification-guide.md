@@ -13,16 +13,19 @@ This guide explains how to obtain official, third-party accessibility certificat
 ## Types of Certifications Available
 
 ### 1. WCAG 2.2 Level AA Self-Certification (What You Have Now)
+
 ✅ **Status:** Already Achieved  
 **Effort:** Minimal (documentation only)  
 **Cost:** Free (internal documentation)
 
 **What it is:**
+
 - Your internal audit and testing showing compliance
 - Published accessibility statement on your website
 - No third party involved
 
 **How to promote it:**
+
 - Add WCAG 2.2 Level AA badge to your website
 - Include in your accessibility statement
 - Reference in marketing materials
@@ -32,40 +35,44 @@ This guide explains how to obtain official, third-party accessibility certificat
 ---
 
 ### 2. Third-Party WCAG 2.2 Audit & Certification
+
 ✅ **Recommended**  
 **Effort:** Medium (2-4 weeks, active participation required)  
 **Cost:** $1,500-$5,000 USD for a full audit
 
 **What it is:**
+
 - Professional accessibility auditor reviews your site
 - Issues formal certification letter
 - Provides detailed report
 - Valid for 12 months (typically)
 
 **Who provides it:**
+
 - **TPGI (The Paciello Group)** – Industry leader
-  - Website: https://www.tpgi.com/
+  - Website: <https://www.tpgi.com/>
   - Service: WCAG 2.2 Accessibility Audit & Certification
   - Turnaround: 2-4 weeks
   - Cost: $2,000-$4,000 for small website
 
 - **Deque Systems (Axe)**
-  - Website: https://www.deque.com/
+  - Website: <https://www.deque.com/>
   - Service: Accessibility Audit + Fixed
   - Cost: $1,500-$3,000
 
 - **WebAIM**
-  - Website: https://webaim.org/
+  - Website: <https://webaim.org/>
   - Service: Web Accessibility Audit
   - Cost: $1,200-$2,500
   - Nonprofit-friendly pricing available
 
 - **Access Innovation Media**
-  - Website: https://www.accessinnovation.com/
+  - Website: <https://www.accessinnovation.com/>
   - Service: WCAG 2.2 AA Audits
   - Cost: $1,500-$3,000
 
 **How to get it:**
+
 1. Contact one of the companies above
 2. Request "WCAG 2.2 Level AA Audit with Certification"
 3. Provide your website URL
@@ -78,17 +85,20 @@ This guide explains how to obtain official, third-party accessibility certificat
 ---
 
 ### 3. AODA Compliance Verification (Ontario-Specific)
+
 ✅ **Recommended for Ontario**  
 **Effort:** Low-Medium  
 **Cost:** $500-$1,500
 
 **What it is:**
+
 - Formal confirmation of AODA (Ontario) compliance
 - Can satisfy legal requirements if audited
 
 **Who provides it:**
+
 - **Accessibility Standards Canada (ASC)**
-  - Website: https://accessibilitystandards.ca/
+  - Website: <https://accessibilitystandards.ca/>
   - Service: AODA Compliance Verification
   - Cost: Varies (often included with general audit)
 
@@ -97,6 +107,7 @@ This guide explains how to obtain official, third-party accessibility certificat
   - Doesn't issue certificates but recognizes third-party audits
 
 **How to get it:**
+
 1. Mention you're in Ontario and need AODA verification
 2. Include in your WCAG audit request above
 3. Auditor will specifically verify AODA compliance (WCAG 2.0 AA minimum)
@@ -104,22 +115,26 @@ This guide explains how to obtain official, third-party accessibility certificat
 ---
 
 ### 4. ISO/IEC 40500:2025 Certification
+
 ✅ **Optional (Advanced)**  
 **Effort:** Medium-High  
 **Cost:** $2,000-$5,000 (may be bundled with WCAG audit)
 
 **What it is:**
+
 - International standard for web accessibility
 - Aligns with WCAG 2.2
 - Formal certification from accredited body
 
 **Who provides it:**
+
 - **ISO Certification Bodies** (country-specific)
-  - US: https://www.nsf.org/ (NSF International)
-  - Canada: https://www.nqa.com/ (National Quality Assurance)
+  - US: <https://www.nsf.org/> (NSF International)
+  - Canada: <https://www.nqa.com/> (National Quality Assurance)
   - EU: Various accredited bodies
 
 **How to get it:**
+
 1. Request ISO/IEC 40500:2025 certification
 2. Typically conducted alongside WCAG audit
 3. Auditor must be ISO-accredited
@@ -130,20 +145,24 @@ This guide explains how to obtain official, third-party accessibility certificat
 ---
 
 ### 5. EN 301 549 (EAA) Compliance Verification
+
 ✅ **Recommended if serving EU**  
 **Effort:** Low-Medium  
 **Cost:** Often bundled with WCAG audit ($200-$500 extra)
 
 **What it is:**
+
 - European Accessibility Act compliance verification
 - Harmonizes with WCAG standards
 - Required if targeting EU markets
 
 **Who provides it:**
+
 - Any WCAG auditor can verify EN 301 549 alignment
 - European auditors specializing in EAA
 
 **How to get it:**
+
 1. When requesting WCAG 2.2 audit, ask for "EN 301 549 verification"
 2. Minimal additional cost if bundled
 3. Receive separate statement for EU compliance
@@ -153,11 +172,12 @@ This guide explains how to obtain official, third-party accessibility certificat
 ## Recommended Certification Path for Roma Mart
 
 ### Immediate (Next 2-4 Weeks) - **Tier 1 Certification**
+
 **Investment: $2,000-$4,000**
 
 1. **Choose an auditor** (recommended: TPGI or Deque)
 2. **Request:** "WCAG 2.2 Level AA Audit with Certification"
-3. **Ask for:** 
+3. **Ask for:**
    - Full accessibility audit report
    - Formal certification letter
    - AODA compliance verification (Ontario-specific)
@@ -170,6 +190,7 @@ This guide explains how to obtain official, third-party accessibility certificat
    - Permission to display badge on your site
 
 **Action Steps:**
+
 ```
 1. Email TPGI: sales@tpgi.com
    Subject: WCAG 2.2 Level AA Audit Request - Roma Mart
@@ -192,6 +213,7 @@ This guide explains how to obtain official, third-party accessibility certificat
 A professional accessibility audit will verify:
 
 ✅ **Technical Compliance**
+
 - HTML/CSS/JavaScript validation
 - ARIA implementation
 - Semantic markup
@@ -200,15 +222,18 @@ A professional accessibility audit will verify:
 - Screen reader compatibility
 
 ✅ **WCAG 2.2 AA Criteria**
+
 - All 50+ Level A & AA success criteria
 - Documented violations (if any) with remediation steps
 
 ✅ **Best Practices**
+
 - Performance implications of accessibility features
 - Mobile accessibility
 - Future WCAG 3.0 readiness
 
 ✅ **Business Alignment**
+
 - Legal compliance (AODA, ISO, EN 301 549)
 - Industry standards
 - Competitor benchmarking
@@ -222,6 +247,7 @@ A professional accessibility audit will verify:
 Once you receive certification:
 
 1. **Add Certificate Badge to Your Site**
+
    ```html
    <!-- In footer or accessibility page -->
    <div className="accessibility-badge">
@@ -237,6 +263,7 @@ Once you receive certification:
    - In marketing materials
 
 3. **Update Your Statement**
+
    ```markdown
    # Accessibility Statement
    
@@ -251,6 +278,7 @@ Once you receive certification:
 ### Maintain Certification
 
 ✅ Keep certification current:
+
 - Annual audits recommended
 - Update website/pages before next audit
 - Monitor for WCAG 3.0 changes
@@ -275,27 +303,31 @@ Once you receive certification:
 ## Certification Auditors - Contact Info
 
 ### 1. TPGI (The Paciello Group) - Recommended
-- **Website:** https://www.tpgi.com/
-- **Email:** sales@tpgi.com
+
+- **Website:** <https://www.tpgi.com/>
+- **Email:** <sales@tpgi.com>
 - **Phone:** +1 (800) 889-9950
 - **Services:** WCAG, AODA, ISO audits
 - **Turnaround:** 2-4 weeks
 
 ### 2. Deque Systems (Axe)
-- **Website:** https://www.deque.com/
-- **Email:** sales@deque.com
+
+- **Website:** <https://www.deque.com/>
+- **Email:** <sales@deque.com>
 - **Phone:** +1 (800) 793-3383
 - **Services:** WCAG, Deque Certified audits
 - **Turnaround:** 1-2 weeks
 
 ### 3. WebAIM
-- **Website:** https://webaim.org/
-- **Email:** info@webaim.org
+
+- **Website:** <https://webaim.org/>
+- **Email:** <info@webaim.org>
 - **Services:** WCAG, nonprofit-friendly pricing
 - **Turnaround:** 2-3 weeks
 
 ### 4. Access Innovation Media
-- **Website:** https://www.accessinnovation.com/
+
+- **Website:** <https://www.accessinnovation.com/>
 - **Services:** WCAG 2.2 AA Audits
 - **Turnaround:** 2-4 weeks
 
@@ -351,15 +383,16 @@ accessibility@romamart.ca
 Until you get a professional certification, you can:
 
 1. **Run Automated Tools** (Free)
+
    ```bash
    npx axe --url https://khanoflegend.github.io/romamart.ca/
    npx pa11y https://khanoflegend.github.io/romamart.ca/
    ```
 
 2. **Use Free Online Validators**
-   - WAVE: https://wave.webaim.org/
+   - WAVE: <https://wave.webaim.org/>
    - Lighthouse: Chrome DevTools → Lighthouse
-   - axe DevTools: https://www.deque.com/axe/devtools/
+   - axe DevTools: <https://www.deque.com/axe/devtools/>
 
 3. **Get Expert Feedback**
    - Contact local disability organizations
@@ -400,12 +433,14 @@ Until you get a professional certification, you can:
 4. Timeline: 2-4 weeks
 
 **Need help preparing?**
+
 - Your current accessibility documentation is ready (ACCESSIBILITY_AUDIT.md, ACCESSIBILITY_COMPLIANCE.md)
 - ESLint checks are in place
 - Manual testing is documented
 - Just need third-party auditor to validate
 
 **Questions?**
+
 - Contact your chosen auditor - they'll walk you through the process
 - Most offer free consultations before audit
 

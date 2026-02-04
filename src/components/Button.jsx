@@ -210,6 +210,7 @@ const Button = React.forwardRef(({
     padding: variant === 'icon' ? 8 : '12px 28px',
     cursor: disabled ? 'not-allowed' : 'pointer',
     opacity: disabled ? 0.6 : 1,
+    WebkitTapHighlightColor: 'transparent',
     ...VARIANT_STYLES[variant],
     ...style,
   };

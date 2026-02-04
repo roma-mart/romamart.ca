@@ -47,7 +47,6 @@ export const COLORS = {
 
 ## Usage Guidelines
 
-
 ### ✅ Correct Patterns
 
 ```jsx
@@ -77,6 +76,7 @@ import { CSS_VARS } from '../utils/theme';
 ## High Contrast Support
 
 The system supports:
+
 - `prefers-color-scheme: dark`
 - `prefers-contrast: more`
 - `forced-colors: active`
@@ -91,6 +91,7 @@ The system supports:
 ## Quality Checks
 
 The quality checker validates:
+
 - No hardcoded hex colors in components
 - No `text-gray-*` or `bg-gray-*` Tailwind classes
 - Proper CSS variable usage

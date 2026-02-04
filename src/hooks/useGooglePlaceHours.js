@@ -12,6 +12,94 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { circuitBreakers } from '../utils/apiCircuitBreaker';
+import { getUserHour12Preference, formatTimeFrom24h } from '../utils/timeFormat';
+import { groupDayMap } from '../utils/dateHelpers';
+
+const pad2 = (value) => value.toString().padStart(2, '0');
+
+const toDateString = (dateValue) => {
+  if (!dateValue) return null;
+  if (typeof dateValue === 'string') {
+    return dateValue.length >= 10 ? dateValue.slice(0, 10) : null;
+  }
+  if (typeof dateValue === 'object' && dateValue.year && dateValue.month && dateValue.day) {
+    return `${dateValue.year}-${pad2(dateValue.month)}-${pad2(dateValue.day)}`;
+  }
+  return null;
+};
+
+const formatTime = (time, hour12Preference) => {
+  if (time === null || time === undefined) return null;
+  // Coerce numeric times to string (e.g., 830 -> "830")
+  const timeStr = typeof time === 'number' ? String(time) : time;
+  if (typeof timeStr !== 'string') return null;
+  // Strip all non-digit characters (handles "8:30", "08.30", etc.)
+  const digits = timeStr.replace(/\D/g, '');
+  let rawHours;
+  let rawMinutes;
+  if (digits.length === 3) {
+    // HMM -> H:MM (e.g., "830" -> 8:30)
+    rawHours = parseInt(digits.slice(0, 1), 10);
+    rawMinutes = parseInt(digits.slice(1, 3), 10);
+  } else if (digits.length === 4) {
+    // HHMM -> HH:MM (e.g., "0830" -> 8:30)
+    rawHours = parseInt(digits.slice(0, 2), 10);
+    rawMinutes = parseInt(digits.slice(2, 4), 10);
+  } else {
+    // Unsupported format
+    return null;
+  }
+  if (
+    Number.isNaN(rawHours) ||
+    Number.isNaN(rawMinutes) ||
+    rawHours < 0 ||
+    rawHours > 23 ||
+    rawMinutes < 0 ||
+    rawMinutes > 59
+  ) {
+    return null;
+  }
+  const resolvedPreference = typeof hour12Preference === 'boolean'
+    ? hour12Preference
+    : getUserHour12Preference();
+  return formatTimeFrom24h(rawHours, rawMinutes, resolvedPreference);
+};
+
+const formatPeriods = (periods = []) => {
+  if (!Array.isArray(periods) || periods.length === 0) return null;
+  const hour12Preference = getUserHour12Preference();
+  return periods.map(period => {
+    const openTime = formatTime(period?.open?.time || period?.open?.truncatedTime, hour12Preference);
+    const closeTime = formatTime(period?.close?.time || period?.close?.truncatedTime, hour12Preference);
+    if (openTime && closeTime) return `${openTime} – ${closeTime}`;
+    if (openTime && !closeTime) return `${openTime} – Close`;
+    return null;
+  }).filter(Boolean).join(', ');
+};
+
+const extractSpecialHours = (placeData) => {
+  const sources = [
+    placeData?.currentOpeningHours?.specialDays,
+    placeData?.regularOpeningHours?.specialDays,
+    placeData?.opening_hours?.special_days,
+    placeData?.openingHours?.specialDays
+  ].filter(Boolean);
+
+  const specialDays = sources.flat();
+  if (!Array.isArray(specialDays) || specialDays.length === 0) return [];
+
+  return specialDays.map(entry => {
+    const date = toDateString(entry?.date || entry?.startDate || entry?.date?.date);
+    const closed = entry?.closed || entry?.isClosed || entry?.openClosed === 'CLOSED';
+    const periods = entry?.exceptionalHours?.periods || entry?.periods || entry?.openingHours?.periods;
+    const hoursText = closed ? 'Closed' : (entry?.hours || formatPeriods(periods) || 'Special hours');
+    const reason = entry?.reason || entry?.description || entry?.name || null;
+
+    return date
+      ? { date, hours: hoursText, reason }
+      : null;
+  }).filter(Boolean);
+};
 
 // Extract API key from environment variable
 // This key powers: Places API (New), Google Maps Embed API, Maps JavaScript API
@@ -124,7 +212,10 @@ function parseOpeningHours(placeData) {
     isOpenNow: openNow ?? false,
     weekdayText: weekdayDescriptions || [],
     periods: periods || [],
-    display: formatHoursDisplay(weekdayDescriptions)
+    display: {
+      ...formatHoursDisplay(weekdayDescriptions),
+      exceptions: extractSpecialHours(placeData)
+    }
   };
 
   return formatted;
@@ -196,12 +287,15 @@ function formatHoursDisplay(weekdayText) {
 
   // Check if ALL days (Mon–Sun) have identical hours using validated dayMap
   const allSame = dayMap.length > 0 && dayMap.every(entry => entry.hours === dayMap[0].hours);
+  const grouped = groupDayMap(dayMap);
 
   return {
     weekdays: sameWeekdayHours && weekdayHours.length > 0 ? weekdayHours[0] : 'Varies',
     weekends: sameWeekendHours && weekendHours.length > 0 ? weekendHours[0] : 'Varies',
     full: weekdayText,
-    allSame
+    allSame,
+    dayMap,
+    grouped
   };
 }
 
@@ -222,19 +316,22 @@ export function useGooglePlaceHours(placeId, options = {}) {
   const [error, setError] = useState(null);
   const [isOpenNow, setIsOpenNow] = useState(null);
 
-  const fetchHours = useCallback(async () => {
+  const fetchHours = useCallback(async (fetchOptions = {}) => {
+    const force = typeof fetchOptions === 'boolean' ? fetchOptions : fetchOptions?.force;
     if (!placeId || !enabled) {
       setIsLoading(false);
       return;
     }
 
     // Check cache first
-    const cached = hoursCache.get(placeId);
-    if (cached && (Date.now() - cached.timestamp) < cacheDuration) {
-      setHours(cached.hours);
-      setIsOpenNow(cached.isOpenNow);
-      setIsLoading(false);
-      return;
+    if (!force) {
+      const cached = hoursCache.get(placeId);
+      if (cached && (Date.now() - cached.timestamp) < cacheDuration) {
+        setHours(cached.hours);
+        setIsOpenNow(cached.isOpenNow);
+        setIsLoading(false);
+        return;
+      }
     }
 
     setIsLoading(true);
@@ -263,6 +360,9 @@ export function useGooglePlaceHours(placeId, options = {}) {
         isOpenNow: parsedHours?.isOpenNow,
         timestamp: Date.now()
       });
+
+      // Record success with circuit breaker to clear accumulated failures
+      circuitBreakers.googlePlaces.recordSuccess();
 
       setHours(parsedHours);
       setIsOpenNow(parsedHours?.isOpenNow);
@@ -302,7 +402,7 @@ export function clearHoursCache() {
  * 
  * Usage in DevTools Console:
  *   import { getPlacesQuotaStatus } from '@/hooks/useGooglePlaceHours'
- *   console.log(getPlacesQuotaStatus())
+ *   getPlacesQuotaStatus()
  */
 export function getPlacesQuotaStatus() {
   return circuitBreakers.googlePlaces.getStatus();

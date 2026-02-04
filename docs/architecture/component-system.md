@@ -50,7 +50,6 @@ Context providers for global state:
 
 ## Component Patterns
 
-
 ### Functional Components
 
 All components use functional syntax with hooks. **Always use centralized config for navigation and company info.**

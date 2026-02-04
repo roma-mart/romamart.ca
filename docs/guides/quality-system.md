@@ -40,11 +40,13 @@ npm run check:integrity # Meta-checker validation
 ### Dark Mode
 
 Violation patterns detected:
+
 - `text-gray-*` classes → HIGH severity
 - `bg-gray-*` classes → HIGH severity
 - Hardcoded hex colors → LOW severity
 
 **Correct approach:**
+
 ```jsx
 // Use CSS variables
 <p style={{ color: 'var(--color-text-muted)' }}>Text</p>

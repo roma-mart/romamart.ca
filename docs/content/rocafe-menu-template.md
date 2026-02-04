@@ -93,7 +93,9 @@ This template defines the structure for adding menu items to the RoCafé section
 ## Customization Modes
 
 ### Single Selection (Radio Buttons)
+
 Used when customer must select exactly one option:
+
 ```javascript
 {
   type: 'Temperature',
@@ -107,7 +109,9 @@ Used when customer must select exactly one option:
 ```
 
 ### Multiple Selection (Checkboxes)
+
 Used when customer can select zero or more options:
+
 ```javascript
 {
   type: 'Toppings',
@@ -123,7 +127,9 @@ Used when customer can select zero or more options:
 ```
 
 ### Quantity Selection (Counters)
+
 Used when customer can add multiple of same item:
+
 ```javascript
 {
   type: 'Sugar',

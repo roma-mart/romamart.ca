@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 
 /**
  * CustomizationSection Component
@@ -252,6 +252,8 @@ function QuantityMode({ customization, selectedOptions, onOptionsChange }) {
  * Single Selection Mode: Radio-style buttons
  */
 function SingleSelectionMode({ customization, selectedOptions, onOptionsChange }) {
+  const buttonRefs = useRef([]);
+
   const handleSelect = (optionName) => {
     onOptionsChange({
       ...selectedOptions,
@@ -259,8 +261,32 @@ function SingleSelectionMode({ customization, selectedOptions, onOptionsChange }
     });
   };
 
+  const handleKeyDown = (e, currentIdx) => {
+    const options = customization.options;
+    
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      const nextIdx = (currentIdx + 1) % options.length;
+      handleSelect(options[nextIdx].name);
+      setTimeout(() => {
+        buttonRefs.current[nextIdx]?.focus();
+      }, 0);
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      const nextIdx = (currentIdx - 1 + options.length) % options.length;
+      handleSelect(options[nextIdx].name);
+      setTimeout(() => {
+        buttonRefs.current[nextIdx]?.focus();
+      }, 0);
+    }
+  };
+
   return (
-    <div className="flex gap-2 flex-wrap">
+    <div
+      className="flex gap-2 flex-wrap"
+      role="radiogroup"
+      aria-label={customization.type}
+    >
       {customization.options.map((option, optIdx) => {
         const isSelected = selectedOptions[customization.type] === option.name;
         
@@ -268,10 +294,14 @@ function SingleSelectionMode({ customization, selectedOptions, onOptionsChange }
           <button
             type="button"
             key={optIdx}
+            ref={(el) => {
+              buttonRefs.current[optIdx] = el;
+            }}
             onClick={(e) => {
               e.stopPropagation();
               handleSelect(option.name);
             }}
+            onKeyDown={(e) => handleKeyDown(e, optIdx)}
             className="px-3 py-2 rounded-lg font-inter text-xs transition-all hover:scale-105"
             style={{
               backgroundColor: isSelected ? 'var(--color-accent)' : 'var(--color-bg)',
@@ -279,7 +309,9 @@ function SingleSelectionMode({ customization, selectedOptions, onOptionsChange }
               border: `1px solid ${isSelected ? 'var(--color-accent)' : 'var(--color-border)'}`,
               fontWeight: isSelected ? 'bold' : 'normal'
             }}
-            aria-pressed={isSelected}
+            role="radio"
+            aria-checked={isSelected}
+            tabIndex={isSelected ? 0 : -1}
           >
             {option.name}
             {option.price > 0 && (
