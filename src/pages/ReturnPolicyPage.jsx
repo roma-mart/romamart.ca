@@ -125,7 +125,7 @@ const ReturnPolicyPage = () => {
               <p style={textColor}><strong>{COMPANY_DATA.legalName}</strong></p>
               <p style={textColor}>{COMPANY_DATA.location.address.streetAddress}</p>
               <p style={textColor}>{COMPANY_DATA.location.address.addressLocality}, {COMPANY_DATA.location.address.addressRegion} {COMPANY_DATA.location.address.postalCode}</p>
-              <p style={textColor}>Email: <a href={`mailto:${getContextualEmail('legal')}`} style={{ color: 'var(--color-accent)' }}>{getContextualEmail('legal')}</a></p>
+              <p style={textColor}>Email: <a href={`mailto:${getContextualEmail('support')}`} style={{ color: 'var(--color-accent)' }}>{getContextualEmail('support')}</a></p>
               <p style={textColor}>Phone: <a href={`tel:${COMPANY_DATA.location.contact.phone}`} style={{ color: 'var(--color-accent)' }}>{COMPANY_DATA.location.contact.phoneDisplay || COMPANY_DATA.location.contact.phone}</a></p>
               <p className="text-sm mt-4" style={mutedTextColor}>GST/HST#: {COMPANY_DATA.gstNumber}</p>
             </div>

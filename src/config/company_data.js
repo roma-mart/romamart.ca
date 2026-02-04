@@ -42,7 +42,8 @@ const COMPANY_DATA = {
     privacy: 'privacy@romamart.ca',
     accessibility: 'accessibility@romamart.ca',
     technology: 'technology@romamart.ca',
-    legal: 'legal@romamart.ca'
+    legal: 'legal@romamart.ca',
+    support: 'support@romamart.ca'
   },
   // Location-dependent info is mapped from the primary location object
   location: getPrimaryLocation(),
