@@ -8,6 +8,8 @@ import { getActiveLocations, formatDistance, getPreferredLocations } from '../da
 import LocationImageCarousel from '../components/LocationImageCarousel';
 import LiveHoursDisplay from '../components/LiveHoursDisplay';
 import { useAutoLocation } from '../hooks/useAutoLocation';
+import StructuredData from '../components/StructuredData';
+import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 import { normalizePhoneForTel } from '../utils/phone';
 
 const LocationsPage = () => {
@@ -66,6 +68,9 @@ const LocationsPage = () => {
         <meta name="description" content="Find Roma Mart convenience store locations in Sarnia, Ontario. Get directions, hours, and contact information." />
         <link rel="canonical" href="https://romamart.ca/locations" />
       </Helmet>
+
+      {/* Breadcrumb Schema */}
+      <StructuredData type="BreadcrumbList" data={{ breadcrumbs: buildBreadcrumbArray('Locations', 'https://romamart.ca/locations') }} />
 
       <nav aria-label="Breadcrumb" className="max-w-7xl mx-auto px-4 mb-8">
         <ol className="flex items-center gap-2 text-sm font-inter">

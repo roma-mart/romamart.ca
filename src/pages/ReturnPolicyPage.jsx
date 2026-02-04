@@ -5,6 +5,7 @@ import ShareButton from '../components/ShareButton';
 import StructuredData from '../components/StructuredData';
 import COMPANY_DATA, { getContextualEmail } from '../config/company_data';
 import { normalizePhoneForTel } from '../utils/phone';
+import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 
 const ReturnPolicyPage = () => {
   const textColor = { color: 'var(--color-text)' };
@@ -30,6 +31,9 @@ const ReturnPolicyPage = () => {
         />
         <link rel="canonical" href="https://romamart.ca/return-policy" />
       </Helmet>
+
+      {/* Breadcrumb Schema */}
+      <StructuredData type="BreadcrumbList" data={{ breadcrumbs: buildBreadcrumbArray('Return Policy', 'https://romamart.ca/return-policy') }} />
 
       {/* Breadcrumb */}
       <nav aria-label="Breadcrumb" className="max-w-4xl mx-auto px-4 mb-8">

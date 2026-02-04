@@ -4,6 +4,8 @@ import { ChevronRight } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
 import COMPANY_DATA, { getContextualEmail } from '../config/company_data';
 import { normalizePhoneForTel } from '../utils/phone';
+import StructuredData from '../components/StructuredData';
+import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 
 const CookiesPage = () => {
 
@@ -19,6 +21,9 @@ const CookiesPage = () => {
         <meta name="description" content="Learn about how Roma Mart Convenience uses cookies and similar technologies. Manage your cookie preferences." />
         <link rel="canonical" href="https://romamart.ca/cookies" />
       </Helmet>
+
+      {/* Breadcrumb Schema */}
+      <StructuredData type="BreadcrumbList" data={{ breadcrumbs: buildBreadcrumbArray('Cookies', 'https://romamart.ca/cookies') }} />
 
       {/* Breadcrumb */}
       <nav aria-label="Breadcrumb" className="max-w-4xl mx-auto px-4 mb-8">

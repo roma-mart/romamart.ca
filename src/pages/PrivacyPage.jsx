@@ -5,6 +5,7 @@ import ShareButton from '../components/ShareButton';
 import StructuredData from '../components/StructuredData';
 import COMPANY_DATA, { getContextualEmail } from '../config/company_data';
 import { normalizePhoneForTel } from '../utils/phone';
+import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 
 const PrivacyPage = () => {
 
@@ -27,6 +28,9 @@ const PrivacyPage = () => {
         <meta name="description" content="Learn how Roma Mart Convenience collects, uses, and protects your personal information. PIPEDA compliant privacy policy." />
         <link rel="canonical" href="https://romamart.ca/privacy" />
       </Helmet>
+
+      {/* Breadcrumb Schema */}
+      <StructuredData type="BreadcrumbList" data={{ breadcrumbs: buildBreadcrumbArray('Privacy', 'https://romamart.ca/privacy') }} />
 
       {/* Breadcrumb */}
       <nav aria-label="Breadcrumb" className="max-w-4xl mx-auto px-4 mb-8">

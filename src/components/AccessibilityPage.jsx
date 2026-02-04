@@ -4,6 +4,8 @@ import { ExternalLink, Mail, Phone, MapPin, CheckCircle, ChevronRight } from 'lu
 import ShareButton from './ShareButton';
 import { tokens } from '../design/tokens';
 import COMPANY_DATA from '../config/company_data';
+import StructuredData from './StructuredData';
+import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 
 const AccessibilityPage = () => {
   const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
@@ -17,6 +19,9 @@ const AccessibilityPage = () => {
         <meta name="description" content="Roma Mart Convenience is committed to digital accessibility. WCAG 2.2 Level AA compliant. Learn about our accessibility features and report issues." />
         <link rel="canonical" href="https://romamart.ca/accessibility" />
       </Helmet>
+
+      {/* Breadcrumb Schema */}
+      <StructuredData type="BreadcrumbList" data={{ breadcrumbs: buildBreadcrumbArray('Accessibility', 'https://romamart.ca/accessibility') }} />
 
       {/* Breadcrumb */}
       <nav aria-label="Breadcrumb" className="max-w-4xl mx-auto px-4 mb-8">

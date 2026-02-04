@@ -5,6 +5,7 @@ import ShareButton from '../components/ShareButton';
 import StructuredData from '../components/StructuredData';
 import COMPANY_DATA from '../config/company_data';
 import { getAssetUrl } from "../utils/getAssetUrl";
+import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 
 const AboutPage = () => {
 
@@ -131,6 +132,9 @@ const AboutPage = () => {
         <meta name="description" content="Learn about Roma Mart's story, mission, and the team dedicated to serving the Sarnia community with quality products and exceptional service." />
         <link rel="canonical" href="https://romamart.ca/about" />
       </Helmet>
+
+      {/* Breadcrumb Schema */}
+      <StructuredData type="BreadcrumbList" data={{ breadcrumbs: buildBreadcrumbArray('About', 'https://romamart.ca/about') }} />
 
       {/* Breadcrumb Navigation */}
       <nav aria-label="Breadcrumb" className="max-w-7xl mx-auto px-4 mb-8">

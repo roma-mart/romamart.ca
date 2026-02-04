@@ -10,6 +10,7 @@ import { SERVICES } from '../data/services';
 import { buildMenuItemSchema } from '../schemas/menuItemSchema';
 import { buildPrivacyPolicySchema } from '../schemas/privacyPolicySchema';
 import { buildReturnPolicySchema } from '../schemas/returnPolicySchema';
+import { buildBreadcrumbSchema } from '../schemas/breadcrumbSchema';
 import { parse12hTo24h } from '../utils/dateHelpers';
 
 const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
@@ -164,16 +165,8 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
         };
 
       case 'BreadcrumbList':
-        return {
-          '@context': 'https://schema.org',
-          '@type': 'BreadcrumbList',
-          itemListElement: data.items?.map((item, index) => ({
-            '@type': 'ListItem',
-            position: index + 1,
-            name: item.name,
-            item: item.url
-          })) || []
-        };
+        // Use centralized breadcrumb schema builder
+        return buildBreadcrumbSchema(data.breadcrumbs || data.items);
 
       case 'WebSite':
         return {

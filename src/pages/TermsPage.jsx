@@ -4,6 +4,8 @@ import { ChevronRight } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
 import COMPANY_DATA, { getContextualEmail } from '../config/company_data';
 import { normalizePhoneForTel } from '../utils/phone';
+import StructuredData from '../components/StructuredData';
+import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 
 const TermsPage = () => {
 
@@ -19,6 +21,9 @@ const TermsPage = () => {
         <meta name="description" content="Terms and conditions for using Roma Mart Convenience services. Understand your rights and obligations." />
         <link rel="canonical" href="https://romamart.ca/terms" />
       </Helmet>
+
+      {/* Breadcrumb Schema */}
+      <StructuredData type="BreadcrumbList" data={{ breadcrumbs: buildBreadcrumbArray('Terms', 'https://romamart.ca/terms') }} />
 
       {/* Breadcrumb */}
       <nav aria-label="Breadcrumb" className="max-w-4xl mx-auto px-4 mb-8">

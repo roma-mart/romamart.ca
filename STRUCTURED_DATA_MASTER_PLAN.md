@@ -1,8 +1,8 @@
 # Structured Data Implementation - Master Plan
 
-**Status:** Phase 2 Implementation Complete (Ready for Phase 3)
+**Status:** Phase 2 Week 3 Complete (BreadcrumbList Schemas + PWA Analysis)
 **Last Updated:** February 4, 2026  
-**Version:** 2.0.0 (Phase 2 Complete - All Week 1-2 Work Done)
+**Version:** 2.1.0 (Phase 2 Week 3 - Breadcrumbs Complete)
 **Created By:** GitHub Copilot + Roma Mart Team  
 **Audience:** Development team, colleague, AI assistants (for continuity)
 
@@ -28,8 +28,12 @@ Roma Mart 2.0 needs structured data (JSON-LD schemas) to improve Google Search v
 - ✅ NAICS code added to company_data (4541 - Grocery Stores)
 - ✅ Employee data management documented (locations.js metadata)
 - ✅ Return Policy navigation links added (footer + config)
+- ✅ **BreadcrumbList schema builder** (`src/schemas/breadcrumbSchema.js`)
+- ✅ **BreadcrumbList schemas on all 10 pages** (Services, RoCafé, Locations, Contact, About, Accessibility, Privacy, Terms, Cookies, Return Policy)
+- ✅ **PWA schema analysis complete** (WebApplication recommended for Phase 4)
 - ❌ Service schemas hardcoded in StructuredData.jsx instead of imported from SERVICES (Phase 3)
 - ❌ Location schema incomplete (Phase 3)
+- ❌ WebApplication schema not yet implemented (Phase 4)
 
 ### What We're Doing
 
@@ -68,7 +72,15 @@ Menu items + services account for ~40% of searchable content. Without proper sch
 - ✅ Return Policy footer links + navigation config
 - ✅ LocalBusiness schema enrichment with company_data fallbacks
 
-**Weeks 3-4 (Next):**
+**Week 3 Complete:** ✅ (February 4, 2026)
+
+- ✅ BreadcrumbList schema builder (`src/schemas/breadcrumbSchema.js`)
+- ✅ Breadcrumb schema test suite (18 tests, 100% passing)
+- ✅ BreadcrumbList schemas on all 10 pages (Services, RoCafé, Locations, Contact, About, Accessibility, Privacy, Terms, Cookies, Return Policy)
+- ✅ StructuredData component enhanced for BreadcrumbList support
+- ✅ PWA schema analysis (WebApplication - see Phase 4 recommendations)
+
+**Week 4 (Next):**
 
 - 🟡 Service schema builder (Phase 3 trigger - awaiting Toolpad API)
 - 🟡 Location schema builder (Phase 3 trigger - awaiting Toolpad API)
@@ -1566,7 +1578,113 @@ Build schema builders that:
 
 ---
 
-## Part 11: Success Metrics
+## Part 11: PWA Schema Analysis & Recommendations
+
+### Current PWA Implementation
+
+**Manifest Status:** ✅ Complete (`public/manifest.webmanifest`)
+
+- **Display Mode:** `standalone` (installable PWA)
+- **Distribution:** Web-only (no iOS/Android/Microsoft Store publishing)
+- **Icons:** Comprehensive (Windows 11 + Android assets)
+- **Categories:** `["shopping", "food", "business"]`
+- **Service Worker:** ✅ Active (`public/sw.js`)
+- **Install Prompt:** ✅ Implemented (`PWAInstallPrompt` component)
+
+### Schema.org Options Analysis
+
+#### Option 1: MobileApplication (❌ Not Recommended)
+
+**When to Use:**
+- App published to Apple App Store
+- App published to Google Play Store
+- App published to Microsoft Store
+
+**Why Not Applicable:**
+- Roma Mart is web-only PWA (not in app stores)
+- MobileApplication requires `applicationCategory` matching store listings
+- Misleading to Google Search (implies native app availability)
+
+#### Option 2: WebApplication (✅ Recommended)
+
+**When to Use:**
+- Web-based application accessible via browser
+- PWA with offline capabilities
+- Installable web app (Add to Home Screen)
+
+**Applicability to Roma Mart:**
+- ✅ Web-only distribution (no app stores)
+- ✅ PWA with service worker (offline support)
+- ✅ Installable via browser (manifest.webmanifest)
+- ✅ Provides app-like experience
+
+### Recommended WebApplication Schema
+
+**Implementation Location:** Homepage (`App.jsx`)
+
+```jsx
+<StructuredData
+  type="WebApplication"
+  data={{
+    name: "Roma Mart Convenience",
+    url: "https://romamart.ca",
+    description: "Shop Roma Mart online - groceries, global snacks, halal meat, RoCafé coffee, and more. Available 24/7 from any device.",
+    applicationCategory: "Lifestyle", // Shopping/Food/Lifestyle
+    operatingSystem: "Any (Web Browser)",
+    offers: {
+      price: "0",
+      priceCurrency: "CAD"
+    },
+    browserRequirements: "Requires JavaScript. Modern browsers (Chrome, Firefox, Safari, Edge) recommended.",
+    permissions: "Location (optional, for nearest store)"
+  }}
+/>
+```
+
+**Schema.org Properties:**
+
+| Property | Value | Required |
+|----------|-------|----------|
+| @type | WebApplication | Yes |
+| name | Roma Mart Convenience | Yes |
+| url | https://romamart.ca | Yes |
+| description | App description | Recommended |
+| applicationCategory | Lifestyle/Shopping | Recommended |
+| operatingSystem | Any (Web Browser) | Recommended |
+| offers.price | 0 (free to use) | Recommended |
+| browserRequirements | Browser compatibility | Optional |
+| screenshot | Array of PWA screenshots | Optional |
+
+### Implementation Priority
+
+**Phase:** 4 (Post-Phase 3)
+
+**Rationale:**
+- Not blocking for Phase 2 completion
+- Lower SEO impact than Product/Service schemas
+- WebApplication schemas primarily benefit PWA discovery
+- Can be added after Service/Location schema migration
+
+### Implementation Steps (Phase 4)
+
+1. Create `src/schemas/webApplicationSchema.js`
+2. Add WebApplication case to StructuredData.jsx
+3. Add schema to homepage (App.jsx)
+4. Test with Google Rich Results Test
+5. Validate in Search Console
+
+**Estimated Effort:** 2-3 hours
+
+### Related Documentation
+
+- PWA Manifest: `public/manifest.webmanifest`
+- Service Worker: `public/sw.js`
+- Install Prompt: `src/components/PWAInstallPrompt.jsx`
+- Browser Features: `src/hooks/useBrowserFeatures.js`
+
+---
+
+## Part 12: Success Metrics
 
 ### Development Success
 

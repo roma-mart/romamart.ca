@@ -13,6 +13,7 @@ import MenuExcelLoader from '../components/MenuExcelHolder';
 import { useExcelMenu } from '../hooks/useExcelMenu';
 import { groupExcelItemsByCategory, mergeCategoriesWithFallback } from '../utils/excelMenuTransform';
 import StructuredData from '../components/StructuredData';
+import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 
 const RoCafePage = () => {
 
@@ -76,6 +77,9 @@ const RoCafePage = () => {
         <meta name="description" content="Explore the RoCafé menu featuring hot coffee, iced coffee, tea, fresh juice, smoothies, frappés, specialty drinks, food, and seasonal items." />
         <link rel="canonical" href="https://romamart.ca/rocafe" />
       </Helmet>
+
+      {/* Breadcrumb Schema */}
+      <StructuredData type="BreadcrumbList" data={{ breadcrumbs: buildBreadcrumbArray('RoCafé', 'https://romamart.ca/rocafe') }} />
 
       {/* Breadcrumb Navigation */}
       <nav aria-label="Breadcrumb" className="max-w-7xl mx-auto px-4 mb-8">
