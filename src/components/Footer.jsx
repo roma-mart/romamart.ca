@@ -15,8 +15,7 @@ import { LOCATIONS, getActiveLocations } from '../data/locations';
 import { NAVIGATION_LINKS } from '../config/navigation';
 import OrderCTA from './OrderCTA';
 import Button from './Button';
-import { ReactGoogleReviews } from 'react-google-reviews';
-import 'react-google-reviews/dist/index.css';
+import GoogleReviews from './GoogleReviews';
 
 
 // Social platforms to control display in Footer (label, icon)
@@ -151,33 +150,9 @@ export default function Footer() {
       {/* Persistent floating OrderCTA button for site-wide visibility */}
       <OrderCTA />
       <footer className="pt-16 pb-8" style={{ backgroundColor: 'var(--color-footer)', color: 'var(--color-on-footer)' }}>
-        {/* Featurable Google Reviews Carousel */}
-        <div className="mb-8 flex justify-center">
-          {import.meta.env.VITE_FEATURABLE_KEY ? (
-            <ReactGoogleReviews 
-              layout="carousel"
-              featurableId={import.meta.env.VITE_FEATURABLE_KEY}
-              theme="dark"
-              carouselAutoplay={true}
-              carouselSpeed={5000}
-              maxItems={3}
-              reviewVariant="card"
-              structuredData={false}
-              brandName={COMPANY_DATA.name}
-            />
-          ) : (
-            <div className="text-center text-base font-inter text-[var(--color-on-footer-muted)]">
-              <span>We value your feedback!&nbsp;</span>
-                       <a
-                         href={LOCATIONS[0].google.mapLink}
-                         target="_blank"
-                         rel="noopener noreferrer"
-                         className="underline text-[var(--color-accent)] hover:text-[var(--color-accent)]"
-                       >
-                         View Google Reviews
-                       </a>
-            </div>
-          )}
+        {/* Google Reviews Carousel */}
+        <div className="mb-8 w-full">
+          <GoogleReviews />
         </div>
       <div className="max-w-7xl mx-auto p-4 grid md:grid-cols-4 gap-12 mb-12">
         <div className="p-1 col-span-1 md:col-span-2">
