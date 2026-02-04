@@ -11,6 +11,7 @@ import { buildMenuItemSchema } from '../schemas/menuItemSchema';
 import { buildPrivacyPolicySchema } from '../schemas/privacyPolicySchema';
 import { buildReturnPolicySchema } from '../schemas/returnPolicySchema';
 import { buildBreadcrumbSchema } from '../schemas/breadcrumbSchema';
+import { buildWebApplicationSchema } from '../schemas/webApplicationSchema';
 import { parse12hTo24h } from '../utils/dateHelpers';
 
 const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
@@ -242,6 +243,9 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
 
       case 'ReturnPolicy':
         return buildReturnPolicySchema(data);
+      case 'WebApplication':
+        return buildWebApplicationSchema(data);
+
 
       default:
         return data;

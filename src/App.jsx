@@ -626,6 +626,29 @@ function App() {
   return (
     <LocationProvider>
       <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--color-bg)' }}>
+                {/* PWA WebApplication Schema (Homepage Only) */}
+                {currentPage === 'home' && (
+                  <StructuredData
+                    type="WebApplication"
+                    data={{
+                      name: COMPANY_DATA.dba || 'Roma Mart Convenience',
+                      url: 'https://romamart.ca',
+                      description: 'Shop Roma Mart online - groceries, global snacks, halal meat, RoCafé coffee, and more. Available 24/7 from any device with offline support.',
+                      applicationCategory: 'Lifestyle',
+                      operatingSystem: 'Any (Web Browser)',
+                      offers: {
+                        price: '0',
+                        priceCurrency: 'CAD'
+                      },
+                      browserRequirements: 'Requires JavaScript. Modern browsers (Chrome, Firefox, Safari, Edge) recommended.',
+                      permissions: ['Location (optional, for nearest store)'],
+                      author: {
+                        name: COMPANY_DATA.legalName || 'Roma Mart Corp.',
+                        url: 'https://romamart.ca'
+                      }
+                    }}
+                  />
+                )}
         {/* Homepage Product Schemas (Featured Items Only - Primary Source for Google) */}
         {currentPage === 'home' && featuredSchemaItems.length > 0 && (
           <StructuredData
