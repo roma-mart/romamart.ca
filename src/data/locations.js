@@ -80,9 +80,6 @@ export const LOCATIONS = [
     // === HOURS ===
     hours: {
       timezone: 'America/Toronto',
-      // Backward-compatible summary strings
-      weekdays: '8:30 AM - 9:00 PM',
-      weekends: '8:30 AM - 9:00 PM',
       // Per-day hours (source of truth for display grouping)
       daily: {
         Monday: '8:30 AM - 9:00 PM',

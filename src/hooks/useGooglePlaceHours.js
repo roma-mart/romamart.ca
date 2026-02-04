@@ -332,19 +332,22 @@ export function useGooglePlaceHours(placeId, options = {}) {
   const [error, setError] = useState(null);
   const [isOpenNow, setIsOpenNow] = useState(null);
 
-  const fetchHours = useCallback(async () => {
+  const fetchHours = useCallback(async (options = {}) => {
+    const force = typeof options === 'boolean' ? options : options?.force;
     if (!placeId || !enabled) {
       setIsLoading(false);
       return;
     }
 
     // Check cache first
-    const cached = hoursCache.get(placeId);
-    if (cached && (Date.now() - cached.timestamp) < cacheDuration) {
-      setHours(cached.hours);
-      setIsOpenNow(cached.isOpenNow);
-      setIsLoading(false);
-      return;
+    if (!force) {
+      const cached = hoursCache.get(placeId);
+      if (cached && (Date.now() - cached.timestamp) < cacheDuration) {
+        setHours(cached.hours);
+        setIsOpenNow(cached.isOpenNow);
+        setIsLoading(false);
+        return;
+      }
     }
 
     setIsLoading(true);

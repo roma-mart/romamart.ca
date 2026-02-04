@@ -22,6 +22,7 @@ import BrandPatternBackground from './components/BrandPatternBackground';
 import ShareButton from './components/ShareButton';
 import Button from './components/Button';
 import StandardizedItem from './components/StandardizedItem';
+import LiveHoursDisplay from './components/LiveHoursDisplay';
 import { useLocationAware } from './hooks/useLocationContext';
 import { ROCAFE_FEATURED } from './data/rocafe-menu';
 import { SERVICES_FEATURED } from './data/services.jsx';
@@ -474,8 +475,8 @@ const ContactSection = () => {
                   <LiveHoursDisplay
                     placeId={primaryLocation.google.placeId}
                     fallbackHours={{
-                      weekdays: primaryLocation.hours.weekdays,
-                      weekends: primaryLocation.hours.weekends
+                      daily: primaryLocation.hours.daily,
+                      exceptions: primaryLocation.hours.exceptions
                     }}
                     showStatus={true}
                     compact={true}

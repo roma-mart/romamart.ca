@@ -203,8 +203,8 @@ const LocationsPage = () => {
                   <LiveHoursDisplay 
                     placeId={location.google.placeId}
                     fallbackHours={{
-                      weekdays: location.hours.weekdays,
-                      weekends: location.hours.weekends
+                      daily: location.hours.daily,
+                      exceptions: location.hours.exceptions
                     }}
                     showStatus={true}
                   />

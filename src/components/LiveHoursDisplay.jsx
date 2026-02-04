@@ -70,20 +70,7 @@ const buildFallbackDayMap = (fallbackHours) => {
     }));
   }
 
-  const monThu = fallbackHours.monThu || fallbackHours.weekdays || 'Hours not available';
-  const friday = fallbackHours.friday || fallbackHours.weekdays || 'Hours not available';
-  const saturday = fallbackHours.saturday || fallbackHours.weekends || 'Hours not available';
-  const sunday = fallbackHours.sunday || fallbackHours.weekends || 'Hours not available';
-
-  return [
-    { day: 'Monday', hours: monThu },
-    { day: 'Tuesday', hours: monThu },
-    { day: 'Wednesday', hours: monThu },
-    { day: 'Thursday', hours: monThu },
-    { day: 'Friday', hours: friday },
-    { day: 'Saturday', hours: saturday },
-    { day: 'Sunday', hours: sunday }
-  ];
+  return [];
 };
 
 const normalizeExceptions = (exceptions = []) => {
@@ -125,13 +112,11 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
 
   // Use live hours if available, otherwise fallback
   const displayHours = useMemo(() => hours?.display || {
-    weekdays: fallbackHours?.weekdays || 'Hours not available',
-    weekends: fallbackHours?.weekends || 'Hours not available',
     full: null,
     dayMap: fallbackDayMap,
     grouped: fallbackGrouped,
     allSame: fallbackDayMap.length > 0 && fallbackDayMap.every(entry => entry.hours === fallbackDayMap[0].hours)
-  }, [hours?.display, fallbackHours?.weekdays, fallbackHours?.weekends, fallbackDayMap, fallbackGrouped]);
+  }, [hours?.display, fallbackDayMap, fallbackGrouped]);
 
   const renderGroupedLines = (groups) => (
     <div className="space-y-1">
@@ -191,10 +176,7 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
           {fallbackGrouped.length > 0
             ? renderGroupedLines(fallbackGrouped)
             : (
-              <>
-                <p className="font-inter" style={{ color: 'var(--color-text-muted)' }}>Mon-Fri: {fallbackHours?.weekdays}</p>
-                <p className="font-inter" style={{ color: 'var(--color-text-muted)' }}>Sat-Sun: {fallbackHours?.weekends}</p>
-              </>
+              <p className="font-inter" style={{ color: 'var(--color-text-muted)' }}>Hours not available</p>
             )}
           {renderExceptions()}
         </div>
@@ -211,10 +193,7 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
           {fallbackGrouped.length > 0
             ? renderGroupedLines(fallbackGrouped)
             : (
-              <>
-                <p className="font-inter" style={{ color: 'var(--color-text-muted)' }}>Mon-Fri: {fallbackHours?.weekdays}</p>
-                <p className="font-inter" style={{ color: 'var(--color-text-muted)' }}>Sat-Sun: {fallbackHours?.weekends}</p>
-              </>
+              <p className="font-inter" style={{ color: 'var(--color-text-muted)' }}>Hours not available</p>
             )}
           {renderExceptions()}
         </div>
@@ -284,10 +263,7 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
         {grouped.length > 0
           ? renderGroupedLines(grouped)
           : (
-            <>
-              <p className="font-inter" style={{ color: 'var(--color-text-muted)' }}>Mon-Fri: {displayHours.weekdays}</p>
-              <p className="font-inter" style={{ color: 'var(--color-text-muted)' }}>Sat-Sun: {displayHours.weekends}</p>
-            </>
+            <p className="font-inter" style={{ color: 'var(--color-text-muted)' }}>Hours not available</p>
           )}
         {renderExceptions()}
       </div>
@@ -296,7 +272,7 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
 
   const refreshButton = showRefresh && (hours || error) ? (
     <button
-      onClick={refetch}
+      onClick={() => refetch({ force: true })}
       className={compact ? 'mt-2 text-xs hover:underline flex items-center gap-1' : 'mt-2 text-xs hover:underline flex items-center gap-1'}
       style={{ color: 'var(--color-accent)' }}
       aria-label="Refresh hours"
@@ -337,13 +313,7 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
 LiveHoursDisplay.propTypes = {
   placeId: PropTypes.string.isRequired,
   fallbackHours: PropTypes.shape({
-    weekdays: PropTypes.string,
-    weekends: PropTypes.string,
     display: PropTypes.string,
-    monThu: PropTypes.string,
-    friday: PropTypes.string,
-    saturday: PropTypes.string,
-    sunday: PropTypes.string,
     daily: PropTypes.oneOfType([
       PropTypes.object,
       PropTypes.array

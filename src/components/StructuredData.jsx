@@ -38,26 +38,14 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
             longitude: data.geo?.longitude || -82.404589
           },
           openingHoursSpecification: data.hours || (
-            COMPANY_DATA.location?.hours
+            COMPANY_DATA.location?.hours?.daily
               ? [
-                  ...(COMPANY_DATA.location.hours.daily
-                    ? Object.entries(COMPANY_DATA.location.hours.daily).map(([day, hours]) => ({
-                        '@type': 'OpeningHoursSpecification',
-                        dayOfWeek: [day],
-                        opens: hours === 'Closed' ? undefined : hours?.split('-')[0]?.trim(),
-                        closes: hours === 'Closed' ? undefined : hours?.split('-')[1]?.trim()
-                      }))
-                    : [
-                        {
-                          '@type': 'OpeningHoursSpecification',
-                          dayOfWeek: [
-                            'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'
-                          ],
-                          opens: COMPANY_DATA.location.hours.weekdays?.split('-')[0]?.trim() || '08:00',
-                          closes: COMPANY_DATA.location.hours.weekdays?.split('-')[1]?.trim() || '21:00'
-                        }
-                      ]
-                  ),
+                  ...Object.entries(COMPANY_DATA.location.hours.daily).map(([day, hours]) => ({
+                    '@type': 'OpeningHoursSpecification',
+                    dayOfWeek: [day],
+                    opens: hours === 'Closed' ? undefined : hours?.split('-')[0]?.trim(),
+                    closes: hours === 'Closed' ? undefined : hours?.split('-')[1]?.trim()
+                  })),
                   // Add exceptions if present
                   ...(COMPANY_DATA.location.hours.exceptions?.map(ex => ({
                     '@type': 'OpeningHoursSpecification',
