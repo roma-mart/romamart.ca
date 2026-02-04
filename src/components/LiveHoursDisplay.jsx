@@ -97,7 +97,14 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
       const key = `${item.date}-${item.hours}-${item.reason || ''}`;
       if (!unique.has(key)) unique.set(key, item);
     });
-    const today = new Date().toISOString().slice(0, 10);
+    // Use local date (YYYY-MM-DD) to match exception date format
+    // new Date().toISOString() uses UTC, which can be off by one day for users in negative offsets
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const today = `${year}-${month}-${day}`;
+    
     return Array.from(unique.values())
       .filter(item => item.date >= today)
       .sort((a, b) => a.date.localeCompare(b.date))

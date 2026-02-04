@@ -49,7 +49,6 @@ const OrderCTA = ({ orderUrl = getOrderingUrl() }) => {
         minWidth: 56, 
         minHeight: 56, 
         padding: 0, 
-        transform: 'translateZ(0)',
         WebkitTapHighlightColor: 'transparent',
         ...((!isVisible) && { pointerEvents: 'none' }) 
       }}

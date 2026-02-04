@@ -361,6 +361,9 @@ export function useGooglePlaceHours(placeId, options = {}) {
         timestamp: Date.now()
       });
 
+      // Record success with circuit breaker to clear accumulated failures
+      circuitBreakers.googlePlaces.recordSuccess();
+
       setHours(parsedHours);
       setIsOpenNow(parsedHours?.isOpenNow);
     } catch (err) {
