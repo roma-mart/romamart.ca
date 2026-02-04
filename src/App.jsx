@@ -49,6 +49,7 @@ const AccessibilityPage = lazy(() => import('./components/AccessibilityPage'));
 const PrivacyPage = lazy(() => import('./pages/PrivacyPage'));
 const TermsPage = lazy(() => import('./pages/TermsPage'));
 const CookiesPage = lazy(() => import('./pages/CookiesPage'));
+const ReturnPolicyPage = lazy(() => import('./pages/ReturnPolicyPage'));
 const ServicesPage = lazy(() => import('./pages/ServicesPage'));
 const RoCafePage = lazy(() => import('./pages/RoCafePage'));
 const LocationsPage = lazy(() => import('./pages/LocationsPage'));
@@ -603,7 +604,7 @@ function App() {
   // comment out unused variable
   // const shouldReduceMotion = useMemo(() => { const lowBattery = batteryLevel !== null && batteryLevel < 0.2 && !isCharging; const prefersReduced = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; return lowBattery || prefersReduced; }, [batteryLevel, isCharging]);
   useEffect(() => { if (!isVisible && import.meta.env.DEV) { console.warn('[Performance] Tab hidden - pausing heavy operations'); } }, [isVisible]);
-  const getPage = useCallback(() => { if (pathname.includes('/services')) return 'services'; if (pathname.includes('/rocafe')) return 'rocafe'; if (pathname.includes('/locations')) return 'locations'; if (pathname.includes('/contact')) return 'contact'; if (pathname.includes('/about')) return 'about'; if (pathname.includes('/accessibility')) return 'accessibility'; if (pathname.includes('/privacy')) return 'privacy'; if (pathname.includes('/terms')) return 'terms'; if (pathname.includes('/cookies')) return 'cookies'; return 'home'; }, [pathname]);
+  const getPage = useCallback(() => { if (pathname.includes('/services')) return 'services'; if (pathname.includes('/rocafe')) return 'rocafe'; if (pathname.includes('/locations')) return 'locations'; if (pathname.includes('/contact')) return 'contact'; if (pathname.includes('/about')) return 'about'; if (pathname.includes('/accessibility')) return 'accessibility'; if (pathname.includes('/privacy')) return 'privacy'; if (pathname.includes('/terms')) return 'terms'; if (pathname.includes('/cookies')) return 'cookies'; if (pathname.includes('/return-policy')) return 'return-policy'; return 'home'; }, [pathname]);
   const currentPage = getPage();
   const handleTrackOrderClick = useCallback((location = 'hero_section') => { try { if (typeof window.trackOrderClick === 'function') { window.trackOrderClick(location); } } catch (e) {
     console.warn('trackOrderClick failed:', e);
@@ -658,6 +659,9 @@ function App() {
                 )}
                 {currentPage === 'cookies' && (
                   <ErrorBoundary><CookiesPage /></ErrorBoundary>
+                )}
+                {currentPage === 'return-policy' && (
+                  <ErrorBoundary><ReturnPolicyPage /></ErrorBoundary>
                 )}
               </div>
             </Suspense>

@@ -17,7 +17,7 @@ Roma Mart 2.0 needs structured data (JSON-LD schemas) to improve Google Search v
 - ✅ LocalBusiness schema exists (basic)
 - ✅ Product schemas for menu items (homepage featured + /rocafe full, API-only)
 - ❌ Service schemas hardcoded in StructuredData.jsx instead of imported from SERVICES (data duplication problem)
-- ✅ Return Policy schema builder implemented (page pending)
+- ✅ Return Policy schema builder implemented (page published)
 - ✅ Privacy policy content updated (per in-store policy)
 - ✅ Privacy policy schema builder implemented
 - ❌ Location schema incomplete (missing services details)
@@ -236,10 +236,9 @@ const serviceMap = {
 
 ### Problem 6: Return Policy Not Published (MEDIUM)
 
-**File:** Missing - no /return-policy page exists  
-**Issue:** Return policy exists in-store as poster but not on website. No searchable policy page. Schema won't render properly without policy URL.  
-**Impact:** Policy not searchable. Customers can't find policy online. Return Policy schema incomplete without URL.  
-**Fix:** Create /pages/ReturnPolicyPage.jsx during Phase 2, Week 2
+**Status:** Resolved ✅  
+**File:** src/pages/ReturnPolicyPage.jsx  
+**Fix:** Return policy page created and ReturnPolicy schema can now reference /return-policy
 
 ### Problem 7: Privacy Policy Outdated & Missing Schema (MEDIUM)
 

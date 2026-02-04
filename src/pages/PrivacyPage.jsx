@@ -162,7 +162,7 @@ const PrivacyPage = () => {
             </p>
             <div className="p-6 rounded-lg" style={{ backgroundColor: 'var(--color-surface)' }}>
               <p style={textColor}><strong>Roma Mart Corp.</strong></p>
-              <p style={textColor}>189-3 Wellington Street</p>
+              <p style={textColor}>3-189 Wellington Street</p>
               <p style={textColor}>Sarnia, ON N7T 1G6</p>
               <p style={textColor}>Email: <a href="mailto:privacy@romamart.ca" style={{ color: 'var(--color-accent)' }}>privacy@romamart.ca</a></p>
               <p style={textColor}>Phone: <a href="tel:+13823422000" style={{ color: 'var(--color-accent)' }}>+1 (382) 342-2000</a></p>

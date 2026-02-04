@@ -40,6 +40,14 @@ const routes = [
     imageAlt: 'RoCafé logo and beverage branding'
   },
   {
+    path: '/return-policy',
+    title: 'Return Policy',
+    description: 'Roma Mart Return Policy - All sales final except for faulty products reported within 24 hours.',
+    ogImage: DEFAULT_OG_IMAGE,
+    twitterImage: DEFAULT_TW_IMAGE,
+    imageAlt: DEFAULT_IMAGE_ALT
+  },
+  {
     path: '/locations',
     title: 'Locations',
     description: 'Find Roma Mart locations, hours, and directions in Sarnia, Ontario.',
