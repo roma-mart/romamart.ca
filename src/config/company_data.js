@@ -53,7 +53,7 @@ const COMPANY_DATA = {
 
 /**
  * Get the appropriate email address for a given page context
- * @param {'general' | 'privacy' | 'accessibility' | 'technology' | 'legal'} context - Page context
+ * @param {'general' | 'privacy' | 'accessibility' | 'technology' | 'legal' | 'support'} context - Page context
  * @returns {string} Contextual email address
  */
 export function getContextualEmail(context = 'general') {

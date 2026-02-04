@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { ChevronRight } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
 import COMPANY_DATA, { getContextualEmail } from '../config/company_data';
+import { normalizePhoneForTel } from '../utils/phone';
 
 const TermsPage = () => {
 
@@ -10,12 +11,6 @@ const TermsPage = () => {
   const mutedTextColor = { color: 'var(--color-text)', opacity: 0.7 };
 
   const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
-
-  // Normalize phone to E.164 format for tel: URI (remove spaces, parentheses, dashes except leading +)
-  const normalizePhoneForTel = (phone) => {
-    if (!phone) return '';
-    return phone.replace(/[\s()-]/g, '');
-  };
 
   return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>

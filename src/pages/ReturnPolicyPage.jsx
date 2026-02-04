@@ -4,6 +4,7 @@ import { ChevronRight } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
 import StructuredData from '../components/StructuredData';
 import COMPANY_DATA, { getContextualEmail } from '../config/company_data';
+import { normalizePhoneForTel } from '../utils/phone';
 
 const ReturnPolicyPage = () => {
   const textColor = { color: 'var(--color-text)' };
@@ -12,12 +13,6 @@ const ReturnPolicyPage = () => {
   const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL
     ? import.meta.env.BASE_URL
     : '/';
-
-  // Normalize phone to E.164 format for tel: URI
-  const normalizePhoneForTel = (phone) => {
-    if (!phone) return '';
-    return phone.replace(/[\s()-]/g, '');
-  };
 
   return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>
