@@ -87,17 +87,17 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
                 atm: { name: 'ATM Services', type: 'Service', description: 'Cash withdrawal and banking services available 24/7' },
                 bitcoin_atm: { name: 'Bitcoin ATM', type: 'Service', description: 'Cryptocurrency buying and selling services' },
                 rocafe: { name: 'RoCafé Coffee & Bubble Tea', type: 'Service', description: 'Fresh brewed coffee, signature bubble tea, matcha lattes, and fruit slushes' },
-                halal_meat: { name: 'Halal Meat', type: 'Product', description: 'Certified Zabiha Halal meats' },
+                halal_meat: { name: 'Halal Meat', type: 'Product', description: 'Certified Zabiha Halal meats', hasOffer: true },
                 printing: { name: 'Printing Services', type: 'Service', description: 'Document printing and copying' },
                 package_pickup: { name: 'Package Services', type: 'Service', description: 'Shipping and package handling' },
                 money_transfer: { name: 'Money Transfer', type: 'Service', description: 'Send and receive money worldwide' },
-                gift_cards: { name: 'Gift Cards', type: 'Product', description: 'Prepaid and gift cards for major brands' },
-                perfumes: { name: 'Perfumes', type: 'Product', description: 'Imported and local fragrances' },
-                tobacco: { name: 'Tobacco & Vape Products', type: 'Product', description: 'Wide selection for adult customers (19+)' },
+                gift_cards: { name: 'Gift Cards', type: 'Product', description: 'Prepaid and gift cards for major brands', hasOffer: true },
+                perfumes: { name: 'Perfumes', type: 'Product', description: 'Imported and local fragrances', hasOffer: true },
+                tobacco: { name: 'Tobacco & Vape Products', type: 'Product', description: 'Wide selection for adult customers (19+)', hasOffer: true },
                 lottery: { name: 'OLG Lottery', type: 'Service', description: 'Lottery tickets and scratch cards' }
               };
               const mapped = serviceMap[service] || { name: service, type: 'Service', description: '' };
-              return {
+              const offer = {
                 '@type': 'Offer',
                 itemOffered: {
                   '@type': mapped.type,
@@ -105,6 +105,15 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
                   description: mapped.description
                 }
               };
+              // Add offers field to Product schema per Google Rich Results requirements
+              if (mapped.type === 'Product') {
+                offer.itemOffered.offers = {
+                  '@type': 'AggregateOffer',
+                  availability: 'https://schema.org/InStock',
+                  priceCurrency: 'CAD'
+                };
+              }
+              return offer;
             })
           },
           amenityFeature: [
