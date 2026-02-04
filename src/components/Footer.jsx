@@ -17,6 +17,7 @@ import OrderCTA from './OrderCTA';
 import Button from './Button';
 import { ReactGoogleReviews } from 'react-google-reviews';
 import 'react-google-reviews/dist/index.css';
+import { circuitBreakers } from '../utils/apiCircuitBreaker';
 
 
 // Social platforms to control display in Footer (label, icon)
@@ -153,7 +154,9 @@ export default function Footer() {
       <footer className="pt-16 pb-8" style={{ backgroundColor: 'var(--color-footer)', color: 'var(--color-on-footer)' }}>
         {/* Google Places Reviews Carousel */}
         <div className="mb-8 flex justify-center">
-          {import.meta.env.VITE_GOOGLE_PLACES_API_KEY && LOCATIONS[0]?.google?.placeId ? (
+          {import.meta.env.VITE_GOOGLE_PLACES_API_KEY && 
+           LOCATIONS[0]?.google?.placeId && 
+           circuitBreakers.googlePlaces.shouldAttemptCall() ? (
             <ReactGoogleReviews 
               layout="carousel"
               googlePlaceId={LOCATIONS[0].google.placeId}
