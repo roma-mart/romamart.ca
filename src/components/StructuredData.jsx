@@ -6,6 +6,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import COMPANY_DATA from '../config/company_data';
+import { buildMenuItemSchema } from '../schemas/menuItemSchema';
 
 const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
   const generateSchema = () => {
@@ -147,12 +148,27 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
           }
         };
 
+      case 'Product': {
+        const menuItem = data.menuItem || data.item || data;
+        const baseUrl = data.baseUrl || 'https://romamart.ca';
+        const options = {
+          priceInCents: data.priceInCents,
+          currency: data.currency
+        };
+
+        return buildMenuItemSchema(menuItem, baseUrl, options);
+      }
+
       default:
         return data;
     }
   };
 
   const schema = generateSchema();
+
+  if (!schema) {
+    return null;
+  }
 
   return (
     <Helmet>
