@@ -10,14 +10,14 @@ import { useLocationAware } from '../hooks/useLocationContext';
 import { ROCAFE_FULL_MENU, MENU_CATEGORIES, ALLERGEN_WARNING } from '../data/rocafe-menu';
 import COMPANY_DATA from '../config/company_data';
 import MenuExcelLoader from '../components/MenuExcelHolder';
-import { useExcelMenu } from '../hooks/useExcelMenu';
+import { useMenu } from '../contexts/MenuContext';
 import { groupExcelItemsByCategory, mergeCategoriesWithFallback } from '../utils/excelMenuTransform';
 import StructuredData from '../components/StructuredData';
 import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 
 const RoCafePage = () => {
 
-  const { menuItems } = useExcelMenu();
+  const { menuItems } = useMenu();
   
   // Note: menuItems will be empty array during loading or on error
   // The menuCategories useMemo will handle fallback to static menu

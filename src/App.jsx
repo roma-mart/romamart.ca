@@ -1,6 +1,7 @@
 import React, { useState, useEffect, Suspense, lazy, useCallback, useMemo } from 'react';
 import ErrorBoundary from './components/ErrorBoundary';
 import { motion } from 'framer-motion';
+import { MenuProvider } from './contexts/MenuContext.jsx';
 import {
   ShoppingBasket,
   Star,
@@ -28,7 +29,7 @@ import { ROCAFE_FEATURED } from './data/rocafe-menu';
 import { SERVICES_FEATURED } from './data/services.jsx';
 import Phone from 'lucide-react/dist/esm/icons/phone.js';
 import Clock from 'lucide-react/dist/esm/icons/clock.js';
-import { useExcelMenu } from './hooks/useExcelMenu';
+import { useMenu } from './contexts/MenuContext';
 import { transformExcelToMenuItem } from './utils/excelMenuTransform';
 import HCaptchaWidget from './components/HCaptchaWidget';
 import StructuredData from './components/StructuredData';
@@ -599,11 +600,8 @@ function App() {
   const { batteryLevel, isCharging } = useBatteryStatus();
   
   // Fetch menu data from API for homepage featured schemas + RoCafe section
-  // PERF: useExcelMenu is called unconditionally here (even on non-home routes),
-  // and also in RoCafePage, causing duplicate API calls.
-  // TODO: Consider moving menu state to a shared context provider (e.g., MenuProvider)
-  // to deduplicate API calls and share cache between App + RoCafePage routes.
-  const { menuItems, loading } = useExcelMenu();
+  // Menu is now provided via MenuProvider context to avoid duplicate API calls
+  const { menuItems, loading } = useMenu();
   
   // Only include featured items for homepage schemas (limited selection)
   const featuredSchemaItems = useMemo(() => {
