@@ -11,7 +11,7 @@
  * @returns {string|null} Price as dollar string (e.g., "4.99") or null for invalid input
  */
 export const convertCentsToDollars = (cents) => {
-  if (typeof cents !== 'number' || Number.isNaN(cents)) {
+  if (typeof cents !== 'number' || !Number.isFinite(cents)) {
     return null;
   }
 

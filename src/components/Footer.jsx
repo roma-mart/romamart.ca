@@ -161,7 +161,11 @@ export default function Footer() {
                 See what our customers say about us on Google
               </p>
               <a
-                href={LOCATIONS[0]?.google?.mapLink}
+                href={
+                  currentLocation?.google?.mapLink ||
+                  COMPANY_DATA.location?.google?.mapLink ||
+                  LOCATIONS[0]?.google?.mapLink
+                }
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all focus:outline-none focus:ring-2 focus:ring-offset-2"
@@ -237,7 +241,11 @@ export default function Footer() {
             <div className="p-1">
               <h4 className="font-heading text-lg mb-6" style={{ color: 'var(--color-on-footer)' }}>Pages</h4>
               <ul className="space-y-3 font-inter" style={{ color: 'var(--color-on-footer-muted)' }}>
-                {NAVIGATION_LINKS.filter(link => link.showIn.footer && !['privacy','terms','cookies','accessibility','return-policy'].includes(link.label.toLowerCase())).map(link => (
+                {NAVIGATION_LINKS.filter(link => {
+                  if (!link.showIn.footer) return false;
+                  const normalizedHref = (link.href || '').replace(/^\//, '').replace(/\/$/, '').toLowerCase();
+                  return !['privacy', 'terms', 'cookies', 'accessibility', 'return-policy'].includes(normalizedHref);
+                }).map(link => (
                   <li key={link.href}>
                     <a
                       href={`${BASE_URL}${link.href.replace('/', '')}`}
@@ -268,7 +276,11 @@ export default function Footer() {
             <div className="p-1">
               <h4 className="font-heading text-lg mb-6" style={{ color: 'var(--color-on-footer)' }}>Legal & Accessibility</h4>
               <ul className="space-y-2 font-inter" style={{ color: 'var(--color-on-footer-muted)' }}>
-                {NAVIGATION_LINKS.filter(link => link.showIn.footer && ['privacy','terms','cookies','accessibility','return-policy'].includes(link.label.toLowerCase())).map(link => (
+                {NAVIGATION_LINKS.filter(link => {
+                  if (!link.showIn.footer) return false;
+                  const normalizedHref = (link.href || '').replace(/^\//, '').replace(/\/$/, '').toLowerCase();
+                  return ['privacy', 'terms', 'cookies', 'accessibility', 'return-policy'].includes(normalizedHref);
+                }).map(link => (
                   <li key={link.href}>
                     <a
                       href={`${BASE_URL}${link.href.replace('/', '')}`}

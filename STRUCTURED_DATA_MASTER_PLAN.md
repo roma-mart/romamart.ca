@@ -133,7 +133,7 @@ Roma Mart operates across three distinct systems that must work together:
 - GitHub repository (c:\src\romamart.ca)
 - Deployed: GitHub Pages
 - Role: Renders UI, generates and injects schemas
-- Technologies: React 19, Vite 7, React Helmet, Tailwind
+- Technologies: React 18, Vite 7, React Helmet, Tailwind
 
 #### Component 2: Colleague's Admin System (External)
 
@@ -216,7 +216,7 @@ Roma Mart operates across three distinct systems that must work together:
 
 - Employee count (`employeeCount`) is stored in `src/data/locations.js` under each location's `metadata` section
 - Used by Organization schema in `src/components/StructuredData.jsx` to populate `numberOfEmployees` field
-- Currently: HQ location has `employeeCount: 3`
+- Currently: HQ location has `employeeCount: 5`
 
 **Management Pattern (Consistent with Services & Menu Items):**
 
