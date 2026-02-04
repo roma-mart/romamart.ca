@@ -219,13 +219,32 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
           alternateName: COMPANY_DATA.dba || 'Roma Mart Convenience',
           url: 'https://romamart.ca',
           logo: 'https://romamart.ca/logo.png',
+          description: 'Roma Mart Corp. is a community-first convenience store in Sarnia, Ontario, offering essentials, RoCafé beverages, and local services.',
+          email: COMPANY_DATA.contact?.email || 'contact@romamart.ca',
+          telephone: COMPANY_DATA.contact?.phone || '+1-382-342-2000',
+          address: {
+            '@type': 'PostalAddress',
+            streetAddress: COMPANY_DATA.address?.street || COMPANY_DATA.location?.address?.street || '189-3 Wellington Street',
+            addressLocality: COMPANY_DATA.address?.city || COMPANY_DATA.location?.address?.city || 'Sarnia',
+            addressRegion: COMPANY_DATA.address?.province || COMPANY_DATA.location?.address?.province || 'ON',
+            postalCode: COMPANY_DATA.address?.postalCode || COMPANY_DATA.location?.address?.postalCode || 'N7T 1G6',
+            addressCountry: COMPANY_DATA.address?.country === 'Canada' ? 'CA' : (COMPANY_DATA.address?.country || 'CA')
+          },
           contactPoint: {
             '@type': 'ContactPoint',
             contactType: 'customer service',
             telephone: COMPANY_DATA.contact?.phone || '+1-382-342-2000',
             email: COMPANY_DATA.contact?.email || 'contact@romamart.ca'
           },
-          sameAs: Object.values(COMPANY_DATA.socialLinks || {})
+          sameAs: Object.values(COMPANY_DATA.socialLinks || {}),
+          taxID: COMPANY_DATA.gstNumber || undefined,
+          naicsCode: COMPANY_DATA.naicsCode || '4541',
+          numberOfEmployees: COMPANY_DATA.location?.metadata?.employeeCount
+            ? {
+                '@type': 'QuantitativeValue',
+                value: COMPANY_DATA.location.metadata.employeeCount
+              }
+            : undefined
         };
 
       case 'PrivacyPolicy':

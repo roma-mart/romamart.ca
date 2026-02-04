@@ -16,6 +16,8 @@ const COMPANY_DATA = {
   legalName: 'Roma Mart Corp.',
   dba: 'Roma Mart Convenience',
   gstNumber: '780971768',
+  naicsCode: '4541',  // Grocery stores (North American Industry Classification System)
+  naicsDescription: 'Grocery Stores',
   onlineStoreUrl: null,
   socialLinks: {
     facebook: 'https://www.facebook.com/romamartca',
