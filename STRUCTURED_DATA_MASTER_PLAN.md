@@ -1,8 +1,8 @@
 # Structured Data Implementation - Master Plan
 
-**Status:** Ready for Phase 2 Implementation  
+**Status:** Phase 2 Implementation In Progress (Week 2 Completion)
 **Last Updated:** February 4, 2026  
-**Version:** 1.0.1 (Aligned with actual codebase & standards)  
+**Version:** 1.0.2 (Phase 2 Week 2 Complete - NAICS & Navigation Added)
 **Created By:** GitHub Copilot + Roma Mart Team  
 **Audience:** Development team, colleague, AI assistants (for continuity)
 
@@ -16,13 +16,20 @@ Roma Mart 2.0 needs structured data (JSON-LD schemas) to improve Google Search v
 
 - ✅ LocalBusiness schema exists (basic)
 - ✅ Product schemas for menu items (homepage featured + /rocafe full, API-only)
-- ❌ Service schemas hardcoded in StructuredData.jsx instead of imported from SERVICES (data duplication problem)
-- ✅ Return Policy schema builder implemented (page published)
-- ✅ Privacy policy content updated (per in-store policy)
-- ✅ Privacy policy schema builder implemented
-- ✅ Organization schema on About page
-- ❌ Location schema incomplete (missing services details)
-- ✅ safeString sanitization hardened (DOMParser + iterative fallback)
+- ✅ Product schema tests (90%+ coverage)
+- ✅ safeString sanitization hardened (DOMParser + iterative fallback - CodeQL fix)
+- ✅ API call deduplication (single useExcelMenu at App level)
+- ✅ Menu item schema builder (`src/schemas/menuItemSchema.js`)
+- ✅ Return Policy schema builder (`src/schemas/returnPolicySchema.js`)
+- ✅ Return Policy page created and published (`/return-policy`)
+- ✅ Privacy policy schema builder (`src/schemas/privacyPolicySchema.js`)
+- ✅ Privacy policy page updated (July 28, 2025 effective date)
+- ✅ Organization schema on About page (enhanced with NAICS)
+- ✅ NAICS code added to company_data (4541 - Grocery Stores)
+- ✅ Employee data management documented (locations.js metadata)
+- ✅ Return Policy navigation links added (footer + config)
+- ❌ Service schemas hardcoded in StructuredData.jsx instead of imported from SERVICES (Phase 3)
+- ❌ Location schema incomplete (Phase 3)
 
 ### What We're Doing
 
@@ -41,6 +48,32 @@ Menu items + services account for ~40% of searchable content. Without proper sch
 ### Timeline
 
 4 weeks (Phase 2 implementation) + 4-6 weeks (Phase 3 migration to Toolpad APIs)
+
+### Phase 2 Implementation Progress (Week 1-2 Complete ✅)
+
+**Week 1 Complete:** ✅
+
+- ✅ Schema helpers utility (safeString, convertCentsToDollars, etc.)
+- ✅ Menu item schema builder with 90%+ test coverage
+- ✅ Product schema integration (homepage featured + /rocafe full)
+- ✅ API call deduplication
+- ✅ CodeQL sanitization vulnerability fix
+
+**Week 2 Complete:** ✅
+
+- ✅ Privacy Policy schema builder + page content update (July 28, 2025)
+- ✅ Return Policy schema builder + new `/return-policy` page
+- ✅ Organization schema enhanced with NAICS code (4541)
+- ✅ Employee data management documented (SSOT pattern)
+- ✅ Return Policy footer links + navigation config
+- ✅ LocalBusiness schema enrichment with company_data fallbacks
+
+**Weeks 3-4 (Next):**
+
+- 🟡 Service schema builder (Phase 3 trigger - awaiting Toolpad API)
+- 🟡 Location schema builder (Phase 3 trigger - awaiting Toolpad API)
+- 🟡 Google Rich Results validation (all schemas)
+- 🟡 Manual testing & documentation finalization
 
 ---
 
