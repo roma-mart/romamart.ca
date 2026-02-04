@@ -1,3 +1,5 @@
+import sanitizeHtml from 'sanitize-html';
+
 /**
  * Schema Helpers
  * Shared utilities for schema.org JSON-LD generation
@@ -8,11 +10,11 @@
 /**
  * Convert cents to dollar string for schema.org
  * @param {number} cents - Price in cents (e.g., 499)
- * @returns {string} Price as dollar string (e.g., "4.99")
+ * @returns {string|null} Price as dollar string (e.g., "4.99") or null for invalid input
  */
 export const convertCentsToDollars = (cents) => {
   if (typeof cents !== 'number' || Number.isNaN(cents)) {
-    return '0.00';
+    return null;
   }
 
   return (cents / 100).toFixed(2);
@@ -28,8 +30,12 @@ export const safeString = (value) => {
     return '';
   }
 
-  return value
-    .replace(/<[^>]*>/g, '')
+  const sanitized = sanitizeHtml(value, {
+    allowedTags: [],
+    allowedAttributes: {}
+  });
+
+  return sanitized
     .replace(/\s+/g, ' ')
     .trim();
 };

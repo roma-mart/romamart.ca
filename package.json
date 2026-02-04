@@ -33,6 +33,7 @@
     "react-dom": "^18.3.1",
     "react-google-reviews": "^1.8.0",
     "react-helmet-async": "^2.0.5",
+    "sanitize-html": "^2.17.0",
     "vite-plugin-pages": "^0.33.1",
     "vite-ssg": "^28.2.2",
     "xlsx": "^0.18.5"
