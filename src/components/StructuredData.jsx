@@ -27,7 +27,7 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
           logo: 'https://romamart.ca/logo.png',
           address: {
             '@type': 'PostalAddress',
-            streetAddress: data.address?.street || COMPANY_DATA.location.address.street || '189-3 Wellington Street',
+            streetAddress: data.address?.street || COMPANY_DATA.location.address.street || '3-189 Wellington Street',
             addressLocality: data.address?.city || COMPANY_DATA.location.address.city || 'Sarnia',
             addressRegion: data.address?.province || 'ON',
             postalCode: data.address?.postalCode || COMPANY_DATA.location.address.postalCode || 'N7T 1G6',
