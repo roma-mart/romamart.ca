@@ -8,6 +8,7 @@ import { getActiveLocations, formatDistance, getPreferredLocations } from '../da
 import LocationImageCarousel from '../components/LocationImageCarousel';
 import LiveHoursDisplay from '../components/LiveHoursDisplay';
 import { useAutoLocation } from '../hooks/useAutoLocation';
+import { normalizePhoneForTel } from '../utils/phone';
 
 const LocationsPage = () => {
   const [userLoadedMaps, setUserLoadedMaps] = useState(() => []);
@@ -210,7 +211,7 @@ const LocationsPage = () => {
                     <div className="flex-1">
                       <h3 className="font-bold mb-1" style={textColor}>Phone</h3>
                       <div className="flex items-center gap-2 flex-wrap">
-                        <a href={`tel:${location.phone}`} className="font-inter hover:underline" style={{ color: 'var(--color-accent)' }}>
+                        <a href={`tel:${normalizePhoneForTel(location.phone)}`} className="font-inter hover:underline" style={{ color: 'var(--color-accent)' }}>
                           {location.phone}
                         </a>
                       <CopyButton 

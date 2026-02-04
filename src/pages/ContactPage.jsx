@@ -13,6 +13,7 @@ import COMPANY_DATA from '../config/company_data';
 import HCaptchaWidget from '../components/HCaptchaWidget';
 import { getHCaptchaTheme } from '../design/hcaptchaTheme';
 import { useColorScheme } from '../hooks/useColorScheme';
+import { normalizePhoneForTel } from '../utils/phone';
 
 const ContactPage = () => {
   const textColor = { color: 'var(--color-text)' };
@@ -131,7 +132,7 @@ const ContactPage = () => {
                 <div className="flex-1">
                   <h4 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Call Us</h4>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <a href={`tel:${COMPANY_DATA.location.contact.phone}`} className="hover:underline" style={{ color: 'var(--color-accent)' }}>
+                    <a href={`tel:${normalizePhoneForTel(COMPANY_DATA.location.contact.phone)}`} className="hover:underline" style={{ color: 'var(--color-accent)' }}>
                       {COMPANY_DATA.location.contact.phone}
                     </a>
                     <CopyButton 
