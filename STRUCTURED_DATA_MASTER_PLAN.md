@@ -125,6 +125,7 @@ Roma Mart operates across three distinct systems that must work together:
 | Menu Items | Colleague's Toolpad (API) | JSON via endpoint | Same (extended) |
 | Services | services.jsx (static) | JavaScript array | Colleague's Toolpad + API |
 | Locations | locations.js (static) | JavaScript array | Colleague's Toolpad + API |
+| **Employees** | **locations.js metadata** | **JavaScript (per-location)** | **Colleague's Toolpad + API** |
 | Company Info | company_data.js (static) | JavaScript object | Static (brand constants) |
 
 ### The rocafe-menu.js Reality
@@ -175,6 +176,44 @@ Roma Mart operates across three distinct systems that must work together:
 | src/config/company_data.js | Company/HQ data, social links | YES | Imports primary location from locations.js as fallback |
 | src/hooks/useExcelMenu.js | Fetches menu from API | No (integration) | Calls [https://romamart.netlify.app/api/public-menu](https://romamart.netlify.app/api/public-menu) |
 | src/utils/excelMenuTransform.jsx | Transforms API data for UI | No (transformation) | Price conversion, field mapping for display |
+
+### Employee Data Management System
+
+**Current Implementation:**
+
+- Employee count (`employeeCount`) is stored in `src/data/locations.js` under each location's `metadata` section
+- Used by Organization schema in `src/components/StructuredData.jsx` to populate `numberOfEmployees` field
+- Currently: HQ location has `employeeCount: 3`
+
+**Management Pattern (Consistent with Services & Menu Items):**
+
+Employee data should be managed exactly like services and menu items—as a **centralized, location-specific data attribute**:
+
+- **Single Source of Truth:** Defined in `locations.js` metadata (per location)
+- **Phase 2 (Current):** Sourced from `locations.js`
+- **Phase 3 (Future):** Will migrate to Colleague's Toolpad API when location management is extended
+- **Usage:** Referenced in schemas via `COMPANY_DATA.location.metadata.employeeCount` → Organization schema
+
+**Locations.js Structure Example:**
+
+```javascript
+metadata: {
+  openedDate: '2025-11-28',              // Store opening date
+  squareFootage: 2000,
+  employeeCount: 3,                      // ← Employee count managed here
+  isHeadquarters: true,
+  acceptsCrypto: true,
+  languages: ['English', 'Hindi', 'Urdu']
+}
+```
+
+**Future Enhancement (Phase 3):**
+
+When Colleague's Toolpad API is extended with location management, employee counts will be pulled from the API endpoint instead of static file, enabling:
+
+- Real-time employee count updates
+- Per-location staffing information
+- Historical tracking for analytics
 
 ---
 
