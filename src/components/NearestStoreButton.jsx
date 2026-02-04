@@ -44,10 +44,8 @@ const NearestStoreButton = ({ onLocationFound, className = '', style: customStyl
       type="button"
       onClick={getCurrentLocation}
       disabled={disabled}
-      className={`inline-flex items-center gap-2 px-6 py-3 rounded-full font-bold font-inter transition-all disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
-      style={{ WebkitTapHighlightColor: 'transparent', transform: 'translateZ(0)', backgroundColor: 'var(--color-primary)', color: 'var(--color-accent)', ...customStyle }}
-      onMouseEnter={(e) => !disabled && (e.currentTarget.style.transform = 'scale(1.05) translateZ(0)')}
-      onMouseLeave={(e) => !disabled && (e.currentTarget.style.transform = 'scale(1) translateZ(0)')}
+      className={`inline-flex items-center gap-2 px-6 py-3 rounded-full font-bold font-inter transform transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
+      style={{ WebkitTapHighlightColor: 'transparent', backgroundColor: 'var(--color-primary)', color: 'var(--color-accent)', ...customStyle }}
     >
       {loading ? (
         <>

@@ -259,8 +259,25 @@ function SingleSelectionMode({ customization, selectedOptions, onOptionsChange }
     });
   };
 
+  const handleKeyDown = (e, currentIdx) => {
+    const options = customization.options;
+    let nextIdx = currentIdx;
+    
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      nextIdx = (currentIdx + 1) % options.length;
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      nextIdx = (currentIdx - 1 + options.length) % options.length;
+    } else {
+      return;
+    }
+    
+    handleSelect(options[nextIdx].name);
+  };
+
   return (
-    <div className="flex gap-2 flex-wrap">
+    <div className="flex gap-2 flex-wrap" role="radiogroup">
       {customization.options.map((option, optIdx) => {
         const isSelected = selectedOptions[customization.type] === option.name;
         
@@ -272,6 +289,7 @@ function SingleSelectionMode({ customization, selectedOptions, onOptionsChange }
               e.stopPropagation();
               handleSelect(option.name);
             }}
+            onKeyDown={(e) => handleKeyDown(e, optIdx)}
             className="px-3 py-2 rounded-lg font-inter text-xs transition-all hover:scale-105"
             style={{
               backgroundColor: isSelected ? 'var(--color-accent)' : 'var(--color-bg)',

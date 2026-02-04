@@ -13,7 +13,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { circuitBreakers } from '../utils/apiCircuitBreaker';
 import { getUserHour12Preference, formatTimeFrom24h } from '../utils/timeFormat';
-import { DAY_ORDER, DAY_SHORT, groupDayMap } from '../utils/dateHelpers';
+import { DAY_ORDER, groupDayMap } from '../utils/dateHelpers';
 
 const pad2 = (value) => value.toString().padStart(2, '0');
 

@@ -54,10 +54,8 @@ const ShareButton = ({ title, text, url, className = '', style: customStyle = {}
     <button
       type="button"
       onClick={handleShare}
-      className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-inter font-semibold transition-all ${className}`}
-      style={{ WebkitTapHighlightColor: 'transparent', transform: 'translateZ(0)', ...customStyle }}
-      onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05) translateZ(0)'}
-      onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1) translateZ(0)'}
+      className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-inter font-semibold transform transition-all hover:scale-105 ${className}`}
+      style={{ WebkitTapHighlightColor: 'transparent', ...customStyle }}
       aria-label={`Share ${title || 'this page'}`}
     >
       <Share2 size={18} />

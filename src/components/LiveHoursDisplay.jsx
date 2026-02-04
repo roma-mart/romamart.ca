@@ -232,6 +232,7 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
 
   const refreshButton = showRefresh && (hours || error) ? (
     <button
+      type="button"
       onClick={() => refetch({ force: true })}
       className="mt-2 text-xs hover:underline flex items-center gap-1"
       style={{ color: 'var(--color-accent)' }}

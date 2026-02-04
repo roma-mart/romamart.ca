@@ -486,6 +486,7 @@ export default function GoogleReviews() {
         {reviews.length > 1 && (
           <>
             <button
+              type="button"
               onClick={goToPrev}
               className="absolute left-0 md:-left-16 top-1/2 z-10 p-3 rounded-full transition-all focus:outline-none hidden md:flex items-center justify-center"
               style={{ 
@@ -511,6 +512,7 @@ export default function GoogleReviews() {
               <ChevronLeft size={24} />
             </button>
             <button
+              type="button"
               onClick={goToNext}
               className="absolute right-0 md:-right-16 top-1/2 z-10 p-3 rounded-full transition-all focus:outline-none hidden md:flex items-center justify-center"
               style={{ 
