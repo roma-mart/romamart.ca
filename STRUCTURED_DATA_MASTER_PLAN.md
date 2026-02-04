@@ -66,7 +66,7 @@ Roma Mart operates across three distinct systems that must work together:
 
 - Endpoint: [https://romamart.netlify.app/api/public-menu](https://romamart.netlify.app/api/public-menu)
 - Returns: JSON array of menu items (colleague's system)
-- Format: Matches rocafe-menu.js structure (see below)
+- Format: Matches rocafe-menu.js structure with prices in cents from API
 - Updates: Real-time when colleague edits items in Toolpad
 
 ### Data Sources (SSOT - Single Source of Truth)

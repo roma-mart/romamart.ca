@@ -45,6 +45,25 @@ const normalizePrice = (price, priceInCents) => {
   return priceInCents ? convertCentsToDollars(value) : value.toFixed(2);
 };
 
+const inferPriceInCents = (sizes = []) => {
+  if (!Array.isArray(sizes) || sizes.length === 0) {
+    return false;
+  }
+
+  const numericPrices = sizes
+    .map(size => Number(size?.price))
+    .filter(value => Number.isFinite(value));
+
+  if (numericPrices.length === 0) {
+    return false;
+  }
+
+  const maxPrice = Math.max(...numericPrices);
+  const hasLargeInteger = numericPrices.some(value => Number.isInteger(value) && value >= 100);
+
+  return maxPrice >= 100 && hasLargeInteger;
+};
+
 const buildOffer = (size, options) => {
   if (!size) return null;
 
@@ -99,19 +118,19 @@ const buildOffers = (sizes = [], options) => {
 /**
  * Build a Product schema object for a menu item
  * @param {Object} menuItem - Menu item object
- * @param {string} baseUrl - Base site URL (e.g., https://romamart.ca)
+ * @param {string} itemUrl - Canonical URL for the menu item or page
  * @param {Object} options - Optional overrides
  * @param {boolean} options.priceInCents - Whether size prices are in cents
  * @param {string} options.currency - ISO currency code (default CAD)
  * @returns {Object|null} Product schema object
  */
-export const buildMenuItemSchema = (menuItem, baseUrl, options = {}) => {
+export const buildMenuItemSchema = (menuItem, itemUrl, options = {}) => {
   if (!menuItem || typeof menuItem !== 'object') {
     return null;
   }
 
   const resolvedOptions = {
-    priceInCents: options.priceInCents !== false,
+    priceInCents: options.priceInCents ?? inferPriceInCents(menuItem.sizes || []),
     currency: options.currency || 'CAD'
   };
 
@@ -145,7 +164,7 @@ export const buildMenuItemSchema = (menuItem, baseUrl, options = {}) => {
     ...(offers ? { offers } : {}),
     ...(image ? { image } : {}),
     ...(menuItem.id ? { sku: safeString(menuItem.id) } : {}),
-    ...(baseUrl ? { url: baseUrl } : {})
+    ...(itemUrl ? { url: itemUrl } : {})
   };
 
   return schema;

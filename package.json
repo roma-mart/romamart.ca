@@ -69,5 +69,8 @@
     },
     "esbuild": "0.27.0"
   },
-  "legacy-peer-deps": true
+  "legacy-peer-deps": true,
+  "engines": {
+    "node": ">=22 <24"
+  }
 }

@@ -12,6 +12,7 @@ import COMPANY_DATA from '../config/company_data';
 import MenuExcelLoader from '../components/MenuExcelHolder';
 import { useExcelMenu } from '../hooks/useExcelMenu';
 import { groupExcelItemsByCategory, mergeCategoriesWithFallback } from '../utils/excelMenuTransform';
+import StructuredData from '../components/StructuredData';
 
 const RoCafePage = () => {
 
@@ -39,6 +40,12 @@ const RoCafePage = () => {
     return groupExcelItemsByCategory(menuItems);
   }, [menuItems]);
 
+  const schemaMenuItems = useMemo(() => {
+    return menuItems.length > 0 ? menuItems : ROCAFE_FULL_MENU;
+  }, [menuItems]);
+
+  const schemaPriceInCents = menuItems.length > 0;
+
 
   // create memoized handlers map for categories
   const categoryHandlers = useMemo(() => {
@@ -51,6 +58,17 @@ const RoCafePage = () => {
 
   return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>
+      {schemaMenuItems.map(item => (
+        <StructuredData
+          key={`schema-${item.id || item.name}`}
+          type="Product"
+          data={{
+            menuItem: item,
+            itemUrl: 'https://romamart.ca/rocafe',
+            priceInCents: schemaPriceInCents
+          }}
+        />
+      ))}
       <Helmet>
         <title>RoCafé Menu | Roma Mart Convenience</title>
         <meta name="description" content="Explore the RoCafé menu featuring hot coffee, iced coffee, tea, fresh juice, smoothies, frappés, specialty drinks, food, and seasonal items." />

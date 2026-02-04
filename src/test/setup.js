@@ -1,12 +1,11 @@
+import { afterEach } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
 
 // Cleanup after each test case (e.g., clearing jsdom)
-if (typeof globalThis.afterEach === 'function') {
-  globalThis.afterEach(() => {
-    cleanup();
-  });
-}
+afterEach(() => {
+  cleanup();
+});
 
 // Mock window.matchMedia for components that check for dark mode
 Object.defineProperty(window, 'matchMedia', {

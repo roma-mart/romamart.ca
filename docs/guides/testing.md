@@ -8,6 +8,10 @@ Roma Mart uses a combination of automated quality checks and manual testing to e
 
 ## Automated Testing
 
+### Runtime Requirement
+
+- Use Node 22.x for running Vitest (see .nvmrc). Node 24 currently triggers a Vitest runner error.
+
 ### Quality Checks
 
 ```bash
@@ -85,6 +89,7 @@ PRs cannot merge if checks fail.
 ### Core Web Vitals
 
 Monitor in production:
+
 - LCP (Largest Contentful Paint)
 - FID (First Input Delay)
 - CLS (Cumulative Layout Shift)
@@ -92,6 +97,7 @@ Monitor in production:
 ### Bundle Size
 
 Current targets (gzipped):
+
 - JavaScript: < 150 KB
 - CSS: < 10 KB
 - Total: < 200 KB

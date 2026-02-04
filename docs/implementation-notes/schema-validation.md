@@ -9,6 +9,7 @@
 2. Select **Code** input.
 3. Paste the JSON-LD sample below.
 4. Run the test and confirm no errors.
+5. Validate the same JSON-LD in the Schema.org validator: [https://validator.schema.org/](https://validator.schema.org/)
 
 ## Sample JSON-LD (Product)
 
@@ -48,4 +49,4 @@
 
 ## Result
 
-- Rich Results Test reported "No items detected." This is expected because Product schemas do not produce rich results in that tool by default. Schema is still valid for search engine understanding.
+- Rich Results Test reported "No items detected." Treat this as investigatory: Product rich results require specific fields. Validate with the Schema.org validator and revisit required fields if rich results are needed.

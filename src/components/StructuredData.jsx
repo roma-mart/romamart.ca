@@ -150,13 +150,13 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
 
       case 'Product': {
         const menuItem = data.menuItem || data.item || data;
-        const baseUrl = data.baseUrl || 'https://romamart.ca';
+        const itemUrl = data.itemUrl || data.url || 'https://romamart.ca';
         const options = {
           priceInCents: data.priceInCents,
           currency: data.currency
         };
 
-        return buildMenuItemSchema(menuItem, baseUrl, options);
+        return buildMenuItemSchema(menuItem, itemUrl, options);
       }
 
       default:
