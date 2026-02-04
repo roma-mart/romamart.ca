@@ -31,9 +31,7 @@ const COMPANY_DATA = {
   contact: {
     phone: getPrimaryLocation().contact.phone,
     email: getPrimaryLocation().email,
-    web3FormsAccessKey: (typeof import.meta !== 'undefined' && import.meta.env?.VITE_WEB3FORMS_KEY)
-      ? import.meta.env.VITE_WEB3FORMS_KEY
-      : 'YOUR_WEB3FORMS_KEY'
+    web3FormsAccessKey: getEnvVar('VITE_WEB3FORMS_KEY', 'YOUR_WEB3FORMS_KEY')
   },
   // Location-dependent info is mapped from the primary location object
   location: getPrimaryLocation(),

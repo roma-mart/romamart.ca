@@ -7,7 +7,7 @@
  * @module components/LiveHoursDisplay
  */
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { Clock, RefreshCw, AlertCircle } from 'lucide-react';
 import useGooglePlaceHours from '../hooks/useGooglePlaceHours';
@@ -36,7 +36,7 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
     full: null
   };
 
-  const renderHoursContent = () => {
+  const renderHoursContent = useCallback(() => {
     if (error) {
       return (
         <div className="space-y-2">
@@ -126,7 +126,7 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
         <p className="font-inter" style={mutedTextColor}>Sat-Sun: {displayHours.weekends}</p>
       </div>
     );
-  };
+  }, [error, isLoading, displayHours, showStatus, isOpenNow, fallbackHours, textColor, mutedTextColor]);
 
   if (compact) {
     return (

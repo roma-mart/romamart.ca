@@ -167,6 +167,13 @@ function formatHoursDisplay(weekdayText) {
     if (import.meta.env.DEV) {
       console.warn('Google Places API returned unexpected number of days:', dayMap.length);
     }
+    // Return fallback for unexpected day count to avoid incorrect data
+    return {
+      weekdays: 'Hours not available',
+      weekends: 'Hours not available',
+      full: weekdayText,
+      allSame: false
+    };
   }
 
   // Extract Monday-Friday by day name (resilient to API format changes)
