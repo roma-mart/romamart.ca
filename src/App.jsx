@@ -655,7 +655,7 @@ function App() {
           />
         )}
         <ErrorBoundary>
-          <Navbar />
+          <Navbar currentPage={currentPage} />
         </ErrorBoundary>
         <main className="flex-1">
           {currentPage !== 'home' ? (
