@@ -4,10 +4,14 @@
  * Uses the Place ID to fetch current hours and status from Google Maps.
  * Results are cached to minimize API calls and respect rate limits.
  * 
+ * Includes circuit breaker protection to stop API calls if quota is exceeded,
+ * automatically falling back to static hours.
+ * 
  * @module hooks/useGooglePlaceHours
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import { circuitBreakers } from '../utils/apiCircuitBreaker';
 
 // Extract API key from environment variable
 // This key powers: Places API (New), Google Maps Embed API, Maps JavaScript API
@@ -37,6 +41,14 @@ async function fetchPlaceDetails(placeId) {
     throw new Error('Place ID is required');
   }
 
+  // Check circuit breaker first - if quota exceeded, return null immediately
+  if (!circuitBreakers.googlePlaces.shouldAttemptCall()) {
+    if (import.meta.env.DEV) {
+      console.warn('⚠️ Circuit breaker is open. API quota likely exceeded. Using fallback hours only.');
+    }
+    return null;
+  }
+
   // Fail fast if API key not configured
   if (!GOOGLE_API_KEY) {
     throw new Error('Google Places API key not configured (VITE_GOOGLE_PLACES_API_KEY)');
@@ -61,10 +73,14 @@ async function fetchPlaceDetails(placeId) {
     });
     
     if (!response.ok) {
-      // If new API fails, use fallback
+      // Record the failure for circuit breaker
+      circuitBreakers.googlePlaces.recordFailure(response.status);
+
       if (import.meta.env.DEV) {
-        console.warn('Places API request failed, using fallback');
+        console.warn(`Places API error (${response.status}): ${response.statusText}`);
       }
+
+      // Return null - component will use fallback hours
       return null;
     }
 
@@ -252,6 +268,25 @@ export function useGooglePlaceHours(placeId, options = {}) {
  */
 export function clearHoursCache() {
   hoursCache.clear();
+}
+
+/**
+ * Get circuit breaker status (for monitoring API quota in dev console)
+ * Returns: { isOpen, failureCount, quotaExceeded, timeUntilReset, apiName }
+ * 
+ * Usage in DevTools Console:
+ *   import { getPlacesQuotaStatus } from '@/hooks/useGooglePlaceHours'
+ *   console.log(getPlacesQuotaStatus())
+ */
+export function getPlacesQuotaStatus() {
+  return circuitBreakers.googlePlaces.getStatus();
+}
+
+/**
+ * Manually reset circuit breaker (for testing - dev only)
+ */
+export function resetPlacesCircuitBreaker() {
+  circuitBreakers.googlePlaces.reset();
 }
 
 export default useGooglePlaceHours;
