@@ -140,49 +140,6 @@ const RoCafePage = () => {
         </div>
       </section>
 
-      {/* Allergen Warning Section */}
-      <section className="max-w-5xl mx-auto px-4 mb-12">
-        <div
-          className="p-6 rounded-2xl border-4"
-          style={{
-            backgroundColor: 'var(--color-warning-bg)',
-            borderColor: 'var(--color-warning-border)'
-          }}
-        >
-          <div className="flex items-start gap-4">
-            <AlertTriangle size={32} style={{ color: 'var(--color-warning)', flexShrink: 0 }} />
-            <div>
-              <h2 className="text-2xl var(--font-heading) font-bold mb-2" style={{ color: 'var(--color-warning)' }}>
-                {ALLERGEN_WARNING.title}
-              </h2>
-              <p className="font-inter text-sm mb-4" style={{ color: 'var(--color-warning)' }}>
-                {ALLERGEN_WARNING.subtitle}
-              </p>
-              <div className="flex flex-wrap gap-2 mb-4">
-                {ALLERGEN_WARNING.allergens.map((allergen, idx) => (
-                  <div 
-                    key={idx}
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg"
-                    style={{ backgroundColor: 'var(--color-warning)', color: 'var(--color-warning-bg)' }}
-                  >
-                    <span className="text-lg">{allergen.icon}</span>
-                    <span className="text-xs font-inter font-bold" style={{ color: 'var(--color-warning-bg)' }}>
-                      {allergen.name}
-                    </span>
-                  </div>
-                ))}
-              </div>
-              <p className="font-inter text-xs font-bold mb-2" style={{ color: 'var(--color-warning)' }}>
-                {ALLERGEN_WARNING.footer}
-              </p>
-              <p className="font-inter text-xs leading-relaxed" style={{ color: 'var(--color-warning)', opacity: 0.8 }}>
-                {ALLERGEN_WARNING.disclaimer}
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Menu Categories */}
       <section className="max-w-5xl mx-auto px-4">
         <div className="space-y-4">
@@ -230,6 +187,49 @@ const RoCafePage = () => {
               )}
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Allergen Warning Section */}
+      <section className="max-w-5xl mx-auto px-4 mt-12 mb-12">
+        <div
+          className="p-6 rounded-2xl border-4"
+          style={{
+            backgroundColor: 'var(--color-warning-bg)',
+            borderColor: 'var(--color-warning-border)'
+          }}
+        >
+          <div className="flex items-start gap-4">
+            <AlertTriangle size={32} style={{ color: 'var(--color-warning)', flexShrink: 0 }} />
+            <div>
+              <h2 className="text-2xl var(--font-heading) font-bold mb-2" style={{ color: 'var(--color-warning)' }}>
+                {ALLERGEN_WARNING.title}
+              </h2>
+              <p className="font-inter text-sm mb-4" style={{ color: 'var(--color-warning)' }}>
+                {ALLERGEN_WARNING.subtitle}
+              </p>
+              <div className="flex flex-wrap gap-2 mb-4">
+                {ALLERGEN_WARNING.allergens.map((allergen, idx) => (
+                  <div 
+                    key={idx}
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg"
+                    style={{ backgroundColor: 'var(--color-warning)', color: 'var(--color-warning-bg)' }}
+                  >
+                    <span className="text-lg">{allergen.icon}</span>
+                    <span className="text-xs font-inter font-bold" style={{ color: 'var(--color-warning-bg)' }}>
+                      {allergen.name}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <p className="font-inter text-xs font-bold mb-2" style={{ color: 'var(--color-warning)' }}>
+                {ALLERGEN_WARNING.footer}
+              </p>
+              <p className="font-inter text-xs leading-relaxed" style={{ color: 'var(--color-warning)', opacity: 0.8 }}>
+                {ALLERGEN_WARNING.disclaimer}
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 

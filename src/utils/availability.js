@@ -83,8 +83,8 @@ export function getMenuItemStatusAtLocation(menuItemId, location, menuData, menu
  * @returns {boolean} True if location is open (live) or marked as open (fallback).
  */
 export function isLocationOpen(location, isOpenNow = undefined) {
-  // Prefer live data from Google Places API
-  if (isOpenNow !== undefined) {
+  // Prefer live data from Google Places API (only if it's explicitly true or false, not null/undefined)
+  if (isOpenNow !== undefined && isOpenNow !== null) {
     return isOpenNow;
   }
   // Fallback to static location status
