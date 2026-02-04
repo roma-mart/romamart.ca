@@ -38,7 +38,7 @@ If using content from this site for training or analysis:
 
 ### Contact
 For questions about AI crawling and data usage:
-- Email: info@romamart.ca
+- Email: technology@romamart.ca
 - Website: https://romamart.ca
 
 ### Data Freshness Notes
