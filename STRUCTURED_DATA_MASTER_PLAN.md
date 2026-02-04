@@ -15,10 +15,11 @@ Roma Mart 2.0 needs structured data (JSON-LD schemas) to improve Google Search v
 ### Current State
 
 - ✅ LocalBusiness schema exists (basic)
-- ❌ Zero Product schemas for menu items (CRITICAL GAP - ~40% of searchable content)
+- ✅ Product schemas for menu items (homepage featured + /rocafe full, API-only)
 - ❌ Service schemas hardcoded in StructuredData.jsx instead of imported from SERVICES (data duplication problem)
 - ❌ Return Policy schema missing
 - ❌ Location schema incomplete (missing services details)
+- ✅ safeString sanitization hardened (DOMParser + iterative fallback)
 
 ### What We're Doing
 
@@ -157,14 +158,15 @@ Roma Mart operates across three distinct systems that must work together:
 - Schema builders use this as type reference for field mapping
 - UI components use this for rendering with excelMenuTransform
 - Tests validate against this structure
-- Falls back to static ROCAFE_FULL_MENU if API fails
+- UI can fall back to static ROCAFE_FULL_MENU for display only
+- Schemas are API-only (no static fallback to avoid stale data)
 
 ### Key Files & Their Actual Purpose
 
 | File | Purpose | SSOT? | Notes |
 | --- | --- | --- | --- |
 | src/components/StructuredData.jsx | Schema generation & injection | No (integration layer) | Needs refactoring - imports hardcoded services instead of SERVICES array |
-| src/data/rocafe-menu.js | Data structure template + static fallback | Yes for schema template | 309 lines, 4 example items showing all field types |
+| src/data/rocafe-menu.js | Data structure template + UI fallback | Yes for schema template | 309 lines, 4 example items showing all field types; schemas use API-only |
 | src/data/services.jsx | ALL service definitions | YES | 444 lines, 12+ services with complete metadata. StructuredData should import this. |
 | src/data/locations.js | ALL location definitions | YES | 544 lines, location services array, hours, contact. Primary location = HQ. |
 | src/config/company_data.js | Company/HQ data, social links | YES | Imports primary location from locations.js as fallback |

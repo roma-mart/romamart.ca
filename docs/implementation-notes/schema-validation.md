@@ -42,6 +42,18 @@
 }
 ```
 
+## ItemList Validation (Homepage + /rocafe)
+
+- Homepage renders an ItemList of **featured** products only.
+- /rocafe renders an ItemList of the **full** menu.
+- Both ItemLists are built from API data (no static fallback for schemas).
+
+If validating ItemList:
+
+1. Inspect rendered HTML and copy the JSON-LD from `<script type="application/ld+json">`.
+2. Validate the ItemList in the Schema.org validator.
+3. Confirm `itemListElement[].item` entries are Product objects.
+
 ## Notes
 
 - Generated via buildMenuItemSchema() using fixture data.
