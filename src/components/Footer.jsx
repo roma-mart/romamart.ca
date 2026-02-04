@@ -151,31 +151,32 @@ export default function Footer() {
       {/* Persistent floating OrderCTA button for site-wide visibility */}
       <OrderCTA />
       <footer className="pt-16 pb-8" style={{ backgroundColor: 'var(--color-footer)', color: 'var(--color-on-footer)' }}>
-        {/* Featurable Google Reviews Carousel */}
+        {/* Google Places Reviews Carousel */}
         <div className="mb-8 flex justify-center">
-          {import.meta.env.VITE_FEATURABLE_KEY ? (
+          {import.meta.env.VITE_GOOGLE_PLACES_API_KEY && LOCATIONS[0]?.google?.placeId ? (
             <ReactGoogleReviews 
               layout="carousel"
-              featurableId={import.meta.env.VITE_FEATURABLE_KEY}
+              googlePlaceId={LOCATIONS[0].google.placeId}
+              googleAPIKey={import.meta.env.VITE_GOOGLE_PLACES_API_KEY}
               theme="dark"
               carouselAutoplay={true}
               carouselSpeed={5000}
               maxItems={3}
               reviewVariant="card"
-              structuredData={false}
+              structuredData={true}
               brandName={COMPANY_DATA.name}
             />
           ) : (
             <div className="text-center text-base font-inter text-[var(--color-on-footer-muted)]">
               <span>We value your feedback!&nbsp;</span>
-                       <a
-                         href={LOCATIONS[0].google.mapLink}
-                         target="_blank"
-                         rel="noopener noreferrer"
-                         className="underline text-[var(--color-accent)] hover:text-[var(--color-accent)]"
-                       >
-                         View Google Reviews
-                       </a>
+              <a
+                href={LOCATIONS[0]?.google?.mapLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline text-[var(--color-accent)] hover:text-[var(--color-accent)]"
+              >
+                View Google Reviews
+              </a>
             </div>
           )}
         </div>
