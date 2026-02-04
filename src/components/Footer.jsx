@@ -15,8 +15,7 @@ import { LOCATIONS, getActiveLocations } from '../data/locations';
 import { NAVIGATION_LINKS } from '../config/navigation';
 import OrderCTA from './OrderCTA';
 import Button from './Button';
-import { ReactGoogleReviews } from 'react-google-reviews';
-import 'react-google-reviews/dist/index.css';
+import GoogleReviews from './GoogleReviews';
 
 
 // Social platforms to control display in Footer (label, icon)
@@ -120,18 +119,18 @@ export default function Footer() {
   const currentLocation = getCurrentLocation();
 
                   <div className="mt-8 text-sm font-inter" style={{ color: 'var(--color-on-footer)' }}>
-                    {/* Prefer currentLocation, fallback to COMPANY_DATA.hq */}
+                    {/* Prefer currentLocation, fallback to COMPANY_DATA.location (HQ) */}
                     <div className="mb-2">
-                      <strong>Address:</strong> {currentLocation?.address?.formatted || COMPANY_DATA.hq?.address?.formatted}
+                      <strong>Address:</strong> {currentLocation?.address?.formatted || COMPANY_DATA.location?.address?.formatted}
                     </div>
                     <div className="mb-2">
-                      <strong>Phone:</strong> {currentLocation?.contact?.phone || COMPANY_DATA.hq?.contact?.phone}
+                      <strong>Phone:</strong> {currentLocation?.contact?.phone || COMPANY_DATA.location?.contact?.phone}
                     </div>
                     <div className="mb-2">
-                      <strong>Email:</strong> {currentLocation?.contact?.email || COMPANY_DATA.hq?.contact?.email}
+                      <strong>Email:</strong> {currentLocation?.contact?.email || COMPANY_DATA.location?.contact?.email}
                     </div>
                     <div className="mb-2">
-                      <strong>Hours:</strong> Mon-Fri: {currentLocation?.hours?.weekdays || COMPANY_DATA.hq?.hours?.weekdays}, Sat-Sun: {currentLocation?.hours?.weekends || COMPANY_DATA.hq?.hours?.weekends}
+                      <strong>Hours:</strong> {currentLocation?.hours?.display || COMPANY_DATA.location?.hours?.display}
                     </div>
                   </div>
 
@@ -151,39 +150,16 @@ export default function Footer() {
       {/* Persistent floating OrderCTA button for site-wide visibility */}
       <OrderCTA />
       <footer className="pt-16 pb-8" style={{ backgroundColor: 'var(--color-footer)', color: 'var(--color-on-footer)' }}>
-        {/* Featurable Google Reviews Carousel */}
-        <div className="mb-8 flex justify-center">
-          {import.meta.env.VITE_FEATURABLE_KEY ? (
-            <ReactGoogleReviews 
-              layout="carousel"
-              featurableId={import.meta.env.VITE_FEATURABLE_KEY}
-              theme="dark"
-              carouselAutoplay={true}
-              carouselSpeed={5000}
-              maxItems={3}
-              reviewVariant="card"
-              structuredData={false}
-              brandName={COMPANY_DATA.name}
-            />
-          ) : (
-            <div className="text-center text-base font-inter text-[var(--color-on-footer-muted)]">
-              <span>We value your feedback!&nbsp;</span>
-                       <a
-                         href={LOCATIONS[0].google.mapLink}
-                         target="_blank"
-                         rel="noopener noreferrer"
-                         className="underline text-[var(--color-accent)] hover:text-[var(--color-accent)]"
-                       >
-                         View Google Reviews
-                       </a>
-            </div>
-          )}
+        {/* Google Reviews Carousel */}
+        <div className="mb-8 w-full">
+          <GoogleReviews />
         </div>
       <div className="max-w-7xl mx-auto p-4 grid md:grid-cols-4 gap-12 mb-12">
         <div className="p-1 col-span-1 md:col-span-2">
            <a 
              href={`${BASE_URL}`}
-             className="flex items-center gap-3 mb-6 hover:opacity-80 transition-opacity cursor-pointer w-fit"
+             className="flex items-center gap-3 mb-6 transition-opacity cursor-pointer w-fit hover:opacity-80 focus-visible:opacity-80"
+             style={{ WebkitTapHighlightColor: 'transparent' }}
              aria-label="Roma Mart - Go to homepage"
            >
               <Logo layout="horizontal" variant="white" size={40} />
@@ -403,8 +379,8 @@ export default function Footer() {
         <button
           type="button"
           aria-label="Back to top of page"
-          className="px-8 py-4 min-w-[44px] min-h-[44px] rounded-full font-bold font-inter bg-[var(--color-accent)] text-[var(--color-primary)] shadow-lg transition-transform hover:scale-105 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
-          style={{ outline: '2px solid var(--color-focus)', outlineOffset: '2px', fontSize: '1rem' }}
+          className="px-8 py-4 min-w-[44px] min-h-[44px] rounded-full font-bold font-inter bg-[var(--color-accent)] text-[var(--color-primary)] shadow-lg transition-all transform hover:scale-105 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+          style={{ WebkitTapHighlightColor: 'transparent', outline: '2px solid var(--color-focus)', outlineOffset: '2px', fontSize: '1rem' }}
           onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }}
         >
           ↑ Back to Top

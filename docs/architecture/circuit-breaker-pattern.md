@@ -21,26 +21,31 @@ The **Circuit Breaker** is a fault-tolerance pattern that prevents cascading fai
 The circuit breaker is extracted to `src/utils/apiCircuitBreaker.js` rather than embedded in `useGooglePlaceHours.js` because:
 
 **1. Reusability** (ETHOS: Systems Over Spot Fixes)
+
 - Can be used for Web3Forms API, GTM tracking, or any future API integration
 - Not specific to Google Places - it's a general utility
 - Follows DRY principle: one implementation, many uses
 
 **2. Testability**
+
 - Can test circuit breaker independently of the hook
 - Easier to mock API failures and verify behavior
 - Cleaner unit test files
 
 **3. Separation of Concerns**
+
 - Hook focuses on: data fetching, caching, React state management
 - Circuit breaker focuses on: failure detection, request throttling, resilience
 - Each component has one responsibility (SOLID: Single Responsibility Principle)
 
 **4. Documentation**
+
 - Clear what the circuit breaker does (fault tolerance)
 - Clear what the hook does (fetch hours with caching)
 - Easier for new developers to understand architecture
 
 **5. Future Extensions**
+
 - Easy to add metrics/monitoring to circuit breaker
 - Easy to add different strategies (exponential backoff, jitter, etc.)
 - Easy to swap implementations without touching hooks
@@ -239,11 +244,13 @@ Circuit breaker status is logged to browser console (dev mode only) when it open
 When integrating a new API (e.g., Web3Forms):
 
 **1. Import the factory:**
+
 ```javascript
 import { createApiCircuitBreaker, circuitBreakers } from '../utils/apiCircuitBreaker'
 ```
 
 **2. Create instance (if not already pre-created):**
+
 ```javascript
 // In the hook or service file
 const web3FormBreaker = circuitBreakers.web3Forms || 
@@ -251,6 +258,7 @@ const web3FormBreaker = circuitBreakers.web3Forms ||
 ```
 
 **3. Use in fetch logic:**
+
 ```javascript
 if (!web3FormBreaker.shouldAttemptCall()) {
   return null; // Don't try, quota exhausted

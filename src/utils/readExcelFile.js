@@ -1,4 +1,4 @@
-import * as XLSX from 'xlsx';
+import { read, utils } from 'xlsx';
 
 // Reads a File object, returns a promise that resolves to an array of objects
 export function readExcelFile(file) {
@@ -6,12 +6,12 @@ export function readExcelFile(file) {
     const reader = new FileReader();
     reader.onload = (evt) => {
       const bstr = evt.target.result;
-      const workbook = XLSX.read(bstr, { type: 'binary' });
+      const workbook = read(bstr, { type: 'binary' });
       // Use first worksheet
       const wsname = workbook.SheetNames[0];
       const ws = workbook.Sheets[wsname];
       // Convert to JSON: header row = keys
-      const data = XLSX.utils.sheet_to_json(ws, { defval: '' });
+      const data = utils.sheet_to_json(ws, { defval: '' });
       resolve(data);
     };
     reader.onerror = (err) => reject(err);

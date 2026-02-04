@@ -12,23 +12,29 @@
 ## Code Quality
 
 - [ ] All linting passes
+
   ```bash
   npm run lint
   npm run lint:css
   ```
+
 - [ ] Quality checks pass
+
   ```bash
   npm run check:quality
   npm run check:integrity
   ```
+
 - [ ] No console errors in development
 
 ## Build Verification
 
 - [ ] Production build succeeds
+
   ```bash
   npm run build
   ```
+
 - [ ] All routes prerendered
 - [ ] Bundle size within limits
 - [ ] No build warnings
@@ -36,9 +42,11 @@
 ## Local Testing
 
 - [ ] Preview production build
+
   ```bash
   npm run preview
   ```
+
 - [ ] All pages load correctly
 - [ ] Forms functional
 - [ ] PWA install works

@@ -8,7 +8,8 @@
 
 ## ✅ WHAT WE JUST COMPLETED
 
-### Code Cleanup & Bug Fixes:
+### Code Cleanup & Bug Fixes
+
 - ✅ **StandardizedItem.jsx** - Enhanced to handle:
   - Action buttons (email mailto, external URLs)
   - Legal notices for age-restricted items (19+ warning)
@@ -19,13 +20,15 @@
   - Nutritional information
   - Size selections with pricing
 
-### Error Validation:
+### Error Validation
+
 - ✅ **No blocking errors** - Only harmless CSS warnings:
   - Tailwind directives (expected)
   - Browser compatibility notes (non-blocking)
   - Inline styles in offline.html (acceptable for fallback page)
 
-### Documentation Organization:
+### Documentation Organization
+
 - ✅ **Removed duplicates:**
   - Deleted `IMAGE_ASSET_GUIDE.md` (replaced by PHOTO_PLACEMENT_GUIDE.md)
   - Deleted `IPHONE_PHOTOGRAPHY_GUIDE.md` (replaced by specialized guides)
@@ -37,18 +40,20 @@
   - `PHOTO_PLACEMENT_GUIDE.md` - Where to put all photos
   - `ROCAFE_MENU_TEMPLATE.md` - Copy-paste templates for menu data
 
-### Build & Deployment:
+### Build & Deployment
+
 - ✅ **Built successfully:** 1m 33s, 2111 modules, all pages prerendered
-- ✅ **Deployed to GitHub Pages:** https://khanoflegend.github.io/romamart.ca/
+- ✅ **Deployed to GitHub Pages:** <https://khanoflegend.github.io/romamart.ca/>
 - ✅ **All systems operational:** Location system, services system, enhanced StandardizedItem
 
 ---
 
 ## 📸 YOUR PHOTO SESSION CHECKLIST
 
-### BEFORE YOU START:
+### BEFORE YOU START
 
 **Equipment Prep:**
+
 - [ ] iPhone charged to 100%
 - [ ] Free up 5GB+ storage
 - [ ] Clean camera lens
@@ -56,6 +61,7 @@
 - [ ] Set to HEIF format (Settings → Camera → Formats → High Efficiency)
 
 **Store Prep:**
+
 - [ ] Clean store thoroughly
 - [ ] Organize product displays
 - [ ] Turn on ALL lights
@@ -63,6 +69,7 @@
 - [ ] RoCafé area cleaned and styled
 
 **Time Your Session:**
+
 - [ ] Schedule for **10am-2pm** (best natural light)
 - [ ] Choose a **sunny day** if possible
 - [ ] Allow **1-1.5 hours total** for both guides
@@ -72,9 +79,11 @@
 ## 📋 PHOTO SESSION WORKFLOW
 
 ### STEP 1: Store Location Photos (20-30 minutes)
+
 **Use:** `STORE_PHOTOGRAPHY_GUIDE.md`
 
 **Exterior (3 shots):**
+
 1. **exterior-main.jpg** - Full storefront, vertical, centered ⭐ MOST IMPORTANT
 2. **exterior-entrance.jpg** - Close-up of doors, horizontal
 3. **exterior-angle.jpg** - 45° angle shot, depth perspective
@@ -92,21 +101,25 @@
 ---
 
 ### STEP 2: RoCafé Menu Items (30-45 minutes)
+
 **Use:** `MENU_PHOTOGRAPHY_GUIDE.md`
 
 **Hot Drinks (3-4 items):**
+
 - [ ] Cappuccino (overhead for foam art, 45° for steam)
 - [ ] Latte (side angle, show layers)
 - [ ] Espresso (close-up, small cup)
 - [ ] Americano (simple, clean shot)
 
 **Cold Drinks (3-4 items):**
+
 - [ ] Iced Coffee (straight-on, show condensation)
 - [ ] Iced Latte (layers visible through glass)
 - [ ] Frappe (whipped cream on top)
 - [ ] Smoothie or Cold Brew (colorful)
 
 **Pastries (3-5 items):**
+
 - [ ] Blueberry Muffin (45° angle, break one open)
 - [ ] Chocolate Muffin or Cookie
 - [ ] Croissant (flaky layers visible)
@@ -118,9 +131,11 @@
 ---
 
 ### STEP 3: Optional Service Photos (15-20 minutes)
+
 **Use:** `PHOTO_PLACEMENT_GUIDE.md`
 
 Only if you have time:
+
 - [ ] ATM machine in store
 - [ ] Bitcoin ATM close-up
 - [ ] Halal meat section (fridge/freezer)
@@ -130,6 +145,7 @@ Only if you have time:
 ---
 
 ### STEP 4: Brand Assets (15 minutes)
+
 **Critical for launch:**
 
 1. **Logo** (512x512px PNG with transparency)
@@ -137,7 +153,7 @@ Only if you have time:
    - If you need one created, let me know
 
 2. **Favicon** (32x32px)
-   - Go to https://favicon.io/favicon-converter/
+   - Go to <https://favicon.io/favicon-converter/>
    - Upload your logo, download favicon.ico
 
 3. **OG Image** (1200x630px)
@@ -148,21 +164,27 @@ Only if you have time:
 
 ## 💻 AFTER YOUR PHOTO SESSION
 
-### Transfer Photos to Computer:
+### Transfer Photos to Computer
+
 **Option A: AirDrop** (Fastest)
+
 - Mac only
 - Select photos → Share → AirDrop to Mac
 
 **Option B: iCloud Photos**
+
 - Photos → Albums → Recently Added
 - Download to Mac/PC from iCloud.com
 
 **Option C: Email**
+
 - Select photos → Share → Email
 - Send to yourself
 
-### Edit Photos:
+### Edit Photos
+
 Use iPhone Photos app or Mac Photos:
+
 1. **Brighten:** +10 to +20
 2. **Contrast:** +5 to +10
 3. **Saturation:** +5 (not too much!)
@@ -170,24 +192,29 @@ Use iPhone Photos app or Mac Photos:
 5. **Crop:** To correct size
 
 **Sizes needed:**
+
 - Location photos: 1920x1080px
 - Menu items: 800x800px square
 - Thumbnail: 400x400px square
 
-### Optimize File Sizes:
+### Optimize File Sizes
+
 Go to **TinyPNG.com** or **Squoosh.app**
 
 Target sizes:
+
 - Exterior: <500KB
 - Interior: <400KB
 - Menu items: <200KB
 - Favicon: <10KB
 - OG image: <200KB
 
-### Rename Files:
+### Rename Files
+
 **CRITICAL:** Use exact naming convention from PHOTO_PLACEMENT_GUIDE.md
 
 Examples:
+
 - `exterior-main.jpg` ✅
 - `Exterior Main.JPG` ❌
 - `interior-rocafe.jpg` ✅
@@ -197,9 +224,10 @@ Examples:
 
 ## 📤 SEND ME YOUR CONTENT
 
-### What to Send:
+### What to Send
 
 **1. Photos (ZIP file or folder link):**
+
 ```
 📁 roma-mart-photos/
   📁 location/
@@ -228,12 +256,14 @@ Examples:
 
 **2. RoCafé Menu Data (text file or message):**
 Use `ROCAFE_MENU_TEMPLATE.md` and fill in:
+
 - Item names
 - Prices (all sizes)
 - Descriptions
 - Allergen info ⚠️ CRITICAL for legal compliance
 
 **Example:**
+
 ```
 Cappuccino
 - Small: $3.49 (8oz)
@@ -248,9 +278,10 @@ Description: Our signature cappuccino features...
 
 ## 🚀 WHAT HAPPENS NEXT
 
-### After You Send Photos & Menu Data:
+### After You Send Photos & Menu Data
 
 **I will:**
+
 1. ✅ Place all photos in correct directories
 2. ✅ Create `src/data/rocafe.js` with your menu
 3. ✅ Update `RoCafePage.jsx` to use new menu system
@@ -261,6 +292,7 @@ Description: Our signature cappuccino features...
 8. ✅ Send you preview link for review
 
 **You will:**
+
 1. ✅ Review live site on GitHub Pages
 2. ✅ Check all photos load correctly
 3. ✅ Verify menu items, prices, descriptions
@@ -268,6 +300,7 @@ Description: Our signature cappuccino features...
 5. ✅ Approve for domain switchover
 
 **Then:**
+
 1. ✅ Point `romamart.ca` to GitHub Pages
 2. ✅ Update all absolute URLs
 3. ✅ Final build and deploy
@@ -278,7 +311,8 @@ Description: Our signature cappuccino features...
 
 ## 📊 PROGRESS TRACKER
 
-### ✅ COMPLETED (Today):
+### ✅ COMPLETED (Today)
+
 - [x] Code cleaned and debugged
 - [x] StandardizedItem enhanced for all new features
 - [x] Error validation passed (zero blocking errors)
@@ -289,13 +323,15 @@ Description: Our signature cappuccino features...
 - [x] Location system operational
 - [x] Services system operational (14 services)
 
-### 📸 IN PROGRESS (Tomorrow):
+### 📸 IN PROGRESS (Tomorrow)
+
 - [ ] Store exterior photos (3 shots)
 - [ ] Store interior photos (5-6 shots)
 - [ ] RoCafé menu item photos (10-15 shots)
 - [ ] Brand assets (logo, favicon, OG image)
 
-### ⏳ NEXT UP (After Photos):
+### ⏳ NEXT UP (After Photos)
+
 - [ ] Create `src/data/rocafe.js`
 - [ ] Update RoCafePage.jsx
 - [ ] Place all photos in directories
@@ -308,12 +344,14 @@ Description: Our signature cappuccino features...
 ## 🎯 IMMEDIATE NEXT STEPS FOR YOU
 
 **TODAY:**
+
 - [ ] Read `STORE_PHOTOGRAPHY_GUIDE.md` (10 min)
 - [ ] Read `MENU_PHOTOGRAPHY_GUIDE.md` (10 min)
 - [ ] Read `PHOTO_PLACEMENT_GUIDE.md` (5 min)
 - [ ] Check weather forecast (aim for sunny 10am-2pm window)
 
 **TOMORROW:**
+
 - [ ] Charge iPhone, clear storage
 - [ ] Clean and prepare store
 - [ ] Take photos (1-1.5 hours total)
@@ -341,6 +379,7 @@ Description: Our signature cappuccino features...
 ## ❓ QUESTIONS BEFORE YOU START?
 
 **Need help with:**
+
 - Logo design?
 - OG image creation?
 - Photo editing?
@@ -351,7 +390,7 @@ Description: Our signature cappuccino features...
 
 ---
 
-**Current Live Site:** https://khanoflegend.github.io/romamart.ca/  
+**Current Live Site:** <https://khanoflegend.github.io/romamart.ca/>  
 **All systems operational, waiting for your content!** ✅
 
 Ready when you are! 📸

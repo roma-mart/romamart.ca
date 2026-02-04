@@ -171,11 +171,13 @@ const ContactPage = () => {
                   <LiveHoursDisplay 
                     placeId={COMPANY_DATA.location.google.placeId}
                     fallbackHours={{
-                      weekdays: COMPANY_DATA.location.hours.weekdays,
-                      weekends: COMPANY_DATA.location.hours.weekends
+                      daily: COMPANY_DATA.location.hours.daily,
+                      exceptions: COMPANY_DATA.location.hours.exceptions
                     }}
                     showStatus={true}
                     compact={true}
+                    showIcon={false}
+                    showRefresh={true}
                   />
                 </div>
               </div>

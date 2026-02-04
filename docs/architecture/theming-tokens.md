@@ -6,7 +6,6 @@
 
 Roma Mart uses a centralized design token system with CSS custom properties for consistent theming and dark mode support.
 
-
 ## Token Sources
 
 ### Design Tokens
@@ -207,7 +206,6 @@ module.exports = {
 ```
 
 ## Anti-Patterns
-
 
 ### ❌ Don't Do
 

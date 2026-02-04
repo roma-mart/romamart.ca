@@ -13,16 +13,16 @@ const lightTheme = {
       body: 'var(--color-text)'
     },
     grey: {
-      100: '#F8F8F8',
-      200: '#F2F2F2',
-      300: '#E5E5E5',
-      400: '#D9D9D9',
-      500: '#B3B3B3',
-      600: '#8C8C8C',
-      700: '#5A5A5A',
-      800: '#2A2A2A',
-      900: '#151515',
-      1000: '#151515'
+      100: 'var(--color-surface)',
+      200: 'var(--color-surface)',
+      300: 'var(--color-border)',
+      400: 'var(--color-border)',
+      500: 'var(--color-text-muted)',
+      600: 'var(--color-text-muted)',
+      700: 'var(--color-text)',
+      800: 'var(--color-footer)',
+      900: 'var(--color-footer)',
+      1000: 'var(--color-footer)'
     }
   }
 };
@@ -36,16 +36,16 @@ const darkTheme = {
       body: 'var(--color-text)'
     },
     grey: {
-      100: '#151515',
-      200: '#2A2A2A',
-      300: '#5A5A5A',
-      400: '#8C8C8C',
-      500: '#B3B3B3',
-      600: '#D9D9D9',
-      700: '#E5E5E5',
-      800: '#F2F2F2',
-      900: '#F8F8F8',
-      1000: '#FFFFFF'
+      100: 'var(--color-footer)',
+      200: 'var(--color-on-footer-dark)',
+      300: 'var(--color-on-footer-subtle)',
+      400: 'var(--color-text-muted)',
+      500: 'var(--color-on-footer-muted)',
+      600: 'var(--color-on-footer)',
+      700: 'var(--color-text)',
+      800: 'var(--color-surface)',
+      900: 'var(--color-bg)',
+      1000: 'var(--color-bg)'
     }
   }
 };

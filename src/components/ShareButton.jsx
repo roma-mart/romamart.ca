@@ -9,7 +9,7 @@ import { Share2 } from 'lucide-react';
 import { useShare, useClipboard, useVibration } from '../hooks/useBrowserFeatures';
 import { useToast } from './ToastContainer';
 
-const ShareButton = ({ title, text, url, className = '' }) => {
+const ShareButton = ({ title, text, url, className = '', style: customStyle = {} }) => {
   const { share, canShare } = useShare();
   const { copyToClipboard } = useClipboard();
   const { showSuccess, showError } = useToast();
@@ -54,7 +54,8 @@ const ShareButton = ({ title, text, url, className = '' }) => {
     <button
       type="button"
       onClick={handleShare}
-      className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-inter font-semibold transition-all hover:scale-105 ${className}`}
+      className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-inter font-semibold transform transition-all hover:scale-105 ${className}`}
+      style={{ WebkitTapHighlightColor: 'transparent', ...customStyle }}
       aria-label={`Share ${title || 'this page'}`}
     >
       <Share2 size={18} />

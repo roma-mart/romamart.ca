@@ -1,9 +1,11 @@
 # Unified Typography System Implementation Guide
 
 ## Overview
+
 This guide outlines the steps to implement a unified typography system for the Roma Mart website. The goal is to ensure consistent, scalable, and accessible typography that aligns with the brand's identity and development ethos.
 
 ## Objectives
+
 1. **Consistency**:
    - Use Outfit for headings and Inter for body text.
    - Define typography tokens as the single source of truth.
@@ -17,9 +19,11 @@ This guide outlines the steps to implement a unified typography system for the R
 ## Implementation Plan
 
 ### Phase 1: Define Typography Tokens
+
 1. **Expand `src/design/tokens.js`**:
    - Add tokens for font families, sizes, weights, and line heights.
    - Use descriptive names (e.g., `heading-lg`, `body-sm`, `font-bold`).
+
    ```javascript
    export const TYPOGRAPHY = {
      fontFamily: {
@@ -52,6 +56,7 @@ This guide outlines the steps to implement a unified typography system for the R
 2. **Map Tokens to CSS Variables**:
    - Update `src/index.css` to include typography tokens as CSS variables.
    - Ensure variables adapt to responsive breakpoints.
+
    ```css
    :root {
      --font-heading: 'Outfit, sans-serif';
@@ -62,9 +67,11 @@ This guide outlines the steps to implement a unified typography system for the R
    ```
 
 ### Phase 2: Refactor Components
+
 1. **Replace Hardcoded Styles**:
    - Identify components with hardcoded font styles.
    - Replace with CSS variables or theme utilities.
+
    ```jsx
    <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: 'var(--font-size-xl)' }}>
      Welcome to Roma Mart
@@ -78,7 +85,9 @@ This guide outlines the steps to implement a unified typography system for the R
 ### Additional Examples for Refactoring Components
 
 #### Example: Replacing Hardcoded Styles
+
 Before:
+
 ```jsx
 <h1 style={{ fontFamily: 'Poppins, sans-serif', fontSize: '1.5rem' }}>
   Welcome to Roma Mart
@@ -86,6 +95,7 @@ Before:
 ```
 
 After:
+
 ```jsx
 <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: 'var(--font-size-xl)' }}>
   Welcome to Roma Mart
@@ -93,7 +103,9 @@ After:
 ```
 
 #### Example: Using Theme Utilities
+
 Before:
+
 ```jsx
 <p style={{ color: '#6B7280', lineHeight: '1.75' }}>
   Your trusted neighborhood convenience store.
@@ -101,6 +113,7 @@ Before:
 ```
 
 After:
+
 ```jsx
 <p style={{ color: 'var(--color-text-muted)', lineHeight: 'var(--line-height-relaxed)' }}>
   Your trusted neighborhood convenience store.
@@ -108,9 +121,11 @@ After:
 ```
 
 ### Phase 3: Automate Quality Checks
+
 1. **Enhance `check-quality.js`**:
    - Add rules to flag hardcoded font styles.
    - Validate token usage and accessibility compliance.
+
    ```javascript
    if (/fontFamily\s*:\s*['"][^'"]*['"]/.test(line)) {
      const font = line.match(/fontFamily\s*:\s*['"]([^'"]*)['"]/)[1];
@@ -127,6 +142,7 @@ After:
    - Ensure all text meets WCAG 2.2 AA+ contrast ratios.
 
 ### Phase 4: Documentation
+
 1. **Create Developer Guides**:
    - Document the unified typography system and its benefits.
    - Include examples and best practices for implementing tokens.
@@ -137,6 +153,7 @@ After:
 ## Updated Findings and Recommendations
 
 ### Additional Observations
+
 1. **CSS Variables Usage**:
    - Typography-related variables like `var(--color-heading)`, `var(--color-text)`, and `var(--color-surface)` are used consistently across components.
    - Dynamic colors (e.g., `COLORS.yellow`, `COLORS.navy`) are hardcoded in some places, which can be replaced with tokens.
@@ -154,33 +171,40 @@ After:
 ### Updated Implementation Plan
 
 #### Phase 1: Define Typography Tokens
+
 - Expand `src/design/tokens.js` to include tokens for dynamic colors like `COLORS.yellow` and `COLORS.navy`.
 - Add tokens for common inline styles (e.g., borders, shadows).
 
 #### Phase 2: Refactor Components
+
 - Replace hardcoded dynamic colors with CSS variables.
 - Extract common inline styles into reusable Tailwind utility classes or CSS modules.
 - Refactor components to use centralized typography tokens.
 
 #### Phase 3: Automate Quality Checks
+
 - Enhance `check-quality.js` to flag hardcoded dynamic colors and inline styles.
 - Add validation for token usage in typography and theming.
 
 #### Phase 4: Comprehensive Review
+
 - Analyze all site files (components, pages, etc.) to identify hardcoded styles and ensure adherence to the unified typography system.
 - Validate typography for accessibility, responsiveness, and brand consistency.
 
 ### Next Steps
+
 1. Assign team members to review specific files and components.
 2. Establish a timeline for completing the refactor and validation.
 3. Monitor progress and ensure alignment with the development ethos.
 
 ## Validation
+
 - Run `npm run check:all` to ensure quality compliance.
 - Test all components in staging and production environments.
 - Validate typography for accessibility, responsiveness, and brand consistency.
 
 ## Next Steps
+
 1. Assign team members to specific tasks.
 2. Establish a timeline for completing the implementation.
 3. Monitor progress and ensure alignment with the development ethos.

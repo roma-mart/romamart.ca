@@ -48,29 +48,49 @@ export default function Navbar() {
 
   useEffect(() => {
     const checkPath = () => {
-      const path = window.location.pathname;
-      setIsHomePage(path === '/' || path === BASE_URL || path === BASE_URL + '/');
+      const normalizePath = (value) => {
+        if (!value) return '/';
+        const trimmed = value.replace(/\/+$/, '');
+        return trimmed === '' ? '/' : trimmed;
+      };
+      const path = normalizePath(window.location.pathname);
+      const basePath = normalizePath(BASE_URL);
+      setIsHomePage(path === '/' || path === basePath);
     };
     checkPath();
     window.addEventListener('popstate', checkPath);
     return () => window.removeEventListener('popstate', checkPath);
   }, [BASE_URL]);
 
+  const scrollToSection = (sectionId) => {
+    if (!sectionId) return false;
+    const element = document.getElementById(sectionId);
+    if (!element) return false;
+    const navHeight = document.querySelector('nav')?.offsetHeight || 0;
+    const top = element.getBoundingClientRect().top + window.scrollY - navHeight - 12;
+    const prefersReducedMotion =
+      typeof window !== 'undefined' &&
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const behavior = prefersReducedMotion ? 'auto' : 'smooth';
+    window.scrollTo({ top, behavior });
+    return true;
+  };
+
   const handleNavClick = (e, sectionId, subpageUrl) => {
     setIsOpen(false);
-    // Always navigate to About subpage
-    if (subpageUrl && subpageUrl.endsWith('about')) {
+    if (sectionId) {
       e.preventDefault();
-      window.location.assign(subpageUrl);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if (!scrollToSection(sectionId) && subpageUrl) {
+            window.location.assign(subpageUrl);
+          }
+        });
+      });
       return;
     }
-    if (isHomePage && sectionId) {
-      e.preventDefault();
-      const element = document.getElementById(sectionId);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
-    } else if (subpageUrl) {
+    if (subpageUrl) {
       e.preventDefault();
       window.location.assign(subpageUrl);
     }
@@ -101,7 +121,8 @@ export default function Navbar() {
           {/* Logo Area */}
           <a
             href={`${BASE_URL}`}
-            className={`flex items-center hover:opacity-80 transition-opacity cursor-pointer no-drag${isOpen ? ' invisible' : ''} md:visible`}
+            className={`flex items-center transition-opacity cursor-pointer no-drag hover:opacity-80 focus-visible:opacity-80${isOpen ? ' invisible' : ''} md:visible`}
+            style={{ WebkitTapHighlightColor: 'transparent' }}
             aria-label="Roma Mart - Go to homepage"
           >
             {/* Mobile: vertical logo */}
@@ -141,8 +162,8 @@ export default function Navbar() {
               <a
                 key="home"
                 href={BASE_URL}
-                className="font-inter font-medium hover:opacity-80 transition-opacity flex items-center gap-2"
-                style={{ color: 'var(--color-text)' }}
+                className="font-inter font-medium transition-opacity flex items-center gap-2 hover:opacity-80 focus-visible:opacity-80"
+                style={{ color: 'var(--color-text)', WebkitTapHighlightColor: 'transparent' }}
                 aria-label="Go to homepage"
                 title="Home"
               >
@@ -154,8 +175,8 @@ export default function Navbar() {
                 key={link.href}
                 href={isHomePage && link.href.startsWith('/') ? `${BASE_URL}#${link.href.replace('/', '')}` : `${BASE_URL}${link.href.replace('/', '')}`}
                 onClick={e => handleNavClick(e, link.href !== '/' ? link.href.replace('/', '') : null, `${BASE_URL}${link.href.replace('/', '')}`)}
-                className="font-inter font-medium hover:opacity-80 transition-opacity"
-                style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-text)' }}
+                className="font-inter font-medium transition-opacity hover:opacity-80 focus-visible:opacity-80"
+                style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-text)', WebkitTapHighlightColor: 'transparent' }}
                 aria-label={link.ariaLabel || link.label}
                 title={link.label}
               >

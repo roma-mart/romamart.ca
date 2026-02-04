@@ -16,6 +16,13 @@
 import { getAssetUrl, getEnvVar } from "../utils/getAssetUrl.js";
 
 const MAPS_EMBED_KEY = getEnvVar('VITE_GOOGLE_PLACES_API_KEY');
+const buildGoogleMapsLink = (placeId, address) => {
+  const query = encodeURIComponent(address || 'Roma Mart');
+  if (placeId) {
+    return `https://www.google.com/maps/search/?api=1&query=${query}&query_place_id=${placeId}`;
+  }
+  return `https://www.google.com/maps/search/?api=1&query=${query}`;
+};
 // Location type constants
 export const LOCATION_TYPES = {
   CONVENIENCE_STORE: 'convenience_store',    // Full-service Roma Mart
@@ -51,7 +58,7 @@ export const LOCATIONS = [
     // === GOOGLE INTEGRATION ===
     google: {
       placeId: 'ChIJCfo3t6SdJYgRIQVbpCppKmY',
-      mapLink: 'https://maps.google.com/?q=place_id:ChIJCfo3t6SdJYgRIQVbpCppKmY',
+      mapLink: buildGoogleMapsLink('ChIJCfo3t6SdJYgRIQVbpCppKmY', '3-189 Wellington Street, Sarnia, ON N7T 1G6'),
       embedUrl: MAPS_EMBED_KEY
         ? `https://www.google.com/maps/embed/v1/place?key=${MAPS_EMBED_KEY}&q=place_id:ChIJCfo3t6SdJYgRIQVbpCppKmY&zoom=15`
         : null,
@@ -73,9 +80,20 @@ export const LOCATIONS = [
     // === HOURS ===
     hours: {
       timezone: 'America/Toronto',
+      // Per-day hours (source of truth for display grouping)
+      daily: {
+        Monday: '8:30 AM - 9:00 PM',
+        Tuesday: '8:30 AM - 9:00 PM',
+        Wednesday: '8:30 AM - 9:00 PM',
+        Thursday: '8:30 AM - 9:00 PM',
+        Friday: '3:00 PM - 9:00 PM',
+        Saturday: '8:30 AM - 9:00 PM',
+        Sunday: '8:30 AM - 9:00 PM'
+      },
+      // Backward-compatible fields for helpers still using legacy schema
       weekdays: '8:30 AM - 9:00 PM',
       weekends: '8:30 AM - 9:00 PM',
-      display: 'Open Daily 8:30 AM - 9:00 PM',
+      display: 'Mon-Thu, Sat-Sun: 8:30 AM - 9:00 PM | Fri: 3:00 PM - 9:00 PM',
       is24Hours: false,
       isSeasonal: false,
       // Special hours/exceptions (optional)
@@ -482,9 +500,13 @@ export const isLocationOpenNow = (location) => {
   const currentMinutes = currentHour * 60 + currentMinute;
 
   // Parse hours (e.g., "7:00 AM - 10:00 PM")
-  const dayOfWeek = now.getDay(); // 0 = Sunday, 6 = Saturday
-  const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-  const hoursString = isWeekend ? location.hours?.weekends : location.hours?.weekdays;
+  // Use daily schedule as source of truth, fallback to legacy weekdays/weekends
+  const dayName = now.toLocaleString('en-US', { weekday: 'long', timeZone: location.hours?.timezone });
+  const isWeekend = dayName === 'Saturday' || dayName === 'Sunday';
+  let hoursString = location.hours?.daily?.[dayName];
+  if (!hoursString) {
+    hoursString = isWeekend ? location.hours?.weekends : location.hours?.weekdays;
+  }
 
   if (!hoursString) {
     return false; // No hours defined, assume closed

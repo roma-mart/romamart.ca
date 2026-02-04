@@ -34,9 +34,10 @@ Actions performed (automated):
 
 6. Git operations
    - All edits committed to branch `fix/quality-and-keys` and pushed to origin.
-   - Remote branch URL: https://github.com/KhanofLegend/romamart.ca/pull/new/fix/quality-and-keys (create PR from this link in the GitHub UI)
+   - Remote branch URL: <https://github.com/KhanofLegend/romamart.ca/pull/new/fix/quality-and-keys> (create PR from this link in the GitHub UI)
 
 Verification checklist (manual steps for operator)
+
 - [ ] Add `GTM_ID` secret in repository Settings ? Secrets ? Actions.
 - [ ] Open PR for branch `fix/quality-and-keys` and merge to `main` when CI checks pass.
 - [ ] After merge, publish job will run and deploy to GitHub Pages (CNAME configured). Verify live site.
@@ -44,10 +45,11 @@ Verification checklist (manual steps for operator)
 - [ ] Verify analytics (GTM) receives events such as `order_cta_click` and `contact_form_submit`.
 
 Notes & disclaimers
+
 - This automation has performed all non-interactive tasks available in the local workspace: docs updates, lint/quality checks, build, prerender, push.
 - Creating or merging a PR and updating GitHub repository secrets require interactive user actions or API tokens outside the local workspace. Follow the PR link above to complete the deployment flow.
 
 If you want, I can:
+
 - Add a small smoke-test step to CI to assert GTM ID presence in `dist/index.html` when the secret is present.
 - Prepare the PR description and checklist content for you to paste into the new PR.
-

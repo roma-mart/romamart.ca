@@ -5,7 +5,7 @@
 **Compliance Date:** November 30, 2025  
 **Standards Assessed:** WCAG 2.2, AODA, ISO/IEC 40500:2025, EN 301 549 (EAA)  
 **Conformance Level:** WCAG 2.2 Level AA  
-**Website:** https://romamart.ca  
+**Website:** <https://romamart.ca>  
 
 ---
 
@@ -18,15 +18,18 @@ Roma Mart Convenience is committed to ensuring digital accessibility for people 
 ## Compliance Standards
 
 ### ✅ WCAG 2.2 Level AA
+
 This website complies with Web Content Accessibility Guidelines (WCAG) 2.2 Level AA. WCAG 2.2 is a technical standard developed by the W3C Web Accessibility Initiative (WAI) that provides guidelines for creating accessible web content.
 
 **Principles:**
+
 - **Perceivable:** Information is presented in ways that can be perceived by all users
 - **Operable:** All functionality is operable via keyboard and other input methods
 - **Understandable:** Information and controls are clear and easy to understand
 - **Robust:** Content works with assistive technologies and across browsers
 
 **Conformance Level AA includes:**
+
 - All Level A requirements
 - Enhanced color contrast (4.5:1 for normal text, 3:1 for UI components)
 - Keyboard navigation and focus management
@@ -34,9 +37,11 @@ This website complies with Web Content Accessibility Guidelines (WCAG) 2.2 Level
 - Support for user preferences (e.g., reduced motion)
 
 ### ✅ AODA (Accessibility for Ontarians with Disabilities Act)
+
 This website exceeds the accessibility requirements of the Accessibility for Ontarians with Disabilities Act (AODA), which mandates WCAG 2.0 Level AA compliance. Our compliance with WCAG 2.2 Level AA exceeds this requirement.
 
 **AODA Compliance Details:**
+
 - Applicable to all public-facing websites and digital materials
 - Jurisdiction: Ontario, Canada
 - Mandate: Accessibility Standards (O. Reg. 191/11)
@@ -44,9 +49,11 @@ This website exceeds the accessibility requirements of the Accessibility for Ont
 - **Roma Mart Status:** WCAG 2.2 AA ✅
 
 ### ✅ ISO/IEC 40500:2025
+
 This website complies with ISO/IEC 40500:2025, the international standard for web accessibility that aligns with WCAG 2.2 Level AA.
 
 **ISO/IEC 40500 Details:**
+
 - International Organization for Standardization (ISO) & International Electrotechnical Commission (IEC)
 - Publication Date: 2025
 - Standard Number: ISO/IEC 40500:2025
@@ -54,9 +61,11 @@ This website complies with ISO/IEC 40500:2025, the international standard for we
 - **Roma Mart Status:** Full Compliance ✅
 
 ### ✅ EN 301 549 (EAA – European Accessibility Act)
+
 This website complies with EN 301 549, the European standard for accessibility that harmonizes with WCAG 2.1 AA and extends support for WCAG 3.0 principles.
 
 **EN 301 549 Details:**
+
 - Developed by: European Telecommunications Standards Institute (ETSI)
 - Adopted by: European Commission for the European Accessibility Act (EAA)
 - Scope: Websites, web applications, digital services
@@ -68,39 +77,51 @@ This website complies with EN 301 549, the European standard for accessibility t
 ## Accessibility Features
 
 ### Keyboard Navigation
+
 ✅ All functionality is accessible via keyboard. Users can navigate through the website using the Tab key, activate buttons with Enter/Space, and access all features without requiring a mouse or touchscreen.
 
 ### Focus Management
+
 ✅ Keyboard focus is clearly visible with a high-contrast yellow outline (3px solid, 13.8:1 contrast ratio). The focus order follows the logical flow of the page.
 
 ### Screen Reader Support
+
 ✅ The website is fully compatible with screen readers (NVDA, JAWS, VoiceOver) thanks to semantic HTML, ARIA labels, and descriptive link text.
 
 ### Skip Navigation
+
 ✅ A "Skip to main content" link is available at the top of every page, allowing users to bypass repetitive navigation elements.
 
 ### Color Contrast
+
 ✅ All text and UI components meet or exceed WCAG AA color contrast requirements:
+
 - **Navy (#020178) on White:** 12.6:1 (exceeds AAA)
 - **Yellow (#E4B340) on White:** 8.4:1 (exceeds AA and approaches AAA)
 - **Focus Indicator:** 13.8:1 (exceeds AAA)
 
 ### Resizable Text
+
 ✅ Text can be resized up to 200% without loss of content or functionality. The website reflows properly on all zoom levels.
 
 ### Reduced Motion Support
+
 ✅ Animations and transitions respect the `prefers-reduced-motion` media query. Users with vestibular disorders or motion sensitivity can disable animations in their operating system preferences.
 
 ### Touch Target Size
+
 ✅ All interactive elements (buttons, links, form inputs) are at least 44×44 CSS pixels, meeting mobile accessibility standards.
 
 ### Semantic HTML
+
 ✅ The website uses semantic HTML elements (`<nav>`, `<main>`, `<section>`, `<article>`, `<header>`, `<footer>`) to provide proper document structure for assistive technologies.
 
 ### Form Accessibility
+
 ✅ All form inputs have associated labels, clear instructions, and proper error handling that is announced to screen readers.
 
 ### Image Descriptions
+
 ✅ All non-decorative images have descriptive alt text. Decorative images are marked with `alt=""` or `aria-hidden="true"` to avoid unnecessary announcements.
 
 ---
@@ -120,12 +141,14 @@ This website complies with EN 301 549, the European standard for accessibility t
 ## Accessibility Testing
 
 ### Automated Testing
+
 - ✅ ESLint with jsx-a11y plugin (20+ accessibility rules)
 - ✅ W3C HTML Validator (0 errors)
 - ✅ Lighthouse Accessibility Audit (100% score target)
 - ✅ Color Contrast Analysis (TPGI Color Contrast Analyzer)
 
 ### Manual Testing
+
 - ✅ Keyboard-only navigation (Tab, Shift+Tab, Enter, Space, Escape)
 - ✅ Screen Reader testing (NVDA on Windows, VoiceOver on macOS)
 - ✅ Zoom testing (100%, 200%, 400%)
@@ -133,6 +156,7 @@ This website complies with EN 301 549, the European standard for accessibility t
 - ✅ Touch device testing with screen reader
 
 ### Browser & Assistive Technology Support
+
 - ✅ Chrome / Chromium (Windows, macOS, Linux)
 - ✅ Firefox (Windows, macOS, Linux)
 - ✅ Safari (macOS, iOS)
@@ -147,12 +171,14 @@ This website complies with EN 301 549, the European standard for accessibility t
 ## WCAG 2.2 Compliance Checklist
 
 ### Perceivable
+
 - [x] 1.1 Text Alternatives – All images have alt text
 - [x] 1.2 Adaptable – Content structure is semantic
 - [x] 1.3 Distinguishable – Colors exceed contrast requirements
 - [x] 1.4 Distinguishable – Text is resizable, focus is visible
 
 ### Operable
+
 - [x] 2.1 Keyboard Accessible – All features keyboard-accessible
 - [x] 2.2 Enough Time – No time-dependent content
 - [x] 2.3 Seizures & Reactions – No content that flashes >3x/second
@@ -160,12 +186,14 @@ This website complies with EN 301 549, the European standard for accessibility t
 - [x] 2.5 Input Modalities – Multiple input methods supported
 
 ### Understandable
+
 - [x] 3.1 Readable – Language specified, no complex jargon
 - [x] 3.2 Predictable – Navigation consistent, no unexpected changes
 - [x] 3.3 Input Assistance – Form labels, error handling
 - [x] 3.4 Readable – Abbreviations handled (if used)
 
 ### Robust
+
 - [x] 4.1 Compatible – Valid HTML, proper ARIA implementation
 - [x] 4.1 Name, Role, Value – All UI components properly exposed
 
@@ -175,7 +203,7 @@ This website complies with EN 301 549, the European standard for accessibility t
 
 If you encounter any accessibility barriers or have suggestions for improvement, please contact us:
 
-**Email:** accessibility@romamart.ca  
+**Email:** <accessibility@romamart.ca>  
 **Phone:** +1 (382) 342-2000  
 **Mailing Address:** Roma Mart Convenience, Sarnia, ON, Canada  
 
@@ -212,18 +240,21 @@ The following third-party services are used on this website and have been select
 ## Technical Implementation Details
 
 ### Accessibility Technologies Used
+
 - **ARIA (Accessible Rich Internet Applications):** Role, label, and state attributes
 - **Semantic HTML:** Proper heading hierarchy, landmark elements
 - **CSS:** Focus styles, reduced-motion media queries, color contrast
 - **JavaScript:** Keyboard event handling, focus management (React)
 
 ### Frameworks & Libraries
+
 - **React 19:** Semantic JSX with accessibility features
 - **Tailwind CSS:** Utility-first CSS with accessibility utilities
 - **Framer Motion:** Animations with reduced-motion support
 - **Font Awesome:** Accessible icon library
 
 ### Conformance Testing Tools
+
 - ESLint jsx-a11y
 - W3C HTML Validator
 - Lighthouse
@@ -236,6 +267,7 @@ The following third-party services are used on this website and have been select
 ## Legal Compliance
 
 This website complies with:
+
 - ✅ **Accessibility for Ontarians with Disabilities Act (AODA), 2005**
 - ✅ **Ontario Regulation 191/11 – Accessibility Standards for Information and Communication Technology (ICT)**
 - ✅ **European Union Accessibility Act (EAA) – EN 301 549** (if serving EU audiences)
@@ -258,6 +290,7 @@ This website complies with:
 ## Accessibility Resources
 
 For more information about web accessibility:
+
 - [Web Content Accessibility Guidelines (WCAG) 2.2](https://www.w3.org/WAI/WCAG22/quickref/)
 - [WCAG 3.0 Draft](https://www.w3.org/WAI/WCAG3/)
 - [AODA Ontario Regulations](https://www.ontario.ca/laws/regulation/070191)
@@ -302,5 +335,5 @@ European Accessibility Act (EAA) Harmonized Standard
 
 ---
 
-**For accessibility inquiries, contact:** accessibility@romamart.ca  
+**For accessibility inquiries, contact:** <accessibility@romamart.ca>  
 **For urgent accessibility issues, call:** +1 (382) 342-2000
