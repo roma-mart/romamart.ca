@@ -58,6 +58,7 @@ export function MenuProvider({ children }) {
  * Returns the same cached data across all components
  * Eliminates duplicate API calls
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export function useMenu() {
   const context = useContext(MenuContext);
   if (!context) {
