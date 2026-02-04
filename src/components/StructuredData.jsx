@@ -6,6 +6,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import COMPANY_DATA from '../config/company_data';
+import { parse12hTo24h } from '../utils/dateHelpers';
 
 const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
   const generateSchema = () => {
@@ -40,22 +41,38 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
           openingHoursSpecification: data.hours || (
             COMPANY_DATA.location?.hours?.daily
               ? [
-                  ...Object.entries(COMPANY_DATA.location.hours.daily).map(([day, hours]) => ({
-                    '@type': 'OpeningHoursSpecification',
-                    dayOfWeek: [day],
-                    opens: hours === 'Closed' ? undefined : hours?.split('-')[0]?.trim(),
-                    closes: hours === 'Closed' ? undefined : hours?.split('-')[1]?.trim()
-                  })),
+                  // Convert daily hours to Schema.org format (24-hour times)
+                  ...Object.entries(COMPANY_DATA.location.hours.daily)
+                    .filter(([, hours]) => hours && hours !== 'Closed' && hours.includes('-'))
+                    .map(([day, hours]) => {
+                      const parts = hours.split('-').map(t => t.trim());
+                      if (parts.length !== 2) return null;
+                      const opens = parse12hTo24h(parts[0]);
+                      const closes = parse12hTo24h(parts[1]);
+                      return opens && closes ? {
+                        '@type': 'OpeningHoursSpecification',
+                        dayOfWeek: [day],
+                        opens,
+                        closes
+                      } : null;
+                    })
+                    .filter(Boolean),
                   // Add exceptions if present
-                  ...(COMPANY_DATA.location.hours.exceptions?.map(ex => ({
-                    '@type': 'OpeningHoursSpecification',
-                    dayOfWeek: undefined,
-                    opens: ex.hours === 'Closed' ? undefined : ex.hours?.split('-')[0]?.trim(),
-                    closes: ex.hours === 'Closed' ? undefined : ex.hours?.split('-')[1]?.trim(),
-                    validFrom: ex.date,
-                    validThrough: ex.date,
-                    description: ex.reason || undefined
-                  })) || [])
+                  ...(COMPANY_DATA.location.hours.exceptions?.map(ex => {
+                    if (!ex.hours || ex.hours === 'Closed' || !ex.hours.includes('-')) return null;
+                    const parts = ex.hours.split('-').map(t => t.trim());
+                    if (parts.length !== 2) return null;
+                    const opens = parse12hTo24h(parts[0]);
+                    const closes = parse12hTo24h(parts[1]);
+                    return opens && closes ? {
+                      '@type': 'OpeningHoursSpecification',
+                      opens,
+                      closes,
+                      validFrom: ex.date,
+                      validThrough: ex.date,
+                      description: ex.reason || undefined
+                    } : null;
+                  }).filter(Boolean) || [])
                 ]
               : []
           ),

@@ -13,6 +13,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { circuitBreakers } from '../utils/apiCircuitBreaker';
 import { getUserHour12Preference, formatTimeFrom24h } from '../utils/timeFormat';
+import { DAY_ORDER, DAY_SHORT, groupDayMap } from '../utils/dateHelpers';
 
 const pad2 = (value) => value.toString().padStart(2, '0');
 
@@ -28,12 +29,36 @@ const toDateString = (dateValue) => {
 };
 
 const formatTime = (time) => {
-  if (!time || typeof time !== 'string') return null;
-  const digits = time.replace(':', '');
-  if (digits.length < 3) return null;
-  const rawHours = parseInt(digits.slice(0, 2), 10);
-  const rawMinutes = parseInt(digits.slice(2, 4), 10);
-  if (Number.isNaN(rawHours) || Number.isNaN(rawMinutes)) return null;
+  if (time === null || time === undefined) return null;
+  // Coerce numeric times to string (e.g., 830 -> "830")
+  const timeStr = typeof time === 'number' ? String(time) : time;
+  if (typeof timeStr !== 'string') return null;
+  // Strip all non-digit characters (handles "8:30", "08.30", etc.)
+  const digits = timeStr.replace(/\D/g, '');
+  let rawHours;
+  let rawMinutes;
+  if (digits.length === 3) {
+    // HMM -> H:MM (e.g., "830" -> 8:30)
+    rawHours = parseInt(digits.slice(0, 1), 10);
+    rawMinutes = parseInt(digits.slice(1, 3), 10);
+  } else if (digits.length === 4) {
+    // HHMM -> HH:MM (e.g., "0830" -> 8:30)
+    rawHours = parseInt(digits.slice(0, 2), 10);
+    rawMinutes = parseInt(digits.slice(2, 4), 10);
+  } else {
+    // Unsupported format
+    return null;
+  }
+  if (
+    Number.isNaN(rawHours) ||
+    Number.isNaN(rawMinutes) ||
+    rawHours < 0 ||
+    rawHours > 23 ||
+    rawMinutes < 0 ||
+    rawMinutes > 59
+  ) {
+    return null;
+  }
   const hour12Preference = getUserHour12Preference();
   return formatTimeFrom24h(rawHours, rawMinutes, hour12Preference);
 };
@@ -191,50 +216,6 @@ function parseOpeningHours(placeData) {
   };
 
   return formatted;
-}
-
-const DAY_ORDER = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-const DAY_SHORT = {
-  Monday: 'Mon',
-  Tuesday: 'Tue',
-  Wednesday: 'Wed',
-  Thursday: 'Thu',
-  Friday: 'Fri',
-  Saturday: 'Sat',
-  Sunday: 'Sun'
-};
-
-function groupDayMap(dayMap) {
-  if (!Array.isArray(dayMap) || dayMap.length === 0) return [];
-  const byDay = new Map(dayMap.map(entry => [entry.day, entry.hours]));
-  const ordered = DAY_ORDER.map(day => ({ day, hours: byDay.get(day) || 'Closed' }));
-
-  const groups = [];
-  let current = { start: ordered[0].day, end: ordered[0].day, hours: ordered[0].hours };
-
-  for (let i = 1; i < ordered.length; i += 1) {
-    const next = ordered[i];
-    if (next.hours === current.hours) {
-      current.end = next.day;
-      continue;
-    }
-    groups.push({
-      label: current.start === current.end
-        ? DAY_SHORT[current.start]
-        : `${DAY_SHORT[current.start]}–${DAY_SHORT[current.end]}`,
-      hours: current.hours
-    });
-    current = { start: next.day, end: next.day, hours: next.hours };
-  }
-
-  groups.push({
-    label: current.start === current.end
-      ? DAY_SHORT[current.start]
-      : `${DAY_SHORT[current.start]}–${DAY_SHORT[current.end]}`,
-    hours: current.hours
-  });
-
-  return groups;
 }
 
 /**

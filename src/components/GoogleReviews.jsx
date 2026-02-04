@@ -28,18 +28,8 @@ const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours (reviews don't change fr
 const AUTO_ROTATE_INTERVAL = 6000; // 6 seconds per slide
 const reviewsCache = new Map();
 
-// Create a safe circuit breaker factory as fallback
-function createSafeCircuitBreaker() {
-  return {
-    shouldAttemptCall: () => true,
-    recordFailure: () => {},
-    reset: () => {},
-    getStatus: () => ({ state: 'CLOSED' })
-  };
-}
-
 // Circuit breaker to prevent excessive API calls when quota is exceeded
-const reviewsBreaker = circuitBreakers.reviews || createSafeCircuitBreaker();
+const reviewsBreaker = circuitBreakers.reviews;
 
 /**
  * Fetch reviews from Google Places API (New)
@@ -111,8 +101,8 @@ async function fetchGoogleReviews(placeId) {
       timestamp: Date.now()
     });
 
-    // Reset circuit breaker on successful call
-    reviewsBreaker.reset();
+    // Record success with circuit breaker (clears failure count)
+    reviewsBreaker.recordSuccess();
 
     return data.reviews || [];
   } catch (error) {
@@ -210,16 +200,17 @@ function ReviewCard({ review, prefersReducedMotion }) {
       style={{ 
         backgroundColor: 'var(--color-surface)',
         boxShadow: 'var(--shadow-soft)',
-        willChange: 'transform',
         transform: 'translateZ(0)', // Hardware acceleration for smooth animations
         transitionDuration: prefersReducedMotion ? '0ms' : undefined
       }}
       onMouseEnter={(e) => {
         if (prefersReducedMotion) return;
+        e.currentTarget.style.willChange = 'transform';
         e.currentTarget.style.transform = 'scale(1.02) translateZ(0)';
       }}
       onMouseLeave={(e) => {
         if (prefersReducedMotion) return;
+        e.currentTarget.style.willChange = 'auto';
         e.currentTarget.style.transform = 'scale(1) translateZ(0)';
       }}
     >
@@ -461,8 +452,17 @@ export default function GoogleReviews() {
       className="w-full max-w-7xl mx-auto px-4"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
-      onFocus={() => setIsPaused(true)}
-      onBlur={() => setIsPaused(false)}
+      onFocusCapture={() => setIsPaused(true)}
+      onBlurCapture={(e) => {
+        const currentTarget = e.currentTarget;
+        const relatedTarget = e.relatedTarget;
+        // If focus is moving to another element inside the wrapper, keep autoplay paused
+        if (relatedTarget && currentTarget.contains(relatedTarget)) {
+          return;
+        }
+        // Focus has left the wrapper; it's safe to resume autoplay
+        setIsPaused(false);
+      }}
     >
       {/* Section Header */}
       <div className="text-center mb-8">
@@ -544,7 +544,6 @@ export default function GoogleReviews() {
             className="flex transition-transform duration-500 ease-in-out"
             style={{ 
               transform: `translate3d(-${currentIndex * 100}%, 0, 0)`,
-              willChange: 'transform',
               transitionDuration: prefersReducedMotion ? '0ms' : undefined
             }}
           >
@@ -573,7 +572,7 @@ export default function GoogleReviews() {
                   opacity: idx === currentIndex ? 1 : 0.5
                 }}
                 aria-label={`Go to review ${idx + 1}`}
-                aria-pressed={idx === currentIndex ? 'true' : 'false'}
+                aria-current={idx === currentIndex ? 'true' : undefined}
               />
             ))}
           </div>

@@ -93,7 +93,7 @@ export const LOCATIONS = [
       // Backward-compatible fields for helpers still using legacy schema
       weekdays: '8:30 AM - 9:00 PM',
       weekends: '8:30 AM - 9:00 PM',
-      display: 'Mon-Thu & Sat-Sun: 8:30 AM - 9:00 PM | Fri: 3:00 PM - 9:00 PM',
+      display: 'Mon-Thu, Sat-Sun: 8:30 AM - 9:00 PM | Fri: 3:00 PM - 9:00 PM',
       is24Hours: false,
       isSeasonal: false,
       // Special hours/exceptions (optional)

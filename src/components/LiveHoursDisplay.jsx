@@ -11,50 +11,7 @@ import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { Clock, RefreshCw, AlertCircle } from 'lucide-react';
 import useGooglePlaceHours from '../hooks/useGooglePlaceHours';
-
-const DAY_ORDER = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-const DAY_SHORT = {
-  Monday: 'Mon',
-  Tuesday: 'Tue',
-  Wednesday: 'Wed',
-  Thursday: 'Thu',
-  Friday: 'Fri',
-  Saturday: 'Sat',
-  Sunday: 'Sun'
-};
-
-const groupDayMap = (dayMap) => {
-  if (!Array.isArray(dayMap) || dayMap.length === 0) return [];
-  const byDay = new Map(dayMap.map(entry => [entry.day, entry.hours]));
-  const ordered = DAY_ORDER.map(day => ({ day, hours: byDay.get(day) || 'Closed' }));
-
-  const groups = [];
-  let current = { start: ordered[0].day, end: ordered[0].day, hours: ordered[0].hours };
-
-  for (let i = 1; i < ordered.length; i += 1) {
-    const next = ordered[i];
-    if (next.hours === current.hours) {
-      current.end = next.day;
-      continue;
-    }
-    groups.push({
-      label: current.start === current.end
-        ? DAY_SHORT[current.start]
-        : `${DAY_SHORT[current.start]}–${DAY_SHORT[current.end]}`,
-      hours: current.hours
-    });
-    current = { start: next.day, end: next.day, hours: next.hours };
-  }
-
-  groups.push({
-    label: current.start === current.end
-      ? DAY_SHORT[current.start]
-      : `${DAY_SHORT[current.start]}–${DAY_SHORT[current.end]}`,
-    hours: current.hours
-  });
-
-  return groups;
-};
+import { DAY_ORDER, groupDayMap } from '../utils/dateHelpers';
 
 const buildFallbackDayMap = (fallbackHours) => {
   if (!fallbackHours) return [];
@@ -95,7 +52,10 @@ const formatExceptionDate = (value) => {
  * 
  * @param {Object} props
  * @param {string} props.placeId - Google Place ID
- * @param {Object} props.fallbackHours - Fallback hours object { daily, weekdays, weekends, display, exceptions }
+ * @param {Object} props.fallbackHours - Fallback hours object
+ * @param {Object|Array} props.fallbackHours.daily - Per-day hours (object with day keys or array of {day, hours})
+ * @param {Array} [props.fallbackHours.exceptions] - Holiday/exception hours [{date, hours, reason}]
+ * @param {Array} [props.fallbackHours.dayMap] - Pre-formatted day map
  * @param {boolean} props.showStatus - Show open/closed status badge
  * @param {boolean} props.compact - Compact display mode
  * @param {boolean} props.showIcon - Show clock icon

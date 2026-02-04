@@ -279,7 +279,8 @@ function SingleSelectionMode({ customization, selectedOptions, onOptionsChange }
               border: `1px solid ${isSelected ? 'var(--color-accent)' : 'var(--color-border)'}`,
               fontWeight: isSelected ? 'bold' : 'normal'
             }}
-            aria-pressed={isSelected}
+            role="radio"
+            aria-checked={isSelected}
           >
             {option.name}
             {option.price > 0 && (

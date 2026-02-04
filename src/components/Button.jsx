@@ -212,7 +212,6 @@ const Button = React.forwardRef(({
     opacity: disabled ? 0.6 : 1,
     WebkitTapHighlightColor: 'transparent',
     transform: 'translateZ(0)',
-    willChange: 'transform',
     ...VARIANT_STYLES[variant],
     ...style,
   };

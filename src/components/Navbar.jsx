@@ -68,7 +68,12 @@ export default function Navbar() {
     if (!element) return false;
     const navHeight = document.querySelector('nav')?.offsetHeight || 0;
     const top = element.getBoundingClientRect().top + window.scrollY - navHeight - 12;
-    window.scrollTo({ top, behavior: 'smooth' });
+    const prefersReducedMotion =
+      typeof window !== 'undefined' &&
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const behavior = prefersReducedMotion ? 'auto' : 'smooth';
+    window.scrollTo({ top, behavior });
     return true;
   };
 

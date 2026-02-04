@@ -30,7 +30,8 @@ const readStoredPreference = () => {
 
 /**
  * Get user's hour12 preference.
- * @returns {boolean|undefined} true for 12-hour, false for 24-hour, undefined if unknown
+ * Always returns a boolean (defaults to true/12-hour if unknown).
+ * @returns {boolean} true for 12-hour, false for 24-hour
  */
 export const getUserHour12Preference = () => {
   const stored = readStoredPreference();
