@@ -74,6 +74,8 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
                 backgroundColor: isOpenNow ? 'var(--color-success-bg)' : 'var(--color-error-bg)',
                 color: isOpenNow ? 'var(--color-success)' : 'var(--color-error)'
               }}
+              role="status"
+              aria-label={isOpenNow ? 'Currently open' : 'Currently closed'}
             >
               <span style={{
                 width: '6px',
@@ -81,7 +83,7 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
                 borderRadius: '50%',
                 backgroundColor: isOpenNow ? 'var(--color-success)' : 'var(--color-error)',
                 display: 'inline-block'
-              }}></span>
+              }} aria-hidden="true"></span>
               {isOpenNow ? 'Open Now' : 'Closed'}
             </span>
           )}
@@ -101,6 +103,8 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
               backgroundColor: isOpenNow ? 'var(--color-success-bg)' : 'var(--color-error-bg)',
               color: isOpenNow ? 'var(--color-success)' : 'var(--color-error)'
             }}
+            role="status"
+            aria-label={isOpenNow ? 'Currently open' : 'Currently closed'}
           >
             <span style={{
               width: '6px',
@@ -108,7 +112,7 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
               borderRadius: '50%',
               backgroundColor: isOpenNow ? 'var(--color-success)' : 'var(--color-error)',
               display: 'inline-block'
-            }}></span>
+            }} aria-hidden="true"></span>
             {isOpenNow ? 'Open Now' : 'Closed'}
           </span>
         )}

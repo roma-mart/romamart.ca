@@ -19,7 +19,9 @@ if (!GOOGLE_API_KEY || GOOGLE_API_KEY === 'YOUR_API_KEY_HERE') {
 }
 
 // Cache duration from env or default to 1 hour
-const CACHE_DURATION = parseInt(import.meta.env.VITE_PLACES_CACHE_DURATION, 10) || 60 * 60 * 1000;
+// Validate parsed value to avoid NaN: parseInt returns NaN for invalid input
+const parsedCacheDuration = parseInt(import.meta.env.VITE_PLACES_CACHE_DURATION, 10);
+const CACHE_DURATION = (parsedCacheDuration && !isNaN(parsedCacheDuration)) ? parsedCacheDuration : 60 * 60 * 1000;
 
 // In-memory cache to avoid redundant API calls
 const hoursCache = new Map();
@@ -35,10 +37,18 @@ async function fetchPlaceDetails(placeId) {
     throw new Error('Place ID is required');
   }
 
+  // Fail fast if API key not configured
+  if (!GOOGLE_API_KEY) {
+    throw new Error('Google Places API key not configured (VITE_GOOGLE_PLACES_API_KEY)');
+  }
+
   // Using Places API (New) which supports client-side requests
   // https://developers.google.com/maps/documentation/places/web-service/place-details
   const fields = 'opening_hours,current_opening_hours,business_status,displayName,formattedAddress,utcOffsetMinutes';
   
+  // NOTE: API key in URL is intentional. Google Places API (New) requires key in request.
+  // SECURITY: Restrict key in Google Cloud Console to: Places API, Embed API, JavaScript API
+  // Set HTTP referrer restrictions to limit abuse. See: https://console.cloud.google.com/
   const url = `https://places.googleapis.com/v1/places/${placeId}?fields=${fields}&key=${GOOGLE_API_KEY}`;
 
   try {
@@ -51,15 +61,19 @@ async function fetchPlaceDetails(placeId) {
     });
     
     if (!response.ok) {
-      // If new API fails, try legacy embed approach
-      console.warn('Places API request failed, using fallback');
+      // If new API fails, use fallback
+      if (import.meta.env.DEV) {
+        console.warn('Places API request failed, using fallback');
+      }
       return null;
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error fetching place details:', error);
+    if (import.meta.env.DEV) {
+      console.error('Error fetching place details:', error);
+    }
     return null;
   }
 }
@@ -117,7 +131,14 @@ function formatHoursDisplay(weekdayText) {
   // ["Monday: 8:00 AM – 9:00 PM", "Tuesday: 8:00 AM – 9:00 PM", ...]
   
   const dayMap = weekdayText.map(text => {
-    const [day, hours] = text.split(': ');
+    // Validate split format to handle edge cases (colon may appear multiple times)
+    const colonIndex = text.indexOf(': ');
+    if (colonIndex === -1) {
+      // Fallback for unexpected format
+      return { day: text, hours: 'Closed' };
+    }
+    const day = text.substring(0, colonIndex);
+    const hours = text.substring(colonIndex + 2).trim() || 'Closed';
     return { day, hours };
   });
 
@@ -202,7 +223,9 @@ export function useGooglePlaceHours(placeId, options = {}) {
       setIsOpenNow(parsedHours?.isOpenNow);
     } catch (err) {
       setError(err.message);
-      console.error('Failed to fetch place hours:', err);
+      if (import.meta.env.DEV) {
+        console.error('Failed to fetch place hours:', err);
+      }
     } finally {
       setIsLoading(false);
     }
