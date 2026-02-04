@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { ChevronRight } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
 import StructuredData from '../components/StructuredData';
-import COMPANY_DATA from '../config/company_data';
+import COMPANY_DATA, { getContextualEmail } from '../config/company_data';
 
 const PrivacyPage = () => {
 
@@ -161,11 +161,11 @@ const PrivacyPage = () => {
               If you have questions about this Privacy Policy or wish to exercise your rights, please contact us:
             </p>
             <div className="p-6 rounded-lg" style={{ backgroundColor: 'var(--color-surface)' }}>
-              <p style={textColor}><strong>Roma Mart Corp.</strong></p>
-              <p style={textColor}>3-189 Wellington Street</p>
-              <p style={textColor}>Sarnia, ON N7T 1G6</p>
-              <p style={textColor}>Email: <a href="mailto:privacy@romamart.ca" style={{ color: 'var(--color-accent)' }}>privacy@romamart.ca</a></p>
-              <p style={textColor}>Phone: <a href="tel:+13823422000" style={{ color: 'var(--color-accent)' }}>+1 (382) 342-2000</a></p>
+              <p style={textColor}><strong>{COMPANY_DATA.legalName}</strong></p>
+              <p style={textColor}>{COMPANY_DATA.location.address.streetAddress}</p>
+              <p style={textColor}>{COMPANY_DATA.location.address.addressLocality}, {COMPANY_DATA.location.address.addressRegion} {COMPANY_DATA.location.address.postalCode}</p>
+              <p style={textColor}>Email: <a href={`mailto:${getContextualEmail('privacy')}`} style={{ color: 'var(--color-accent)' }}>{getContextualEmail('privacy')}</a></p>
+              <p style={textColor}>Phone: <a href={`tel:${COMPANY_DATA.location.contact.phone}`} style={{ color: 'var(--color-accent)' }}>{COMPANY_DATA.location.contact.phoneDisplay || COMPANY_DATA.location.contact.phone}</a></p>
               <p className="text-sm mt-4" style={mutedTextColor}>GST/HST#: {COMPANY_DATA.gstNumber}</p>
             </div>
           </section>
