@@ -11,6 +11,39 @@ import { buildMenuItemSchema } from '../schemas/menuItemSchema';
 const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
   const generateSchema = () => {
     switch (type) {
+      case 'ProductList': {
+        // Build ItemList containing all Product schemas
+        // More efficient than multiple <script> tags
+        if (!data.products || !Array.isArray(data.products)) {
+          return null;
+        }
+
+        const productSchemas = data.products
+          .map(productData => buildMenuItemSchema(
+            productData.menuItem,
+            productData.itemUrl,
+            {
+              currency: productData.currency || 'CAD',
+              priceInCents: productData.priceInCents
+            }
+          ))
+          .filter(Boolean); // Remove null schemas
+
+        if (productSchemas.length === 0) {
+          return null;
+        }
+
+        return {
+          '@context': 'https://schema.org',
+          '@type': 'ItemList',
+          itemListElement: productSchemas.map((product, index) => ({
+            '@type': 'ListItem',
+            position: index + 1,
+            item: product
+          }))
+        };
+      }
+
       case 'LocalBusiness':
         return {
           '@context': 'https://schema.org',

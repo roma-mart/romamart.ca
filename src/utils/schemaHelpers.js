@@ -1,5 +1,3 @@
-import sanitizeHtml from 'sanitize-html';
-
 /**
  * Schema Helpers
  * Shared utilities for schema.org JSON-LD generation
@@ -22,6 +20,7 @@ export const convertCentsToDollars = (cents) => {
 
 /**
  * Sanitize and normalize strings for schema output
+ * Uses native DOMParser to strip HTML tags (zero bundle size impact)
  * @param {string} value - Raw string input
  * @returns {string} Safe, trimmed string
  */
@@ -30,12 +29,23 @@ export const safeString = (value) => {
     return '';
   }
 
-  const sanitized = sanitizeHtml(value, {
-    allowedTags: [],
-    allowedAttributes: {}
-  });
+  // Use native browser DOMParser to strip HTML tags
+  // Falls back to regex for SSR/prerender
+  let withoutTags;
+  if (typeof window !== 'undefined' && window.DOMParser) {
+    try {
+      const doc = new DOMParser().parseFromString(value, 'text/html');
+      withoutTags = doc.body.textContent || '';
+    } catch {
+      // Fallback if DOMParser fails
+      withoutTags = value.replace(/<[^>]*>/g, '');
+    }
+  } else {
+    // SSR/prerender fallback
+    withoutTags = value.replace(/<[^>]*>/g, '');
+  }
 
-  return sanitized
+  return withoutTags
     .replace(/\s+/g, ' ')
     .trim();
 };

@@ -58,17 +58,17 @@ const RoCafePage = () => {
 
   return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>
-      {schemaMenuItems.map(item => (
-        <StructuredData
-          key={`schema-${item.id || item.name}`}
-          type="Product"
-          data={{
+      {/* Single JSON-LD with @graph array for all products (efficient) */}
+      <StructuredData
+        type="ProductList"
+        data={{
+          products: schemaMenuItems.map(item => ({
             menuItem: item,
             itemUrl: 'https://romamart.ca/rocafe',
             priceInCents: schemaPriceInCents
-          }}
-        />
-      ))}
+          }))
+        }}
+      />
       <Helmet>
         <title>RoCafé Menu | Roma Mart Convenience</title>
         <meta name="description" content="Explore the RoCafé menu featuring hot coffee, iced coffee, tea, fresh juice, smoothies, frappés, specialty drinks, food, and seasonal items." />
