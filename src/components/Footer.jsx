@@ -130,7 +130,7 @@ export default function Footer() {
                       <strong>Email:</strong> {currentLocation?.contact?.email || COMPANY_DATA.hq?.contact?.email}
                     </div>
                     <div className="mb-2">
-                      <strong>Hours:</strong> Mon-Fri: {currentLocation?.hours?.weekdays || COMPANY_DATA.hq?.hours?.weekdays}, Sat-Sun: {currentLocation?.hours?.weekends || COMPANY_DATA.hq?.hours?.weekends}
+                      <strong>Hours:</strong> {currentLocation?.hours?.display || COMPANY_DATA.hq?.hours?.display}
                     </div>
                   </div>
 

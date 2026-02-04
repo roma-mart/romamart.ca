@@ -186,7 +186,7 @@ function StarRating({ rating }) {
  * Review Card Component
  * Displays individual review with author attribution per Google's requirements
  */
-function ReviewCard({ review }) {
+function ReviewCard({ review, prefersReducedMotion }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const maxLength = 200;
   const reviewText = review.text?.text || review.text?.originalText || '';
@@ -209,12 +209,19 @@ function ReviewCard({ review }) {
       className="flex-shrink-0 w-full p-6 rounded-xl transition-all duration-300"
       style={{ 
         backgroundColor: 'var(--color-surface)',
-        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+        boxShadow: 'var(--shadow-soft)',
         willChange: 'transform',
-        transform: 'translateZ(0)' // Hardware acceleration for smooth animations
+        transform: 'translateZ(0)', // Hardware acceleration for smooth animations
+        transitionDuration: prefersReducedMotion ? '0ms' : undefined
       }}
-      onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02) translateZ(0)'}
-      onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1) translateZ(0)'}
+      onMouseEnter={(e) => {
+        if (prefersReducedMotion) return;
+        e.currentTarget.style.transform = 'scale(1.02) translateZ(0)';
+      }}
+      onMouseLeave={(e) => {
+        if (prefersReducedMotion) return;
+        e.currentTarget.style.transform = 'scale(1) translateZ(0)';
+      }}
     >
       {/* Author Header */}
       <div className="flex items-start gap-3 mb-4">
@@ -311,6 +318,7 @@ export default function GoogleReviews() {
   const [isLoading, setIsLoading] = useState(!!placeId); // Only load if placeId exists
   const [error, setError] = useState(!placeId); // Error if no placeId
   const [isPaused, setIsPaused] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const intervalRef = useRef(null);
 
   // Fetch reviews on mount
@@ -355,9 +363,27 @@ export default function GoogleReviews() {
     };
   }, [placeId]);
 
+  // Respect reduced motion preferences
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return undefined;
+
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const handleChange = () => setPrefersReducedMotion(mediaQuery.matches);
+
+    handleChange();
+
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', handleChange);
+      return () => mediaQuery.removeEventListener('change', handleChange);
+    }
+
+    mediaQuery.addListener(handleChange);
+    return () => mediaQuery.removeListener(handleChange);
+  }, []);
+
   // Auto-rotate carousel
   useEffect(() => {
-    if (!reviews || reviews.length <= 1 || isPaused) return;
+    if (!reviews || reviews.length <= 1 || isPaused || prefersReducedMotion) return;
 
     intervalRef.current = setInterval(() => {
       setCurrentIndex(prev => (prev + 1) % reviews.length);
@@ -368,7 +394,7 @@ export default function GoogleReviews() {
         clearInterval(intervalRef.current);
       }
     };
-  }, [reviews, isPaused]);
+  }, [reviews, isPaused, prefersReducedMotion]);
 
   const goToNext = useCallback(() => {
     if (reviews && reviews.length > 1) {
@@ -465,15 +491,21 @@ export default function GoogleReviews() {
               style={{ 
                 backgroundColor: 'var(--color-surface)',
                 color: 'var(--color-on-surface)',
-                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                boxShadow: 'var(--shadow-soft)',
                 transform: 'translateY(-50%)',
                 outline: 'none',
                 WebkitTapHighlightColor: 'transparent'
               }}
-              onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-50%) scale(1.1)'}
-              onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(-50%) scale(1)'}
-              onFocus={(e) => e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 0 0 3px var(--color-accent)'}
-              onBlur={(e) => e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)'}
+              onMouseEnter={(e) => {
+                if (prefersReducedMotion) return;
+                e.currentTarget.style.transform = 'translateY(-50%) scale(1.1)';
+              }}
+              onMouseLeave={(e) => {
+                if (prefersReducedMotion) return;
+                e.currentTarget.style.transform = 'translateY(-50%) scale(1)';
+              }}
+              onFocus={(e) => { e.currentTarget.style.boxShadow = 'var(--shadow-soft), var(--focus-ring)'; }}
+              onBlur={(e) => { e.currentTarget.style.boxShadow = 'var(--shadow-soft)'; }}
               aria-label="Previous review"
             >
               <ChevronLeft size={24} />
@@ -484,15 +516,21 @@ export default function GoogleReviews() {
               style={{ 
                 backgroundColor: 'var(--color-surface)',
                 color: 'var(--color-on-surface)',
-                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                boxShadow: 'var(--shadow-soft)',
                 transform: 'translateY(-50%)',
                 outline: 'none',
                 WebkitTapHighlightColor: 'transparent'
               }}
-              onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-50%) scale(1.1)'}
-              onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(-50%) scale(1)'}
-              onFocus={(e) => e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 0 0 3px var(--color-accent)'}
-              onBlur={(e) => e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)'}
+              onMouseEnter={(e) => {
+                if (prefersReducedMotion) return;
+                e.currentTarget.style.transform = 'translateY(-50%) scale(1.1)';
+              }}
+              onMouseLeave={(e) => {
+                if (prefersReducedMotion) return;
+                e.currentTarget.style.transform = 'translateY(-50%) scale(1)';
+              }}
+              onFocus={(e) => { e.currentTarget.style.boxShadow = 'var(--shadow-soft), var(--focus-ring)'; }}
+              onBlur={(e) => { e.currentTarget.style.boxShadow = 'var(--shadow-soft)'; }}
               aria-label="Next review"
             >
               <ChevronRight size={24} />
@@ -506,12 +544,13 @@ export default function GoogleReviews() {
             className="flex transition-transform duration-500 ease-in-out"
             style={{ 
               transform: `translate3d(-${currentIndex * 100}%, 0, 0)`,
-              willChange: 'transform'
+              willChange: 'transform',
+              transitionDuration: prefersReducedMotion ? '0ms' : undefined
             }}
           >
             {reviews.map((review, idx) => (
               <div key={idx} className="w-full flex-shrink-0 px-2">
-                <ReviewCard review={review} />
+                <ReviewCard review={review} prefersReducedMotion={prefersReducedMotion} />
               </div>
             ))}
           </div>
@@ -557,7 +596,7 @@ export default function GoogleReviews() {
           }}
           onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.05)'; }}
           onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
-          onFocus={(e) => { e.currentTarget.style.boxShadow = 'var(--shadow-soft), 0 0 0 3px rgba(228, 179, 64, 0.2)'; }}
+          onFocus={(e) => { e.currentTarget.style.boxShadow = 'var(--shadow-soft), var(--focus-ring)'; }}
           onBlur={(e) => { e.currentTarget.style.boxShadow = 'var(--shadow-soft)'; }}
         >
           View all reviews on Google

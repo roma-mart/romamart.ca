@@ -187,6 +187,10 @@
   --color-accent-bg: color-mix(in srgb, #E4B340 12%, transparent); /* Accent background for icons/cards */
   --color-accent-hover: #C99A2B; /* Slightly darker accent for hover */
 
+  /* Shadows and focus rings */
+  --shadow-soft: 0 4px 6px -1px rgb(0 0 0 / 10%), 0 2px 4px -1px rgb(0 0 0 / 6%);
+  --focus-ring: 0 0 0 3px color-mix(in srgb, var(--color-accent) 20%, transparent);
+
   /* Location button colors */
   --color-location-bg: #E4F1FB; /* Soft blue, map/location theme */
   --color-location-text: #001540; /* Dark navy, matches brand primary */

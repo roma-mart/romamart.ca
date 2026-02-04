@@ -12,6 +12,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { circuitBreakers } from '../utils/apiCircuitBreaker';
+import { getUserHour12Preference, formatTimeFrom24h } from '../utils/timeFormat';
 
 const pad2 = (value) => value.toString().padStart(2, '0');
 
@@ -33,9 +34,8 @@ const formatTime = (time) => {
   const rawHours = parseInt(digits.slice(0, 2), 10);
   const rawMinutes = parseInt(digits.slice(2, 4), 10);
   if (Number.isNaN(rawHours) || Number.isNaN(rawMinutes)) return null;
-  const period = rawHours >= 12 ? 'PM' : 'AM';
-  const hours = rawHours % 12 || 12;
-  return `${hours}:${pad2(rawMinutes)} ${period}`;
+  const hour12Preference = getUserHour12Preference();
+  return formatTimeFrom24h(rawHours, rawMinutes, hour12Preference);
 };
 
 const formatPeriods = (periods = []) => {
