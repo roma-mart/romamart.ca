@@ -15,8 +15,6 @@ import { LOCATIONS, getActiveLocations } from '../data/locations';
 import { NAVIGATION_LINKS } from '../config/navigation';
 import OrderCTA from './OrderCTA';
 import Button from './Button';
-import { ReactGoogleReviews } from 'react-google-reviews';
-import 'react-google-reviews/dist/index.css';
 import { circuitBreakers } from '../utils/apiCircuitBreaker';
 
 
@@ -153,22 +151,33 @@ export default function Footer() {
       <OrderCTA />
       <footer className="pt-16 pb-8" style={{ backgroundColor: 'var(--color-footer)', color: 'var(--color-on-footer)' }}>
         {/* Google Places Reviews Carousel */}
+        {/* Google Places Reviews Link */}
         <div className="mb-8 flex justify-center">
           {import.meta.env.VITE_GOOGLE_PLACES_API_KEY && 
            LOCATIONS[0]?.google?.placeId && 
            circuitBreakers.googlePlaces.shouldAttemptCall() ? (
-            <ReactGoogleReviews 
-              layout="carousel"
-              googlePlaceId={LOCATIONS[0].google.placeId}
-              googleAPIKey={import.meta.env.VITE_GOOGLE_PLACES_API_KEY}
-              theme="dark"
-              carouselAutoplay={true}
-              carouselSpeed={5000}
-              maxItems={3}
-              reviewVariant="card"
-              structuredData={true}
-              brandName={COMPANY_DATA.name}
-            />
+            <div className="max-w-2xl px-4 py-6 rounded-lg" style={{ backgroundColor: 'var(--color-surface)' }}>
+              <div className="text-center">
+                <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--color-on-surface)' }}>
+                  ⭐ Google Reviews
+                </h3>
+                <p className="mb-4" style={{ color: 'var(--color-on-surface-muted)' }}>
+                  See what our customers say about us
+                </p>
+                <a
+                  href={LOCATIONS[0]?.google?.mapLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-6 py-2 rounded-lg font-medium transition-all focus:outline-none focus:ring-2 focus:ring-offset-2"
+                  style={{
+                    backgroundColor: 'var(--color-accent)',
+                    color: 'var(--color-on-accent)'
+                  }}
+                >
+                  View Reviews on Google
+                </a>
+              </div>
+            </div>
           ) : (
             <div className="text-center text-base font-inter text-[var(--color-on-footer-muted)]">
               <span>We value your feedback!&nbsp;</span>
