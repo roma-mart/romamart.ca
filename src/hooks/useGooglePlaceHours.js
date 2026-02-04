@@ -316,8 +316,8 @@ export function useGooglePlaceHours(placeId, options = {}) {
   const [error, setError] = useState(null);
   const [isOpenNow, setIsOpenNow] = useState(null);
 
-  const fetchHours = useCallback(async (options = {}) => {
-    const force = typeof options === 'boolean' ? options : options?.force;
+  const fetchHours = useCallback(async (fetchOptions = {}) => {
+    const force = typeof fetchOptions === 'boolean' ? fetchOptions : fetchOptions?.force;
     if (!placeId || !enabled) {
       setIsLoading(false);
       return;

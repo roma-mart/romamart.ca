@@ -123,7 +123,7 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
           Holiday Hours
         </p>
         {exceptionItems.map(item => (
-          <p key={`${item.date}-${item.hours}`} className="font-inter text-xs" style={{ color: 'var(--color-text-muted)' }}>
+          <p key={`${item.date}-${item.hours}-${item.reason || ''}`} className="font-inter text-xs" style={{ color: 'var(--color-text-muted)' }}>
             {item.isToday ? 'Today' : formatExceptionDate(item.date)}: {item.hours}
             {item.reason ? ` (${item.reason})` : ''}
           </p>
