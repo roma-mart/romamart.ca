@@ -269,17 +269,21 @@ const Locations = () => {
     isOpen: isLocationOpenNow(preferredLocation)
   }), [preferredLocation]);
   
-  const [activeLoc, setActiveLoc] = useState(displayLocation);
-
-  // Sync activeLoc when displayLocation changes (e.g., when geolocation resolves)
-  useEffect(() => {
-    setActiveLoc(displayLocation);
-  }, [displayLocation]);
+  const [userSelectedLocationId, setUserSelectedLocationId] = useState(null);
+  
+  // Use displayLocation directly for activeLoc if not manually selected by user
+  const activeLoc = userSelectedLocationId 
+    ? [displayLocation].find(loc => loc.id === userSelectedLocationId) || displayLocation
+    : displayLocation;
 
   // create memoized handlers for each location to avoid inline closures
   const locationHandlers = React.useMemo(() => {
     const map = {};
-    [displayLocation].forEach(loc => { map[loc.id] = () => setActiveLoc(loc); });
+    [displayLocation].forEach(loc => {
+      map[loc.id] = () => {
+        setUserSelectedLocationId(loc.id); // Remember user's selection
+      };
+    });
     return map;
   }, [displayLocation]);
 

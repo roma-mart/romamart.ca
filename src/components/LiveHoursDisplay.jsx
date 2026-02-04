@@ -62,36 +62,41 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
       );
     }
 
-    // Check if all days have same hours
-    if (displayHours.allSame && displayHours.full) {
-      const sameHours = displayHours.full[0]?.split(': ')[1];
-      return (
-        <div className="space-y-1">
-          {showStatus && isOpenNow !== null && (
-            <span 
-              className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-semibold mb-1"
-              style={{
-                backgroundColor: isOpenNow ? 'var(--color-success-bg)' : 'var(--color-error-bg)',
-                color: isOpenNow ? 'var(--color-success)' : 'var(--color-error)'
-              }}
-              role="status"
-              aria-label={isOpenNow ? 'Currently open' : 'Currently closed'}
-            >
-              <span style={{
-                width: '6px',
-                height: '6px',
-                borderRadius: '50%',
-                backgroundColor: isOpenNow ? 'var(--color-success)' : 'var(--color-error)',
-                display: 'inline-block'
-              }} aria-hidden="true"></span>
-              {isOpenNow ? 'Open Now' : 'Closed'}
-            </span>
-          )}
-          <p className="font-inter font-semibold" style={textColor}>
-            Open Daily: {sameHours}
-          </p>
-        </div>
-      );
+    // Check if all days have same hours and we have valid full hours array
+    if (displayHours.allSame && Array.isArray(displayHours.full) && displayHours.full.length > 0) {
+      const firstLine = displayHours.full[0];
+      const sameHours = typeof firstLine === 'string' && firstLine.includes(': ') ? firstLine.split(': ')[1] : null;
+      
+      // Guard against undefined hours - fall through to variable display
+      if (sameHours) {
+        return (
+          <div className="space-y-1">
+            {showStatus && isOpenNow !== null && (
+              <span 
+                className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-semibold mb-1"
+                style={{
+                  backgroundColor: isOpenNow ? 'var(--color-success-bg)' : 'var(--color-error-bg)',
+                  color: isOpenNow ? 'var(--color-success)' : 'var(--color-error)'
+                }}
+                role="status"
+                aria-label={isOpenNow ? 'Currently open' : 'Currently closed'}
+              >
+                <span style={{
+                  width: '6px',
+                  height: '6px',
+                  borderRadius: '50%',
+                  backgroundColor: isOpenNow ? 'var(--color-success)' : 'var(--color-error)',
+                  display: 'inline-block'
+                }} aria-hidden="true"></span>
+                {isOpenNow ? 'Open Now' : 'Closed'}
+              </span>
+            )}
+            <p className="font-inter font-semibold" style={textColor}>
+              Open Daily: {sameHours}
+            </p>
+          </div>
+        );
+      }
     }
 
     return (
@@ -139,7 +144,7 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
       <div className="flex-1">
         <h3 className="font-bold mb-1" style={textColor}>Hours</h3>
         {renderHoursContent()}
-        {hours && !error && (
+        {(hours || error) && (
           <button
             onClick={refetch}
             className="mt-2 text-xs hover:underline flex items-center gap-1"

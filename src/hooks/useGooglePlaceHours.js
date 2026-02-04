@@ -19,9 +19,9 @@ if (!GOOGLE_API_KEY || GOOGLE_API_KEY === 'YOUR_API_KEY_HERE') {
 }
 
 // Cache duration from env or default to 1 hour
-// Validate parsed value to avoid NaN: parseInt returns NaN for invalid input
+// Validate parsed value using !Number.isNaN to allow 0 (disable caching)
 const parsedCacheDuration = parseInt(import.meta.env.VITE_PLACES_CACHE_DURATION, 10);
-const CACHE_DURATION = (parsedCacheDuration && !isNaN(parsedCacheDuration)) ? parsedCacheDuration : 60 * 60 * 1000;
+const CACHE_DURATION = !Number.isNaN(parsedCacheDuration) ? parsedCacheDuration : 60 * 60 * 1000;
 
 // In-memory cache to avoid redundant API calls
 const hoursCache = new Map();
@@ -45,11 +45,11 @@ async function fetchPlaceDetails(placeId) {
   // Using Places API (New) which supports client-side requests
   // https://developers.google.com/maps/documentation/places/web-service/place-details
   const fields = 'opening_hours,current_opening_hours,business_status,displayName,formattedAddress,utcOffsetMinutes';
-  
+
   // NOTE: API key in URL is intentional. Google Places API (New) requires key in request.
   // SECURITY: Restrict key in Google Cloud Console to: Places API, Embed API, JavaScript API
   // Set HTTP referrer restrictions to limit abuse. See: https://console.cloud.google.com/
-  const url = `https://places.googleapis.com/v1/places/${placeId}?fields=${fields}&key=${GOOGLE_API_KEY}`;
+  const url = `https://places.googleapis.com/v1/places/${placeId}?key=${GOOGLE_API_KEY}`;
 
   try {
     const response = await fetch(url, {
@@ -152,11 +152,14 @@ function formatHoursDisplay(weekdayText) {
   const sameWeekdayHours = weekdayHours.every(h => h === weekdayHours[0]);
   const sameWeekendHours = weekendHours.every(h => h === weekendHours[0]);
 
+  // Check if ALL days (Mon–Sun) have identical hours using validated dayMap
+  const allSame = dayMap.length > 0 && dayMap.every(entry => entry.hours === dayMap[0].hours);
+
   return {
     weekdays: sameWeekdayHours ? weekdayHours[0] : 'Varies',
     weekends: sameWeekendHours ? weekendHours[0] : 'Varies',
     full: weekdayText,
-    allSame: weekdayText.every(d => d.split(': ')[1] === weekdayText[0].split(': ')[1])
+    allSame
   };
 }
 
