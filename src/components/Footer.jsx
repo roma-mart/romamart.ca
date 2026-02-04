@@ -15,7 +15,6 @@ import { LOCATIONS, getActiveLocations } from '../data/locations';
 import { NAVIGATION_LINKS } from '../config/navigation';
 import OrderCTA from './OrderCTA';
 import Button from './Button';
-import { circuitBreakers } from '../utils/apiCircuitBreaker';
 
 
 // Social platforms to control display in Footer (label, icon)
@@ -151,46 +150,30 @@ export default function Footer() {
       <OrderCTA />
       <footer className="pt-16 pb-8" style={{ backgroundColor: 'var(--color-footer)', color: 'var(--color-on-footer)' }}>
         {/* Google Places Reviews Carousel */}
-        {/* Google Places Reviews Link */}
+        {/* Google Reviews */}
         <div className="mb-8 flex justify-center">
-          {import.meta.env.VITE_GOOGLE_PLACES_API_KEY && 
-           LOCATIONS[0]?.google?.placeId && 
-           circuitBreakers.googlePlaces.shouldAttemptCall() ? (
-            <div className="max-w-2xl px-4 py-6 rounded-lg" style={{ backgroundColor: 'var(--color-surface)' }}>
-              <div className="text-center">
-                <h3 className="text-lg font-semibold mb-3" style={{ color: 'var(--color-on-surface)' }}>
-                  ⭐ Google Reviews
-                </h3>
-                <p className="mb-4" style={{ color: 'var(--color-on-surface-muted)' }}>
-                  See what our customers say about us
-                </p>
-                <a
-                  href={LOCATIONS[0]?.google?.mapLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-6 py-2 rounded-lg font-medium transition-all focus:outline-none focus:ring-2 focus:ring-offset-2"
-                  style={{
-                    backgroundColor: 'var(--color-accent)',
-                    color: 'var(--color-on-accent)'
-                  }}
-                >
-                  View Reviews on Google
-                </a>
-              </div>
-            </div>
-          ) : (
-            <div className="text-center text-base font-inter text-[var(--color-on-footer-muted)]">
-              <span>We value your feedback!&nbsp;</span>
+          <div className="w-full max-w-2xl px-4 py-6 rounded-lg" style={{ backgroundColor: 'var(--color-surface)' }}>
+            <div className="text-center">
+              <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--color-on-surface)' }}>
+                ⭐ Google Reviews
+              </h3>
+              <p className="text-sm mb-4" style={{ color: 'var(--color-on-surface-muted)' }}>
+                See what our customers say about us on Google
+              </p>
               <a
                 href={LOCATIONS[0]?.google?.mapLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="underline text-[var(--color-accent)] hover:text-[var(--color-accent)]"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all focus:outline-none focus:ring-2 focus:ring-offset-2"
+                style={{
+                  backgroundColor: 'var(--color-accent)',
+                  color: 'var(--color-on-accent)'
+                }}
               >
-                View Google Reviews
+                View All Reviews on Google
               </a>
             </div>
-          )}
+          </div>
         </div>
       <div className="max-w-7xl mx-auto p-4 grid md:grid-cols-4 gap-12 mb-12">
         <div className="p-1 col-span-1 md:col-span-2">
