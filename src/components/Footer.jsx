@@ -134,14 +134,16 @@ export default function Footer() {
   // Generate star display based on rating
   const renderStars = (ratingValue) => {
     if (!ratingValue) return '⭐⭐⭐⭐⭐';
-    
-    const fullStars = Math.floor(ratingValue);
-    const hasHalfStar = ratingValue % 1 >= 0.3 && ratingValue % 1 < 0.8;
+
+    const clampedRating = Math.min(5, Math.max(0, ratingValue));
+    const roundedRating = Math.round(clampedRating * 2) / 2;
+    const fullStars = Math.floor(roundedRating);
+    const hasHalfStar = roundedRating - fullStars === 0.5;
     const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-    
+
     return (
-      '⭐'.repeat(fullStars) + 
-      (hasHalfStar ? '⭐' : '') + 
+      '⭐'.repeat(fullStars) +
+      (hasHalfStar ? '⯨' : '') +
       '☆'.repeat(Math.max(0, emptyStars))
     );
   };
