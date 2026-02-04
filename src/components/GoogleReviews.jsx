@@ -55,7 +55,9 @@ async function fetchGoogleReviews(placeId) {
 
   // Check circuit breaker before making API call
   if (!reviewsBreaker.shouldAttemptCall()) {
-    console.warn('Circuit breaker OPEN for reviews API - using cached/fallback data');
+    if (import.meta.env.DEV) {
+      console.warn('Circuit breaker OPEN for reviews API - using cached/fallback data');
+    }
     // Return stale cache if available, otherwise null
     return cached?.data || null;
   }
@@ -63,7 +65,9 @@ async function fetchGoogleReviews(placeId) {
   try {
     const apiKey = import.meta.env.VITE_GOOGLE_PLACES_API_KEY;
     if (!apiKey) {
-      console.warn('Google Places API key not configured');
+      if (import.meta.env.DEV) {
+        console.warn('Google Places API key not configured');
+      }
       return null;
     }
 
@@ -82,7 +86,7 @@ async function fetchGoogleReviews(placeId) {
       // Record failure in circuit breaker (opens after 5 quota errors)
       reviewsBreaker.recordFailure(response.status);
       
-      if (response.status === 429 || response.status === 403) {
+      if (import.meta.env.DEV && (response.status === 429 || response.status === 403)) {
         console.error(`Google Places API quota error (${response.status}) - circuit breaker triggered`);
       }
       
@@ -102,11 +106,15 @@ async function fetchGoogleReviews(placeId) {
 
     return data.reviews || [];
   } catch (error) {
-    console.error('Failed to fetch Google reviews:', error);
+    if (import.meta.env.DEV) {
+      console.error('Failed to fetch Google reviews:', error);
+    }
     
     // Return stale cache if available
     if (cached?.data) {
-      console.warn('Using stale cached reviews due to API error');
+      if (import.meta.env.DEV) {
+        console.warn('Using stale cached reviews due to API error');
+      }
       return cached.data;
     }
     
@@ -155,8 +163,8 @@ function StarRating({ rating }) {
           key={star}
           size={16}
           className="transition-all"
-          fill={star <= rating ? '#FBBC04' : 'transparent'}
-          stroke={star <= rating ? '#FBBC04' : 'var(--color-on-footer-muted)'}
+          fill={star <= rating ? 'var(--color-accent)' : 'transparent'}
+          stroke={star <= rating ? 'var(--color-accent)' : 'var(--color-on-footer-muted)'}
           strokeWidth={1.5}
         />
       ))}

@@ -158,7 +158,10 @@ export default function Footer() {
         <div className="p-1 col-span-1 md:col-span-2">
            <a 
              href={`${BASE_URL}`}
-             className="flex items-center gap-3 mb-6 hover:opacity-80 transition-opacity cursor-pointer w-fit"
+             className="flex items-center gap-3 mb-6 transition-opacity cursor-pointer w-fit"
+             style={{ WebkitTapHighlightColor: 'transparent' }}
+             onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
+             onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
              aria-label="Roma Mart - Go to homepage"
            >
               <Logo layout="horizontal" variant="white" size={40} />
@@ -378,8 +381,10 @@ export default function Footer() {
         <button
           type="button"
           aria-label="Back to top of page"
-          className="px-8 py-4 min-w-[44px] min-h-[44px] rounded-full font-bold font-inter bg-[var(--color-accent)] text-[var(--color-primary)] shadow-lg transition-transform hover:scale-105 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
-          style={{ outline: '2px solid var(--color-focus)', outlineOffset: '2px', fontSize: '1rem' }}
+          className="px-8 py-4 min-w-[44px] min-h-[44px] rounded-full font-bold font-inter bg-[var(--color-accent)] text-[var(--color-primary)] shadow-lg transition-all focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+          style={{ WebkitTapHighlightColor: 'transparent', transform: 'translateZ(0)', outline: '2px solid var(--color-focus)', outlineOffset: '2px', fontSize: '1rem' }}
+          onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05) translateZ(0)'}
+          onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1) translateZ(0)'}
           onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }}
         >
           ↑ Back to Top

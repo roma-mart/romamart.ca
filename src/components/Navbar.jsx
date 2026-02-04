@@ -116,7 +116,10 @@ export default function Navbar() {
           {/* Logo Area */}
           <a
             href={`${BASE_URL}`}
-            className={`flex items-center hover:opacity-80 transition-opacity cursor-pointer no-drag${isOpen ? ' invisible' : ''} md:visible`}
+            className={`flex items-center transition-opacity cursor-pointer no-drag${isOpen ? ' invisible' : ''} md:visible`}
+            style={{ WebkitTapHighlightColor: 'transparent' }}
+            onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
+            onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
             aria-label="Roma Mart - Go to homepage"
           >
             {/* Mobile: vertical logo */}
@@ -156,8 +159,10 @@ export default function Navbar() {
               <a
                 key="home"
                 href={BASE_URL}
-                className="font-inter font-medium hover:opacity-80 transition-opacity flex items-center gap-2"
-                style={{ color: 'var(--color-text)' }}
+                className="font-inter font-medium transition-opacity flex items-center gap-2"
+                style={{ color: 'var(--color-text)', WebkitTapHighlightColor: 'transparent' }}
+                onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
+                onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
                 aria-label="Go to homepage"
                 title="Home"
               >
@@ -169,8 +174,10 @@ export default function Navbar() {
                 key={link.href}
                 href={isHomePage && link.href.startsWith('/') ? `${BASE_URL}#${link.href.replace('/', '')}` : `${BASE_URL}${link.href.replace('/', '')}`}
                 onClick={e => handleNavClick(e, link.href !== '/' ? link.href.replace('/', '') : null, `${BASE_URL}${link.href.replace('/', '')}`)}
-                className="font-inter font-medium hover:opacity-80 transition-opacity"
-                style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-text)' }}
+                className="font-inter font-medium transition-opacity"
+                style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-text)', WebkitTapHighlightColor: 'transparent' }}
+                onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
+                onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
                 aria-label={link.ariaLabel || link.label}
                 title={link.label}
               >

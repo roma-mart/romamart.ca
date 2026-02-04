@@ -268,7 +268,7 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
         {renderExceptions()}
       </div>
     );
-  }, [error, isLoading, displayHours, showStatus, isOpenNow, fallbackHours, fallbackGrouped, exceptionItems]);
+  }, [error, isLoading, displayHours, showStatus, isOpenNow, fallbackHours, fallbackGrouped, exceptionItems, renderExceptions, renderGroupedLines]);
 
   const refreshButton = showRefresh && (hours || error) ? (
     <button

@@ -199,8 +199,10 @@ const ServicesPage = () => {
           <div className="flex flex-wrap justify-center gap-4">
             <a
               href={`${BASE_URL}locations`}
-              className="px-8 py-4 rounded-full font-bold font-inter transition-transform hover:scale-105 shadow-lg"
-              style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)' }}
+              className="px-8 py-4 rounded-full font-bold font-inter transition-all shadow-lg"
+              style={{ WebkitTapHighlightColor: 'transparent', transform: 'translateZ(0)', backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)' }}
+              onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05) translateZ(0)'}
+              onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1) translateZ(0)'}
               onMouseOver={e => e.currentTarget.style.backgroundColor = 'rgba(228, 179, 64, 0.85)'}
               onFocus={e => e.currentTarget.style.backgroundColor = 'rgba(228, 179, 64, 0.85)'}
               onMouseOut={e => e.currentTarget.style.backgroundColor = 'var(--color-accent)'}

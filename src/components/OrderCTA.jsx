@@ -44,7 +44,15 @@ const OrderCTA = ({ orderUrl = getOrderingUrl() }) => {
           ? 'opacity-100 pointer-events-auto animate-fab-in'
           : 'opacity-0 pointer-events-none animate-fab-out'
       }`}
-      style={{ boxShadow: '0 4px 16px var(--color-accent-shadow,rgba(228,179,64,0.15))', minWidth: 56, minHeight: 56, padding: 0, ...((!isVisible) && { pointerEvents: 'none' }) }}
+      style={{ 
+        boxShadow: '0 4px 16px var(--color-accent-shadow,rgba(228,179,64,0.15))', 
+        minWidth: 56, 
+        minHeight: 56, 
+        padding: 0, 
+        transform: 'translateZ(0)',
+        WebkitTapHighlightColor: 'transparent',
+        ...((!isVisible) && { pointerEvents: 'none' }) 
+      }}
       {...(!isVisible ? { inert: "true" } : {})}
       children={null}
     />
