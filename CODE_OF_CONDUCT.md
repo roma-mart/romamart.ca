@@ -36,7 +36,7 @@ This Code of Conduct applies within all community spaces, and also applies when 
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the project team at:
 
-📧 **contact@romamart.ca**
+📧 **technology@romamart.ca**
 
 All complaints will be reviewed and investigated promptly and fairly.
 
