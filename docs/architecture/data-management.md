@@ -35,6 +35,13 @@ Roma Mart uses a **hybrid data architecture**:
 - **Graceful Degradation** - Static fallbacks when APIs unavailable
 - **Offline-First** - Cached data for PWA offline functionality
 
+### Migration Roadmap (In Progress)
+
+- **RoCafé Menu:** Now sourced primarily from the external database (see `useExcelMenu`).
+- **Locations, Services, Employees:** Currently hardcoded, scheduled to migrate to the external database.
+- **Company Data:** Currently centralized in config files, expected to migrate to the external database.
+- **Color/Theme Config:** Currently in design tokens and CSS variables, expected to migrate to the external database.
+
 ---
 
 ## Static Data Sources
@@ -132,7 +139,7 @@ export const getLocationsByType = (type) => LOCATIONS.filter(loc => loc.type ===
 
 ### 2. RoCafé Menu Data (`src/data/rocafe-menu.js`)
 
-**Purpose:** Complete menu with items, categories, allergens, customizations, pricing
+**Current Reality:** The app **surfaces the external database menu**. The local file is retained for reference, fallback, and future parity, but it is no longer the primary source displayed to users.
 
 **Structure:**
 ```javascript
@@ -175,7 +182,7 @@ export const DIETARY_TAGS = {
   HALAL: { label: 'Halal', icon: '☪️', color: 'var(--color-success-dark)' }
 };
 
-// Full menu items
+// Full menu items (reference dataset)
 export const ROCAFE_FULL_MENU = [
   {
     itemType: 'menu',
@@ -237,12 +244,14 @@ export const ROCAFE_FULL_MENU = [
 ];
 ```
 
-**Key Features:**
+**Key Features (Reference Dataset):**
 - **Structured Customization System** - Required/optional, single/multiple, quantity-based
 - **Multi-Size Pricing** - Small, Regular, Large with independent prices
 - **Allergen Tracking** - Full allergen disclosure system
 - **Dietary Filtering** - Vegan, vegetarian, gluten-free, halal
 - **Caffeine Levels** - Visual caffeine indicator system
+
+**Primary Source (Live):** External menu database accessed via `useExcelMenu` (see [Dynamic Data (API Integration)](#dynamic-data-api-integration)).
 
 ---
 
@@ -366,7 +375,7 @@ const {
 
 **API Endpoint:** `https://romamart.netlify.app/api/public-menu`
 
-**Use Case:** External menu management system (not currently active in production)
+**Use Case:** External menu management system (currently the **primary** menu source)
 
 ---
 
