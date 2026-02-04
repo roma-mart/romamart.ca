@@ -156,9 +156,7 @@ const ServicesSection = () => {
   );
 };
 
-const RoCafeSection = () => {
-  const { menuItems, loading } = useExcelMenu();
-  
+const RoCafeSection = ({ menuItems, loading }) => {
   // Filter for featured items and transform them
   const featuredItems = useMemo(() => {
     if (!menuItems || menuItems.length === 0) {
@@ -589,9 +587,9 @@ function App() {
   const { isVisible } = usePageVisibility();
   const { batteryLevel, isCharging } = useBatteryStatus();
   
-  // Fetch menu data from API for homepage featured schemas
-  // Homepage shows limited FEATURED items, /rocafe shows full menu
-  const { menuItems } = useExcelMenu();
+  // Fetch menu data from API for homepage featured schemas + RoCafe section
+  // Single API call shared across homepage schema and RoCafe display section
+  const { menuItems, loading } = useExcelMenu();
   
   // Only include featured items for homepage schemas (limited selection)
   const featuredSchemaItems = useMemo(() => {
@@ -669,7 +667,7 @@ function App() {
               <Hero onTrackOrder={handleTrackOrderClick} />
               <div id="main-content">
                 <ErrorBoundary><ServicesSection /></ErrorBoundary>
-                <ErrorBoundary><RoCafeSection /></ErrorBoundary>
+                <ErrorBoundary><RoCafeSection menuItems={menuItems} loading={loading} /></ErrorBoundary>
                 <ErrorBoundary><Locations /></ErrorBoundary>
                 <ErrorBoundary><ContactSection /></ErrorBoundary>
               </div>
