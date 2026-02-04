@@ -133,15 +133,28 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
   }, [exceptionItems]);
 
   const renderHoursContent = useCallback(() => {
-    if (error) {
+    // If there's an error but we have fallback hours, show fallback silently (no error alert)
+    // Error will only show after user explicitly refreshes and it fails again
+    if (error && fallbackGrouped.length === 0) {
       return (
         <div className="space-y-2">
-          <div className="flex items-center gap-2" style={{ color: 'var(--color-text-muted)' }}>
+          <div className="flex items-center gap-2" style={{ color: 'var(--color-error)' }}>
             <AlertCircle size={16} />
             <span className="text-sm">Unable to load live hours</span>
           </div>
-          {fallbackGrouped.length > 0
-            ? renderGroupedLines(fallbackGrouped)
+          {renderExceptions()}
+        </div>
+      );
+    }
+
+    // Show fallback hours (with or without error - error doesn't get priority display)
+    if (error) {
+      // Error exists but we have fallback - display fallback without the error alert
+      const grouped = displayHours.grouped || [];
+      return (
+        <div className="space-y-1">
+          {grouped.length > 0
+            ? renderGroupedLines(grouped)
             : (
               <p className="font-inter" style={{ color: 'var(--color-text-muted)' }}>Hours not available</p>
             )}
@@ -237,7 +250,7 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
     );
   }, [error, isLoading, displayHours, showStatus, isOpenNow, fallbackGrouped, renderExceptions, renderGroupedLines]);
 
-  const refreshButton = showRefresh && (hours || error) ? (
+  const refreshButton = showRefresh && error ? (
     <button
       type="button"
       onClick={() => refetch({ force: true })}

@@ -131,17 +131,21 @@ async function fetchPlaceDetails(placeId) {
     throw new Error('Place ID is required');
   }
 
+  // Fail fast if API key not configured - this is not an error to show users,
+  // just return null to use fallback hours silently
+  if (!GOOGLE_API_KEY) {
+    if (import.meta.env.DEV) {
+      console.warn('Google Places API key not configured. Set VITE_GOOGLE_PLACES_API_KEY to enable live hours.');
+    }
+    return null;
+  }
+
   // Check circuit breaker first - if quota exceeded, return null immediately
   if (!circuitBreakers.googlePlaces.shouldAttemptCall()) {
     if (import.meta.env.DEV) {
       console.warn('⚠️ Circuit breaker is open. API quota likely exceeded. Using fallback hours only.');
     }
     return null;
-  }
-
-  // Fail fast if API key not configured
-  if (!GOOGLE_API_KEY) {
-    throw new Error('Google Places API key not configured (VITE_GOOGLE_PLACES_API_KEY)');
   }
 
   // Using Places API (New) which supports client-side requests
