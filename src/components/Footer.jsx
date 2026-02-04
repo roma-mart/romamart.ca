@@ -158,10 +158,8 @@ export default function Footer() {
         <div className="p-1 col-span-1 md:col-span-2">
            <a 
              href={`${BASE_URL}`}
-             className="flex items-center gap-3 mb-6 transition-opacity cursor-pointer w-fit"
+             className="flex items-center gap-3 mb-6 transition-opacity cursor-pointer w-fit hover:opacity-80 focus-visible:opacity-80"
              style={{ WebkitTapHighlightColor: 'transparent' }}
-             onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
-             onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
              aria-label="Roma Mart - Go to homepage"
            >
               <Logo layout="horizontal" variant="white" size={40} />

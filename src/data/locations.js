@@ -500,11 +500,9 @@ export const isLocationOpenNow = (location) => {
   const currentMinutes = currentHour * 60 + currentMinute;
 
   // Parse hours (e.g., "7:00 AM - 10:00 PM")
-  const dayOfWeek = now.getDay(); // 0 = Sunday, 6 = Saturday
-  const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-  
   // Use daily schedule as source of truth, fallback to legacy weekdays/weekends
   const dayName = now.toLocaleString('en-US', { weekday: 'long', timeZone: location.hours?.timezone });
+  const isWeekend = dayName === 'Saturday' || dayName === 'Sunday';
   let hoursString = location.hours?.daily?.[dayName];
   if (!hoursString) {
     hoursString = isWeekend ? location.hours?.weekends : location.hours?.weekdays;

@@ -121,10 +121,8 @@ export default function Navbar() {
           {/* Logo Area */}
           <a
             href={`${BASE_URL}`}
-            className={`flex items-center transition-opacity cursor-pointer no-drag${isOpen ? ' invisible' : ''} md:visible`}
+            className={`flex items-center transition-opacity cursor-pointer no-drag hover:opacity-80 focus-visible:opacity-80${isOpen ? ' invisible' : ''} md:visible`}
             style={{ WebkitTapHighlightColor: 'transparent' }}
-            onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
-            onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
             aria-label="Roma Mart - Go to homepage"
           >
             {/* Mobile: vertical logo */}

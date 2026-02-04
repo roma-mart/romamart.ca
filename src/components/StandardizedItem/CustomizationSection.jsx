@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 
 /**
  * CustomizationSection Component
@@ -252,6 +252,8 @@ function QuantityMode({ customization, selectedOptions, onOptionsChange }) {
  * Single Selection Mode: Radio-style buttons
  */
 function SingleSelectionMode({ customization, selectedOptions, onOptionsChange }) {
+  const buttonRefs = useRef([]);
+
   const handleSelect = (optionName) => {
     onOptionsChange({
       ...selectedOptions,
@@ -266,25 +268,25 @@ function SingleSelectionMode({ customization, selectedOptions, onOptionsChange }
       e.preventDefault();
       const nextIdx = (currentIdx + 1) % options.length;
       handleSelect(options[nextIdx].name);
-      // Move focus to next button
       setTimeout(() => {
-        const buttons = document.querySelectorAll('[role="radio"]');
-        buttons[nextIdx]?.focus();
+        buttonRefs.current[nextIdx]?.focus();
       }, 0);
     } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
       e.preventDefault();
       const nextIdx = (currentIdx - 1 + options.length) % options.length;
       handleSelect(options[nextIdx].name);
-      // Move focus to previous button
       setTimeout(() => {
-        const buttons = document.querySelectorAll('[role="radio"]');
-        buttons[nextIdx]?.focus();
+        buttonRefs.current[nextIdx]?.focus();
       }, 0);
     }
   };
 
   return (
-    <div className="flex gap-2 flex-wrap" role="radiogroup" aria-label={customization.type}>
+    <div
+      className="flex gap-2 flex-wrap"
+      role="radiogroup"
+      aria-label={customization.type}
+    >
       {customization.options.map((option, optIdx) => {
         const isSelected = selectedOptions[customization.type] === option.name;
         
@@ -292,6 +294,9 @@ function SingleSelectionMode({ customization, selectedOptions, onOptionsChange }
           <button
             type="button"
             key={optIdx}
+            ref={(el) => {
+              buttonRefs.current[optIdx] = el;
+            }}
             onClick={(e) => {
               e.stopPropagation();
               handleSelect(option.name);
