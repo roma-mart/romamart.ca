@@ -30,6 +30,8 @@ import Clock from 'lucide-react/dist/esm/icons/clock.js';
 import { useExcelMenu } from './hooks/useExcelMenu';
 import { transformExcelToMenuItem } from './utils/excelMenuTransform';
 import HCaptchaWidget from './components/HCaptchaWidget';
+import StructuredData from './components/StructuredData';
+import { ROCAFE_FULL_MENU } from './data/rocafe-menu';
 // import { getHCaptchaTheme } from './design/hcaptchaTheme'; // Uncomment if upgrading to Pro/Enterprise for custom themes
 import { useColorScheme } from './hooks/useColorScheme';
 import { useAutoLocation } from './hooks/useAutoLocation';
@@ -587,6 +589,16 @@ function App() {
   useServiceWorker();
   const { isVisible } = usePageVisibility();
   const { batteryLevel, isCharging } = useBatteryStatus();
+  
+  // Fetch menu data for homepage schemas
+  const { menuItems } = useExcelMenu();
+  
+  // Use API menu if available, fallback to static
+  const schemaMenuItems = useMemo(() => {
+    return menuItems.length > 0 ? menuItems : ROCAFE_FULL_MENU;
+  }, [menuItems]);
+  
+  const schemaPriceInCents = menuItems.length > 0;
   batteryLevel; // avoid unused variable warning
   isCharging; // avoid unused variable warning
   // comment out unused variable
@@ -601,6 +613,19 @@ function App() {
   return (
     <LocationProvider>
       <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--color-bg)' }}>
+        {/* Homepage Product Schemas (Primary Source for Google) */}
+        {currentPage === 'home' && (
+          <StructuredData
+            type="ProductList"
+            data={{
+              products: schemaMenuItems.map(item => ({
+                menuItem: item,
+                itemUrl: 'https://romamart.ca/rocafe',
+                priceInCents: schemaPriceInCents
+              }))
+            }}
+          />
+        )}
         <ErrorBoundary>
           <Navbar />
         </ErrorBoundary>

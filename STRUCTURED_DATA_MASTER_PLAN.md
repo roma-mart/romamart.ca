@@ -42,6 +42,45 @@ Menu items + services account for ~40% of searchable content. Without proper sch
 
 ## Part 1: Architecture & Current Understanding
 
+### Schema Placement Strategy
+
+**Architecture Decision:** All structured data resides on the **homepage (/)** as the primary source.
+
+**Why Homepage:**
+
+- Google's crawler always starts at homepage for business schema discovery
+- Local business best practice: comprehensive schemas on root URL
+- SPA routing means individual pages only render when visited
+- Ensures complete business data even if not all pages crawled
+- Modern browsers/Google handle large JSON-LD efficiently (~50KB for all schemas)
+
+**Implementation:**
+
+```text
+Homepage (/) - PRIMARY SCHEMAS (All Business Data):
+├── LocalBusiness (complete with services)
+├── WebSite
+├── ItemList (all 24+ RoCafé menu products)
+├── ServiceList (all services)
+├── LocationList (all store locations)
+└── AggregateRating (reviews)
+
+Specific Pages - REDUNDANT SCHEMAS (Optional, Google ignores duplicates):
+├── /rocafe - ItemList (products)
+├── /services - ServiceList
+├── /locations - LocationList
+└── /about - Organization
+```
+
+**Performance Impact:** Negligible (~50KB JSON-LD doesn't block rendering)
+
+**Prerender vs Runtime Behavior:**
+
+- **Prerendered HTML:** Contains LocalBusiness + WebSite schemas (from `scripts/prerender.js`)
+- **After Hydration:** React adds ItemList with all Product schemas to `<head>`
+- **Google Impact:** None (Googlebot renders JavaScript and sees all schemas)
+- **Future Enhancement:** Modify prerender script to include Product schemas in @graph for instant visibility
+
 ### Three-Component System
 
 Roma Mart operates across three distinct systems that must work together:
