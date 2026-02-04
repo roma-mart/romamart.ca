@@ -188,16 +188,18 @@ function formatHoursDisplay(weekdayText) {
     .filter(d => weekendNames.includes(d.day))
     .map(d => d.hours);
 
-  // Check if all weekdays have same hours
-  const sameWeekdayHours = weekdayHours.every(h => h === weekdayHours[0]);
-  const sameWeekendHours = weekendHours.every(h => h === weekendHours[0]);
+  // Check if all weekdays/weekends have same hours
+  const sameWeekdayHours =
+    weekdayHours.length > 0 && weekdayHours.every(h => h === weekdayHours[0]);
+  const sameWeekendHours =
+    weekendHours.length > 0 && weekendHours.every(h => h === weekendHours[0]);
 
   // Check if ALL days (Mon–Sun) have identical hours using validated dayMap
   const allSame = dayMap.length > 0 && dayMap.every(entry => entry.hours === dayMap[0].hours);
 
   return {
-    weekdays: sameWeekdayHours ? weekdayHours[0] : 'Varies',
-    weekends: sameWeekendHours ? weekendHours[0] : 'Varies',
+    weekdays: sameWeekdayHours && weekdayHours.length > 0 ? weekdayHours[0] : 'Varies',
+    weekends: sameWeekendHours && weekendHours.length > 0 ? weekendHours[0] : 'Varies',
     full: weekdayText,
     allSame
   };
