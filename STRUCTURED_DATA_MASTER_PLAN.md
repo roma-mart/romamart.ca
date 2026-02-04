@@ -20,6 +20,7 @@ Roma Mart 2.0 needs structured data (JSON-LD schemas) to improve Google Search v
 - ✅ Return Policy schema builder implemented (page published)
 - ✅ Privacy policy content updated (per in-store policy)
 - ✅ Privacy policy schema builder implemented
+- ✅ Organization schema on About page
 - ❌ Location schema incomplete (missing services details)
 - ✅ safeString sanitization hardened (DOMParser + iterative fallback)
 

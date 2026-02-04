@@ -56,8 +56,8 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
           alternateName: data.alternateName || COMPANY_DATA.dba || 'Roma Mart',
           description: data.description || 'Your daily stop & go convenience store in Sarnia, Ontario. Fresh RoCafé beverages, ATM, Bitcoin ATM, printing, and more.',
           url: 'https://romamart.ca',
-          telephone: data.telephone || COMPANY_DATA.location.contact.phone || '+1-382-342-2000',
-          email: data.email || COMPANY_DATA.location.contact.email || 'contact@romamart.ca',
+          telephone: data.telephone || COMPANY_DATA.contact?.phone || COMPANY_DATA.location.contact.phone || '+1-382-342-2000',
+          email: data.email || COMPANY_DATA.contact?.email || COMPANY_DATA.location.contact.email || 'contact@romamart.ca',
           priceRange: '$$',
           image: data.image || 'https://romamart.ca/images/store-front.jpg',
           logo: 'https://romamart.ca/logo.png',
@@ -67,11 +67,11 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
           },
           address: {
             '@type': 'PostalAddress',
-            streetAddress: data.address?.street || COMPANY_DATA.location.address.street || '189-3 Wellington Street',
-            addressLocality: data.address?.city || COMPANY_DATA.location.address.city || 'Sarnia',
+            streetAddress: data.address?.street || COMPANY_DATA.address?.street || COMPANY_DATA.location.address.street || '189-3 Wellington Street',
+            addressLocality: data.address?.city || COMPANY_DATA.address?.city || COMPANY_DATA.location.address.city || 'Sarnia',
             addressRegion: data.address?.province || 'ON',
-            postalCode: data.address?.postalCode || COMPANY_DATA.location.address.postalCode || 'N7T 1G6',
-            addressCountry: COMPANY_DATA.location.address.country || 'CA'
+            postalCode: data.address?.postalCode || COMPANY_DATA.address?.postalCode || COMPANY_DATA.location.address.postalCode || 'N7T 1G6',
+            addressCountry: COMPANY_DATA.address?.country || COMPANY_DATA.location.address.country || 'CA'
           },
           geo: {
             '@type': 'GeoCoordinates',
@@ -110,8 +110,8 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
           contactPoint: {
             '@type': 'ContactPoint',
             contactType: 'customer service',
-            telephone: COMPANY_DATA.location?.contact?.phone || '+1-382-342-2000',
-            email: COMPANY_DATA.location?.contact?.email || 'contact@romamart.ca'
+            telephone: COMPANY_DATA.contact?.phone || COMPANY_DATA.location?.contact?.phone || '+1-382-342-2000',
+            email: COMPANY_DATA.contact?.email || COMPANY_DATA.location?.contact?.email || 'contact@romamart.ca'
           },
           areaServed: {
             '@type': 'City',
@@ -209,6 +209,24 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
 
         return buildMenuItemSchema(menuItem, itemUrl, options);
       }
+
+      case 'Organization':
+        return {
+          '@context': 'https://schema.org',
+          '@type': 'Organization',
+          '@id': 'https://romamart.ca/#organization',
+          name: COMPANY_DATA.legalName || 'Roma Mart Corp.',
+          alternateName: COMPANY_DATA.dba || 'Roma Mart Convenience',
+          url: 'https://romamart.ca',
+          logo: 'https://romamart.ca/logo.png',
+          contactPoint: {
+            '@type': 'ContactPoint',
+            contactType: 'customer service',
+            telephone: COMPANY_DATA.contact?.phone || '+1-382-342-2000',
+            email: COMPANY_DATA.contact?.email || 'contact@romamart.ca'
+          },
+          sameAs: Object.values(COMPANY_DATA.socialLinks || {})
+        };
 
       case 'PrivacyPolicy':
         return buildPrivacyPolicySchema(data);

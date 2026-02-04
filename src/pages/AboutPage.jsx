@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { Helmet } from 'react-helmet-async';
 import { ChevronRight, Heart, Users, Award, MapPin } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
+import StructuredData from '../components/StructuredData';
 import COMPANY_DATA from '../config/company_data';
 import { getAssetUrl } from "../utils/getAssetUrl";
 
@@ -124,6 +125,7 @@ const AboutPage = () => {
   }, [updateTeamScrollButtons]);
   return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>
+      <StructuredData type="Organization" />
       <Helmet>
         <title>About Us | Roma Mart Convenience</title>
         <meta name="description" content="Learn about Roma Mart's story, mission, and the team dedicated to serving the Sarnia community with quality products and exceptional service." />
