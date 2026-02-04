@@ -92,10 +92,15 @@ romamart.ca/
 │   │   └── LocationContext.jsx     # Selected location state
 │   │
 │   ├── hooks/                      # Custom React hooks
-│   │   ├── useServiceWorker.js
+│   │   ├── useAppBadge.js
+│   │   ├── useAutoLocation.js
+│   │   ├── useBrowserFeatures.js
+│   │   ├── useColorScheme.js
+│   │   ├── useExcelMenu.js
 │   │   ├── useGooglePlaceHours.js
-│   │   ├── useInstallPrompt.js
-│   │   └── useExcelMenu.js
+│   │   ├── useIntersectionObserver.js
+│   │   ├── useLocationContext.js
+│   │   └── useServiceWorker.js
 │   │
 │   ├── utils/                      # Utility functions
 │   │   ├── theme.js                # Theme utilities
