@@ -162,9 +162,7 @@ export class ApiCircuitBreaker {
       this.isOpen = false;
       this.failureCount = 0;
       this.lastFailureTime = null;
-      if (import.meta.env.DEV) {
-        console.warn(`🔄 CIRCUIT BREAKER MANUALLY RESET [${this.apiName}]`);
-      }
+      console.warn(`🔄 CIRCUIT BREAKER MANUALLY RESET [${this.apiName}]`);
     }
   }
 }

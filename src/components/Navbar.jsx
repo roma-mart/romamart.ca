@@ -162,10 +162,8 @@ export default function Navbar() {
               <a
                 key="home"
                 href={BASE_URL}
-                className="font-inter font-medium transition-opacity flex items-center gap-2"
+                className="font-inter font-medium transition-opacity flex items-center gap-2 hover:opacity-80 focus-visible:opacity-80"
                 style={{ color: 'var(--color-text)', WebkitTapHighlightColor: 'transparent' }}
-                onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
-                onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
                 aria-label="Go to homepage"
                 title="Home"
               >
@@ -177,10 +175,8 @@ export default function Navbar() {
                 key={link.href}
                 href={isHomePage && link.href.startsWith('/') ? `${BASE_URL}#${link.href.replace('/', '')}` : `${BASE_URL}${link.href.replace('/', '')}`}
                 onClick={e => handleNavClick(e, link.href !== '/' ? link.href.replace('/', '') : null, `${BASE_URL}${link.href.replace('/', '')}`)}
-                className="font-inter font-medium transition-opacity"
+                className="font-inter font-medium transition-opacity hover:opacity-80 focus-visible:opacity-80"
                 style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-text)', WebkitTapHighlightColor: 'transparent' }}
-                onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
-                onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
                 aria-label={link.ariaLabel || link.label}
                 title={link.label}
               >

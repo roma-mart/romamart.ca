@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ChevronRight, MapPin, Phone, ExternalLink, Building2 } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
@@ -33,13 +33,13 @@ const LocationsPage = () => {
     locations: getActiveLocations()
   });
   const preferredLocationId = sortedLocations[0]?.id;
-  const loadedMaps = (() => {
+  const loadedMaps = useMemo(() => {
     const combined = new Set(userLoadedMaps);
     if (preferredLocationId) {
       combined.add(preferredLocationId);
     }
     return combined;
-  })();
+  }, [userLoadedMaps, preferredLocationId]);
 
   const locations = sortedLocations.map(loc => ({
     ...loc,

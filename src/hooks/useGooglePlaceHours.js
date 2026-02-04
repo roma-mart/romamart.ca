@@ -28,7 +28,7 @@ const toDateString = (dateValue) => {
   return null;
 };
 
-const formatTime = (time) => {
+const formatTime = (time, hour12Preference) => {
   if (time === null || time === undefined) return null;
   // Coerce numeric times to string (e.g., 830 -> "830")
   const timeStr = typeof time === 'number' ? String(time) : time;
@@ -59,15 +59,18 @@ const formatTime = (time) => {
   ) {
     return null;
   }
-  const hour12Preference = getUserHour12Preference();
-  return formatTimeFrom24h(rawHours, rawMinutes, hour12Preference);
+  const resolvedPreference = typeof hour12Preference === 'boolean'
+    ? hour12Preference
+    : getUserHour12Preference();
+  return formatTimeFrom24h(rawHours, rawMinutes, resolvedPreference);
 };
 
 const formatPeriods = (periods = []) => {
   if (!Array.isArray(periods) || periods.length === 0) return null;
+  const hour12Preference = getUserHour12Preference();
   return periods.map(period => {
-    const openTime = formatTime(period?.open?.time || period?.open?.truncatedTime);
-    const closeTime = formatTime(period?.close?.time || period?.close?.truncatedTime);
+    const openTime = formatTime(period?.open?.time || period?.open?.truncatedTime, hour12Preference);
+    const closeTime = formatTime(period?.close?.time || period?.close?.truncatedTime, hour12Preference);
     if (openTime && closeTime) return `${openTime} – ${closeTime}`;
     if (openTime && !closeTime) return `${openTime} – Close`;
     return null;
