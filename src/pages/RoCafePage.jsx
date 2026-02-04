@@ -40,11 +40,11 @@ const RoCafePage = () => {
     return groupExcelItemsByCategory(menuItems);
   }, [menuItems]);
 
-  const schemaMenuItems = useMemo(() => {
-    return menuItems.length > 0 ? menuItems : ROCAFE_FULL_MENU;
-  }, [menuItems]);
-
-  const schemaPriceInCents = menuItems.length > 0;
+  // No fallback for schemas - API-only (ensures accuracy)
+  const schemaMenuItems = menuItems;
+  
+  // API always returns prices in cents
+  const schemaPriceInCents = true;
 
 
   // create memoized handlers map for categories
@@ -58,17 +58,19 @@ const RoCafePage = () => {
 
   return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>
-      {/* Single JSON-LD with @graph array for all products (efficient) */}
-      <StructuredData
-        type="ProductList"
-        data={{
-          products: schemaMenuItems.map(item => ({
-            menuItem: item,
-            itemUrl: 'https://romamart.ca/rocafe',
-            priceInCents: schemaPriceInCents
-          }))
-        }}
-      />
+      {/* Full menu Product schemas (API-only, no fallback) */}
+      {schemaMenuItems.length > 0 && (
+        <StructuredData
+          type="ProductList"
+          data={{
+            products: schemaMenuItems.map(item => ({
+              menuItem: item,
+              itemUrl: 'https://romamart.ca/rocafe',
+              priceInCents: schemaPriceInCents
+            }))
+          }}
+        />
+      )}
       <Helmet>
         <title>RoCafé Menu | Roma Mart Convenience</title>
         <meta name="description" content="Explore the RoCafé menu featuring hot coffee, iced coffee, tea, fresh juice, smoothies, frappés, specialty drinks, food, and seasonal items." />
