@@ -271,17 +271,9 @@ const Locations = () => {
     isOpen: isLocationOpenNow(preferredLocation)
   }), [preferredLocation]);
   
-  const [userSelectedLocationId, setUserSelectedLocationId] = useState(null);
-  
-  // Use displayLocation directly for activeLoc if not manually selected by user
-  const activeLoc = userSelectedLocationId 
-    ? [displayLocation].find(loc => loc.id === userSelectedLocationId) || displayLocation
-    : displayLocation;
-
-  // Handler for manual location selection
-  const handleSelectLocation = useCallback((locationId) => {
-    setUserSelectedLocationId(locationId);
-  }, []);
+  // Note: Homepage only displays one location (the preferred/closest one)
+  // so we don't need user selection logic here. Use displayLocation directly.
+  const activeLoc = displayLocation;
 
   return (
     <section id="locations" className="py-24" style={{ backgroundColor: 'var(--color-bg)' }}>
@@ -294,14 +286,12 @@ const Locations = () => {
         <div className="grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-1 space-y-4">
             {[displayLocation].map(loc => (
-              <button
-                type="button"
+              <div
                 key={loc.id}
-                onClick={() => handleSelectLocation(loc.id)}
-                className="w-full text-left p-6 rounded-xl border-2 transition-all flex items-center gap-4"
+                className="w-full text-left p-6 rounded-xl border-2 flex items-center gap-4"
                 style={{ 
-                  borderColor: activeLoc.id === loc.id ? 'var(--color-accent)' : 'var(--color-surface)',
-                  backgroundColor: activeLoc.id === loc.id ? 'var(--color-surface)' : 'transparent'
+                  borderColor: 'var(--color-accent)',
+                  backgroundColor: 'var(--color-surface)'
                 }}
               >
                 {preferredLocation.photos?.thumbnail && (
@@ -320,7 +310,7 @@ const Locations = () => {
                     {loc.isOpen ? 'Open Now' : 'Closed'}
                   </div>
                 </div>
-              </button>
+              </div>
             ))}
           </div>
           <div className="lg:col-span-2 rounded-3xl overflow-hidden min-h-[400px] relative shadow-inner" style={{ backgroundColor: 'var(--color-surface)' }}>

@@ -145,6 +145,8 @@ function formatHoursDisplay(weekdayText) {
 
   // weekdayText is an array like:
   // ["Monday: 8:00 AM – 9:00 PM", "Tuesday: 8:00 AM – 9:00 PM", ...]
+  // Note: Google Places API typically returns days starting with Monday,
+  // but we parse day names explicitly for resilience to format variations.
   
   const dayMap = weekdayText.map(text => {
     // Validate split format to handle edge cases (colon may appear multiple times)
@@ -158,11 +160,22 @@ function formatHoursDisplay(weekdayText) {
     return { day, hours };
   });
 
-  // Extract Monday-Friday (indices 0-4)
-  const weekdayHours = dayMap.slice(0, 5).map(d => d.hours);
+  // Validate we have 7 days (resilience check)
+  if (dayMap.length !== 7) {
+    console.warn('Google Places API returned unexpected number of days:', dayMap.length);
+  }
+
+  // Extract Monday-Friday by day name (resilient to API format changes)
+  const weekdayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+  const weekdayHours = dayMap
+    .filter(d => weekdayNames.includes(d.day))
+    .map(d => d.hours);
   
-  // Extract Saturday-Sunday (indices 5-6)
-  const weekendHours = dayMap.slice(5, 7).map(d => d.hours);
+  // Extract Saturday-Sunday by day name
+  const weekendNames = ['Saturday', 'Sunday'];
+  const weekendHours = dayMap
+    .filter(d => weekendNames.includes(d.day))
+    .map(d => d.hours);
 
   // Check if all weekdays have same hours
   const sameWeekdayHours = weekdayHours.every(h => h === weekdayHours[0]);

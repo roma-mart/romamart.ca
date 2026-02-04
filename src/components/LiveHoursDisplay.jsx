@@ -8,6 +8,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Clock, RefreshCw, AlertCircle } from 'lucide-react';
 import useGooglePlaceHours from '../hooks/useGooglePlaceHours';
 
@@ -159,5 +160,16 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
     </div>
   );
 }
+
+LiveHoursDisplay.propTypes = {
+  placeId: PropTypes.string.isRequired,
+  fallbackHours: PropTypes.shape({
+    weekdays: PropTypes.string,
+    weekends: PropTypes.string,
+    display: PropTypes.string
+  }),
+  showStatus: PropTypes.bool,
+  compact: PropTypes.bool
+};
 
 export default LiveHoursDisplay;
