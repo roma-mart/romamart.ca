@@ -9,20 +9,93 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Routes to prerender
-const routes = [
-  { path: '/', title: 'Home', description: 'Roma Mart Convenience - Groceries, Global Snacks, Halal Meat, Coffee & More in Sarnia, ON. ATM, Bitcoin, Lottery, and Tobacco services available.' },
-  { path: '/services', title: 'Services', description: 'Explore Roma Mart services: ATM, Bitcoin ATM, printing, money transfer, lottery, and more in Sarnia, ON.' },
-  { path: '/rocafe', title: 'RoCafé Menu', description: 'Discover RoCafé coffee, bubble tea, matcha lattes, and signature drinks at Roma Mart in Sarnia, ON.' },
-  { path: '/locations', title: 'Locations', description: 'Find Roma Mart locations, hours, and directions in Sarnia, Ontario.' },
-  { path: '/contact', title: 'Contact', description: 'Get in touch with Roma Mart Convenience in Sarnia, ON. Phone, email, and directions.' },
-  { path: '/about', title: 'About Us', description: 'Learn about Roma Mart Convenience, our community focus, and services in Sarnia, ON.' },
-  { path: '/accessibility', title: 'Accessibility', description: 'Roma Mart Accessibility Statement - WCAG 2.2 Level AA compliance and accessibility commitments.' },
-  { path: '/privacy', title: 'Privacy', description: 'Roma Mart Privacy Policy - How we collect, use, and protect your information.' },
-  { path: '/terms', title: 'Terms', description: 'Roma Mart Terms of Service and usage policies.' },
-  { path: '/cookies', title: 'Cookies', description: 'Roma Mart Cookie Policy and preferences.' }
-];
-
 const BASE_URL = 'https://romamart.ca';
+const DEFAULT_OG_IMAGE = `${BASE_URL}/og-image.jpg`;
+const DEFAULT_TW_IMAGE = `${BASE_URL}/twitter-card.jpg`;
+const DEFAULT_IMAGE_ALT = 'Roma Mart storefront and branding';
+
+const routes = [
+  {
+    path: '/',
+    title: 'Home',
+    description: 'Roma Mart Convenience - Groceries, Global Snacks, Halal Meat, Coffee & More in Sarnia, ON. ATM, Bitcoin, Lottery, and Tobacco services available.',
+    ogImage: DEFAULT_OG_IMAGE,
+    twitterImage: DEFAULT_TW_IMAGE,
+    imageAlt: DEFAULT_IMAGE_ALT
+  },
+  {
+    path: '/services',
+    title: 'Services',
+    description: 'Explore Roma Mart services: ATM, Bitcoin ATM, printing, money transfer, lottery, and more in Sarnia, ON.',
+    ogImage: `${BASE_URL}/images/romamart-interior1.png`,
+    twitterImage: `${BASE_URL}/images/romamart-interior1.png`,
+    imageAlt: 'Roma Mart interior showcasing products and services'
+  },
+  {
+    path: '/rocafe',
+    title: 'RoCafé Menu',
+    description: 'Discover RoCafé coffee, bubble tea, matcha lattes, and signature drinks at Roma Mart in Sarnia, ON.',
+    ogImage: `${BASE_URL}/rocafe-logo.png`,
+    twitterImage: `${BASE_URL}/rocafe-logo.png`,
+    imageAlt: 'RoCafé logo and beverage branding'
+  },
+  {
+    path: '/locations',
+    title: 'Locations',
+    description: 'Find Roma Mart locations, hours, and directions in Sarnia, Ontario.',
+    ogImage: `${BASE_URL}/images/romamart-opening1.png`,
+    twitterImage: `${BASE_URL}/images/romamart-opening1.png`,
+    imageAlt: 'Roma Mart storefront exterior'
+  },
+  {
+    path: '/contact',
+    title: 'Contact',
+    description: 'Get in touch with Roma Mart Convenience in Sarnia, ON. Phone, email, and directions.',
+    ogImage: `${BASE_URL}/images/romamart-interior2.png`,
+    twitterImage: `${BASE_URL}/images/romamart-interior2.png`,
+    imageAlt: 'Roma Mart interior with shelves and signage'
+  },
+  {
+    path: '/about',
+    title: 'About Us',
+    description: 'Learn about Roma Mart Convenience, our community focus, and services in Sarnia, ON.',
+    ogImage: `${BASE_URL}/images/romamart-opening2.png`,
+    twitterImage: `${BASE_URL}/images/romamart-opening2.png`,
+    imageAlt: 'Roma Mart grand opening event'
+  },
+  {
+    path: '/accessibility',
+    title: 'Accessibility',
+    description: 'Roma Mart Accessibility Statement - WCAG 2.2 Level AA compliance and accessibility commitments.',
+    ogImage: DEFAULT_OG_IMAGE,
+    twitterImage: DEFAULT_TW_IMAGE,
+    imageAlt: DEFAULT_IMAGE_ALT
+  },
+  {
+    path: '/privacy',
+    title: 'Privacy',
+    description: 'Roma Mart Privacy Policy - How we collect, use, and protect your information.',
+    ogImage: DEFAULT_OG_IMAGE,
+    twitterImage: DEFAULT_TW_IMAGE,
+    imageAlt: DEFAULT_IMAGE_ALT
+  },
+  {
+    path: '/terms',
+    title: 'Terms',
+    description: 'Roma Mart Terms of Service and usage policies.',
+    ogImage: DEFAULT_OG_IMAGE,
+    twitterImage: DEFAULT_TW_IMAGE,
+    imageAlt: DEFAULT_IMAGE_ALT
+  },
+  {
+    path: '/cookies',
+    title: 'Cookies',
+    description: 'Roma Mart Cookie Policy and preferences.',
+    ogImage: DEFAULT_OG_IMAGE,
+    twitterImage: DEFAULT_TW_IMAGE,
+    imageAlt: DEFAULT_IMAGE_ALT
+  }
+];
 
 const serviceMap = {
   atm: { name: 'ATM Services', type: 'Service', description: 'Cash withdrawal and banking services available 24/7' },
@@ -248,12 +321,28 @@ async function prerender() {
         `<meta property="og:description" content="${route.description}" />`
       )
       .replace(
+        /<meta property="og:image" content="[^"]*" \/>/,
+        `<meta property="og:image" content="${route.ogImage || DEFAULT_OG_IMAGE}" />`
+      )
+      .replace(
+        /<meta property="og:image:alt" content="[^"]*" \/>/,
+        `<meta property="og:image:alt" content="${route.imageAlt || DEFAULT_IMAGE_ALT}" />`
+      )
+      .replace(
         /<meta property="twitter:url" content="[^"]*" \/>/,
         `<meta property="twitter:url" content="${absoluteUrl}" />`
       )
       .replace(
         /<meta property="twitter:description" content="[^"]*" \/>/,
         `<meta property="twitter:description" content="${route.description}" />`
+      )
+      .replace(
+        /<meta property="twitter:image" content="[^"]*" \/>/,
+        `<meta property="twitter:image" content="${route.twitterImage || DEFAULT_TW_IMAGE}" />`
+      )
+      .replace(
+        /<meta property="twitter:image:alt" content="[^"]*" \/>/,
+        `<meta property="twitter:image:alt" content="${route.imageAlt || DEFAULT_IMAGE_ALT}" />`
       )
       .replace(
         /<script type="application\/ld\+json">[\s\S]*?<\/script>/,
