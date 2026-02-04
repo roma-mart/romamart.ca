@@ -181,9 +181,13 @@ async function fetchPlaceDetails(placeId) {
     const data = await response.json();
     return data;
   } catch (error) {
+    // Record network errors with circuit breaker too
+    circuitBreakers.googlePlaces.recordFailure(error);
+    
     if (import.meta.env.DEV) {
       console.error('Error fetching place details:', error);
     }
+    
     return null;
   }
 }

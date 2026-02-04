@@ -142,6 +142,11 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
             <AlertCircle size={16} />
             <span className="text-sm">Unable to load live hours</span>
           </div>
+          {import.meta.env.DEV && error && (
+            <p className="text-xs font-mono" style={{ color: 'var(--color-text-muted)' }}>
+              {typeof error === 'string' ? error : 'API error'}
+            </p>
+          )}
           {renderExceptions()}
         </div>
       );
