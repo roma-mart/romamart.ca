@@ -57,20 +57,26 @@ Menu items + services account for ~40% of searchable content. Without proper sch
 **Implementation:**
 
 ```text
-Homepage (/) - PRIMARY SCHEMAS (All Business Data):
+Homepage (/) - PRIMARY SCHEMAS (Featured/Key Business Data):
 ├── LocalBusiness (complete with services)
 ├── WebSite
-├── ItemList (all 24+ RoCafé menu products)
+├── ItemList (~6-8 FEATURED RoCafé products from API)
 ├── ServiceList (all services)
 ├── LocationList (all store locations)
 └── AggregateRating (reviews)
 
-Specific Pages - REDUNDANT SCHEMAS (Optional, Google ignores duplicates):
-├── /rocafe - ItemList (products)
-├── /services - ServiceList
-├── /locations - LocationList
+Specific Pages - COMPLETE DATA:
+├── /rocafe - ItemList (ALL 24+ products from API)
+├── /services - ServiceList (all services)
+├── /locations - LocationList (all locations)
 └── /about - Organization
 ```
+
+**Data Source Logic:**
+
+- Homepage: Uses `menuItems.filter(item => item.featured)` (limited selection)
+- /rocafe page: Uses full `menuItems` array from API (complete catalog)
+- No static fallback for schemas (API-only, ensures accuracy)
 
 **Performance Impact:** Negligible (~50KB JSON-LD doesn't block rendering)
 
