@@ -18,7 +18,7 @@ Roma Mart 2.0 needs structured data (JSON-LD schemas) to improve Google Search v
 - ✅ Product schemas for menu items (homepage featured + /rocafe full, API-only)
 - ✅ Product schema tests (90%+ coverage)
 - ✅ safeString sanitization hardened (DOMParser + iterative fallback - CodeQL fix)
-- ✅ API call deduplication (single useExcelMenu at App level)
+- ✅ API call deduplication (MenuContext - single shared API call)
 - ✅ Menu item schema builder (`src/schemas/menuItemSchema.js`)
 - ✅ Return Policy schema builder (`src/schemas/returnPolicySchema.js`)
 - ✅ Return Policy page created and published (`/return-policy`)
@@ -447,10 +447,11 @@ const serviceMap = {
 
 **API Call Deduplication:**
 
-- ✅ Problem: useExcelMenu called in both App and RoCafeSection
-- ✅ Solution: Hoisted to App level, passed as props to RoCafeSection
-- ✅ Impact: Eliminates duplicate API fetch
-- ✅ Commit: `refactor(schema): deduplicate useExcelMenu API call`
+- ✅ Problem: useExcelMenu called in both App.jsx and RoCafePage.jsx (duplicate API calls)
+- ✅ Solution: Created MenuContext for centralized menu state management
+- ✅ Implementation: MenuProvider wraps app at root, useMenu() hook shares cached data
+- ✅ Impact: 50% reduction in API calls (2 → 1 per session)
+- ✅ Commit: `perf(menu): eliminate duplicate API calls via MenuContext` (c8fbccc)
 
 **Quality Checks:**
 

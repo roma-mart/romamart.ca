@@ -358,11 +358,12 @@ function LocationCard({ location }) {
 
 ---
 
-### 2. External Menu API (`useExcelMenu` hook)
+### 2. External Menu API (MenuContext)
 
-**Purpose:** Fetch menu items from Excel-based API (legacy integration)
+**Purpose:** Centralized menu data management via React Context
 
-**Hook:** `src/hooks/useExcelMenu.js`
+**Context:** `src/contexts/MenuContext.jsx`  
+**Hook:** `useMenu()` (for consuming menu data)
 
 **Returns:**
 ```javascript
@@ -370,10 +371,16 @@ const {
   menuItems,           // array - Menu items from API
   loading,             // boolean - Fetch in progress
   error                // string | null - Error message
-} = useExcelMenu(apiUrl);
+} = useMenu();
 ```
 
 **API Endpoint:** `https://romamart.netlify.app/api/public-menu`
+
+**Architecture:**
+- MenuProvider wraps app at root level (`main.jsx`)
+- Single API call per session (cached and shared)
+- Consumed by `App.jsx` and `RoCafePage.jsx`
+- Eliminates duplicate API calls (50% reduction)
 
 **Use Case:** External menu management system (currently the **primary** menu source)
 
@@ -423,6 +430,65 @@ Roma Mart uses **React Context** for global state with custom hooks for access:
 ---
 
 ## Context Providers
+
+### MenuProvider (`src/contexts/MenuContext.jsx`)
+
+**Purpose:** Centralized menu data management with single API call per session
+
+**Wraps:** Entire app in `main.jsx`
+
+**Provides:**
+```javascript
+{
+  menuItems: Array<MenuItem>,
+  loading: boolean,
+  error: string | null
+}
+```
+
+**Key Features:**
+
+1. **Single API Call**
+   - Fetches menu once per session on mount
+   - Cached in memory and shared across all routes
+   - Eliminates duplicate API calls (was 2, now 1)
+
+2. **Automatic Error Handling**
+   - Graceful fallback if API fails
+   - Error state exposed to consuming components
+
+3. **Performance Optimization**
+   - 50% reduction in API calls vs previous architecture
+   - Reduces bandwidth and API quota usage
+   - Faster page loads (data already cached)
+
+**Example Setup:**
+```jsx
+// main.jsx
+import { MenuProvider } from './contexts/MenuContext.jsx';
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <HelmetProvider>
+      <MenuProvider>
+        <ToastProvider>
+          <App />
+        </ToastProvider>
+      </MenuProvider>
+    </HelmetProvider>
+  </StrictMode>
+);
+
+// Consuming component
+import { useMenu } from '../contexts/MenuContext';
+
+function RoCafePage() {
+  const { menuItems, loading, error } = useMenu();
+  // Use menu data
+}
+```
+
+---
 
 ### LocationProvider (`src/components/LocationProvider.jsx`)
 

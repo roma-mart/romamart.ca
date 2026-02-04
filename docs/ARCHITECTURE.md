@@ -268,13 +268,15 @@ function Component() {
 - Offline queue (IndexedDB)
 - hCaptcha verification
 
-#### 3. **Excel Online (Future)**
-**Hook:** `useExcelMenu.js`
+#### 3. **External Menu API**
+**Context:** `MenuContext.jsx`  
+**Hook:** `useMenu()`
 
-**Status:** Implemented but not active
-- Fetches menu from Excel Online
-- Parses rows into structured data
-- Ready for when Toolpad API available
+**Status:** Active (production)
+- Fetches menu from `https://romamart.netlify.app/api/public-menu`
+- Single API call per session via React Context
+- Shared across App.jsx and RoCafePage.jsx
+- 50% reduction in API calls vs previous architecture
 
 ### Data Flow Pattern
 
