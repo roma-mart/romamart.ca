@@ -77,7 +77,7 @@ export const LOCATIONS = [
       timezone: 'America/Toronto',
       weekdays: '8:30 AM - 9:00 PM',
       weekends: '8:30 AM - 9:00 PM',
-      display: 'Open Daily 9:00 AM - 9:00 PM',
+      display: 'Open Daily 8:30 AM - 9:00 PM',
       is24Hours: false,
       isSeasonal: false,
       // Special hours/exceptions (optional)

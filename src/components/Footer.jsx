@@ -162,7 +162,7 @@ export default function Footer() {
               carouselSpeed={5000}
               maxItems={3}
               reviewVariant="card"
-              structuredData={true}
+              structuredData={false}
               brandName={COMPANY_DATA.name}
             />
           ) : (

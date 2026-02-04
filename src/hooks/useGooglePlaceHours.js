@@ -19,7 +19,9 @@ import { circuitBreakers } from '../utils/apiCircuitBreaker';
 const GOOGLE_API_KEY = import.meta.env.VITE_GOOGLE_PLACES_API_KEY;
 
 if (!GOOGLE_API_KEY || GOOGLE_API_KEY === 'YOUR_API_KEY_HERE') {
-  console.warn('Google Places API key not configured. Set VITE_GOOGLE_PLACES_API_KEY environment variable for live hours integration.');
+  if (import.meta.env.DEV) {
+    console.warn('Google Places API key not configured. Set VITE_GOOGLE_PLACES_API_KEY environment variable for live hours integration.');
+  }
 }
 
 // Cache duration from env or default to 1 hour
@@ -162,7 +164,9 @@ function formatHoursDisplay(weekdayText) {
 
   // Validate we have 7 days (resilience check)
   if (dayMap.length !== 7) {
-    console.warn('Google Places API returned unexpected number of days:', dayMap.length);
+    if (import.meta.env.DEV) {
+      console.warn('Google Places API returned unexpected number of days:', dayMap.length);
+    }
   }
 
   // Extract Monday-Friday by day name (resilient to API format changes)
