@@ -95,7 +95,7 @@ const formatExceptionDate = (value) => {
  * 
  * @param {Object} props
  * @param {string} props.placeId - Google Place ID
- * @param {Object} props.fallbackHours - Fallback hours object { weekdays, weekends, display }
+ * @param {Object} props.fallbackHours - Fallback hours object { daily, weekdays, weekends, display, exceptions }
  * @param {boolean} props.showStatus - Show open/closed status badge
  * @param {boolean} props.compact - Compact display mode
  * @param {boolean} props.showIcon - Show clock icon
@@ -273,7 +273,7 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
   const refreshButton = showRefresh && (hours || error) ? (
     <button
       onClick={() => refetch({ force: true })}
-      className={compact ? 'mt-2 text-xs hover:underline flex items-center gap-1' : 'mt-2 text-xs hover:underline flex items-center gap-1'}
+      className="mt-2 text-xs hover:underline flex items-center gap-1"
       style={{ color: 'var(--color-accent)' }}
       aria-label="Refresh hours"
     >

@@ -90,7 +90,10 @@ export const LOCATIONS = [
         Saturday: '8:30 AM - 9:00 PM',
         Sunday: '8:30 AM - 9:00 PM'
       },
-      display: 'Open Daily 8:30 AM - 9:00 PM',
+      // Backward-compatible fields for helpers still using legacy schema
+      weekdays: '8:30 AM - 9:00 PM',
+      weekends: '8:30 AM - 9:00 PM',
+      display: 'Mon-Thu & Sat-Sun: 8:30 AM - 9:00 PM | Fri: 3:00 PM - 9:00 PM',
       is24Hours: false,
       isSeasonal: false,
       // Special hours/exceptions (optional)
@@ -499,7 +502,13 @@ export const isLocationOpenNow = (location) => {
   // Parse hours (e.g., "7:00 AM - 10:00 PM")
   const dayOfWeek = now.getDay(); // 0 = Sunday, 6 = Saturday
   const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-  const hoursString = isWeekend ? location.hours?.weekends : location.hours?.weekdays;
+  
+  // Use daily schedule as source of truth, fallback to legacy weekdays/weekends
+  const dayName = now.toLocaleString('en-US', { weekday: 'long', timeZone: location.hours?.timezone });
+  let hoursString = location.hours?.daily?.[dayName];
+  if (!hoursString) {
+    hoursString = isWeekend ? location.hours?.weekends : location.hours?.weekdays;
+  }
 
   if (!hoursString) {
     return false; // No hours defined, assume closed

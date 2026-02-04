@@ -28,8 +28,18 @@ const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours (reviews don't change fr
 const AUTO_ROTATE_INTERVAL = 6000; // 6 seconds per slide
 const reviewsCache = new Map();
 
+// Create a safe circuit breaker factory as fallback
+function createSafeCircuitBreaker() {
+  return {
+    shouldAttemptCall: () => true,
+    recordFailure: () => {},
+    reset: () => {},
+    getStatus: () => ({ state: 'CLOSED' })
+  };
+}
+
 // Circuit breaker to prevent excessive API calls when quota is exceeded
-const reviewsBreaker = circuitBreakers.get('reviews');
+const reviewsBreaker = circuitBreakers.reviews || createSafeCircuitBreaker();
 
 /**
  * Fetch reviews from Google Places API (New)
@@ -509,7 +519,7 @@ export default function GoogleReviews() {
 
         {/* Dots Indicator */}
         {reviews.length > 1 && (
-          <div className="flex justify-center gap-2 mt-8" role="tablist" aria-label="Review navigation">
+          <div className="flex justify-center gap-2 mt-8" aria-label="Review navigation">
             {reviews.map((_, idx) => (
               <button
                 key={idx}
@@ -524,8 +534,7 @@ export default function GoogleReviews() {
                   opacity: idx === currentIndex ? 1 : 0.5
                 }}
                 aria-label={`Go to review ${idx + 1}`}
-                aria-current={idx === currentIndex ? 'true' : 'false'}
-                role="tab"
+                aria-pressed={idx === currentIndex ? 'true' : 'false'}
               />
             ))}
           </div>
@@ -542,14 +551,14 @@ export default function GoogleReviews() {
           style={{ 
             backgroundColor: 'var(--color-accent)',
             color: 'var(--color-on-accent)',
-            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+            boxShadow: 'var(--shadow-soft)',
             textDecoration: 'none',
             WebkitTapHighlightColor: 'transparent'
           }}
-          onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-          onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-          onFocus={(e) => e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(2, 1, 120, 0.3)'}
-          onBlur={(e) => e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)'}
+          onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.05)'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
+          onFocus={(e) => { e.currentTarget.style.boxShadow = 'var(--shadow-soft), 0 0 0 3px rgba(228, 179, 64, 0.2)'; }}
+          onBlur={(e) => { e.currentTarget.style.boxShadow = 'var(--shadow-soft)'; }}
         >
           View all reviews on Google
           <ExternalLink size={16} />
