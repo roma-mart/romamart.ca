@@ -3,11 +3,13 @@
 **Date Started:** December 8, 2025
 
 ## Overview
+
 This document tracks the migration to a single source of truth (SSOT) for service and menu item availability across Roma Mart 2.0. The goal is to ensure all availability logic is centralized, systematic, and ethos-compliant.
 
 ---
 
 ## Key Concepts
+
 - **status:** Global business-level status for a service/menu item (`available`, `coming_soon`, `temporarily_closed`, `unavailable`).
 - **availableAt:** Array of location IDs where the service is (or will be) available.
 - **availability:** Time-based availability (e.g., `store_hours`, `24_7`, `custom`).
@@ -19,7 +21,6 @@ This document tracks the migration to a single source of truth (SSOT) for servic
 ---
 
 ## Migration Steps & Status
-
 
 1. **Design SSOT data structure for services and menu items**
    - [x] Add `status` field to all services in `services.jsx`.
@@ -52,6 +53,7 @@ This document tracks the migration to a single source of truth (SSOT) for servic
 ---
 
 ## Notes & Decisions
+
 - `status` is the global gate for a service/menu item. If not `available`, it is not shown anywhere, regardless of `availableAt`.
 - `availableAt` is for location-specific display.
 - `availability` is for time-based logic.

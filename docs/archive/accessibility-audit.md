@@ -18,12 +18,14 @@ Roma Mart's website has been audited and remediated to comply with **WCAG 2.2 Le
 ## Audit Methodology
 
 ### Tools Used
+
 1. **ESLint jsx-a11y Plugin** – Automated accessibility linting
 2. **Manual Code Review** – Semantic HTML, ARIA labels, keyboard navigation
 3. **Lighthouse Accessibility Audit** – Chrome DevTools automated checks
 4. **W3C HTML Validation** – Markup compliance
 
 ### Test Environment
+
 - **Browser:** Chrome 131, Firefox 127, Safari 18
 - **Screen Readers:** NVDA (Windows), VoiceOver (Mac)
 - **Assistive Tech:** Keyboard-only navigation, zoom testing (200%), reduced-motion preferences
@@ -35,6 +37,7 @@ Roma Mart's website has been audited and remediated to comply with **WCAG 2.2 Le
 ### ✅ Perceivable
 
 #### 1.1 Text Alternatives
+
 - **Status:** ✅ PASS
 - **Findings:**
   - All non-decorative images have descriptive alt text or ARIA labels
@@ -43,6 +46,7 @@ Roma Mart's website has been audited and remediated to comply with **WCAG 2.2 Le
   - Font Awesome brand icons use semantic names (e.g., `faFacebook`)
 
 #### 1.2 Adaptable & Info Relationships
+
 - **Status:** ✅ PASS
 - **Findings:**
   - Semantic HTML used throughout: `<nav>`, `<main id="main-content">`, `<section>`, `<header>`, `<footer>`
@@ -52,6 +56,7 @@ Roma Mart's website has been audited and remediated to comply with **WCAG 2.2 Le
 #### 1.3 Distinguishable
 
 ##### Color Contrast (Critical)
+
 - **Status:** ⚠️ **CONDITIONAL**
 - **Findings:**
   - Navy (#020178) on white: **8.9:1** ✅ Exceeds AA (4.5:1) and AAA (7:1)
@@ -62,6 +67,7 @@ Roma Mart's website has been audited and remediated to comply with **WCAG 2.2 Le
 - **Future:** Consider creating a "High Contrast Mode" toggle for users with low vision
 
 ##### Text Spacing
+
 - **Status:** ✅ PASS
 - **Findings:**
   - Line height: ≥1.5 (`leading-relaxed` in Tailwind)
@@ -69,6 +75,7 @@ Roma Mart's website has been audited and remediated to comply with **WCAG 2.2 Le
   - No loss of content at 200% zoom
 
 ##### Target Size (Touch Targets)
+
 - **Status:** ✅ PASS
 - **Findings:**
   - Buttons: ≥44×44 CSS pixels
@@ -80,6 +87,7 @@ Roma Mart's website has been audited and remediated to comply with **WCAG 2.2 Le
 ### ✅ Operable
 
 #### 2.1 Keyboard Navigation
+
 - **Status:** ✅ PASS
 - **Findings:**
   - All interactive elements keyboard-accessible (Tab navigation)
@@ -89,6 +97,7 @@ Roma Mart's website has been audited and remediated to comply with **WCAG 2.2 Le
 - **Verification:** Tested on Chrome, Firefox, Safari with keyboard-only navigation
 
 #### 2.4 Focus Visible
+
 - **Status:** ✅ PASS
 - **Findings:**
   - Global CSS focus styles applied: `3px solid #E4B340 outline with 2px offset`
@@ -97,6 +106,7 @@ Roma Mart's website has been audited and remediated to comply with **WCAG 2.2 Le
 - **Implementation:** `src/index.css` lines 7–14
 
 #### 2.4.1 Bypass Blocks (Skip Navigation)
+
 - **Status:** ✅ PASS
 - **Findings:**
   - Skip link present at top of page: "Skip to main content"
@@ -106,6 +116,7 @@ Roma Mart's website has been audited and remediated to comply with **WCAG 2.2 Le
 - **Implementation:** `src/App.jsx`, `src/index.css` lines 17–25
 
 #### 2.4.2 Page Title
+
 - **Status:** ✅ PASS
 - **Findings:**
   - Page title: "Roma Mart Convenience | Groceries, Coffee & More in Sarnia, ON"
@@ -114,6 +125,7 @@ Roma Mart's website has been audited and remediated to comply with **WCAG 2.2 Le
 - **Implementation:** `index.html`
 
 #### 2.2 Motion & Animation
+
 - **Status:** ✅ PASS
 - **Findings:**
   - Framer Motion animations respect `prefers-reduced-motion: reduce` media query
@@ -123,6 +135,7 @@ Roma Mart's website has been audited and remediated to comply with **WCAG 2.2 Le
 - **Implementation:** `src/index.css` lines 41–48
 
 #### 2.5 Pointer & Gesture
+
 - **Status:** ✅ PASS
 - **Findings:**
   - No path-dependent gestures (e.g., swipe-to-delete)
@@ -134,6 +147,7 @@ Roma Mart's website has been audited and remediated to comply with **WCAG 2.2 Le
 ### ✅ Understandable
 
 #### 3.1 Language
+
 - **Status:** ✅ PASS
 - **Findings:**
   - HTML lang="en" properly set
@@ -141,6 +155,7 @@ Roma Mart's website has been audited and remediated to comply with **WCAG 2.2 Le
 - **Implementation:** `index.html`
 
 #### 3.2 Predictable
+
 - **Status:** ✅ PASS
 - **Findings:**
   - Navigation consistent across pages (not applicable—single-page app)
@@ -148,6 +163,7 @@ Roma Mart's website has been audited and remediated to comply with **WCAG 2.2 Le
   - Form submission requires explicit user action (contact form)
 
 #### 3.3 Input Assistance
+
 - **Status:** ✅ PASS
 - **Findings:**
   - Contact form has clear labels (email, name, message)
@@ -155,6 +171,7 @@ Roma Mart's website has been audited and remediated to comply with **WCAG 2.2 Le
   - Error messages will be announced to screen readers
 
 #### 3.4 Abbreviations (NEW in WCAG 2.2)
+
 - **Status:** ✅ N/A
 - **Findings:** No abbreviations used that require expansion
 
@@ -163,6 +180,7 @@ Roma Mart's website has been audited and remediated to comply with **WCAG 2.2 Le
 ### ✅ Robust
 
 #### 4.1 Parsing
+
 - **Status:** ✅ PASS
 - **Findings:**
   - W3C HTML validator: No errors
@@ -171,6 +189,7 @@ Roma Mart's website has been audited and remediated to comply with **WCAG 2.2 Le
   - React JSX transpiles to valid HTML
 
 #### 4.1.2 Name, Role, Value
+
 - **Status:** ✅ PASS
 - **Findings:**
   - All buttons have accessible text: "Order Now", "View Menu", etc.
@@ -179,6 +198,7 @@ Roma Mart's website has been audited and remediated to comply with **WCAG 2.2 Le
   - Semantic HTML `<button>`, `<a>`, `<nav>` elements expose role automatically
 
 #### 4.1.3 Status Messages (NEW in WCAG 2.2)
+
 - **Status:** ✅ PASS
 - **Findings:**
   - Contact form submission status will use `aria-live="polite"` (recommended for future implementation)
@@ -189,6 +209,7 @@ Roma Mart's website has been audited and remediated to comply with **WCAG 2.2 Le
 ## ESLint jsx-a11y Linting Results
 
 ### Configuration
+
 ```javascript
 // eslint.config.js - Enabled accessibility rules
 extends: [jsxA11y.flatConfigs.recommended]
@@ -202,7 +223,9 @@ rules: {
 ```
 
 ### Linting Audit Output
+
 **Before Remediation:**
+
 ```
 src/App.jsx
   401:14  error  <iframe> elements must have a unique title property
@@ -212,11 +235,13 @@ src/App.jsx
 ```
 
 **After Remediation:**
+
 ```
 ✅ No errors detected
 ```
 
 ### Issues Fixed
+
 1. **Added iframe title:** `title="Google Maps - Roma Mart Wellington Street Location"`
 2. **Replaced empty href links:** Changed `href="#"` to `href="/privacy"`, `href="/terms"`, `href="/cookies"`
 3. **Semantic HTML improvements:** Wrapping main content in `<div id="main-content">`
@@ -226,6 +251,7 @@ src/App.jsx
 ## Accessibility Features Implemented
 
 ### Phase 1: Critical (COMPLETE ✅)
+
 - [x] Keyboard navigation – all interactive elements Tab-accessible
 - [x] Focus indicators – high-contrast yellow outline (3px, 13.8:1 ratio)
 - [x] Skip link – "Skip to main content" at top of page
@@ -235,6 +261,7 @@ src/App.jsx
 - [x] Semantic HTML – proper heading hierarchy, nav/main/section elements
 
 ### Phase 2: Compliance (COMPLETE ✅)
+
 - [x] Color contrast – navy/yellow exceed WCAG AA/AAA
 - [x] Reduced motion – animations respect `prefers-reduced-motion`
 - [x] Text spacing – line height ≥1.5, adequate padding
@@ -242,6 +269,7 @@ src/App.jsx
 - [x] Error handling – contact form has accessible labels
 
 ### Phase 3: Enhanced (READY FOR IMPLEMENTATION)
+
 - [ ] Color mode toggle – manual dark/light mode switcher
 - [ ] High contrast mode – enhanced contrast variant
 - [ ] Aria-live region – status message announcements
@@ -255,6 +283,7 @@ src/App.jsx
 ### Manual Testing (Completed)
 
 #### Keyboard Navigation
+
 | Test | Result | Notes |
 |------|--------|-------|
 | Tab through all elements | ✅ PASS | Focus moves sequentially |
@@ -264,6 +293,7 @@ src/App.jsx
 | No keyboard traps | ✅ PASS | Focus can move away from all elements |
 
 #### Screen Reader Testing (NVDA / VoiceOver)
+
 | Test | Result | Notes |
 |------|--------|-------|
 | Page title announced | ✅ PASS | "Roma Mart Convenience..." |
@@ -275,6 +305,7 @@ src/App.jsx
 | Form labels | ✅ PASS | Inputs associated with labels |
 
 #### Zoom Testing
+
 | Level | Result | Notes |
 |-------|--------|-------|
 | 100% | ✅ PASS | Normal layout |
@@ -282,6 +313,7 @@ src/App.jsx
 | 400% | ✅ PASS | Single column, fully readable |
 
 #### Color & Contrast Testing
+
 | Element | Foreground | Background | Ratio | Level | Status |
 |---------|-----------|-----------|-------|-------|--------|
 | Navy text | #020178 | #FFFFFF | 12.6:1 | AAA | ✅ |
@@ -290,6 +322,7 @@ src/App.jsx
 | Focus outline | #E4B340 | #FFFFFF | 13.8:1 | AAA | ✅ |
 
 #### Reduced Motion Testing
+
 - With `prefers-reduced-motion: reduce` enabled in OS → Animations disabled ✅ PASS
 - With `prefers-reduced-motion: no-preference` → Animations run normally ✅ PASS
 
@@ -298,25 +331,33 @@ src/App.jsx
 ## Standards Compliance Summary
 
 ### WCAG 2.2 Level AA
+
 ✅ **COMPLIANT**
+
 - All Level A criteria met
 - All Level AA criteria met
 - 0 failures, 0 warnings
 - **Conformance Level:** AA
 
 ### AODA (Accessibility for Ontarians with Disabilities Act)
+
 ✅ **COMPLIANT**
+
 - Exceeds WCAG 2.0 AA requirement (we implement WCAG 2.2 AA)
 - Legal requirement met for Ontario
 
 ### ISO/IEC 40500:2025
+
 ✅ **COMPLIANT**
+
 - Aligns with WCAG 2.2 AA specification
 - Conformance Level: AA
 - Ready for ISO certification audit
 
 ### EN 301 549 (EAA – European Accessibility Act)
+
 ✅ **COMPLIANT**
+
 - Harmonizes with WCAG 2.1 AA (we exceed with 2.2 AA)
 - Keyboard accessibility ✅
 - Focus visibility ✅
@@ -324,7 +365,9 @@ src/App.jsx
 - Ready for EAA compliance certification
 
 ### WCAG 3.0 Readiness
+
 🚀 **FUTURE-PROOF**
+
 - Outcome-based principles implemented:
   - ✅ Perceivable: All content is perceivable (including via assistive tech)
   - ✅ Operable: All functionality keyboard-accessible
@@ -336,23 +379,27 @@ src/App.jsx
 ## Recommendations for Continuous Improvement
 
 ### Immediate (Next Sprint)
+
 1. **Status Message ARIA Live Region** – Add `aria-live="polite"` to contact form submission feedback
 2. **Form Validation Messages** – Ensure error messages appear with role="alert"
 3. **Mobile Menu ARIA** – Add `aria-expanded` and `aria-controls` to hamburger button
 
 ### Short-term (Next Quarter)
+
 1. **High Contrast Mode** – Implement CSS custom properties for HC variant
 2. **Color Mode Toggle** – Add manual dark/light mode switcher with localStorage persistence
-3. **Accessibility Feedback Widget** – "Report Accessibility Issue" link to accessibility@romamart.ca
+3. **Accessibility Feedback Widget** – "Report Accessibility Issue" link to <accessibility@romamart.ca>
 4. **Automated Testing in CI/CD** – GitHub Actions with axe-core + ESLint jsx-a11y
 
 ### Medium-term (Next 6 Months)
+
 1. **User Testing with Disabilities** – Test with screen reader users, low-vision users, motor disability users
 2. **WCAG 3.0 Migration** – As WCAG 3.0 becomes stable, migrate to outcome-based model
 3. **Accessibility Statement Update** – Publish detailed statement on website
 4. **Third-Party Audit** – Consider professional accessibility audit (TPGI, Deque, WebAIM)
 
 ### Long-term (Ongoing)
+
 1. **Monitor Standards Updates** – WCAG 3.0 release, ISO 40500:2026 updates, EN 301 549 revisions
 2. **Accessibility Training** – Train dev team on WCAG 2.2 best practices
 3. **Annual Audits** – Conduct formal accessibility audit annually
@@ -363,12 +410,14 @@ src/App.jsx
 ## Known Limitations & Future Improvements
 
 ### Non-Critical Opportunities
+
 1. **Video/Audio Content** – If added in future, must include captions and transcripts
 2. **PDF Downloads** – If added, must be tagged accessible PDFs (PDF/UA)
 3. **Third-Party Embeds** – Google Fonts, Font Awesome, and Maps are accessible; future embeds should be audited
 4. **Mobile App** – If developed, must comply with WCAG 2.2 and APPL guidelines
 
 ### Technical Debt
+
 None identified. Site is clean and accessibility-first.
 
 ---
@@ -394,6 +443,7 @@ The site is keyboard-accessible, screen-reader-friendly, high-contrast, supports
 **Last Updated:** November 30, 2025
 
 ### Appendix: Files Modified
+
 - `eslint.config.js` – Added jsx-a11y plugin with accessibility rules
 - `index.html` – Updated page title, added meta description
 - `src/index.css` – Added focus styles, skip link styles, reduced-motion support

@@ -12,6 +12,7 @@
 Transform `StandardizedItem` component into a universal solution for both services and menu items, with full support for RoCafé menu customizations including dynamic pricing, multiple selections, quantity counters, and Canadian allergen compliance.
 
 **Key Requirements Met:**
+
 1. ✅ Dynamic pricing: "from $X.XX" → calculated price with selections
 2. ✅ Unified size selector (visible in both basic and detailed views)
 3. ✅ Multiple selection support (checkboxes for toppings/add-ons)
@@ -26,6 +27,7 @@ Transform `StandardizedItem` component into a universal solution for both servic
 ## 📦 Deliverables
 
 ### New Files Created
+
 1. **`src/data/rocafe-menu.js`** (330 lines)
    - Centralized menu data structure
    - 4 featured menu items (Bubble Tea, Coffee, Matcha, Mango Slush)
@@ -45,6 +47,7 @@ Transform `StandardizedItem` component into a universal solution for both servic
    - Easy to update for production cutover
 
 ### Modified Files
+
 1. **`src/components/StandardizedItem.jsx`** (794 lines)
    - Added multiple/quantity customization support
    - Unified size selector (no duplication)
@@ -67,6 +70,7 @@ Transform `StandardizedItem` component into a universal solution for both servic
 ## 🏗️ Architecture Improvements
 
 ### Before Refactor (Grade: B+)
+
 - ❌ Helpers in data file (rocafe-menu.js)
 - ❌ Hardcoded UberEats URL in component
 - ❌ Mixed responsibilities (data + logic)
@@ -76,6 +80,7 @@ Transform `StandardizedItem` component into a universal solution for both servic
 - ❌ Unused imports
 
 ### After Refactor (Grade: A)
+
 - ✅ **Separation of Concerns:** Data (rocafe-menu.js) | Logic (menuHelpers.js) | Config (ordering.js)
 - ✅ **Single Responsibility:** Each file has one clear purpose
 - ✅ **Reusability:** Helpers available to all components
@@ -89,6 +94,7 @@ Transform `StandardizedItem` component into a universal solution for both servic
 ## 🎨 Features Implemented
 
 ### Dynamic Pricing System
+
 ```javascript
 // Base price + size + customizations (single/multiple/quantity)
 calculateItemPrice(item, selectedSize, selectedOptions)
@@ -101,11 +107,13 @@ calculateItemPrice(item, selectedSize, selectedOptions)
 ```
 
 **Calculation Modes:**
+
 1. **Single Selection:** Radio buttons (Milk Choice, Temperature)
 2. **Multiple Selection:** Checkboxes (Toppings, Add-ons) with optional max limit
 3. **Quantity Selection:** +/- counters (Sugar, Cream, Milk)
 
 ### Customization Rendering
+
 ```jsx
 {customization.multiple ? (
   // Checkboxes with maxSelections support
@@ -120,7 +128,9 @@ calculateItemPrice(item, selectedSize, selectedOptions)
 ```
 
 ### Allergen Compliance
+
 Based on user's in-store posted notice (JPG provided):
+
 ```javascript
 export const ALLERGEN_WARNING = {
   title: 'Check your allergy before eating',
@@ -137,6 +147,7 @@ export const ALLERGEN_WARNING = {
 ```
 
 ### Location Integration
+
 ```javascript
 // Uses LocationContext for availability messaging
 {nearestLocation ? (
@@ -151,6 +162,7 @@ export const ALLERGEN_WARNING = {
 ## 📊 Quality Metrics
 
 ### Build Performance
+
 ```
 ✅ Build Time: 8.28s
 ✅ Bundle Size:
@@ -162,6 +174,7 @@ export const ALLERGEN_WARNING = {
 ```
 
 ### Code Quality
+
 ```
 ✅ ESLint: Pass (4 a11y warnings, acceptable)
 ✅ Quality Checker: 25 LOW/INFO issues (no CRITICAL/HIGH)
@@ -170,6 +183,7 @@ export const ALLERGEN_WARNING = {
 ```
 
 ### Accessibility (WCAG 2.2 AA)
+
 - ✅ Keyboard navigation (all interactive elements)
 - ✅ Screen reader support (proper labels, ARIA)
 - ✅ Focus indicators (`:focus-visible` styles)
@@ -177,6 +191,7 @@ export const ALLERGEN_WARNING = {
 - ✅ Semantic HTML (`<label>`, `<button>`, proper heading hierarchy)
 
 ### Dark Mode
+
 - ✅ All colors use CSS variables (`var(--color-*)`)
 - ✅ Adapts to `prefers-color-scheme`
 - ✅ High contrast mode support
@@ -187,6 +202,7 @@ export const ALLERGEN_WARNING = {
 ## 🔄 Git History
 
 ### Commit 1: Initial Integration (84e171c)
+
 ```
 feat(rocafe): integrate StandardizedItem on homepage
 - Add RoCafé section to App.jsx
@@ -196,6 +212,7 @@ feat(rocafe): integrate StandardizedItem on homepage
 ```
 
 ### Commit 2: Full Menu Page (a3066af)
+
 ```
 feat(rocafe): create full menu page with allergen warning
 - Add RoCafePage.jsx with dynamic category grouping
@@ -205,6 +222,7 @@ feat(rocafe): create full menu page with allergen warning
 ```
 
 ### Commit 3: Dynamic Pricing & Customizations (dbddfb0)
+
 ```
 feat(menu): implement dynamic pricing and customizations
 - Add checkbox support (multiple flag)
@@ -215,6 +233,7 @@ feat(menu): implement dynamic pricing and customizations
 ```
 
 ### Commit 4: Priority Refactor ⭐ (50d21d7)
+
 ```
 refactor(menu): implement priority fixes for StandardizedItem
 - Extract utilities to utils/menuHelpers.js
@@ -230,6 +249,7 @@ refactor(menu): implement priority fixes for StandardizedItem
 ## 🧪 Testing Performed
 
 ### Manual Test Flows (All Passed ✅)
+
 1. **Homepage RoCafé Section**
    - View 4 featured items in collapsed state
    - Click to expand → see customizations, Order Now button
@@ -283,6 +303,7 @@ refactor(menu): implement priority fixes for StandardizedItem
 ## 📋 Development Ethos Compliance
 
 ### ✅ Principles Satisfied (21/25)
+
 1. ✅ **Systems over spot fixes** - Unified size selector, not conditional duplication
 2. ✅ **Utilities in utils/** - menuHelpers.js extracted
 3. ✅ **Config in config/** - ordering.js created
@@ -295,6 +316,7 @@ refactor(menu): implement priority fixes for StandardizedItem
 10. ✅ **Documentation up-to-date** - JSDoc matches implementation
 
 ### ⚠️ Minor Gaps (4/25)
+
 - Feature flagging system (not needed for this scope)
 - Automated test suite (manual testing sufficient)
 - Component size budget (794 lines, target 600 - acceptable for universal component)
@@ -307,6 +329,7 @@ refactor(menu): implement priority fixes for StandardizedItem
 ## 🚀 Production Readiness
 
 ### Pre-Launch Checklist
+
 - [x] Build succeeds without errors
 - [x] ESLint passes (warnings acceptable)
 - [x] Quality checker: 0 CRITICAL/HIGH issues
@@ -320,6 +343,7 @@ refactor(menu): implement priority fixes for StandardizedItem
 - [x] Service worker configured (PWA ready)
 
 ### Known Limitations
+
 1. **UberEats URL:** Generic URL pending production-specific link
    - **Action:** Update `ORDERING_CONFIG.uberEats` in `config/ordering.js` before cutover
    - **Impact:** Low (generic link works, just not optimized)
@@ -341,6 +365,7 @@ refactor(menu): implement priority fixes for StandardizedItem
 ## 📚 Developer Handoff
 
 ### Files to Update for Production
+
 1. **`src/config/ordering.js`**
    - Line 11: Update `uberEats` URL to production restaurant link
    - Lines 18-26: Update other service URLs (SkipTheDishes, DoorDash)
@@ -352,6 +377,7 @@ refactor(menu): implement priority fixes for StandardizedItem
 
 3. **`src/data/locations.js`** (future enhancement)
    - Add `orderingUrls` object to each location:
+
      ```javascript
      orderingUrls: {
        ubereats: 'https://ubereats.com/store/roma-mart-location1',
@@ -360,6 +386,7 @@ refactor(menu): implement priority fixes for StandardizedItem
      ```
 
 ### How to Add New Menu Items
+
 ```javascript
 // 1. Open src/data/rocafe-menu.js
 // 2. Copy existing item structure
@@ -412,6 +439,7 @@ refactor(menu): implement priority fixes for StandardizedItem
 ```
 
 ### How to Use Menu Helpers
+
 ```javascript
 import { 
   formatPrice, 
@@ -443,18 +471,21 @@ const defaults = getDefaultSelections(menuItem.customizations);
 ## 🎓 Lessons Learned
 
 ### What Went Well ✅
+
 1. **Unified Component Architecture:** Single `StandardizedItem` for services + menu reduces maintenance
 2. **Data-Driven Customizations:** `multiple`/`quantity` flags elegant solution
 3. **Structured Refactoring:** Ethos review identified violations before they became tech debt
 4. **Canadian Allergen Compliance:** User-provided JPG helped build accurate warning system
 
 ### What Could Improve 🔄
+
 1. **Component Size:** 794 lines acceptable but pushing limits - future: split into sub-components
 2. **Test Coverage:** Manual testing works but automated tests would catch regressions
 3. **Image Management:** Placeholder images require manual replacement - future: asset pipeline
 4. **Performance Budget:** No automated bundle size tracking - future: Lighthouse CI
 
 ### Architecture Decisions 🏗️
+
 1. **Why not TypeScript?** Project uses JSDoc for type safety, consistent with existing codebase
 2. **Why menuHelpers.js?** Separation of concerns, testability, reusability across components
 3. **Why ordering.js config?** Easy to update URLs without touching component code
@@ -476,18 +507,21 @@ const defaults = getDefaultSelections(menuItem.customizations);
 ## 🎬 Next Steps
 
 ### Immediate (Before Merge)
+
 1. [ ] Create pull request with ethos analysis findings
 2. [ ] Request code review from team
 3. [ ] Update README.md with RoCafé menu feature
 4. [ ] Add screenshots to PR description
 
 ### Short-Term (Production Cutover)
+
 1. [ ] Replace placeholder images with professional photography
 2. [ ] Update ordering URLs to production UberEats link
 3. [ ] Add 6-10 more menu items (expand beyond 4)
 4. [ ] Configure `maxSelections` on applicable customizations
 
 ### Long-Term (Future Enhancements)
+
 1. [ ] Location-specific ordering URLs (multi-location support)
 2. [ ] Automated testing suite (Jest + React Testing Library)
 3. [ ] Component library extraction (Storybook)
@@ -499,6 +533,7 @@ const defaults = getDefaultSelections(menuItem.customizations);
 ## ✨ Success Metrics
 
 **Project Goals Achieved:**
+
 - ✅ Complete menu variant of StandardizedItem (100%)
 - ✅ Dynamic pricing system (100%)
 - ✅ Multiple customization modes (100%)
@@ -508,6 +543,7 @@ const defaults = getDefaultSelections(menuItem.customizations);
 - ✅ Intelligent Navbar/Footer restoration (100%)
 
 **Quality Improvements:**
+
 - Grade: B+ → A+ (85/100 → 98/100)
 - Ethos Violations: 7 → 0
 - Architecture Flaws: 4 → 0
@@ -516,6 +552,7 @@ const defaults = getDefaultSelections(menuItem.customizations);
 - ESLint: 0 errors, 4 warnings (a11y only)
 
 **Code Impact:**
+
 - Files Created: 2 (menuHelpers.js, ordering.js)
 - Files Modified: 7 (StandardizedItem, rocafe-menu, App, RoCafePage, Navbar, Footer, docs)
 - Lines Added: 975
@@ -523,6 +560,7 @@ const defaults = getDefaultSelections(menuItem.customizations);
 - Net Change: +549 lines (quality-focused growth)
 
 **Post-Rebase Fixes:**
+
 - ✅ Restored intelligent Navbar with smart navigation (home button on subpages only, scroll vs navigate)
 - ✅ Restored rich Footer with social links, location selector, Trustpilot widget
 - ✅ Fixed Tailwind class typos (underscores → hyphens)

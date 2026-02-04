@@ -80,28 +80,40 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
           },
           hasMap: COMPANY_DATA.location?.google?.mapLink || undefined,
           openingHoursSpecification: data.hours || (
-            COMPANY_DATA.location?.hours
+            COMPANY_DATA.location?.hours?.daily
               ? [
-                  {
-                    '@type': 'OpeningHoursSpecification',
-                    dayOfWeek: [
-                      'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'
-                    ],
-                    opens: COMPANY_DATA.location.hours.weekdays?.split('-')[0]?.trim() || '08:00',
-                    closes: COMPANY_DATA.location.hours.weekdays?.split('-')[1]?.trim() || '21:00',
-                    validFrom: undefined,
-                    validThrough: undefined
-                  },
+                  // Convert daily hours to Schema.org format (24-hour times)
+                  ...Object.entries(COMPANY_DATA.location.hours.daily)
+                    .filter(([, hours]) => hours && hours !== 'Closed' && hours.includes('-'))
+                    .map(([day, hours]) => {
+                      const parts = hours.split('-').map(t => t.trim());
+                      if (parts.length !== 2) return null;
+                      const opens = parse12hTo24h(parts[0]);
+                      const closes = parse12hTo24h(parts[1]);
+                      return opens && closes ? {
+                        '@type': 'OpeningHoursSpecification',
+                        dayOfWeek: [day],
+                        opens,
+                        closes
+                      } : null;
+                    })
+                    .filter(Boolean),
                   // Add exceptions if present
-                  ...(COMPANY_DATA.location.hours.exceptions?.map(ex => ({
-                    '@type': 'OpeningHoursSpecification',
-                    dayOfWeek: undefined,
-                    opens: ex.hours === 'Closed' ? undefined : ex.hours?.split('-')[0]?.trim(),
-                    closes: ex.hours === 'Closed' ? undefined : ex.hours?.split('-')[1]?.trim(),
-                    validFrom: ex.date,
-                    validThrough: ex.date,
-                    description: ex.reason || undefined
-                  })) || [])
+                  ...(COMPANY_DATA.location.hours.exceptions?.map(ex => {
+                    if (!ex.hours || ex.hours === 'Closed' || !ex.hours.includes('-')) return null;
+                    const parts = ex.hours.split('-').map(t => t.trim());
+                    if (parts.length !== 2) return null;
+                    const opens = parse12hTo24h(parts[0]);
+                    const closes = parse12hTo24h(parts[1]);
+                    return opens && closes ? {
+                      '@type': 'OpeningHoursSpecification',
+                      opens,
+                      closes,
+                      validFrom: ex.date,
+                      validThrough: ex.date,
+                      description: ex.reason || undefined
+                    } : null;
+                  }).filter(Boolean) || [])
                 ]
               : []
           ),
@@ -128,14 +140,18 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
                 rocafe: { name: 'RoCafé Coffee & Bubble Tea', type: 'Service', description: 'Fresh brewed coffee, signature bubble tea, matcha lattes, and fruit slushes' },
                 halal_meat: { name: 'Halal Meat', type: 'Product', description: 'Certified Zabiha Halal meats' },
                 printing: { name: 'Printing Services', type: 'Service', description: 'Document printing and copying' },
+                package_services: { name: 'Package Services', type: 'Service', description: 'Shipping and package handling' },
                 package_pickup: { name: 'Package Services', type: 'Service', description: 'Shipping and package handling' },
                 money_transfer: { name: 'Money Transfer', type: 'Service', description: 'Send and receive money worldwide' },
                 gift_cards: { name: 'Gift Cards', type: 'Product', description: 'Prepaid and gift cards for major brands' },
                 perfumes: { name: 'Perfumes', type: 'Product', description: 'Imported and local fragrances' },
+                canadian_products: { name: 'Canadian Products', type: 'Product', description: 'Quality products sourced from Canadian manufacturers' },
+                international_products: { name: 'International Products', type: 'Product', description: 'Imported specialty products from around the world' },
                 tobacco: { name: 'Tobacco & Vape Products', type: 'Product', description: 'Wide selection for adult customers (19+)' },
                 lottery: { name: 'OLG Lottery', type: 'Service', description: 'Lottery tickets and scratch cards' }
               };
               const mapped = serviceMap[service] || { name: service, type: 'Service', description: '' };
+              // Emit each service as a simple Offer with itemOffered (no nested offers)
               return {
                 '@type': 'Offer',
                 itemOffered: {

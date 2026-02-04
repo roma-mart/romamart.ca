@@ -5,6 +5,7 @@
 ## 📖 Quick Navigation
 
 ### Getting Started
+
 - [Main README](../README.md) - Project overview and quick start
 - [Contributing Guide](../CONTRIBUTING.md) - How to contribute
 - [Architecture](../ARCHITECTURE.md) - System design overview
@@ -52,6 +53,7 @@
 ### Archive
 
 Historical implementation documents preserved for reference:
+
 - [Archive Index](./archive/README.md)
 
 ## 🏗️ Documentation Structure
@@ -66,45 +68,50 @@ docs/
 └── archive/               # Historical/deprecated docs
 ```
 
-
 ## 📝 Documentation Standards
 
 ### File Naming
+
 - Use lowercase with hyphens: `quality-system.md`
 - Be descriptive but concise
 - Use `.md` extension for all documentation
 
 ### Content Format
+
 - Start with H1 title
 - Include brief description
 - Use markdown tables for structured data
 - Include code examples where applicable
 
 ### Code Example Compliance
+
 - **All code examples must use centralized config:**
-	- Navigation: `import { NAVIGATION_LINKS } from '../config/navigation'`
-	- Company info: `import COMPANY_DATA from '../config/company_data'`
+ 	- Navigation: `import { NAVIGATION_LINKS } from '../config/navigation'`
+ 	- Company info: `import COMPANY_DATA from '../config/company_data'`
 - **Do not use hardcoded URLs, company names, or social links.**
 - **Breadcrumbs and canonical links may be page-specific, but navigation and company info must always use config.**
 
 **Example (Compliant):**
+
 ```jsx
 import { NAVIGATION_LINKS } from '../config/navigation';
 import COMPANY_DATA from '../config/company_data';
 
 <nav>
-	{NAVIGATION_LINKS.filter(link => link.showIn.navbar).map(link => (
-		<a href={link.href}>{link.label}</a>
-	))}
+ {NAVIGATION_LINKS.filter(link => link.showIn.navbar).map(link => (
+  <a href={link.href}>{link.label}</a>
+ ))}
 </nav>
 
 <footer>
-	<span>{COMPANY_DATA.legalName}</span>
+ <span>{COMPANY_DATA.legalName}</span>
 </footer>
 ```
+
 - Link to related documentation
 
 ### Updates
+
 - Keep documentation current with code changes
 - Date major updates in document footer
 - Archive rather than delete outdated content

@@ -136,6 +136,7 @@ npm run check:all
 ### CI/CD
 
 GitHub Actions runs quality checks on:
+
 - All pull requests to `main`
 - All pushes to `main`
 

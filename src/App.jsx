@@ -22,6 +22,7 @@ import BrandPatternBackground from './components/BrandPatternBackground';
 import ShareButton from './components/ShareButton';
 import Button from './components/Button';
 import StandardizedItem from './components/StandardizedItem';
+import LiveHoursDisplay from './components/LiveHoursDisplay';
 import { useLocationAware } from './hooks/useLocationContext';
 import { ROCAFE_FEATURED } from './data/rocafe-menu';
 import { SERVICES_FEATURED } from './data/services.jsx';
@@ -471,8 +472,17 @@ const ContactSection = () => {
                 </div>
                 <div>
                   <h4 className="font-bold text-lg" style={{ color: 'var(--color-accent)' }}>Hours</h4>
-                  <p style={textColor}>Mon-Fri: {getPrimaryLocation().hours.weekdays}</p>
-                  <p style={textColor}>Sat-Sun: {getPrimaryLocation().hours.weekends}</p>
+                  <LiveHoursDisplay
+                    placeId={primaryLocation.google.placeId}
+                    fallbackHours={{
+                      daily: primaryLocation.hours.daily,
+                      exceptions: primaryLocation.hours.exceptions
+                    }}
+                    showStatus={true}
+                    compact={true}
+                    showIcon={false}
+                    showRefresh={true}
+                  />
                 </div>
               </div>
             </div>
