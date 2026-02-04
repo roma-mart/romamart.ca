@@ -18,7 +18,7 @@ npm run dev
 ## 📖 Documentation
 
 - [Getting Started](./docs/guides/deployment.md)
-- [Architecture](./ARCHITECTURE.md)
+- [Architecture](./docs/ARCHITECTURE.md)
 - [Contributing](./CONTRIBUTING.md)
 - [Full Documentation](./docs/README.md)
 
@@ -46,7 +46,7 @@ COMPANY_DATA.legalName
 COMPANY_DATA.socialLinks.facebook
 ```
 
-See [Architecture](./ARCHITECTURE.md) and [Quality System](./QUALITY_SYSTEM.md) for details.
+See [Architecture](./docs/ARCHITECTURE.md) and [Quality System](./docs/QUALITY_SYSTEM.md) for details.
 
 ## ✨ Features
 

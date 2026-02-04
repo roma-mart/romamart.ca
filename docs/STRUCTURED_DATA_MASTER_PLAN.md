@@ -1515,19 +1515,19 @@ Recommended approach: **parallel run with feature flag**
 
 ## Part 9: Key Implementation Principles
 
-### Systems Over Spot Fixes (DEVELOPMENT_ETHOS Principle #1)
+### Systems Over Spot Fixes (DEVELOPMENT_ETHOS.md Principle #1)
 
 ❌ **Wrong approach:** Add one Product schema to homepage, hardcode another on menu page
 
 ✅ **Right approach:** Build reusable schema builders that can be used anywhere data exists
 
-### Single Source of Truth (DEVELOPMENT_ETHOS Principle #16)
+### Single Source of Truth (DEVELOPMENT_ETHOS.md Principle #16)
 
 ❌ **Wrong approach:** Duplicate service names/descriptions in StructuredData.jsx serviceMap
 
 ✅ **Right approach:** Import SERVICES from services.jsx, build schema dynamically
 
-### Deep Understanding Before Action (DEVELOPMENT_ETHOS Principle #25)
+### Deep Understanding Before Action (DEVELOPMENT_ETHOS.md Principle #25)
 
 ✅ **Done:** Full codebase review, identified all problems, understood architecture
 

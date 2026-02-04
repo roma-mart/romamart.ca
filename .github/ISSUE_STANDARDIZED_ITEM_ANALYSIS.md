@@ -10,7 +10,7 @@
 
 ## Executive Summary
 
-This issue presents a comprehensive analysis of the `StandardizedItem` component (765 lines, +254 from PR #7 merge), the services data architecture (`services.jsx`, 403 lines), the location system integration (`locations.js`, 422 lines), and the new RoCafé menu system (`rocafe-menu.js`, 288 lines). The goal is to identify architectural improvements, reduce complexity, and enhance maintainability while ensuring alignment with DEVELOPMENT_ETHOS.md principles.
+This issue presents a comprehensive analysis of the `StandardizedItem` component (765 lines, +254 from PR #7 merge), the services data architecture (`services.jsx`, 403 lines), the location system integration (`locations.js`, 422 lines), and the new RoCafé menu system (`rocafe-menu.js`, 288 lines). The goal is to identify architectural improvements, reduce complexity, and enhance maintainability while ensuring alignment with docs/DEVELOPMENT_ETHOS.md principles.
 
 **Key Findings (Updated Post-PR #7 Merge):**
 - ✅ Component successfully handles both menu and service variants with auto-detection
@@ -1140,7 +1140,7 @@ const badgeStyle = useMemo(() =>
 ### Definition of Done
 - [ ] All 5 refactoring phases completed
 - [ ] Test coverage >80%
-- [ ] Documentation updated (ARCHITECTURE.md, component READMEs)
+- [ ] Documentation updated (docs/ARCHITECTURE.md, component READMEs)
 - [ ] `npm run check:all` passes with 0 critical/high issues
 - [ ] Visual regression tests pass
 - [ ] Accessibility audit (WCAG 2.2 AA) pass
@@ -1255,7 +1255,7 @@ const StandardizedItem = ({ item }) => {
 ### Short-Term Actions (Next 2 Weeks)
 1. **Phase 1 Implementation:** Data architecture refactor
 2. **Testing:** Set up unit test infrastructure if not present
-3. **Documentation:** Update ARCHITECTURE.md with new patterns
+3. **Documentation:** Update docs/ARCHITECTURE.md with new patterns
 
 ### Long-Term Actions (Next Month)
 1. **Phase 2-5 Implementation:** Complete all refactoring phases
@@ -1290,4 +1290,4 @@ const StandardizedItem = ({ item }) => {
 
 ---
 
-_This analysis was created following DEVELOPMENT_ETHOS.md Principle #25: "Deep Understanding Before Action." All recommendations align with established architectural patterns and quality standards._
+_This analysis was created following docs/DEVELOPMENT_ETHOS.md Principle #25: "Deep Understanding Before Action." All recommendations align with established architectural patterns and quality standards._

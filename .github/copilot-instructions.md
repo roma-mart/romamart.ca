@@ -9,13 +9,13 @@ Roma Mart 2.0 is a **React 19 + Vite 7** progressive web app for a multi-locatio
 
 ## Critical Architecture Principles
 
-### 1. Systems Over Spot Fixes (DEVELOPMENT_ETHOS.md Principle #1)
+### 1. Systems Over Spot Fixes (docs/DEVELOPMENT_ETHOS.md Principle #1)
 - **Never** suppress warnings or make ad-hoc patches
 - Build comprehensive, reusable solutions that scale
 - Example: Don't fix one color; update the design token system
 
 ### 2. Deep Understanding Before Action (Principle #25)
-- **ALWAYS** read `ARCHITECTURE.md`, `DEVELOPMENT_ETHOS.md`, and relevant docs before making changes
+- **ALWAYS** read `docs/ARCHITECTURE.md`, `docs/DEVELOPMENT_ETHOS.md`, and relevant docs before making changes
 - Run `npm run check:quality` and `npm run check:integrity` to understand current state
 - Crawl related files to understand context before proposing solutions
 
@@ -226,9 +226,9 @@ Before going live on custom domain:
 
 | File | Purpose |
 |------|---------|
-| `DEVELOPMENT_ETHOS.md` | 25 core principles guiding all development |
-| `ARCHITECTURE.md` | High-level system design and conventions |
-| `QUALITY_SYSTEM.md` | Comprehensive quality standards documentation |
+| `docs/DEVELOPMENT_ETHOS.md` | 25 core principles guiding all development |
+| `docs/ARCHITECTURE.md` | High-level system design and conventions |
+| `docs/QUALITY_SYSTEM.md` | Comprehensive quality standards documentation |
 | `docs/README.md` | Documentation index and navigation |
 | `src/design/tokens.js` | Single source of truth for design tokens |
 | `src/data/locations.js` | All store locations data |

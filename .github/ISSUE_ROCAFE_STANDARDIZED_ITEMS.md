@@ -675,8 +675,8 @@ No new dependencies required. Uses existing:
 
 ## 📝 Related Documentation
 
-- [DEVELOPMENT_ETHOS.md](../DEVELOPMENT_ETHOS.md) - Core development principles
-- [QUALITY_SYSTEM.md](../QUALITY_SYSTEM.md) - Quality standards
+- [DEVELOPMENT_ETHOS.md](../docs/DEVELOPMENT_ETHOS.md) - Core development principles
+- [QUALITY_SYSTEM.md](../docs/QUALITY_SYSTEM.md) - Quality standards
 - [ARCHITECTURE.md](../ARCHITECTURE.md) - System architecture
 - [CONTENT_GUIDE.md](../CONTENT_GUIDE.md) - Content standards
 - [ROCAFE_MENU_TEMPLATE.md](../ROCAFE_MENU_TEMPLATE.md) - Menu content template
