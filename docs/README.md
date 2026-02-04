@@ -8,8 +8,22 @@
 
 - [Main README](../README.md) - Project overview and quick start
 - [Contributing Guide](../CONTRIBUTING.md) - How to contribute
-- [Architecture](../ARCHITECTURE.md) - System design overview
-- [Development Ethos](../DEVELOPMENT_ETHOS.md) - Core principles
+- [Architecture](./ARCHITECTURE.md) - System design overview
+- [Development Ethos](./DEVELOPMENT_ETHOS.md) - Core principles
+- [Quality System](./QUALITY_SYSTEM.md) - Universal quality standards
+- [Dark Mode System](./DARK_MODE_SYSTEM.md) - Dark mode implementation
+
+### System Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Accessibility Compliance](./ACCESSIBILITY_COMPLIANCE.md) | WCAG 2.2 AA compliance details |
+| [Content Guide](./CONTENT_GUIDE.md) | Content creation standards |
+| [Deployment Guide](./DEPLOYMENT_GUIDE.md) | Deployment procedures |
+| [Meta-Checker System](./META_CHECKER_SYSTEM.md) | Quality checker validation |
+| [Release Checklist](./RELEASE_CHECKLIST.md) | Pre-release verification |
+| [Structured Data Master Plan](./STRUCTURED_DATA_MASTER_PLAN.md) | SEO schema implementation |
+| [Financial Case](./FINANCIAL_CASE.md) | Website valuation & ROI analysis |
 
 ### Guides
 
@@ -62,12 +76,25 @@ Historical implementation documents preserved for reference:
 
 ```
 docs/
-├── README.md              # This file - documentation index
-├── guides/                # User & developer guides
-├── content/               # Content creation guides
-├── architecture/          # Deep technical documentation
-├── checklists/            # Operational checklists
-└── archive/               # Historical/deprecated docs
+├── README.md                           # This file - documentation index
+├── ARCHITECTURE.md                     # System design overview
+├── DEVELOPMENT_ETHOS.md                # 25 core development principles
+├── QUALITY_SYSTEM.md                   # Universal quality standards
+├── DARK_MODE_SYSTEM.md                 # Dark mode implementation
+├── ACCESSIBILITY_COMPLIANCE.md         # WCAG 2.2 AA compliance
+├── CONTENT_GUIDE.md                    # Content creation standards
+├── DEPLOYMENT_GUIDE.md                 # Deployment procedures
+├── META_CHECKER_SYSTEM.md              # Meta-checker validation
+├── RELEASE_CHECKLIST.md                # Pre-release verification
+├── STRUCTURED_DATA_MASTER_PLAN.md      # SEO schema roadmap
+├── FINANCIAL_CASE.md                   # Website valuation & ROI
+├── guides/                             # User & developer guides
+├── content/                            # Content creation guides
+├── architecture/                       # Deep technical documentation
+├── checklists/                         # Operational checklists
+├── implementation-notes/               # Development session notes
+├── updates/                            # Project updates & releases
+└── archive/                            # Historical/deprecated docs
 ```
 
 ## 📝 Documentation Standards
@@ -88,8 +115,8 @@ docs/
 ### Code Example Compliance
 
 - **All code examples must use centralized config:**
- 	- Navigation: `import { NAVIGATION_LINKS } from '../config/navigation'`
- 	- Company info: `import COMPANY_DATA from '../config/company_data'`
+  - Navigation: `import { NAVIGATION_LINKS } from '../config/navigation'`
+  - Company info: `import COMPANY_DATA from '../config/company_data'`
 - **Do not use hardcoded URLs, company names, or social links.**
 - **Breadcrumbs and canonical links may be page-specific, but navigation and company info must always use config.**
 
@@ -100,13 +127,13 @@ import { NAVIGATION_LINKS } from '../config/navigation';
 import COMPANY_DATA from '../config/company_data';
 
 <nav>
- {NAVIGATION_LINKS.filter(link => link.showIn.navbar).map(link => (
-  <a href={link.href}>{link.label}</a>
- ))}
+  {NAVIGATION_LINKS.filter(link => link.showIn.navbar).map(link => (
+    <a href={link.href}>{link.label}</a>
+  ))}
 </nav>
 
 <footer>
- <span>{COMPANY_DATA.legalName}</span>
+  <span>{COMPANY_DATA.legalName}</span>
 </footer>
 ```
 
@@ -126,4 +153,4 @@ import COMPANY_DATA from '../config/company_data';
 
 ---
 
-**Last Updated:** December 2025
+**Last Updated:** February 4, 2026
