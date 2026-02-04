@@ -3,26 +3,174 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import COMPANY_DATA from '../src/config/company_data.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Routes to prerender
 const routes = [
-  { path: '/', title: 'Home' },
-  { path: '/services', title: 'Services' },
-  { path: '/rocafe', title: 'RoCafé Menu' },
-  { path: '/locations', title: 'Locations' },
-  { path: '/contact', title: 'Contact' },
-  { path: '/about', title: 'About Us' },
-  { path: '/accessibility', title: 'Accessibility' },
-  { path: '/privacy', title: 'Privacy' },
-  { path: '/terms', title: 'Terms' },
-  { path: '/cookies', title: 'Cookies' }
+  { path: '/', title: 'Home', description: 'Roma Mart Convenience - Groceries, Global Snacks, Halal Meat, Coffee & More in Sarnia, ON. ATM, Bitcoin, Lottery, and Tobacco services available.' },
+  { path: '/services', title: 'Services', description: 'Explore Roma Mart services: ATM, Bitcoin ATM, printing, money transfer, lottery, and more in Sarnia, ON.' },
+  { path: '/rocafe', title: 'RoCafé Menu', description: 'Discover RoCafé coffee, bubble tea, matcha lattes, and signature drinks at Roma Mart in Sarnia, ON.' },
+  { path: '/locations', title: 'Locations', description: 'Find Roma Mart locations, hours, and directions in Sarnia, Ontario.' },
+  { path: '/contact', title: 'Contact', description: 'Get in touch with Roma Mart Convenience in Sarnia, ON. Phone, email, and directions.' },
+  { path: '/about', title: 'About Us', description: 'Learn about Roma Mart Convenience, our community focus, and services in Sarnia, ON.' },
+  { path: '/accessibility', title: 'Accessibility', description: 'Roma Mart Accessibility Statement - WCAG 2.2 Level AA compliance and accessibility commitments.' },
+  { path: '/privacy', title: 'Privacy', description: 'Roma Mart Privacy Policy - How we collect, use, and protect your information.' },
+  { path: '/terms', title: 'Terms', description: 'Roma Mart Terms of Service and usage policies.' },
+  { path: '/cookies', title: 'Cookies', description: 'Roma Mart Cookie Policy and preferences.' }
 ];
 
-const REPO_NAME = 'romamart.ca';
+const BASE_URL = 'https://romamart.ca';
 const BASE_PATH = `/`;
+
+const serviceMap = {
+  atm: { name: 'ATM Services', type: 'Service', description: 'Cash withdrawal and banking services available 24/7' },
+  bitcoin_atm: { name: 'Bitcoin ATM', type: 'Service', description: 'Cryptocurrency buying and selling services' },
+  rocafe: { name: 'RoCafé Coffee & Bubble Tea', type: 'Service', description: 'Fresh brewed coffee, signature bubble tea, matcha lattes, and fruit slushes' },
+  halal_meat: { name: 'Halal Meat', type: 'Product', description: 'Certified Zabiha Halal meats' },
+  printing: { name: 'Printing Services', type: 'Service', description: 'Document printing and copying' },
+  package_pickup: { name: 'Package Services', type: 'Service', description: 'Shipping and package handling' },
+  package_services: { name: 'Package Services', type: 'Service', description: 'Shipping and package handling' },
+  money_transfer: { name: 'Money Transfer', type: 'Service', description: 'Send and receive money worldwide' },
+  gift_cards: { name: 'Gift Cards', type: 'Product', description: 'Prepaid and gift cards for major brands' },
+  perfumes: { name: 'Perfumes', type: 'Product', description: 'Imported and local fragrances' },
+  tobacco: { name: 'Tobacco & Vape Products', type: 'Product', description: 'Wide selection for adult customers (19+)' },
+  lottery: { name: 'OLG Lottery', type: 'Service', description: 'Lottery tickets and scratch cards' }
+};
+
+const to24h = (timeStr) => {
+  if (!timeStr || typeof timeStr !== 'string') return null;
+  const match = timeStr.trim().match(/^(\d{1,2})(?::(\d{2}))?\s*(AM|PM)$/i);
+  if (!match) return null;
+  let hours = parseInt(match[1], 10);
+  const minutes = match[2] || '00';
+  const meridiem = match[3].toUpperCase();
+  if (meridiem === 'PM' && hours !== 12) hours += 12;
+  if (meridiem === 'AM' && hours === 12) hours = 0;
+  return `${String(hours).padStart(2, '0')}:${minutes}`;
+};
+
+const parseHoursRange = (range) => {
+  if (!range || typeof range !== 'string') return { opens: null, closes: null };
+  const parts = range.split('-').map(part => part.trim());
+  if (parts.length < 2) return { opens: null, closes: null };
+  return { opens: to24h(parts[0]), closes: to24h(parts[1]) };
+};
+
+const normalizeCountry = (country) => {
+  if (!country) return 'CA';
+  if (country.toUpperCase() === 'CANADA') return 'CA';
+  if (country.length === 2) return country.toUpperCase();
+  return country;
+};
+
+const buildStructuredData = () => {
+  const location = COMPANY_DATA.location;
+  const address = location?.address || {};
+  const contact = location?.contact || {};
+  const coords = location?.google?.coordinates || {};
+  const hours = location?.hours || {};
+
+  const weekday = parseHoursRange(hours.weekdays);
+  const weekend = parseHoursRange(hours.weekends);
+
+  const openingHoursSpecification = [
+    weekday.opens && weekday.closes
+      ? {
+          '@type': 'OpeningHoursSpecification',
+          dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+          opens: weekday.opens,
+          closes: weekday.closes
+        }
+      : null,
+    weekend.opens && weekend.closes
+      ? {
+          '@type': 'OpeningHoursSpecification',
+          dayOfWeek: ['Saturday', 'Sunday'],
+          opens: weekend.opens,
+          closes: weekend.closes
+        }
+      : null
+  ].filter(Boolean);
+
+  const services = (location?.services || []).map(service => {
+    const mapped = serviceMap[service] || { name: service, type: 'Service', description: '' };
+    return {
+      '@type': 'Offer',
+      itemOffered: {
+        '@type': mapped.type,
+        name: mapped.name,
+        description: mapped.description
+      }
+    };
+  });
+
+  const schema = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'LocalBusiness',
+        '@id': `${BASE_URL}/#business`,
+        name: COMPANY_DATA.legalName || 'Roma Mart Convenience',
+        alternateName: COMPANY_DATA.dba || 'Roma Mart',
+        description: 'Your daily stop & go convenience store in Sarnia, Ontario. Fresh RoCafé beverages, ATM, Bitcoin ATM, printing, and more.',
+        url: BASE_URL,
+        telephone: contact.phone || '+1-382-342-2000',
+        email: contact.email || 'contact@romamart.ca',
+        priceRange: '$$',
+        image: 'https://romamart.ca/images/store-front.jpg',
+        logo: 'https://romamart.ca/logo.png',
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: address.street || '3-189 Wellington Street',
+          addressLocality: address.city || 'Sarnia',
+          addressRegion: address.province || 'ON',
+          postalCode: address.postalCode || 'N7T 1G6',
+          addressCountry: normalizeCountry(address.country) || 'CA'
+        },
+        geo: {
+          '@type': 'GeoCoordinates',
+          latitude: coords.lat || 42.970389,
+          longitude: coords.lng || -82.404589
+        },
+        openingHoursSpecification,
+        timeZone: hours.timezone || 'America/Toronto',
+        sameAs: Object.values(COMPANY_DATA.socialLinks || {}),
+        hasOfferCatalog: {
+          '@type': 'OfferCatalog',
+          name: 'Services & Products',
+          itemListElement: services
+        },
+        amenityFeature: [
+          { '@type': 'LocationFeatureSpecification', name: 'Free WiFi', value: true },
+          { '@type': 'LocationFeatureSpecification', name: 'Parking', value: true },
+          { '@type': 'LocationFeatureSpecification', name: 'Wheelchair Accessible', value: true }
+        ],
+        paymentAccepted: ['Cash', 'Credit Card', 'Debit Card', 'Interac', 'Visa', 'Mastercard', 'American Express', 'Bitcoin']
+      },
+      {
+        '@type': 'WebSite',
+        '@id': `${BASE_URL}/#website`,
+        url: BASE_URL,
+        name: COMPANY_DATA.dba || 'Roma Mart Convenience',
+        description: 'Your daily stop & go convenience store in Sarnia, Ontario.',
+        publisher: { '@id': `${BASE_URL}/#business` },
+        potentialAction: {
+          '@type': 'SearchAction',
+          target: {
+            '@type': 'EntryPoint',
+            urlTemplate: `${BASE_URL}/search?q={search_term_string}`
+          },
+          'query-input': 'required name=search_term_string'
+        }
+      }
+    ]
+  };
+
+  return JSON.stringify(schema);
+};
 
 async function prerender() {
   const distPath = path.resolve(__dirname, '../dist');
@@ -51,14 +199,39 @@ async function prerender() {
     }
 
     // Copy template with route-specific meta tags
+    const absoluteUrl = `${BASE_URL}${route.path}`;
     const html = indexTemplate
       .replace(
         /<title>[^<]*<\/title>/,
         `<title>Roma Mart - ${route.title} | Groceries, Coffee & More in Sarnia, ON</title>`
       )
       .replace(
+        /<meta name="description" content="[^"]*" \/>/,
+        `<meta name="description" content="${route.description}" />`
+      )
+      .replace(
+        /<link rel="canonical" href="[^"]*" \/>/,
+        `<link rel="canonical" href="${absoluteUrl}" />`
+      )
+      .replace(
         /<meta property="og:url" content="[^"]*" \/>/,
-        `<meta property="og:url" content="${BASE_PATH}${route.path.slice(1)}" />`
+        `<meta property="og:url" content="${absoluteUrl}" />`
+      )
+      .replace(
+        /<meta property="og:description" content="[^"]*" \/>/,
+        `<meta property="og:description" content="${route.description}" />`
+      )
+      .replace(
+        /<meta property="twitter:url" content="[^"]*" \/>/,
+        `<meta property="twitter:url" content="${absoluteUrl}" />`
+      )
+      .replace(
+        /<meta property="twitter:description" content="[^"]*" \/>/,
+        `<meta property="twitter:description" content="${route.description}" />`
+      )
+      .replace(
+        /<script type="application\/ld\+json">[\s\S]*?<\/script>/,
+        `<script type="application/ld+json">${buildStructuredData()}</script>`
       );
 
     fs.writeFileSync(outputPath, html);

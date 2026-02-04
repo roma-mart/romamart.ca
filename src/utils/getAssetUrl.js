@@ -9,7 +9,9 @@
  *   getAssetUrl("/rocafe-logo.png") => "/rocafe-logo.png"
  */
 export function getAssetUrl(path) {
-    const domain = import.meta.env.VITE_APP_DOMAIN;
+    const domain = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_APP_DOMAIN)
+      ? import.meta.env.VITE_APP_DOMAIN
+      : '';
     const normalizedPath = path.startsWith('/') ? path : `/${path}`;
     if (domain) {
       // Always prefix with a slash, never double it

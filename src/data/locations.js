@@ -13,9 +13,11 @@
  * This ensures a single source of truth for all location-dependent info and future scalability.
  */
 
-import { getAssetUrl } from "../utils/getAssetUrl";
+import { getAssetUrl } from "../utils/getAssetUrl.js";
 
-const MAPS_EMBED_KEY = import.meta.env.VITE_GOOGLE_PLACES_API_KEY;
+const MAPS_EMBED_KEY = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_GOOGLE_PLACES_API_KEY)
+  ? import.meta.env.VITE_GOOGLE_PLACES_API_KEY
+  : undefined;
 // Location type constants
 export const LOCATION_TYPES = {
   CONVENIENCE_STORE: 'convenience_store',    // Full-service Roma Mart

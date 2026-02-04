@@ -9,7 +9,7 @@
 // All overrides and fallbacks for HQ data must be handled here for maintainability and resilience.
 
 // import { getOrderingUrl } from './ordering';
-import { getPrimaryLocation } from '../data/locations';
+import { getPrimaryLocation } from '../data/locations.js';
 
 const COMPANY_DATA = {
   legalName: 'Roma Mart Corp.',
@@ -31,7 +31,9 @@ const COMPANY_DATA = {
   contact: {
     phone: getPrimaryLocation().contact.phone,
     email: getPrimaryLocation().email,
-    web3FormsAccessKey: import.meta.env.VITE_WEB3FORMS_KEY || 'YOUR_WEB3FORMS_KEY'
+    web3FormsAccessKey: (typeof import.meta !== 'undefined' && import.meta.env?.VITE_WEB3FORMS_KEY)
+      ? import.meta.env.VITE_WEB3FORMS_KEY
+      : 'YOUR_WEB3FORMS_KEY'
   },
   // Location-dependent info is mapped from the primary location object
   location: getPrimaryLocation(),
