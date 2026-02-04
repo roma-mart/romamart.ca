@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ChevronRight, MapPin, Phone, ExternalLink, Building2 } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
@@ -19,12 +19,14 @@ const LocationsPage = () => {
 
   const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
 
-  useAutoLocation((pos) => {
+  const handleAutoLocation = useCallback((pos) => {
     const coords = pos?.coords;
     if (coords?.latitude && coords?.longitude) {
       setUserCoords({ latitude: coords.latitude, longitude: coords.longitude });
     }
-  });
+  }, []);
+
+  useAutoLocation(handleAutoLocation);
 
   const sortedLocations = getPreferredLocations({
     userCoords,

@@ -253,12 +253,14 @@ const Locations = () => {
   const preferredLocation = getPreferredLocation({ userCoords }) || primaryLocation;
   const locationCount = getActiveLocationCount();
   
-  useAutoLocation((pos) => {
+  const handleAutoLocation = useCallback((pos) => {
     const coords = pos?.coords;
     if (coords?.latitude && coords?.longitude) {
       setUserCoords({ latitude: coords.latitude, longitude: coords.longitude });
     }
-  });
+  }, []);
+
+  useAutoLocation(handleAutoLocation);
 
   const displayLocation = useMemo(() => ({
     id: preferredLocation.id,
@@ -276,16 +278,10 @@ const Locations = () => {
     ? [displayLocation].find(loc => loc.id === userSelectedLocationId) || displayLocation
     : displayLocation;
 
-  // create memoized handlers for each location to avoid inline closures
-  const locationHandlers = React.useMemo(() => {
-    const map = {};
-    [displayLocation].forEach(loc => {
-      map[loc.id] = () => {
-        setUserSelectedLocationId(loc.id); // Remember user's selection
-      };
-    });
-    return map;
-  }, [displayLocation]);
+  // Handler for manual location selection
+  const handleSelectLocation = useCallback((locationId) => {
+    setUserSelectedLocationId(locationId);
+  }, []);
 
   return (
     <section id="locations" className="py-24" style={{ backgroundColor: 'var(--color-bg)' }}>
@@ -301,7 +297,7 @@ const Locations = () => {
               <button
                 type="button"
                 key={loc.id}
-                onClick={locationHandlers[loc.id]}
+                onClick={() => handleSelectLocation(loc.id)}
                 className="w-full text-left p-6 rounded-xl border-2 transition-all flex items-center gap-4"
                 style={{ 
                   borderColor: activeLoc.id === loc.id ? 'var(--color-accent)' : 'var(--color-surface)',
