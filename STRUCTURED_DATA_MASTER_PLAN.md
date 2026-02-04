@@ -1634,7 +1634,7 @@ Build schema builders that:
     name: "Roma Mart Convenience",
     url: "https://romamart.ca",
     description: "Shop Roma Mart online - groceries, global snacks, halal meat, RoCafé coffee, and more. Available 24/7 from any device.",
-    applicationCategory: "Lifestyle", // Shopping/Food/Lifestyle
+    applicationCategory: "Shopping",
     operatingSystem: "Any (Web Browser)",
     offers: {
       price: "0",
@@ -1654,7 +1654,7 @@ Build schema builders that:
 | name | Roma Mart Convenience | Yes |
 | url | https://romamart.ca | Yes |
 | description | App description | Recommended |
-| applicationCategory | Lifestyle/Shopping | Recommended |
+| applicationCategory | Shopping | Recommended |
 | operatingSystem | Any (Web Browser) | Recommended |
 | offers.price | 0 (free to use) | Recommended |
 | browserRequirements | Browser compatibility | Optional |
@@ -1669,8 +1669,9 @@ Build schema builders that:
 1. Created `src/schemas/webApplicationSchema.js`
 2. Added WebApplication case to StructuredData.jsx
 3. Added schema to homepage (App.jsx)
-4. Added test suite (11 tests, 100% passing)
-5. Verified build success
+4. Added SSOT config in `src/config/company_data.js` (`COMPANY_DATA.pwa.webApplication`)
+5. Added test suite (11 tests, 100% passing)
+6. Verified build success
 
 ### Related Documentation
 

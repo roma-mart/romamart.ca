@@ -631,17 +631,9 @@ function App() {
                   <StructuredData
                     type="WebApplication"
                     data={{
-                      name: COMPANY_DATA.dba || 'Roma Mart Convenience',
-                      url: 'https://romamart.ca',
-                      description: 'Shop Roma Mart online - groceries, global snacks, halal meat, RoCafé coffee, and more. Available 24/7 from any device with offline support.',
-                      applicationCategory: 'Lifestyle',
-                      operatingSystem: 'Any (Web Browser)',
-                      offers: {
-                        price: '0',
-                        priceCurrency: 'CAD'
-                      },
-                      browserRequirements: 'Requires JavaScript. Modern browsers (Chrome, Firefox, Safari, Edge) recommended.',
-                      permissions: ['Location (optional, for nearest store)'],
+                      ...COMPANY_DATA.pwa?.webApplication,
+                      name: COMPANY_DATA.pwa?.webApplication?.name || COMPANY_DATA.dba || 'Roma Mart Convenience',
+                      url: COMPANY_DATA.pwa?.webApplication?.url || 'https://romamart.ca',
                       author: {
                         name: COMPANY_DATA.legalName || 'Roma Mart Corp.',
                         url: 'https://romamart.ca'

@@ -47,7 +47,23 @@ const COMPANY_DATA = {
   },
   // Location-dependent info is mapped from the primary location object
   location: getPrimaryLocation(),
-  trustpilotReviewUrl: 'https://www.trustpilot.com/review/romamart.ca'
+  trustpilotReviewUrl: 'https://www.trustpilot.com/review/romamart.ca',
+  // PWA configuration (SSOT for WebApplication schema)
+  pwa: {
+    webApplication: {
+      name: 'Roma Mart Convenience',
+      url: 'https://romamart.ca',
+      description: 'Shop Roma Mart online - groceries, global snacks, halal meat, RoCafé coffee, and more. Available 24/7 from any device with offline support.',
+      applicationCategory: 'Shopping',
+      operatingSystem: 'Any (Web Browser)',
+      offers: {
+        price: '0',
+        priceCurrency: 'CAD'
+      },
+      browserRequirements: 'Requires JavaScript. Modern browsers (Chrome, Firefox, Safari, Edge) recommended.',
+      permissions: ['Location (optional, for nearest store)']
+    }
+  }
   // Add other brand data as needed
 };
 
