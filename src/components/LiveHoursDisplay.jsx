@@ -66,10 +66,10 @@ const formatExceptionDate = (value) => {
  * @param {boolean} props.showStatus - Show open/closed status badge
  * @param {boolean} props.compact - Compact display mode
  * @param {boolean} props.showIcon - Show clock icon
- * @param {boolean} props.showRefresh - Show refresh button when live hours/error are available
+ * @param {boolean} props.showRefreshOnError - Show refresh button when API error occurs (allows manual retry)
  * @returns {JSX.Element}
  */
-function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact = false, showIcon = true, showRefresh = true }) {
+function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact = false, showIcon = true, showRefreshOnError = true }) {
   const { hours, isLoading, error, refetch, isOpenNow } = useGooglePlaceHours(placeId);
 
   const iconColor = useMemo(() => ({ color: 'var(--color-icon)' }), []);
@@ -262,7 +262,7 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
     );
   }, [error, isLoading, displayHours, showStatus, isOpenNow, fallbackGrouped, renderExceptions, renderGroupedLines]);
 
-  const refreshButton = showRefresh && error ? (
+  const refreshButton = showRefreshOnError && error ? (
     <button
       type="button"
       onClick={() => refetch({ force: true })}
@@ -322,8 +322,8 @@ LiveHoursDisplay.propTypes = {
   compact: PropTypes.bool,
   /** Show clock icon in header */
   showIcon: PropTypes.bool,
-  /** Show refresh button when error occurs (allows manual retry) */
-  showRefresh: PropTypes.bool
+  /** Show refresh button when API error occurs (allows manual retry) */
+  showRefreshOnError: PropTypes.bool
 };
 
 export default LiveHoursDisplay;

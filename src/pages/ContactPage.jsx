@@ -178,7 +178,7 @@ const ContactPage = () => {
                     showStatus={true}
                     compact={true}
                     showIcon={false}
-                    showRefresh={true}
+                    showRefreshOnError={true}
                   />
                 </div>
               </div>
