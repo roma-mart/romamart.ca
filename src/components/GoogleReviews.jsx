@@ -72,10 +72,12 @@ async function fetchGoogleReviews(placeId) {
     }
 
     // Use Places API (New) with minimal field mask to reduce costs
+    // Note: Use only X-Goog-FieldMask header (not query param) for consistency with fetchPlaceDetails pattern
     const fields = 'reviews,rating,userRatingCount';
-    const url = `https://places.googleapis.com/v1/places/${placeId}?fields=${fields}&key=${apiKey}`;
+    const url = `https://places.googleapis.com/v1/places/${placeId}?key=${apiKey}`;
 
     const response = await fetch(url, {
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
         'X-Goog-FieldMask': fields
