@@ -105,21 +105,6 @@ const routes = [
   }
 ];
 
-const serviceMap = {
-  atm: { name: 'ATM Services', type: 'Service', description: 'Cash withdrawal and banking services available 24/7' },
-  bitcoin_atm: { name: 'Bitcoin ATM', type: 'Service', description: 'Cryptocurrency buying and selling services' },
-  rocafe: { name: 'RoCafé Coffee & Bubble Tea', type: 'Service', description: 'Fresh brewed coffee, signature bubble tea, matcha lattes, and fruit slushes' },
-  halal_meat: { name: 'Halal Meat', type: 'Product', description: 'Certified Zabiha Halal meats' },
-  printing: { name: 'Printing Services', type: 'Service', description: 'Document printing and copying' },
-  package_pickup: { name: 'Package Services', type: 'Service', description: 'Shipping and package handling' },
-  package_services: { name: 'Package Services', type: 'Service', description: 'Shipping and package handling' },
-  money_transfer: { name: 'Money Transfer', type: 'Service', description: 'Send and receive money worldwide' },
-  gift_cards: { name: 'Gift Cards', type: 'Product', description: 'Prepaid and gift cards for major brands' },
-  perfumes: { name: 'Perfumes', type: 'Product', description: 'Imported and local fragrances' },
-  tobacco: { name: 'Tobacco & Vape Products', type: 'Product', description: 'Wide selection for adult customers (19+)' },
-  lottery: { name: 'OLG Lottery', type: 'Service', description: 'Lottery tickets and scratch cards' }
-};
-
 const to24h = (timeStr) => {
   if (!timeStr || typeof timeStr !== 'string') return null;
   const match = timeStr.trim().match(/^(\d{1,2})(?::(\d{2}))?\s*(AM|PM)$/i);
@@ -201,18 +186,6 @@ const buildStructuredData = () => {
       : null
   ].filter(Boolean);
 
-  const services = (location?.services || []).map(service => {
-    const mapped = serviceMap[service] || { name: service, type: 'Service', description: '' };
-    return {
-      '@type': 'Offer',
-      itemOffered: {
-        '@type': mapped.type,
-        name: mapped.name,
-        description: mapped.description
-      }
-    };
-  });
-
   const schema = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -245,17 +218,12 @@ const buildStructuredData = () => {
         openingHoursSpecification,
         timeZone: hours.timezone || 'America/Toronto',
         sameAs: Object.values(COMPANY_DATA.socialLinks || {}),
-        hasOfferCatalog: {
-          '@type': 'OfferCatalog',
-          name: 'Services & Products',
-          itemListElement: services
-        },
-        amenityFeature: [
-          { '@type': 'LocationFeatureSpecification', name: 'Free WiFi', value: true },
-          { '@type': 'LocationFeatureSpecification', name: 'Parking', value: true },
-          { '@type': 'LocationFeatureSpecification', name: 'Wheelchair Accessible', value: true }
-        ],
-        paymentAccepted: ['Cash', 'Credit Card', 'Debit Card', 'Interac', 'Visa', 'Mastercard', 'American Express', 'Bitcoin']
+        amenityFeature: (location?.amenities || []).map(amenity => ({
+          '@type': 'LocationFeatureSpecification',
+          name: amenity.name,
+          value: amenity.value
+        })),
+        paymentAccepted: COMPANY_DATA.paymentMethods || ['Cash', 'Credit Card', 'Debit Card', 'Interac', 'Visa', 'Mastercard', 'American Express', 'Bitcoin']
       },
       {
         '@type': 'WebSite',

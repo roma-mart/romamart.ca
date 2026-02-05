@@ -40,10 +40,23 @@ describe('buildWebApplicationSchema', () => {
     expect(schema.permissions).toEqual(['Location (optional, for nearest store)']);
   });
 
-  it('should return null for missing required fields', () => {
-    expect(buildWebApplicationSchema({})).toBeNull();
-    expect(buildWebApplicationSchema({ name: 'Test' })).toBeNull();
-    expect(buildWebApplicationSchema({ url: 'https://example.com' })).toBeNull();
+  it('should use COMPANY_DATA defaults when no data provided', () => {
+    // Empty object should use COMPANY_DATA.pwa.webApplication defaults
+    const schema1 = buildWebApplicationSchema({});
+    expect(schema1).toBeDefined();
+    expect(schema1.name).toBeDefined(); // From COMPANY_DATA
+    expect(schema1.url).toBeDefined(); // From COMPANY_DATA
+
+    // Partial data should merge with COMPANY_DATA defaults
+    const schema2 = buildWebApplicationSchema({ name: 'Test' });
+    expect(schema2).toBeDefined();
+    expect(schema2.name).toBe('Test'); // Override
+    expect(schema2.url).toBeDefined(); // From COMPANY_DATA
+
+    const schema3 = buildWebApplicationSchema({ url: 'https://example.com' });
+    expect(schema3).toBeDefined();
+    expect(schema3.name).toBeDefined(); // From COMPANY_DATA
+    expect(schema3.url).toBe('https://example.com'); // Override
   });
 
   it('should handle minimal data', () => {
@@ -58,8 +71,9 @@ describe('buildWebApplicationSchema', () => {
     expect(schema['@type']).toBe('WebApplication');
     expect(schema.name).toBe('Roma Mart');
     expect(schema.url).toBe('https://romamart.ca');
-    expect(schema.description).toBeUndefined();
-    expect(schema.applicationCategory).toBeUndefined();
+    // Description and category should come from COMPANY_DATA defaults
+    expect(schema.description).toBeDefined(); // From COMPANY_DATA.pwa.webApplication
+    expect(schema.applicationCategory).toBeDefined(); // From COMPANY_DATA.pwa.webApplication
   });
 
   it('should handle screenshots array', () => {

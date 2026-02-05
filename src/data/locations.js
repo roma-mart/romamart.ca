@@ -143,20 +143,25 @@ export const LOCATIONS = [
       // },
       // Add more menu overrides as needed
     },
-    // === FEATURES & AMENITIES ===
-    features: {
-      parking: true,
-      parkingSpots: 15,
-      wheelchairAccessible: true,
-      wifi: true,
-      wifiPassword: null,
-      restroom: true,
-      seating: false,
-      seatingCapacity: 0,
-      outdoorSeating: false,
-      driveThrough: false,
-      deliveryAvailable: false
-    },
+    // === AMENITIES ===
+    // Google-recognized amenities for LocalBusiness schema
+    // These names match Google Business Profile attributes and schema.org LocationFeatureSpecification
+    // When locations API is implemented, return this exact structure
+    amenities: [
+      { name: 'Free Wi-Fi', value: true },
+      { name: 'Wheelchair-accessible entrance', value: true },
+      { name: 'Wheelchair-accessible parking', value: true },
+      { name: 'Restroom', value: true },
+      { name: 'Parking', value: true }
+      // Other Google Business Profile amenities to consider:
+      // { name: 'Gender-neutral restroom', value: true },
+      // { name: 'In-store pickup', value: true },
+      // { name: 'In-store shopping', value: true },
+      // { name: 'Same-day delivery', value: true },
+      // { name: 'Debit cards', value: true },
+      // { name: 'Credit cards', value: true },
+      // { name: 'NFC mobile payments', value: true }
+    ],
     // === PHOTOS ===
     photos: {
       // Main exterior shot
@@ -317,13 +322,15 @@ export const getActiveLocationCount = () => {
 };
 
 /**
- * Check if location has specific feature
+ * Check if location has specific amenity
  * @param {Object} location - Location object
- * @param {string} feature - Feature name
- * @returns {boolean} Has feature
+ * @param {string} amenityName - Amenity name (e.g., 'Free Wi-Fi', 'Parking')
+ * @returns {boolean} Has amenity
  */
-export const hasFeature = (location, feature) => {
-  return location.features?.[feature] === true;
+export const hasAmenity = (location, amenityName) => {
+  return location.amenities?.some(amenity =>
+    amenity.name === amenityName && amenity.value === true
+  ) || false;
 };
 
 /**
@@ -552,7 +559,7 @@ export default {
   getHeadquarters,
   getTotalLocationCount,
   getActiveLocationCount,
-  hasFeature,
+  hasAmenity,
   hasService,
   getStatusText,
   getFormattedAddress,

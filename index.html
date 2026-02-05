@@ -6,6 +6,7 @@
     <!-- <meta http-equiv="X-Content-Type-Options" content="nosniff" /> -->
     <!-- only available for server headers - cannot apply in static sites -->
     <meta name="description" content="Roma Mart Convenience - Groceries, Global Snacks, Halal Meat, Coffee & More in Sarnia, ON. ATM, Bitcoin, Lottery, and Tobacco services available." />
+    <!-- Progressive enhancement: theme-color supported in Chrome, Safari, Edge (not Firefox/Opera) -->
     <meta name="theme-color" content="#020178" />
     <!-- SVG favicon for modern browsers -->
     <link rel="icon" type="image/svg+xml" href="/icon-192.svg" />
@@ -35,51 +36,23 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&family=Inter:wght@400;700&display=swap" rel="stylesheet" />
-    <!-- Structured Data for SEO (JSON-LD) - LocalBusiness & WebSite schemas -->
+    <!-- Structured Data for SEO (JSON-LD) - WebSite schema for instant SearchAction -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@graph": [
-        {
-          "@type": "LocalBusiness",
-          "@id": "https://romamart.ca/#business",
-          "name": "Roma Mart Convenience",
-          "alternateName": "Roma Mart",
-          "description": "Your daily stop & go convenience store in Sarnia, Ontario. Fresh RoCafé beverages, ATM, Bitcoin ATM, printing, and more.",
-          "url": "https://romamart.ca",
-          "telephone": "+1-382-342-2000",
-          "email": "contact@romamart.ca",
-          "priceRange": "$$",
-          "image": "https://romamart.ca/images/store-front.jpg",
-          "logo": "https://romamart.ca/logo.png",
-          "address": {
-            "@type": "PostalAddress",
-            "streetAddress": "3-189 Wellington Street",
-            "addressLocality": "Sarnia",
-            "addressRegion": "ON",
-            "postalCode": "N7T 1G6",
-            "addressCountry": "CA"
-          },
-          "geo": {
-            "@type": "GeoCoordinates",
-            "latitude": 42.970389,
-            "longitude": -82.404589
-          },
-          "openingHoursSpecification": [
-            {"@type": "OpeningHoursSpecification","dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens": "08:30","closes": "21:00"},
-            {"@type": "OpeningHoursSpecification","dayOfWeek": ["Saturday","Sunday"],"opens": "08:30","closes": "21:00"}
-          ],
-          "sameAs": ["https://www.facebook.com/romamartca","https://www.instagram.com/romamartca/","https://www.tiktok.com/@romamartca/","https://www.x.com/romamartca/"],
-          "paymentAccepted": ["Cash","Credit Card","Debit Card","Interac","Visa","Mastercard","American Express","Bitcoin"]
+      "@type": "WebSite",
+      "@id": "https://romamart.ca/#website",
+      "url": "https://romamart.ca",
+      "name": "Roma Mart Convenience",
+      "publisher": {"@id": "https://romamart.ca/#business"},
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://romamart.ca/search?q={search_term_string}"
         },
-        {
-          "@type": "WebSite",
-          "@id": "https://romamart.ca/#website",
-          "url": "https://romamart.ca",
-          "name": "Roma Mart Convenience",
-          "publisher": {"@id": "https://romamart.ca/#business"}
-        }
-      ]
+        "query-input": "required name=search_term_string"
+      }
     }
     </script>
 
@@ -112,5 +85,3 @@
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
-
-

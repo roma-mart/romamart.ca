@@ -18,7 +18,46 @@ const COMPANY_DATA = {
   gstNumber: '780971768',
   naicsCode: '4541',  // Grocery stores (North American Industry Classification System)
   naicsDescription: 'Grocery Stores',
+  // Base URLs (SSOT for all schema URLs)
+  baseUrl: 'https://romamart.ca',
+  logoUrl: 'https://romamart.ca/logo.png',
   onlineStoreUrl: null,
+  // Schema-specific endpoints
+  endpoints: {
+    returnPolicy: '/return-policy',
+    privacy: '/privacy',
+    services: '/services',
+    locations: '/locations',
+    menu: '/menu'
+  },
+  // Default values for schemas
+  defaults: {
+    productCategory: 'Food & Beverage',
+    priceRange: '$$',
+    country: 'CA',
+    currency: 'CAD',
+    timezone: 'America/Toronto',
+    ageRestriction: '19-' // Minimum age for age-restricted products/services (Ontario law)
+  },
+  // Accepted payment methods (business-wide, for LocalBusiness schema)
+  paymentMethods: [
+    'Cash',
+    'Credit Card',
+    'Debit Card',
+    'Interac',
+    'Visa',
+    'Mastercard',
+    'American Express',
+    'Bitcoin'
+  ],
+  // Return policy defaults (business-wide, for MerchantReturnPolicy schema)
+  returnPolicy: {
+    merchantReturnDays: 1,
+    returnMethod: 'https://schema.org/ReturnInStore',
+    returnFees: 'https://schema.org/FreeReturn',
+    itemCondition: 'https://schema.org/DamagedCondition',
+    returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow'
+  },
   socialLinks: {
     facebook: 'https://www.facebook.com/romamartca',
     instagram: 'https://www.instagram.com/romamartca/',
@@ -29,7 +68,7 @@ const COMPANY_DATA = {
   // Fallback HQ info for resilience
   // HQ info is now sourced directly from the (primary) location in LOCATIONS
   address: getPrimaryLocation().address,
-  
+
   hours: getPrimaryLocation().hours,
   contact: {
     phone: getPrimaryLocation().contact.phone,

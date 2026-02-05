@@ -13,10 +13,10 @@ jobs:
     name: Accessibility Linting
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'npm'
@@ -37,10 +37,10 @@ jobs:
     name: React Tests
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'npm'
@@ -58,10 +58,10 @@ jobs:
     needs: [accessibility-lint, test]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'npm'
@@ -71,9 +71,10 @@ jobs:
 
       - name: Build site
         env:
-          VITE_APP_DOMAIN: ${{ secrets.VITE_APP_DOMAIN }}
+          VITE_APP_DOMAIN: ${{ secrets.VITE_APP_DOMAIN || 'romamart.ca' }}
           VITE_WEB3FORMS_KEY: ${{ secrets.WEB3FORMS_KEY }}
           VITE_GTM_ID: ${{ secrets.GTM_ID }}
+          VITE_GOOGLE_PLACES_API_KEY: ${{ secrets.VITE_GOOGLE_PLACES_API_KEY }}
         run: npm run build
 
       - name: Upload dist artifacts
@@ -100,7 +101,7 @@ jobs:
         uses: Cyb3r-Jak3/html5validator-action@v7.2.0
         with:
           root: dist/
-          continue: true
+        continue-on-error: true
 
   publish:
     runs-on: ubuntu-latest
@@ -114,10 +115,10 @@ jobs:
       id-token: write
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'npm'
@@ -127,17 +128,18 @@ jobs:
 
       - name: Build site
         env:
-          VITE_APP_DOMAIN: ${{ secrets.VITE_APP_DOMAIN }}
+          VITE_APP_DOMAIN: ${{ secrets.VITE_APP_DOMAIN || 'romamart.ca' }}
           VITE_WEB3FORMS_KEY: ${{ secrets.WEB3FORMS_KEY }}
           VITE_GTM_ID: ${{ secrets.GTM_ID }}
+          VITE_GOOGLE_PLACES_API_KEY: ${{ secrets.VITE_GOOGLE_PLACES_API_KEY }}
         run: npm run build
 
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
-          cname: khanoflegend.github.io
+          cname: romamart.ca
 
   report:
     runs-on: ubuntu-latest
@@ -146,10 +148,10 @@ jobs:
     if: always()
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'npm'

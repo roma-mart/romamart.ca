@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 // ...existing code...
 import { LocationProvider } from './components/LocationProvider';
-import { getPrimaryLocation, getActiveLocationCount, getPreferredLocation, LOCATIONS, isLocationOpenNow } from './data/locations';
+import { getPreferredLocation, isLocationOpenNow } from './data/locations';
 import { Logo } from './components/Logo';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -25,10 +25,11 @@ import StandardizedItem from './components/StandardizedItem';
 import LiveHoursDisplay from './components/LiveHoursDisplay';
 import { useLocationAware } from './hooks/useLocationContext';
 import { ROCAFE_FEATURED } from './data/rocafe-menu';
-import { SERVICES_FEATURED } from './data/services.jsx';
 import Phone from 'lucide-react/dist/esm/icons/phone.js';
 import Clock from 'lucide-react/dist/esm/icons/clock.js';
 import { useMenu } from './contexts/MenuContext';
+import { useServices } from './contexts/ServicesContext';
+import { useLocations } from './contexts/LocationsContext';
 import { transformExcelToMenuItem } from './utils/excelMenuTransform';
 import HCaptchaWidget from './components/HCaptchaWidget';
 import StructuredData from './components/StructuredData';
@@ -123,17 +124,17 @@ function Hero({ onTrackOrder }) {
   );
 }
 
-const ServicesSection = () => {
+const ServicesSection = ({ featuredServices = [] }) => {
     useLocationAware();
   return (
     <section id="services" className="py-20" style={{ backgroundColor: 'var(--color-surface)' }}>
       <div className="max-w-7xl mx-auto px-4">
         <h2 className="text-3xl md:text-4xl var(--font-heading) uppercase text-center mb-12" style={{ color: 'var(--color-heading)' }}>Our <span style={{ color: 'var(--color-accent)' }}>Services</span></h2>
-        
+
         {/* Featured Services with StandardizedItem */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          {SERVICES_FEATURED.map((service) => (
-            <StandardizedItem 
+          {featuredServices.map((service) => (
+            <StandardizedItem
               key={service.id}
               item={service}
               itemType="service"
@@ -141,7 +142,7 @@ const ServicesSection = () => {
             />
           ))}
         </div>
-        
+
         <div className="text-center">
           <Button
             href={`${BASE_URL}services`}
@@ -250,9 +251,22 @@ const RoCafeSection = ({ menuItems, loading }) => {
 
 const Locations = () => {
   const [userCoords, setUserCoords] = useState(null);
-  const primaryLocation = getPrimaryLocation();
-  const preferredLocation = getPreferredLocation({ userCoords }) || primaryLocation;
-  const locationCount = getActiveLocationCount();
+  const { locations } = useLocations();
+
+  const primaryLocation = useMemo(() =>
+    locations.find(loc => loc.isPrimary) || locations[0],
+    [locations]
+  );
+
+  const preferredLocation = useMemo(() =>
+    getPreferredLocation({ userCoords, locations }) || primaryLocation,
+    [userCoords, locations, primaryLocation]
+  );
+
+  const locationCount = useMemo(() =>
+    locations.filter(loc => loc.status === 'open').length,
+    [locations]
+  );
   
   const handleAutoLocation = useCallback((pos) => {
     const coords = pos?.coords;
@@ -378,7 +392,11 @@ const Locations = () => {
 const ContactSection = () => {
   const textColor = { color: 'var(--color-text)' };
   const mutedTextColor = { color: 'var(--color-text)', opacity: 0.7 };
-  const primaryLocation = getPrimaryLocation();
+  const { locations } = useLocations();
+  const primaryLocation = useMemo(() =>
+    locations.find(loc => loc.isPrimary) || locations[0],
+    [locations]
+  );
   const [captchaToken, setCaptchaToken] = React.useState('');
   const [formStatus, setFormStatus] = React.useState('');
   const [formMessage, setFormMessage] = React.useState('');
@@ -601,11 +619,22 @@ function App() {
   // Fetch menu data from API for homepage featured schemas + RoCafe section
   // Menu is now provided via MenuProvider context to avoid duplicate API calls
   const { menuItems, loading } = useMenu();
-  
+
+  // Fetch services data from API with fallback to static SERVICES
+  const { services } = useServices();
+
+  // Fetch locations data from API with fallback to static LOCATIONS
+  const { locations } = useLocations();
+
   // Only include featured items for homepage schemas (limited selection)
   const featuredSchemaItems = useMemo(() => {
     return menuItems.filter(item => item.featured);
   }, [menuItems]);
+
+  // Only include featured services for homepage schemas
+  const featuredServices = useMemo(() => {
+    return services.filter(service => service.featured);
+  }, [services]);
   
   // Prices in API are always in cents
   const schemaPriceInCents = true;
@@ -648,6 +677,29 @@ function App() {
                 itemUrl: 'https://romamart.ca/rocafe',
                 priceInCents: schemaPriceInCents
               }))
+            }}
+          />
+        )}
+        {/* Homepage Service Schemas (Featured Services Only) */}
+        {currentPage === 'home' && featuredServices.length > 0 && (
+          <StructuredData
+            type="ServiceList"
+            data={{
+              services: featuredServices,
+              options: {
+                serviceUrl: 'https://romamart.ca/services',
+                providerUrl: 'https://romamart.ca'
+              }
+            }}
+          />
+        )}
+        {/* Homepage Location Schemas */}
+        {currentPage === 'home' && locations.length > 0 && (
+          <StructuredData
+            type="LocationList"
+            data={{
+              locations: locations,
+              options: {}
             }}
           />
         )}
@@ -695,7 +747,7 @@ function App() {
               <a href="#main-content" className="skip-link">Skip to main content</a>
               <Hero onTrackOrder={handleTrackOrderClick} />
               <div id="main-content">
-                <ErrorBoundary><ServicesSection /></ErrorBoundary>
+                <ErrorBoundary><ServicesSection featuredServices={featuredServices} /></ErrorBoundary>
                 <ErrorBoundary><RoCafeSection menuItems={menuItems} loading={loading} /></ErrorBoundary>
                 <ErrorBoundary><Locations /></ErrorBoundary>
                 <ErrorBoundary><ContactSection /></ErrorBoundary>

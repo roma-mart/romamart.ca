@@ -114,9 +114,17 @@ export const LOCATIONS = [
     
     // === SERVICES ===
     services: ['atm', 'bitcoin_atm', 'rocafe', 'lottery'],
-    
+
+    // === AMENITIES (Google Business Profile compliant) ===
+    amenities: [
+      { name: 'Free Wi-Fi', value: true },
+      { name: 'Wheelchair-accessible entrance', value: true },
+      { name: 'Wheelchair-accessible parking', value: true },
+      { name: 'Restroom', value: true },
+      { name: 'Parking', value: true }
+    ],
+
     // === METADATA ===
-    features: ['wifi', 'parking', 'accessible'],
     images: { storefront: null, interior: null },
     seo: { slug: 'wellington-street-sarnia', description: '...' }
   }
@@ -969,5 +977,6 @@ npm test
 
 ---
 
-**Last Updated:** February 4, 2026  
+**Last Updated:** February 5, 2026
 **Maintainer:** Roma Mart Development Team
+**Recent Changes:** Updated location amenities structure to use Google-compliant naming (Feb 5, 2026)

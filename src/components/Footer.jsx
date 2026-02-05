@@ -12,7 +12,7 @@ import { Logo } from './Logo';
 import TrustpilotWidget from './TrustpilotWidget';
 import { useLocationContext } from '../hooks/useLocationContext';
 import useGooglePlaceHours from '../hooks/useGooglePlaceHours';
-import { LOCATIONS, getActiveLocations } from '../data/locations';
+import { useLocations } from '../contexts/LocationsContext';
 import { NAVIGATION_LINKS } from '../config/navigation';
 import OrderCTA from './OrderCTA';
 import Button from './Button';
@@ -32,6 +32,7 @@ export default function Footer() {
 
   const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
   const { userLocation } = useLocationContext();
+  const { locations } = useLocations();
   const [selectedLocationId, setSelectedLocationId] = useState(() => {
     return localStorage.getItem('roma_mart_selected_location') || 'auto';
   });
@@ -54,7 +55,7 @@ export default function Footer() {
       return R * c;
     };
 
-    const activeLocations = getActiveLocations();
+    const activeLocations = locations.filter(loc => loc.status === 'open');
     let nearest = null;
     let minDistance = Infinity;
 
@@ -74,7 +75,7 @@ export default function Footer() {
     });
 
     return nearest;
-  }, [userLocation]);
+  }, [userLocation, locations]);
 
 
   const handleLocationChange = (e) => {
@@ -97,12 +98,12 @@ export default function Footer() {
     let location = null;
     if (selectedLocationId === 'auto') {
       if (nearestLocationId) {
-        location = LOCATIONS.find(loc => loc.id === nearestLocationId);
+        location = locations.find(loc => loc.id === nearestLocationId);
       } else {
         location = COMPANY_DATA.location;
       }
     } else {
-      location = LOCATIONS.find(loc => loc.id === selectedLocationId);
+      location = locations.find(loc => loc.id === selectedLocationId);
       if (!location) {
         location = COMPANY_DATA.location;
       }
@@ -120,7 +121,10 @@ export default function Footer() {
   const currentLocation = getCurrentLocation();
 
   const isAutoMode = selectedLocationId === 'auto';
-  const activeLocations = getActiveLocations();
+  const activeLocations = useMemo(() =>
+    locations.filter(loc => loc.status === 'open'),
+    [locations]
+  );
 
   // Fetch live rating data from Google Places API
   const { rating, userRatingCount } = useGooglePlaceHours(
@@ -201,7 +205,7 @@ export default function Footer() {
                 href={
                   currentLocation?.google?.mapLink ||
                   COMPANY_DATA.location?.google?.mapLink ||
-                  LOCATIONS[0]?.google?.mapLink
+                  locations[0]?.google?.mapLink
                 }
                 target="_blank"
                 rel="noopener noreferrer"

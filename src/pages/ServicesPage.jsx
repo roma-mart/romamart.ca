@@ -3,12 +3,15 @@ import { Helmet } from 'react-helmet-async';
 import { ChevronRight } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
 import StandardizedItem from '../components/StandardizedItem';
-import { SERVICES } from '../data/services.jsx';
+import { useServices } from '../contexts/ServicesContext';
 import COMPANY_DATA from '../config/company_data';
 import StructuredData from '../components/StructuredData';
 import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 
 const ServicesPage = () => {
+  // Fetch services from API with fallback to static data
+  const { services } = useServices();
+
   const COLORS = {
     navy: 'var(--color-primary)',
     yellow: 'var(--color-accent)',
@@ -26,7 +29,7 @@ const ServicesPage = () => {
     'coming_soon': 2,
     'unavailable': 3
   };
-  const sortedServices = [...SERVICES].sort((a, b) => {
+  const sortedServices = [...services].sort((a, b) => {
     const availA = availabilityOrder[a.status] ?? 99;
     const availB = availabilityOrder[b.status] ?? 99;
     if (availA !== availB) return availA - availB;
@@ -43,6 +46,20 @@ const ServicesPage = () => {
 
       {/* Breadcrumb Schema */}
       <StructuredData type="BreadcrumbList" data={{ breadcrumbs: buildBreadcrumbArray('Services', 'https://romamart.ca/services') }} />
+
+      {/* Service List Schema */}
+      {services.length > 0 && (
+        <StructuredData
+          type="ServiceList"
+          data={{
+            services: services,
+            options: {
+              serviceUrl: 'https://romamart.ca/services',
+              providerUrl: 'https://romamart.ca'
+            }
+          }}
+        />
+      )}
 
       {/* Breadcrumb Navigation */}
       <nav aria-label="Breadcrumb" className="max-w-7xl mx-auto px-4 mb-8">

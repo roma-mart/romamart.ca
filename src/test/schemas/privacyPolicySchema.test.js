@@ -17,7 +17,7 @@ describe('buildPrivacyPolicySchema', () => {
       expect(schema).toMatchObject({
         '@context': 'https://schema.org',
         '@type': 'PrivacyPolicy',
-        name: 'Roma Mart Privacy Policy',
+        name: 'Roma Mart Convenience Privacy Policy',
         url: 'https://romamart.ca/privacy',
         inLanguage: 'en-CA',
         datePublished: '2025-07-28',
@@ -219,7 +219,7 @@ describe('buildPrivacyPolicySchema', () => {
 
       expect(schema).toBeDefined();
       expect(schema['@type']).toBe('PrivacyPolicy');
-      expect(schema.name).toBe('Roma Mart Privacy Policy');
+      expect(schema.name).toBe('Roma Mart Convenience Privacy Policy');
     });
 
     it('should handle null values in data object', () => {
@@ -228,7 +228,7 @@ describe('buildPrivacyPolicySchema', () => {
         description: null
       });
 
-      expect(schema.name).toBe('Roma Mart Privacy Policy');
+      expect(schema.name).toBe('Roma Mart Convenience Privacy Policy');
       expect(schema.description).toContain('Roma Mart Corp. values your privacy');
     });
 
@@ -238,7 +238,7 @@ describe('buildPrivacyPolicySchema', () => {
         url: undefined
       });
 
-      expect(schema.name).toBe('Roma Mart Privacy Policy');
+      expect(schema.name).toBe('Roma Mart Convenience Privacy Policy');
       expect(schema.url).toBe('https://romamart.ca/privacy');
     });
   });

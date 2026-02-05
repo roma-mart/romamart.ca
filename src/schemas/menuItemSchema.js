@@ -6,6 +6,7 @@
  */
 
 import { convertCentsToDollars, safeString } from '../utils/schemaHelpers.js';
+import COMPANY_DATA from '../config/company_data.js';
 
 const DIETARY_SCHEMA_MAP = {
   vegan: 'https://schema.org/VeganDiet',
@@ -131,7 +132,7 @@ export const buildMenuItemSchema = (menuItem, itemUrl, options = {}) => {
 
   const resolvedOptions = {
     priceInCents: options.priceInCents ?? inferPriceInCents(menuItem.sizes || []),
-    currency: options.currency || 'CAD'
+    currency: options.currency || COMPANY_DATA.defaults.currency
   };
 
   const name = safeString(menuItem.name);
@@ -156,6 +157,7 @@ export const buildMenuItemSchema = (menuItem, itemUrl, options = {}) => {
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'Product',
+    ...(menuItem.id ? { '@id': `${itemUrl}#${safeString(menuItem.id)}` } : {}),
     name,
     ...(description ? { description } : {}),
     ...(keywords.length ? { keywords } : {}),
@@ -164,7 +166,31 @@ export const buildMenuItemSchema = (menuItem, itemUrl, options = {}) => {
     ...(offers ? { offers } : {}),
     ...(image ? { image } : {}),
     ...(menuItem.id ? { sku: safeString(menuItem.id) } : {}),
-    ...(itemUrl ? { url: itemUrl } : {})
+    ...(itemUrl ? { url: itemUrl } : {}),
+    // Category for better product classification
+    ...(categories.length ? { category: safeString(categories[0]) } : { category: COMPANY_DATA.defaults.productCategory }),
+    brand: {
+      '@type': 'Brand',
+      name: COMPANY_DATA.dba
+    },
+    // Manufacturer (if provided in menuItem data, otherwise Roma Mart for house products)
+    ...(menuItem.manufacturer ? {
+      manufacturer: {
+        '@type': 'Organization',
+        name: safeString(menuItem.manufacturer)
+      }
+    } : {}),
+    // Link to merchant return policy (recommended by Google for products)
+    hasMerchantReturnPolicy: {
+      '@type': 'MerchantReturnPolicy',
+      '@id': `${COMPANY_DATA.baseUrl}${COMPANY_DATA.endpoints.returnPolicy}#policy`,
+      applicableCountry: COMPANY_DATA.defaults.country,
+      returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+      merchantReturnDays: 1,
+      returnMethod: 'https://schema.org/ReturnInStore',
+      returnFees: 'https://schema.org/FreeReturn',
+      itemCondition: 'https://schema.org/DamagedCondition' // Only faulty/damaged items
+    }
   };
 
   return schema;
