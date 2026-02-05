@@ -1,22 +1,156 @@
-name: Bug report
-description: Report a bug
-labels: [bug]
+name: Bug Report
+description: Report a bug or issue with Roma Mart 2.0
+title: "[Bug]: "
+labels: ["bug", "needs-triage"]
 body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🐛 Bug Report
+        Thanks for taking the time to report this issue!
+
   - type: textarea
     id: description
     attributes:
       label: Description
-      description: What happened?
+      description: A clear and concise description of the bug
+      placeholder: What happened?
     validations:
       required: true
+
   - type: textarea
     id: steps
     attributes:
-      label: Steps to reproduce
+      label: Steps to Reproduce
+      description: Steps to reproduce the behavior
+      placeholder: |
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error
     validations:
       required: true
-  - type: input
-    id: env
+
+  - type: textarea
+    id: expected
     attributes:
-      label: Environment
-      placeholder: Node, npm, OS
+      label: Expected Behavior
+      description: What did you expect to happen?
+      placeholder: Describe the expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened?
+      placeholder: Describe what actually happened
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: How severe is this issue?
+      options:
+        - Low (Minor inconvenience)
+        - Medium (Notable impact but workaround exists)
+        - High (Major impact, no workaround)
+        - Critical (Site broken or security issue)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected Area
+      description: Which part of the site is affected?
+      options:
+        - Homepage
+        - RoCafé Menu
+        - Services Page
+        - Locations Page
+        - Contact Form
+        - Navigation/Header
+        - Footer
+        - PWA/Offline Mode
+        - Accessibility
+        - Performance
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: env-browser
+    attributes:
+      label: Browser
+      description: Which browser(s) are you using?
+      placeholder: e.g., Chrome 120, Firefox 121, Safari 17
+    validations:
+      required: true
+
+  - type: input
+    id: env-os
+    attributes:
+      label: Operating System
+      description: Which OS are you using?
+      placeholder: e.g., Windows 11, macOS 14, iOS 17, Android 14
+    validations:
+      required: true
+
+  - type: input
+    id: env-device
+    attributes:
+      label: Device Type
+      description: What device are you using?
+      placeholder: e.g., Desktop, iPhone 14, Samsung Galaxy S23
+
+  - type: dropdown
+    id: theme
+    attributes:
+      label: Theme Mode
+      description: Which theme mode were you using?
+      options:
+        - Light mode
+        - Dark mode
+        - System default (auto)
+        - Don't know
+    validations:
+      required: true
+
+  - type: textarea
+    id: console-errors
+    attributes:
+      label: Console Errors
+      description: Any errors in the browser console? (F12 > Console tab)
+      placeholder: Paste console errors here
+      render: shell
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: Add screenshots to help explain the problem
+      placeholder: Drag and drop images here or paste image URLs
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other relevant information
+      placeholder: Add any other context about the problem here
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Before Submitting
+      description: Please confirm you've checked the following
+      options:
+        - label: I have searched existing issues to avoid duplicates
+          required: true
+        - label: This issue is reproducible
+          required: false
+        - label: I have included all relevant information
+          required: false

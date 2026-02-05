@@ -44,12 +44,15 @@ npm run dev
 
 ### Branching Strategy
 
+> **Full Details:** See [BRANCHING_STRATEGY.md](./.github/BRANCHING_STRATEGY.md) for comprehensive workflow documentation.
+
 | Branch Type | Naming | Purpose |
 |-------------|--------|---------|
 | `feature/*` | `feature/add-menu-filter` | New features |
 | `bugfix/*` | `bugfix/fix-navbar-scroll` | Bug fixes |
 | `docs/*` | `docs/update-readme` | Documentation |
 | `hotfix/*` | `hotfix/critical-fix` | Urgent production fixes |
+| `chore/*` | `chore/dependency-updates` | Maintenance, tooling |
 
 ### Creating a Branch
 

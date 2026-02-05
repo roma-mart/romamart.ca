@@ -1,0 +1,100 @@
+name: Maintenance / Chore
+description: Propose maintenance tasks, dependency updates, or tooling improvements
+title: "[Chore]: "
+labels: ["chore", "maintenance"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🔧 Maintenance / Chore Task
+        Help keep the project healthy and up-to-date!
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Task Type
+      description: What type of maintenance is this?
+      options:
+        - Dependency Updates
+        - Tooling Configuration
+        - CI/CD Improvements
+        - Documentation Structure
+        - Code Cleanup/Refactoring
+        - Build Configuration
+        - Repository Maintenance
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What maintenance task needs to be done?
+      placeholder: Describe the maintenance task
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+      description: Why is this maintenance needed?
+      placeholder: What problem does this solve or what does it improve?
+    validations:
+      required: true
+
+  - type: textarea
+    id: tasks
+    attributes:
+      label: Tasks Checklist
+      description: Break down the maintenance work
+      placeholder: |
+        - [ ] Task 1
+        - [ ] Task 2
+        - [ ] Task 3
+      value: |
+        - [ ]
+    validations:
+      required: false
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How urgent is this maintenance?
+      options:
+        - Low (Nice to have)
+        - Medium (Should do soon)
+        - High (Important for project health)
+        - Critical (Blocks development or security)
+    validations:
+      required: true
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies / Package Versions
+      description: If this involves dependencies, list them
+      placeholder: |
+        Current: package@1.0.0
+        Target: package@2.0.0
+      render: markdown
+
+  - type: checkboxes
+    id: breaking
+    attributes:
+      label: Breaking Changes
+      description: Does this maintenance introduce breaking changes?
+      options:
+        - label: This may introduce breaking changes
+          required: false
+        - label: Migration guide will be needed
+          required: false
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other relevant information
+      placeholder: Links, references, related PRs, etc.

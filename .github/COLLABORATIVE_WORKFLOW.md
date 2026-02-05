@@ -1,4 +1,6 @@
-# Collaborative Workflow Guide
+# Collaborative Workflow Guide (Quick Reference)
+
+> **Note:** This is a quick reference guide. For comprehensive branching strategy details, see [BRANCHING_STRATEGY.md](./BRANCHING_STRATEGY.md).
 
 ## Branch Strategy
 
