@@ -32,6 +32,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Circuit breaker protection for Google Places API
   - 1-hour IndexedDB caching for live hours/ratings
 
+- **100% API-Ready Components:**
+  - App.jsx ServicesSection now uses context provider (not static SERVICES_FEATURED)
+  - App.jsx Locations and ContactSection use context provider (not static helpers)
+  - Footer.jsx uses LocationsContext (not static getActiveLocations)
+  - Zero code changes needed when Services/Locations APIs go live
+
 - **Google-Compliant Amenities System:**
   - Migrated from features object to amenities array
   - Direct pass-through architecture (zero mapping layers)

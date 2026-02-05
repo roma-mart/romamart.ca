@@ -57,27 +57,6 @@
     </script>
 
 
-    <!-- Dynamically inject Google Tag Manager when VITE_GTM_ID is provided at build time -->
-    <script type="module">
-      const GTM_ID = import.meta.env.VITE_GTM_ID;
-      if (GTM_ID) {
-        // Initialize dataLayer and push gtm.start event
-        window.dataLayer = window.dataLayer || [];
-        window.dataLayer.push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
-
-        // Create GTM script element
-        const gtmScript = document.createElement('script');
-        gtmScript.async = true;
-        gtmScript.src = `https://www.googletagmanager.com/gtm.js?id=${GTM_ID}`;
-        document.head.appendChild(gtmScript);
-
-        // Also create noscript fallback iframe for no-JS environments
-        const noscript = document.createElement('noscript');
-        noscript.innerHTML = `<iframe src="https://www.googletagmanager.com/ns.html?id=${GTM_ID}" height="0" width="0" style="display:none;visibility:hidden"></iframe>`;
-        document.documentElement.insertBefore(noscript, document.documentElement.firstChild);
-      }
-    </script>
-
     <title>Roma Mart Convenience | Groceries, Coffee & More in Sarnia, ON</title>
   </head>
   <body>

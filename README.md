@@ -14,7 +14,6 @@ npm install
 npm run dev
 ```
 
-
 ## 📖 Documentation
 
 - [Getting Started](./docs/guides/deployment.md)
@@ -38,7 +37,7 @@ import { NAVIGATION_LINKS } from '../config/navigation';
 
 // Example: Render navigation
 {NAVIGATION_LINKS.filter(link => link.showIn.navbar).map(link => (
-	<a href={link.href}>{link.label}</a>
+<a href={link.href}>{link.label}</a>
 ))}
 
 // Example: Use company info
@@ -103,13 +102,3 @@ This project is licensed under the MIT License - see the [LICENSE](./LICENSE) fi
 - [Live Site](https://romamart.ca)
 - [Documentation](./docs/README.md)
 - [Issue Tracker](https://github.com/roma-mart/romamart.ca/issues)
-- 
-
-
-
-
-
-
-
-shaiz was here
-:)
