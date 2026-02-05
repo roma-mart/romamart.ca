@@ -71,7 +71,7 @@ jobs:
 
       - name: Build site
         env:
-          VITE_APP_DOMAIN: ${{ secrets.VITE_APP_DOMAIN }}
+          VITE_APP_DOMAIN: ${{ secrets.VITE_APP_DOMAIN || 'romamart.ca' }}
           VITE_WEB3FORMS_KEY: ${{ secrets.WEB3FORMS_KEY }}
           VITE_GTM_ID: ${{ secrets.GTM_ID }}
           VITE_GOOGLE_PLACES_API_KEY: ${{ secrets.VITE_GOOGLE_PLACES_API_KEY }}
@@ -101,7 +101,7 @@ jobs:
         uses: Cyb3r-Jak3/html5validator-action@v7.2.0
         with:
           root: dist/
-          continue: true
+        continue-on-error: true
 
   publish:
     runs-on: ubuntu-latest
@@ -128,7 +128,7 @@ jobs:
 
       - name: Build site
         env:
-          VITE_APP_DOMAIN: ${{ secrets.VITE_APP_DOMAIN }}
+          VITE_APP_DOMAIN: ${{ secrets.VITE_APP_DOMAIN || 'romamart.ca' }}
           VITE_WEB3FORMS_KEY: ${{ secrets.WEB3FORMS_KEY }}
           VITE_GTM_ID: ${{ secrets.GTM_ID }}
           VITE_GOOGLE_PLACES_API_KEY: ${{ secrets.VITE_GOOGLE_PLACES_API_KEY }}
