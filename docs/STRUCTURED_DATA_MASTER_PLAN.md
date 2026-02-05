@@ -591,30 +591,61 @@ const id = menuItem.id ? safeString(menuItem.id) : '';
 - Services and Locations protected from empty ID issues
 - All 3 ItemLists properly validated
 
-### Step 2: Full Validation Testing 🔄 NEXT
+### Step 2: Additional Schema Validation Fixes ✅ FIXED
+
+**Page-by-Page Validation Results:**
+
+#### About Page
+**What We Expected:** BreadcrumbList, Organization schema
+**What Validator Detected:** BreadcrumbList ✅, Organization ❌ (naicsCode property not recognized)
+
+**Issue:** Organization schema included unsupported `naicsCode: '4541'` property
+**Fix:** Removed line 250 from `src/components/StructuredData.jsx`
+**Reasoning:** While NAICS codes are useful for business classification, Schema.org doesn't support them
+
+#### Privacy Page
+**What We Expected:** BreadcrumbList, PrivacyPolicy schema
+**What Validator Detected:** BreadcrumbList ✅, PrivacyPolicy ❌ (@type not recognized), WebSite ✅
+
+**Issue:** PrivacyPolicy is not a valid Schema.org type (404 on schema.org/PrivacyPolicy)
+**Fix:** Removed PrivacyPolicy schema from `src/pages/PrivacyPage.jsx` and case from `src/components/StructuredData.jsx`
+**Reasoning:**
+- Schema.org doesn't have a PrivacyPolicy type
+- Valid WebPage subtypes don't include policy pages
+- BreadcrumbList already provides navigation context
+- Invalid schema provides no SEO benefit
+
+**Valid Schema.org WebPage Subtypes:** AboutPage, CheckoutPage, CollectionPage, ContactPage, FAQPage, ItemPage, MedicalWebPage, ProfilePage, QAPage, RealEstateListing, SearchResultsPage
+
+**Note:** MerchantReturnPolicy on return-policy page is VALID ✅ and remains unchanged
+
+#### Terms & Cookies Pages
+**Status:** Already correct ✅ - Only BreadcrumbList schemas (no invalid types)
+
+**Files Modified:**
+1. `src/components/StructuredData.jsx` - Removed naicsCode line, removed PrivacyPolicy case and import
+2. `src/pages/PrivacyPage.jsx` - Removed PrivacyPolicy StructuredData component
+
+### Quality Assurance (Step 2)
+
+**Build & Lint:**
+- ✅ Build: Success (10.42s)
+- ✅ ESLint: 0 errors
+- ✅ Prerender: All 11 routes generated successfully
+
+**Expected Results After Deployment:**
+- About page Organization schema will validate cleanly
+- Privacy page will show only BreadcrumbList (valid)
+- No invalid Schema.org types remaining
+
+### Step 3: Final Deployment & Verification 🔄 NEXT
 
 **Pending Tasks:**
-1. ⏳ Deploy changes to GitHub Pages
-2. ⏳ Run Schema.org validator on all pages:
-   - Homepage (/)
-   - /services
-   - /rocafe
-   - /locations
-   - /about
-   - Policy pages (privacy, terms, return-policy, cookies)
-   - /contact
-   - /accessibility
-3. ⏳ Document any remaining errors/warnings
-4. ⏳ Fix additional issues if found
-5. ⏳ Re-validate until clean
-
-### Step 3: Final Verification 📋 NOT STARTED
-
-**Pending:**
-- Confirm all errors from original validator report are resolved
-- Verify commit 186a55b fixes (timeZone, availableAtOrFrom, etc.) show in validator
-- Document final compliance scores
-- Mark Phase 5 complete
+1. ⏳ Commit all schema validation fixes
+2. ⏳ Deploy changes to GitHub Pages
+3. ⏳ Run Schema.org validator on all pages post-deployment
+4. ⏳ Document final compliance scores
+5. ⏳ Mark Phase 5 complete
 
 ### Technical Notes
 

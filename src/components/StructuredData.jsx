@@ -7,7 +7,6 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import COMPANY_DATA from '../config/company_data';
 import { buildMenuItemSchema } from '../schemas/menuItemSchema';
-import { buildPrivacyPolicySchema } from '../schemas/privacyPolicySchema';
 import { buildReturnPolicySchema } from '../schemas/returnPolicySchema';
 import { buildBreadcrumbSchema } from '../schemas/breadcrumbSchema';
 import { buildWebApplicationSchema } from '../schemas/webApplicationSchema';
@@ -262,9 +261,6 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
             '@id': `${COMPANY_DATA.baseUrl}/#business`
           }
         };
-
-      case 'PrivacyPolicy':
-        return buildPrivacyPolicySchema(data);
 
       case 'ReturnPolicy':
         return buildReturnPolicySchema(data);
