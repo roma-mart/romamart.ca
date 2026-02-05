@@ -824,12 +824,23 @@ COMPANY_DATA = {
 **Critical Distinction**: Not all data belongs in COMPANY_DATA. Smart architecture recognizes the difference:
 
 **Location-Specific Data** (varies per location):
-- **Amenities**: WiFi, parking, wheelchair accessibility, restrooms, seating, outdoor seating, drive-through, delivery
-- **Source**: `location.features` object in locations.js
-- **Mapping**: Centralized in `src/config/amenities.js` (AMENITY_FEATURE_MAP)
-- **Usage**: `buildAmenityFeatures(location.features)` - fully dynamic, no hardcoded feature checks
-- **Schema Impact**: Each location can have different amenities in LocationSchema and LocalBusiness schema
-- **Extensibility**: Add new features to locations.js + amenities.js → automatically included in all schemas
+- **Amenities**: Stored directly in location data with Google-recognized names
+- **Source**: `location.amenities` array in locations.js
+- **Format**: Array of `{ name, value }` objects matching LocationFeatureSpecification
+- **Names**: Google Business Profile compliant (e.g., "Free Wi-Fi", "Wheelchair-accessible entrance")
+- **Schema Impact**: Each location can have different amenities
+- **API-Ready**: When locations API implemented, returns this exact structure → zero code changes
+
+**Example Structure** (locations.js):
+```javascript
+amenities: [
+  { name: 'Free Wi-Fi', value: true },
+  { name: 'Wheelchair-accessible entrance', value: true },
+  { name: 'Wheelchair-accessible parking', value: true },
+  { name: 'Restroom', value: true },
+  { name: 'Parking', value: true }
+]
+```
 
 **Business-Wide Data** (uniform across all locations):
 - **Payment Methods**: Cash, cards, Bitcoin, etc.
@@ -839,52 +850,26 @@ COMPANY_DATA = {
 - **Usage**: `COMPANY_DATA.paymentMethods`, `COMPANY_DATA.returnPolicy`, `COMPANY_DATA.defaults.ageRestriction`
 - **Schema Impact**: All schemas reference the same business-wide values
 
-**Implementation - Fully Dynamic Amenities (NO hardcoded feature names)**:
+**Implementation - Direct Pass-Through (NO mapping layer)**:
 
-1. **Centralized Mapping** (`src/config/amenities.js`):
+Schemas directly map amenities array to schema.org structure:
 ```javascript
-export const AMENITY_FEATURE_MAP = {
-  wifi: 'Free WiFi',
-  wheelchairAccessible: 'Wheelchair Accessible',
-  parking: 'Parking Available',
-  restroom: 'Public Restroom',
-  seating: 'Indoor Seating',
-  outdoorSeating: 'Outdoor Seating',
-  driveThrough: 'Drive-Through',
-  deliveryAvailable: 'Delivery Available'
-  // Add more as needed - all schemas automatically adapt
-};
-
-export function buildAmenityFeatures(features) {
-  // Dynamically iterates ALL features, maps to schema names, builds LocationFeatureSpecification
-  return Object.entries(features)
-    .filter(([key, value]) => AMENITY_FEATURE_MAP[key] && value === true)
-    .map(([key]) => ({
-      '@type': 'LocationFeatureSpecification',
-      name: AMENITY_FEATURE_MAP[key],
-      value: true
-    }));
-}
-```
-
-2. **Usage in Schemas** (StructuredData.jsx, locationSchema.js, prerender.js):
-```javascript
-import { buildAmenityFeatures } from '../config/amenities';
-
-// LocalBusiness schema
-amenityFeature: buildAmenityFeatures(COMPANY_DATA.location.features)
-
-// Location schema
-amenityFeature: buildAmenityFeatures(location.features)
+// StructuredData.jsx, locationSchema.js, prerender.js
+amenityFeature: location.amenities.map(amenity => ({
+  '@type': 'LocationFeatureSpecification',
+  name: amenity.name,
+  value: amenity.value
+}))
 ```
 
 **Benefits of This Architecture**:
-- **100% Dynamic**: No hardcoded feature names anywhere in schemas
-- **Single Source of Truth**: All amenity names defined once in amenities.js
-- **Auto-Extensible**: Add new feature to locations.js + mapping → all schemas include it automatically
-- **Multi-Location Ready**: Each location can have different features
-- **Easy Maintenance**: Change amenity names in one place → updates everywhere
-- **Consistent Naming**: Impossible to have mismatched amenity names across schemas
+- **Amenities Live Where They Belong**: Part of location data, not separate config
+- **Google-Compliant Names**: Uses proper Google Business Profile attributes
+- **Zero Mapping Layer**: Amenities pass through directly from data to schema
+- **API-Ready**: When locations API returns amenities → works immediately
+- **Fully Extensible**: Add any Google-recognized amenity to location.amenities
+- **Multi-Location Support**: Each location has own amenities array
+- **Simple Architecture**: Data structure matches schema structure exactly
 
 This architecture enables:
 - Multi-location support with location-specific amenities
