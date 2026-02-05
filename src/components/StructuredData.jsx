@@ -247,7 +247,6 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
           },
           sameAs: Object.values(COMPANY_DATA.socialLinks || {}),
           taxID: COMPANY_DATA.gstNumber || undefined,
-          naicsCode: COMPANY_DATA.naicsCode,
           areaServed: {
             '@type': 'City',
             name: COMPANY_DATA.address?.city || COMPANY_DATA.location.address.city
