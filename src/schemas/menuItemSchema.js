@@ -164,7 +164,18 @@ export const buildMenuItemSchema = (menuItem, itemUrl, options = {}) => {
     ...(offers ? { offers } : {}),
     ...(image ? { image } : {}),
     ...(menuItem.id ? { sku: safeString(menuItem.id) } : {}),
-    ...(itemUrl ? { url: itemUrl } : {})
+    ...(itemUrl ? { url: itemUrl } : {}),
+    // Link to merchant return policy (recommended by Google for products)
+    hasMerchantReturnPolicy: {
+      '@type': 'MerchantReturnPolicy',
+      '@id': 'https://romamart.ca/return-policy#policy',
+      applicableCountry: 'CA',
+      returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+      merchantReturnDays: 1,
+      returnMethod: 'https://schema.org/ReturnInStore',
+      returnFees: 'https://schema.org/FreeReturn',
+      itemCondition: 'https://schema.org/DamagedCondition' // Only faulty/damaged items
+    }
   };
 
   return schema;
