@@ -15,33 +15,36 @@ describe('buildReturnPolicySchema', () => {
 
       expect(schema).toMatchObject({
         '@context': 'https://schema.org',
-        '@type': 'ReturnPolicy',
-        name: 'Roma Mart Returns & Refund Policy',
+        '@type': 'MerchantReturnPolicy',
+        name: 'Roma Mart Convenience Returns & Refund Policy',
         url: 'https://romamart.ca/return-policy',
-        itemCondition: 'https://schema.org/Faulty',
+        itemCondition: 'https://schema.org/DamagedCondition',
         returnMethod: 'https://schema.org/ReturnInStore',
-        returnFees: 'Free',
-        returnPeriodDays: 1
+        returnFees: 'https://schema.org/FreeReturn',
+        merchantReturnDays: 1
       });
 
       expect(schema.description).toContain('All Roma Mart Corp. sales are final');
-      expect(schema.acceptanceConditions).toContain('24 hours of purchase');
-      expect(schema.nonAcceptedReturns).toContain('Food and beverages');
+      // acceptanceConditions and nonAcceptedReturns are now in additionalProperty array
+      const acceptanceProp = schema.additionalProperty.find(p => p.name === 'Acceptance Conditions');
+      const nonAcceptedProp = schema.additionalProperty.find(p => p.name === 'Non-Accepted Returns');
+      expect(acceptanceProp.value).toContain('24 hours of purchase');
+      expect(nonAcceptedProp.value).toContain('Food and beverages');
     });
 
     it('should have correct price specifications for fees', () => {
       const schema = buildReturnPolicySchema();
 
       expect(schema.returnShippingFeesAmount).toEqual({
-        '@type': 'PriceSpecification',
-        priceCurrency: 'CAD',
-        price: '0'
+        '@type': 'MonetaryAmount',
+        currency: 'CAD',
+        value: '0'
       });
 
       expect(schema.restockingFee).toEqual({
-        '@type': 'PriceSpecification',
-        priceCurrency: 'CAD',
-        price: '0'
+        '@type': 'MonetaryAmount',
+        currency: 'CAD',
+        value: '0'
       });
     });
   });
@@ -78,7 +81,8 @@ describe('buildReturnPolicySchema', () => {
         acceptanceConditions: customConditions
       });
 
-      expect(schema.acceptanceConditions).toBe(customConditions);
+      const acceptanceProp = schema.additionalProperty.find(p => p.name === 'Acceptance Conditions');
+      expect(acceptanceProp.value).toBe(customConditions);
     });
 
     it('should override nonAcceptedReturns when provided', () => {
@@ -87,7 +91,8 @@ describe('buildReturnPolicySchema', () => {
         nonAcceptedReturns: customNonAccepted
       });
 
-      expect(schema.nonAcceptedReturns).toBe(customNonAccepted);
+      const nonAcceptedProp = schema.additionalProperty.find(p => p.name === 'Non-Accepted Returns');
+      expect(nonAcceptedProp.value).toBe(customNonAccepted);
     });
   });
 
@@ -95,14 +100,15 @@ describe('buildReturnPolicySchema', () => {
     it('should have 1-day return period by default', () => {
       const schema = buildReturnPolicySchema();
 
-      expect(schema.returnPeriodDays).toBe(1);
+      expect(schema.merchantReturnDays).toBe(1);
     });
 
     it('should represent 24-hour policy correctly', () => {
       const schema = buildReturnPolicySchema();
 
-      expect(schema.returnPeriodDays).toBe(1);
-      expect(schema.acceptanceConditions).toContain('24 hours');
+      expect(schema.merchantReturnDays).toBe(1);
+      const acceptanceProp = schema.additionalProperty.find(p => p.name === 'Acceptance Conditions');
+      expect(acceptanceProp.value).toContain('24 hours');
     });
   });
 
@@ -116,13 +122,13 @@ describe('buildReturnPolicySchema', () => {
     it('should specify faulty item condition only', () => {
       const schema = buildReturnPolicySchema();
 
-      expect(schema.itemCondition).toBe('https://schema.org/Faulty');
+      expect(schema.itemCondition).toBe('https://schema.org/DamagedCondition');
     });
 
     it('should specify free return fees', () => {
       const schema = buildReturnPolicySchema();
 
-      expect(schema.returnFees).toBe('Free');
+      expect(schema.returnFees).toBe('https://schema.org/FreeReturn');
     });
   });
 
@@ -150,8 +156,9 @@ describe('buildReturnPolicySchema', () => {
         acceptanceConditions: '<a href="javascript:void(0)">Click</a> Valid conditions'
       });
 
-      expect(schema.acceptanceConditions).not.toContain('javascript:');
-      expect(schema.acceptanceConditions).toContain('Valid conditions');
+      const acceptanceProp = schema.additionalProperty.find(p => p.name === 'Acceptance Conditions');
+      expect(acceptanceProp.value).not.toContain('javascript:');
+      expect(acceptanceProp.value).toContain('Valid conditions');
     });
 
     it('should sanitize HTML in nonAcceptedReturns', () => {
@@ -159,8 +166,9 @@ describe('buildReturnPolicySchema', () => {
         nonAcceptedReturns: '<b onmouseover=alert(1)>Items</b> list'
       });
 
-      expect(schema.nonAcceptedReturns).not.toContain('onmouseover');
-      expect(schema.nonAcceptedReturns).toContain('list');
+      const nonAcceptedProp = schema.additionalProperty.find(p => p.name === 'Non-Accepted Returns');
+      expect(nonAcceptedProp.value).not.toContain('onmouseover');
+      expect(nonAcceptedProp.value).toContain('list');
     });
   });
 
@@ -184,7 +192,7 @@ describe('buildReturnPolicySchema', () => {
     it('should have correct @type', () => {
       const schema = buildReturnPolicySchema();
 
-      expect(schema['@type']).toBe('ReturnPolicy');
+      expect(schema['@type']).toBe('MerchantReturnPolicy');
     });
   });
 
@@ -194,7 +202,7 @@ describe('buildReturnPolicySchema', () => {
 
       expect(schema).toBeDefined();
       expect(schema['@type']).toBe('ReturnPolicy');
-      expect(schema.name).toBe('Roma Mart Returns & Refund Policy');
+      expect(schema.name).toBe('Roma Mart Convenience Returns & Refund Policy');
     });
 
     it('should handle null values in data object', () => {
@@ -203,7 +211,7 @@ describe('buildReturnPolicySchema', () => {
         description: null
       });
 
-      expect(schema.name).toBe('Roma Mart Returns & Refund Policy');
+      expect(schema.name).toBe('Roma Mart Convenience Returns & Refund Policy');
       expect(schema.description).toContain('All Roma Mart Corp. sales are final');
     });
 
@@ -213,7 +221,7 @@ describe('buildReturnPolicySchema', () => {
         url: undefined
       });
 
-      expect(schema.name).toBe('Roma Mart Returns & Refund Policy');
+      expect(schema.name).toBe('Roma Mart Convenience Returns & Refund Policy');
       expect(schema.url).toBe('https://romamart.ca/return-policy');
     });
   });
