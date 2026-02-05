@@ -28,9 +28,10 @@ import { ROCAFE_FEATURED } from './data/rocafe-menu';
 import { SERVICES_FEATURED } from './data/services.jsx';
 import Phone from 'lucide-react/dist/esm/icons/phone.js';
 import Clock from 'lucide-react/dist/esm/icons/clock.js';
-import { useExcelMenu } from './hooks/useExcelMenu';
+import { useMenu } from './contexts/MenuContext';
 import { transformExcelToMenuItem } from './utils/excelMenuTransform';
 import HCaptchaWidget from './components/HCaptchaWidget';
+import StructuredData from './components/StructuredData';
 // import { getHCaptchaTheme } from './design/hcaptchaTheme'; // Uncomment if upgrading to Pro/Enterprise for custom themes
 import { useColorScheme } from './hooks/useColorScheme';
 import { useAutoLocation } from './hooks/useAutoLocation';
@@ -49,6 +50,7 @@ const AccessibilityPage = lazy(() => import('./components/AccessibilityPage'));
 const PrivacyPage = lazy(() => import('./pages/PrivacyPage'));
 const TermsPage = lazy(() => import('./pages/TermsPage'));
 const CookiesPage = lazy(() => import('./pages/CookiesPage'));
+const ReturnPolicyPage = lazy(() => import('./pages/ReturnPolicyPage'));
 const ServicesPage = lazy(() => import('./pages/ServicesPage'));
 const RoCafePage = lazy(() => import('./pages/RoCafePage'));
 const LocationsPage = lazy(() => import('./pages/LocationsPage'));
@@ -156,9 +158,7 @@ const ServicesSection = () => {
   );
 };
 
-const RoCafeSection = () => {
-  const { menuItems, loading } = useExcelMenu();
-  
+const RoCafeSection = ({ menuItems, loading }) => {
   // Filter for featured items and transform them
   const featuredItems = useMemo(() => {
     if (!menuItems || menuItems.length === 0) {
@@ -481,7 +481,7 @@ const ContactSection = () => {
                     showStatus={true}
                     compact={true}
                     showIcon={false}
-                    showRefresh={true}
+                    showRefreshOnError={true}
                   />
                 </div>
               </div>
@@ -597,12 +597,24 @@ function App() {
   useServiceWorker();
   const { isVisible } = usePageVisibility();
   const { batteryLevel, isCharging } = useBatteryStatus();
+  
+  // Fetch menu data from API for homepage featured schemas + RoCafe section
+  // Menu is now provided via MenuProvider context to avoid duplicate API calls
+  const { menuItems, loading } = useMenu();
+  
+  // Only include featured items for homepage schemas (limited selection)
+  const featuredSchemaItems = useMemo(() => {
+    return menuItems.filter(item => item.featured);
+  }, [menuItems]);
+  
+  // Prices in API are always in cents
+  const schemaPriceInCents = true;
   batteryLevel; // avoid unused variable warning
   isCharging; // avoid unused variable warning
   // comment out unused variable
   // const shouldReduceMotion = useMemo(() => { const lowBattery = batteryLevel !== null && batteryLevel < 0.2 && !isCharging; const prefersReduced = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; return lowBattery || prefersReduced; }, [batteryLevel, isCharging]);
   useEffect(() => { if (!isVisible && import.meta.env.DEV) { console.warn('[Performance] Tab hidden - pausing heavy operations'); } }, [isVisible]);
-  const getPage = useCallback(() => { if (pathname.includes('/services')) return 'services'; if (pathname.includes('/rocafe')) return 'rocafe'; if (pathname.includes('/locations')) return 'locations'; if (pathname.includes('/contact')) return 'contact'; if (pathname.includes('/about')) return 'about'; if (pathname.includes('/accessibility')) return 'accessibility'; if (pathname.includes('/privacy')) return 'privacy'; if (pathname.includes('/terms')) return 'terms'; if (pathname.includes('/cookies')) return 'cookies'; return 'home'; }, [pathname]);
+  const getPage = useCallback(() => { if (pathname.includes('/services')) return 'services'; if (pathname.includes('/rocafe')) return 'rocafe'; if (pathname.includes('/locations')) return 'locations'; if (pathname.includes('/contact')) return 'contact'; if (pathname.includes('/about')) return 'about'; if (pathname.includes('/accessibility')) return 'accessibility'; if (pathname.includes('/privacy')) return 'privacy'; if (pathname.includes('/terms')) return 'terms'; if (pathname.includes('/cookies')) return 'cookies'; if (pathname.includes('/return-policy')) return 'return-policy'; return 'home'; }, [pathname]);
   const currentPage = getPage();
   const handleTrackOrderClick = useCallback((location = 'hero_section') => { try { if (typeof window.trackOrderClick === 'function') { window.trackOrderClick(location); } } catch (e) {
     console.warn('trackOrderClick failed:', e);
@@ -611,8 +623,36 @@ function App() {
   return (
     <LocationProvider>
       <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--color-bg)' }}>
+                {/* PWA WebApplication Schema (Homepage Only) */}
+                {currentPage === 'home' && (
+                  <StructuredData
+                    type="WebApplication"
+                    data={{
+                      ...COMPANY_DATA.pwa?.webApplication,
+                      name: COMPANY_DATA.pwa?.webApplication?.name || COMPANY_DATA.dba || 'Roma Mart Convenience',
+                      url: COMPANY_DATA.pwa?.webApplication?.url || 'https://romamart.ca',
+                      author: {
+                        name: COMPANY_DATA.legalName || 'Roma Mart Corp.',
+                        url: 'https://romamart.ca'
+                      }
+                    }}
+                  />
+                )}
+        {/* Homepage Product Schemas (Featured Items Only - Primary Source for Google) */}
+        {currentPage === 'home' && featuredSchemaItems.length > 0 && (
+          <StructuredData
+            type="ProductList"
+            data={{
+              products: featuredSchemaItems.map(item => ({
+                menuItem: item,
+                itemUrl: 'https://romamart.ca/rocafe',
+                priceInCents: schemaPriceInCents
+              }))
+            }}
+          />
+        )}
         <ErrorBoundary>
-          <Navbar />
+          <Navbar currentPage={currentPage} />
         </ErrorBoundary>
         <main className="flex-1">
           {currentPage !== 'home' ? (
@@ -645,6 +685,9 @@ function App() {
                 {currentPage === 'cookies' && (
                   <ErrorBoundary><CookiesPage /></ErrorBoundary>
                 )}
+                {currentPage === 'return-policy' && (
+                  <ErrorBoundary><ReturnPolicyPage /></ErrorBoundary>
+                )}
               </div>
             </Suspense>
           ) : (
@@ -653,7 +696,7 @@ function App() {
               <Hero onTrackOrder={handleTrackOrderClick} />
               <div id="main-content">
                 <ErrorBoundary><ServicesSection /></ErrorBoundary>
-                <ErrorBoundary><RoCafeSection /></ErrorBoundary>
+                <ErrorBoundary><RoCafeSection menuItems={menuItems} loading={loading} /></ErrorBoundary>
                 <ErrorBoundary><Locations /></ErrorBoundary>
                 <ErrorBoundary><ContactSection /></ErrorBoundary>
               </div>

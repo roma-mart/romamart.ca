@@ -5,6 +5,8 @@ import ShareButton from '../components/ShareButton';
 import StandardizedItem from '../components/StandardizedItem';
 import { SERVICES } from '../data/services.jsx';
 import COMPANY_DATA from '../config/company_data';
+import StructuredData from '../components/StructuredData';
+import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 
 const ServicesPage = () => {
   const COLORS = {
@@ -38,6 +40,9 @@ const ServicesPage = () => {
         <meta name="description" content="Roma Mart offers ATM, Bitcoin ATM, printing, package services, halal meat, money transfer, gift cards, perfumes, tobacco products, and more in Sarnia, Ontario." />
         <link rel="canonical" href="https://romamart.ca/services" />
       </Helmet>
+
+      {/* Breadcrumb Schema */}
+      <StructuredData type="BreadcrumbList" data={{ breadcrumbs: buildBreadcrumbArray('Services', 'https://romamart.ca/services') }} />
 
       {/* Breadcrumb Navigation */}
       <nav aria-label="Breadcrumb" className="max-w-7xl mx-auto px-4 mb-8">

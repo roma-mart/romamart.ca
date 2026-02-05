@@ -183,7 +183,7 @@ export const LOCATIONS = [
     metadata: {
       openedDate: '2025-11-28',              // Store opening date YYYY-MM-DD
       squareFootage: 2000,
-      employeeCount: 3,
+      employeeCount: 5,
       isHeadquarters: true,                  // Official business address
       acceptsCrypto: true,
       languages: ['English', 'Hindi', 'Urdu'] 

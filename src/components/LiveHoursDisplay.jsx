@@ -1,8 +1,15 @@
 /**
  * LiveHoursDisplay Component
  * 
- * Displays live opening hours fetched from Google Places API.
- * Falls back to static hours if API fails or is loading.
+ * Displays live opening hours fetched from Google Places API with circuit breaker protection.
+ * Falls back silently to static hours if API fails. Errors only displayed on manual refresh.
+ * 
+ * Features:
+ * - Circuit breaker pattern for API quota protection
+ * - Silent fallback to static hours on initial error
+ * - Manual refresh with error visibility
+ * - 1-hour client-side caching
+ * - Grouped day display (e.g., Mon-Fri)
  * 
  * @module components/LiveHoursDisplay
  */
@@ -59,10 +66,10 @@ const formatExceptionDate = (value) => {
  * @param {boolean} props.showStatus - Show open/closed status badge
  * @param {boolean} props.compact - Compact display mode
  * @param {boolean} props.showIcon - Show clock icon
- * @param {boolean} props.showRefresh - Show refresh button when live hours/error are available
+ * @param {boolean} props.showRefreshOnError - Show refresh button when API error occurs (allows manual retry)
  * @returns {JSX.Element}
  */
-function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact = false, showIcon = true, showRefresh = true }) {
+function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact = false, showIcon = true, showRefreshOnError = true }) {
   const { hours, isLoading, error, refetch, isOpenNow } = useGooglePlaceHours(placeId);
 
   const iconColor = useMemo(() => ({ color: 'var(--color-icon)' }), []);
@@ -133,15 +140,33 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
   }, [exceptionItems]);
 
   const renderHoursContent = useCallback(() => {
-    if (error) {
+    // If there's an error but we have fallback hours, show fallback silently (no error alert)
+    // Error will only show after user explicitly refreshes and it fails again
+    if (error && fallbackGrouped.length === 0) {
       return (
         <div className="space-y-2">
-          <div className="flex items-center gap-2" style={{ color: 'var(--color-text-muted)' }}>
+          <div className="flex items-center gap-2" style={{ color: 'var(--color-error)' }}>
             <AlertCircle size={16} />
             <span className="text-sm">Unable to load live hours</span>
           </div>
-          {fallbackGrouped.length > 0
-            ? renderGroupedLines(fallbackGrouped)
+          {import.meta.env.DEV && error && (
+            <p className="text-xs font-mono" style={{ color: 'var(--color-text-muted)' }}>
+              {typeof error === 'string' ? error : 'API error'}
+            </p>
+          )}
+          {renderExceptions()}
+        </div>
+      );
+    }
+
+    // Show fallback hours (with or without error - error doesn't get priority display)
+    if (error) {
+      // Error exists but we have fallback - display fallback without the error alert
+      const grouped = displayHours.grouped || [];
+      return (
+        <div className="space-y-1">
+          {grouped.length > 0
+            ? renderGroupedLines(grouped)
             : (
               <p className="font-inter" style={{ color: 'var(--color-text-muted)' }}>Hours not available</p>
             )}
@@ -237,7 +262,7 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
     );
   }, [error, isLoading, displayHours, showStatus, isOpenNow, fallbackGrouped, renderExceptions, renderGroupedLines]);
 
-  const refreshButton = showRefresh && (hours || error) ? (
+  const refreshButton = showRefreshOnError && error ? (
     <button
       type="button"
       onClick={() => refetch({ force: true })}
@@ -279,7 +304,9 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
 }
 
 LiveHoursDisplay.propTypes = {
+  /** Google Place ID for the location */
   placeId: PropTypes.string.isRequired,
+  /** Fallback hours to display if API fails (shown silently) */
   fallbackHours: PropTypes.shape({
     display: PropTypes.string,
     daily: PropTypes.oneOfType([
@@ -289,10 +316,14 @@ LiveHoursDisplay.propTypes = {
     dayMap: PropTypes.array,
     exceptions: PropTypes.array
   }),
+  /** Show "Live from Google" status badge */
   showStatus: PropTypes.bool,
+  /** Use compact layout for smaller displays */
   compact: PropTypes.bool,
+  /** Show clock icon in header */
   showIcon: PropTypes.bool,
-  showRefresh: PropTypes.bool
+  /** Show refresh button when API error occurs (allows manual retry) */
+  showRefreshOnError: PropTypes.bool
 };
 
 export default LiveHoursDisplay;

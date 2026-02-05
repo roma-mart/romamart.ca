@@ -10,12 +10,14 @@ import { useLocationAware } from '../hooks/useLocationContext';
 import { ROCAFE_FULL_MENU, MENU_CATEGORIES, ALLERGEN_WARNING } from '../data/rocafe-menu';
 import COMPANY_DATA from '../config/company_data';
 import MenuExcelLoader from '../components/MenuExcelHolder';
-import { useExcelMenu } from '../hooks/useExcelMenu';
+import { useMenu } from '../contexts/MenuContext';
 import { groupExcelItemsByCategory, mergeCategoriesWithFallback } from '../utils/excelMenuTransform';
+import StructuredData from '../components/StructuredData';
+import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 
 const RoCafePage = () => {
 
-  const { menuItems } = useExcelMenu();
+  const { menuItems } = useMenu();
   
   // Note: menuItems will be empty array during loading or on error
   // The menuCategories useMemo will handle fallback to static menu
@@ -39,6 +41,12 @@ const RoCafePage = () => {
     return groupExcelItemsByCategory(menuItems);
   }, [menuItems]);
 
+  // No fallback for schemas - API-only (ensures accuracy)
+  const schemaMenuItems = menuItems;
+  
+  // API always returns prices in cents
+  const schemaPriceInCents = true;
+
 
   // create memoized handlers map for categories
   const categoryHandlers = useMemo(() => {
@@ -51,11 +59,27 @@ const RoCafePage = () => {
 
   return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>
+      {/* Full menu Product schemas (API-only, no fallback) */}
+      {schemaMenuItems.length > 0 && (
+        <StructuredData
+          type="ProductList"
+          data={{
+            products: schemaMenuItems.map(item => ({
+              menuItem: item,
+              itemUrl: 'https://romamart.ca/rocafe',
+              priceInCents: schemaPriceInCents
+            }))
+          }}
+        />
+      )}
       <Helmet>
         <title>RoCafé Menu | Roma Mart Convenience</title>
         <meta name="description" content="Explore the RoCafé menu featuring hot coffee, iced coffee, tea, fresh juice, smoothies, frappés, specialty drinks, food, and seasonal items." />
         <link rel="canonical" href="https://romamart.ca/rocafe" />
       </Helmet>
+
+      {/* Breadcrumb Schema */}
+      <StructuredData type="BreadcrumbList" data={{ breadcrumbs: buildBreadcrumbArray('RoCafé', 'https://romamart.ca/rocafe') }} />
 
       {/* Breadcrumb Navigation */}
       <nav aria-label="Breadcrumb" className="max-w-7xl mx-auto px-4 mb-8">
@@ -116,49 +140,6 @@ const RoCafePage = () => {
         </div>
       </section>
 
-      {/* Allergen Warning Section */}
-      <section className="max-w-5xl mx-auto px-4 mb-12">
-        <div
-          className="p-6 rounded-2xl border-4"
-          style={{
-            backgroundColor: 'var(--color-warning-bg)',
-            borderColor: 'var(--color-warning-border)'
-          }}
-        >
-          <div className="flex items-start gap-4">
-            <AlertTriangle size={32} style={{ color: 'var(--color-warning)', flexShrink: 0 }} />
-            <div>
-              <h2 className="text-2xl var(--font-heading) font-bold mb-2" style={{ color: 'var(--color-warning)' }}>
-                {ALLERGEN_WARNING.title}
-              </h2>
-              <p className="font-inter text-sm mb-4" style={{ color: 'var(--color-warning)' }}>
-                {ALLERGEN_WARNING.subtitle}
-              </p>
-              <div className="flex flex-wrap gap-2 mb-4">
-                {ALLERGEN_WARNING.allergens.map((allergen, idx) => (
-                  <div 
-                    key={idx}
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg"
-                    style={{ backgroundColor: 'var(--color-warning)', color: 'var(--color-warning-bg)' }}
-                  >
-                    <span className="text-lg">{allergen.icon}</span>
-                    <span className="text-xs font-inter font-bold" style={{ color: 'var(--color-warning-bg)' }}>
-                      {allergen.name}
-                    </span>
-                  </div>
-                ))}
-              </div>
-              <p className="font-inter text-xs font-bold mb-2" style={{ color: 'var(--color-warning)' }}>
-                {ALLERGEN_WARNING.footer}
-              </p>
-              <p className="font-inter text-xs leading-relaxed" style={{ color: 'var(--color-warning)', opacity: 0.8 }}>
-                {ALLERGEN_WARNING.disclaimer}
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Menu Categories */}
       <section className="max-w-5xl mx-auto px-4">
         <div className="space-y-4">
@@ -206,6 +187,49 @@ const RoCafePage = () => {
               )}
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Allergen Warning Section */}
+      <section className="max-w-5xl mx-auto px-4 mt-12 mb-12">
+        <div
+          className="p-6 rounded-2xl border-4"
+          style={{
+            backgroundColor: 'var(--color-warning-bg)',
+            borderColor: 'var(--color-warning-border)'
+          }}
+        >
+          <div className="flex items-start gap-4">
+            <AlertTriangle size={32} style={{ color: 'var(--color-warning)', flexShrink: 0 }} />
+            <div>
+              <h2 className="text-2xl var(--font-heading) font-bold mb-2" style={{ color: 'var(--color-warning)' }}>
+                {ALLERGEN_WARNING.title}
+              </h2>
+              <p className="font-inter text-sm mb-4" style={{ color: 'var(--color-warning)' }}>
+                {ALLERGEN_WARNING.subtitle}
+              </p>
+              <div className="flex flex-wrap gap-2 mb-4">
+                {ALLERGEN_WARNING.allergens.map((allergen, idx) => (
+                  <div 
+                    key={idx}
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg"
+                    style={{ backgroundColor: 'var(--color-warning)', color: 'var(--color-warning-bg)' }}
+                  >
+                    <span className="text-lg">{allergen.icon}</span>
+                    <span className="text-xs font-inter font-bold" style={{ color: 'var(--color-warning-bg)' }}>
+                      {allergen.name}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <p className="font-inter text-xs font-bold mb-2" style={{ color: 'var(--color-warning)' }}>
+                {ALLERGEN_WARNING.footer}
+              </p>
+              <p className="font-inter text-xs leading-relaxed" style={{ color: 'var(--color-warning)', opacity: 0.8 }}>
+                {ALLERGEN_WARNING.disclaimer}
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 

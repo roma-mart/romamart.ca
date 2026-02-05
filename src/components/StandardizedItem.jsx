@@ -8,6 +8,7 @@ import { getServiceStatusAtLocation, getMenuItemStatusAtLocation, isLocationOpen
 import { SERVICES } from '../data/services.jsx';
 import { ROCAFE_FULL_MENU } from '../data/rocafe-menu';
 import { useLocationContext } from '../hooks/useLocationContext';
+import useGooglePlaceHours from '../hooks/useGooglePlaceHours';
 import BasicView from './StandardizedItem/BasicView';
 import CustomizationSection from './StandardizedItem/CustomizationSection';
 import AvailabilityIndicator from './StandardizedItem/AvailabilityIndicator';
@@ -46,9 +47,14 @@ const StandardizedItem = ({ item, itemType, defaultExpanded = false }) => {
     const { nearestLocation } = useLocationContext();
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 
+  // Get live open/closed status from Google Places API if available
+  const { isOpenNow: liveOpenStatus } = useGooglePlaceHours(
+    nearestLocation?.google?.placeId || null
+  );
+
   // Compute effective status for item at nearest location
   let effectiveStatus = item.status;
-  let locationIsOpen = nearestLocation ? isLocationOpen(nearestLocation) : false;
+  let locationIsOpen = false;
 
   let availabilityState = 'unavailable';
   if (!nearestLocation) {
@@ -61,7 +67,7 @@ const StandardizedItem = ({ item, itemType, defaultExpanded = false }) => {
       const result = getServiceStatusAtLocation(item.id, nearestLocation, SERVICES);
       effectiveStatus = result.status;
     }
-    locationIsOpen = isLocationOpen(nearestLocation);
+    locationIsOpen = isLocationOpen(nearestLocation, liveOpenStatus);
     if (effectiveStatus === 'available' && locationIsOpen) {
       availabilityState = 'available';
     } else if (effectiveStatus === 'available' && !locationIsOpen) {

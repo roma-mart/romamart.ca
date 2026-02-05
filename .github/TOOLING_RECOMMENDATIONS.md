@@ -737,7 +737,7 @@ Commit: `chore(tooling): add lint-staged for faster pre-commit`
 ## 💬 Questions?
 
 - Review [CONTRIBUTING.md](../CONTRIBUTING.md)
-- Check [Development Ethos](../DEVELOPMENT_ETHOS.md)
+- Check [Development Ethos](../docs/DEVELOPMENT_ETHOS.md)
 - Open a discussion on GitHub
 
 ---

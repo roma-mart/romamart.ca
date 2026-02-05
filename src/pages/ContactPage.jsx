@@ -8,11 +8,14 @@ import { useBackgroundSync } from '../hooks/useServiceWorker';
 import { useToast } from '../components/ToastContainer';
 // import { queueFormSubmission, getPendingCount } from '../utils/indexedDB'; // Disabled offline queue
 import Button from '../components/Button';
+import StructuredData from '../components/StructuredData';
+import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 import LiveHoursDisplay from '../components/LiveHoursDisplay';
 import COMPANY_DATA from '../config/company_data';
 import HCaptchaWidget from '../components/HCaptchaWidget';
 import { getHCaptchaTheme } from '../design/hcaptchaTheme';
 import { useColorScheme } from '../hooks/useColorScheme';
+import { normalizePhoneForTel } from '../utils/phone';
 
 const ContactPage = () => {
   const textColor = { color: 'var(--color-text)' };
@@ -66,6 +69,9 @@ const ContactPage = () => {
         <meta name="description" content="Get in touch with Roma Mart. Visit us, call, or send a message. We're here to help!" />
         <link rel="canonical" href="https://romamart.ca/contact" />
       </Helmet>
+
+      {/* Breadcrumb Schema */}
+      <StructuredData type="BreadcrumbList" data={{ breadcrumbs: buildBreadcrumbArray('Contact', 'https://romamart.ca/contact') }} />
 
       <nav aria-label="Breadcrumb" className="max-w-7xl mx-auto px-4 mb-8">
         <ol className="flex items-center gap-2 text-sm font-inter">
@@ -131,7 +137,7 @@ const ContactPage = () => {
                 <div className="flex-1">
                   <h4 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Call Us</h4>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <a href={`tel:${COMPANY_DATA.location.contact.phone}`} className="hover:underline" style={{ color: 'var(--color-accent)' }}>
+                    <a href={`tel:${normalizePhoneForTel(COMPANY_DATA.location.contact.phone)}`} className="hover:underline" style={{ color: 'var(--color-accent)' }}>
                       {COMPANY_DATA.location.contact.phone}
                     </a>
                     <CopyButton 
@@ -177,7 +183,7 @@ const ContactPage = () => {
                     showStatus={true}
                     compact={true}
                     showIcon={false}
-                    showRefresh={true}
+                    showRefreshOnError={true}
                   />
                 </div>
               </div>

@@ -8,6 +8,9 @@ import { getActiveLocations, formatDistance, getPreferredLocations } from '../da
 import LocationImageCarousel from '../components/LocationImageCarousel';
 import LiveHoursDisplay from '../components/LiveHoursDisplay';
 import { useAutoLocation } from '../hooks/useAutoLocation';
+import StructuredData from '../components/StructuredData';
+import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
+import { normalizePhoneForTel } from '../utils/phone';
 
 const LocationsPage = () => {
   const [userLoadedMaps, setUserLoadedMaps] = useState(() => []);
@@ -65,6 +68,9 @@ const LocationsPage = () => {
         <meta name="description" content="Find Roma Mart convenience store locations in Sarnia, Ontario. Get directions, hours, and contact information." />
         <link rel="canonical" href="https://romamart.ca/locations" />
       </Helmet>
+
+      {/* Breadcrumb Schema */}
+      <StructuredData type="BreadcrumbList" data={{ breadcrumbs: buildBreadcrumbArray('Locations', 'https://romamart.ca/locations') }} />
 
       <nav aria-label="Breadcrumb" className="max-w-7xl mx-auto px-4 mb-8">
         <ol className="flex items-center gap-2 text-sm font-inter">
@@ -203,6 +209,7 @@ const LocationsPage = () => {
                       exceptions: location.hours.exceptions
                     }}
                     showStatus={true}
+                    showRefreshOnError={true}
                   />
 
                   <div className="flex gap-4">
@@ -210,7 +217,7 @@ const LocationsPage = () => {
                     <div className="flex-1">
                       <h3 className="font-bold mb-1" style={textColor}>Phone</h3>
                       <div className="flex items-center gap-2 flex-wrap">
-                        <a href={`tel:${location.phone}`} className="font-inter hover:underline" style={{ color: 'var(--color-accent)' }}>
+                        <a href={`tel:${normalizePhoneForTel(location.phone)}`} className="font-inter hover:underline" style={{ color: 'var(--color-accent)' }}>
                           {location.phone}
                         </a>
                       <CopyButton 

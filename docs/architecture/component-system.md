@@ -45,8 +45,10 @@ Reusable interface elements:
 
 Context providers for global state:
 
+- `MenuProvider` - Menu data context (`src/contexts/MenuContext.jsx`)
 - `LocationProvider.jsx` - Location context
-- `HelmetProvider` - SEO meta tags
+- `ToastProvider` - Toast notification context
+- `HelmetProvider` - SEO meta tags (from react-helmet-async)
 
 ## Component Patterns
 

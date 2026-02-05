@@ -1,0 +1,120 @@
+/**
+ * Schema Helpers
+ * Shared utilities for schema.org JSON-LD generation
+ *
+ * @since February 4, 2026
+ */
+
+/**
+ * Convert cents to dollar string for schema.org
+ * @param {number} cents - Price in cents (e.g., 499)
+ * @returns {string|null} Price as dollar string (e.g., "4.99") or null for invalid input
+ */
+export const convertCentsToDollars = (cents) => {
+  if (typeof cents !== 'number' || !Number.isFinite(cents)) {
+    return null;
+  }
+
+  return (cents / 100).toFixed(2);
+};
+
+/**
+ * Sanitize and normalize strings for schema output
+ * Uses native DOMParser to strip HTML tags (zero bundle size impact)
+ * @param {string} value - Raw string input
+ * @returns {string} Safe, trimmed string
+ */
+export const safeString = (value) => {
+  if (typeof value !== 'string') {
+    return '';
+  }
+
+  // Use native browser DOMParser to strip HTML tags (most secure)
+  // Falls back to iterative regex for SSR/prerender or DOMParser failure
+  let withoutTags;
+  if (typeof window !== 'undefined' && window.DOMParser) {
+    try {
+      const doc = new DOMParser().parseFromString(value, 'text/html');
+      withoutTags = doc.body.textContent || '';
+    } catch {
+      // Fallback if DOMParser fails - repeatedly strip tags until stable
+      // Prevents incomplete sanitization (e.g., <<script>script> -> <script>)
+      let previous;
+      let current = value;
+      do {
+        previous = current;
+        current = current.replace(/<[^>]*>/g, '');
+      } while (current !== previous);
+      withoutTags = current;
+    }
+  } else {
+    // SSR/prerender fallback - repeatedly strip tags until stable
+    // Prevents incomplete sanitization (e.g., <<script>script> -> <script>)
+    let previous;
+    let current = value;
+    do {
+      previous = current;
+      current = current.replace(/<[^>]*>/g, '');
+    } while (current !== previous);
+    withoutTags = current;
+  }
+
+  return withoutTags
+    .replace(/\s+/g, ' ')
+    .trim();
+};
+
+/**
+ * Format a PostalAddress object into a single line string
+ * @param {Object} address - Address object
+ * @param {string} address.formatted - Preformatted address
+ * @param {string} address.street - Street address
+ * @param {string} address.city - City
+ * @param {string} address.province - Province/Region
+ * @param {string} address.postalCode - Postal code
+ * @param {string} address.country - Country
+ * @returns {string} Formatted address string
+ */
+export const formatAddress = (address = {}) => {
+  if (address.formatted) {
+    return safeString(address.formatted);
+  }
+
+  const parts = [
+    safeString(address.street),
+    safeString(address.city),
+    safeString(address.province),
+    safeString(address.postalCode),
+    safeString(address.country)
+  ].filter(Boolean);
+
+  return parts.join(', ');
+};
+
+/**
+ * Build AggregateRating from a list of review objects
+ * @param {Array} reviews - Review objects containing rating values
+ * @returns {Object|null} AggregateRating schema or null
+ */
+export const buildAggregateRating = (reviews = []) => {
+  if (!Array.isArray(reviews) || reviews.length === 0) {
+    return null;
+  }
+
+  const ratingValues = reviews
+    .map(review => Number(review?.rating))
+    .filter(value => Number.isFinite(value));
+
+  if (ratingValues.length === 0) {
+    return null;
+  }
+
+  const total = ratingValues.reduce((sum, value) => sum + value, 0);
+  const average = total / ratingValues.length;
+
+  return {
+    '@type': 'AggregateRating',
+    ratingValue: Number(average.toFixed(2)),
+    reviewCount: ratingValues.length
+  };
+};

@@ -131,6 +131,15 @@ async function fetchPlaceDetails(placeId) {
     throw new Error('Place ID is required');
   }
 
+  // Fail fast if API key not configured - this is not an error to show users,
+  // just return null to use fallback hours silently
+  if (!GOOGLE_API_KEY) {
+    if (import.meta.env.DEV) {
+      console.warn('Google Places API key not configured. Set VITE_GOOGLE_PLACES_API_KEY to enable live hours.');
+    }
+    return null;
+  }
+
   // Check circuit breaker first - if quota exceeded, return null immediately
   if (!circuitBreakers.googlePlaces.shouldAttemptCall()) {
     if (import.meta.env.DEV) {
@@ -139,14 +148,9 @@ async function fetchPlaceDetails(placeId) {
     return null;
   }
 
-  // Fail fast if API key not configured
-  if (!GOOGLE_API_KEY) {
-    throw new Error('Google Places API key not configured (VITE_GOOGLE_PLACES_API_KEY)');
-  }
-
   // Using Places API (New) which supports client-side requests
   // https://developers.google.com/maps/documentation/places/web-service/place-details
-  const fields = 'opening_hours,current_opening_hours,business_status,displayName,formattedAddress,utcOffsetMinutes';
+  const fields = 'opening_hours,current_opening_hours,business_status,displayName,formattedAddress,utcOffsetMinutes,rating,userRatingCount';
 
   // NOTE: API key in URL is intentional. Google Places API (New) requires key in request.
   // SECURITY: Restrict key in Google Cloud Console to: Places API, Embed API, JavaScript API
@@ -177,9 +181,13 @@ async function fetchPlaceDetails(placeId) {
     const data = await response.json();
     return data;
   } catch (error) {
+    // Record network errors (note: circuit breaker only counts quota-related statuses)
+    circuitBreakers.googlePlaces.recordFailure(error);
+    
     if (import.meta.env.DEV) {
       console.error('Error fetching place details:', error);
     }
+    
     return null;
   }
 }
@@ -212,6 +220,8 @@ function parseOpeningHours(placeData) {
     isOpenNow: openNow ?? false,
     weekdayText: weekdayDescriptions || [],
     periods: periods || [],
+    rating: placeData.rating ?? null,
+    userRatingCount: placeData.userRatingCount ?? null,
     display: {
       ...formatHoursDisplay(weekdayDescriptions),
       exceptions: extractSpecialHours(placeData)
@@ -306,7 +316,7 @@ function formatHoursDisplay(weekdayText) {
  * @param {Object} options - Configuration options
  * @param {boolean} options.enabled - Enable/disable fetching (default: true)
  * @param {number} options.cacheDuration - Cache duration in ms (default: 1 hour)
- * @returns {Object} { hours, isLoading, error, refetch, isOpenNow }
+ * @returns {Object} { hours, isLoading, error, refetch, isOpenNow, rating, userRatingCount }
  */
 export function useGooglePlaceHours(placeId, options = {}) {
   const { enabled = true, cacheDuration = CACHE_DURATION } = options;
@@ -315,6 +325,8 @@ export function useGooglePlaceHours(placeId, options = {}) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isOpenNow, setIsOpenNow] = useState(null);
+  const [rating, setRating] = useState(null);
+  const [userRatingCount, setUserRatingCount] = useState(null);
 
   const fetchHours = useCallback(async (fetchOptions = {}) => {
     const force = typeof fetchOptions === 'boolean' ? fetchOptions : fetchOptions?.force;
@@ -329,6 +341,8 @@ export function useGooglePlaceHours(placeId, options = {}) {
       if (cached && (Date.now() - cached.timestamp) < cacheDuration) {
         setHours(cached.hours);
         setIsOpenNow(cached.isOpenNow);
+        setRating(cached.rating ?? null);
+        setUserRatingCount(cached.userRatingCount ?? null);
         setIsLoading(false);
         return;
       }
@@ -358,6 +372,8 @@ export function useGooglePlaceHours(placeId, options = {}) {
       hoursCache.set(placeId, {
         hours: parsedHours,
         isOpenNow: parsedHours?.isOpenNow,
+        rating: parsedHours?.rating ?? null,
+        userRatingCount: parsedHours?.userRatingCount ?? null,
         timestamp: Date.now()
       });
 
@@ -366,6 +382,8 @@ export function useGooglePlaceHours(placeId, options = {}) {
 
       setHours(parsedHours);
       setIsOpenNow(parsedHours?.isOpenNow);
+      setRating(parsedHours?.rating ?? null);
+      setUserRatingCount(parsedHours?.userRatingCount ?? null);
     } catch (err) {
       setError(err.message);
       if (import.meta.env.DEV) {
@@ -385,7 +403,9 @@ export function useGooglePlaceHours(placeId, options = {}) {
     isLoading,
     error,
     refetch: fetchHours,
-    isOpenNow
+    isOpenNow,
+    rating,
+    userRatingCount
   };
 }
 

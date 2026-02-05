@@ -8,6 +8,10 @@ Roma Mart uses a combination of automated quality checks and manual testing to e
 
 ## Automated Testing
 
+### Runtime Requirement
+
+- Use Node 22.x for running Vitest (see .nvmrc). Node 24 currently triggers a Vitest runner error.
+
 ### Quality Checks
 
 ```bash

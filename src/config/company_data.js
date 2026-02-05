@@ -16,6 +16,8 @@ const COMPANY_DATA = {
   legalName: 'Roma Mart Corp.',
   dba: 'Roma Mart Convenience',
   gstNumber: '780971768',
+  naicsCode: '4541',  // Grocery stores (North American Industry Classification System)
+  naicsDescription: 'Grocery Stores',
   onlineStoreUrl: null,
   socialLinks: {
     facebook: 'https://www.facebook.com/romamartca',
@@ -31,13 +33,47 @@ const COMPANY_DATA = {
   hours: getPrimaryLocation().hours,
   contact: {
     phone: getPrimaryLocation().contact.phone,
-    email: getPrimaryLocation().email,
+    email: getPrimaryLocation().contact.email,
     web3FormsAccessKey: getEnvVar('VITE_WEB3FORMS_KEY', 'YOUR_WEB3FORMS_KEY')
+  },
+  // Contextual email addresses for specialized pages
+  contextualEmails: {
+    general: 'contact@romamart.ca',
+    privacy: 'privacy@romamart.ca',
+    accessibility: 'accessibility@romamart.ca',
+    technology: 'technology@romamart.ca',
+    legal: 'legal@romamart.ca',
+    support: 'support@romamart.ca'
   },
   // Location-dependent info is mapped from the primary location object
   location: getPrimaryLocation(),
-  trustpilotReviewUrl: 'https://www.trustpilot.com/review/romamart.ca'
+  trustpilotReviewUrl: 'https://www.trustpilot.com/review/romamart.ca',
+  // PWA configuration (SSOT for WebApplication schema)
+  pwa: {
+    webApplication: {
+      name: 'Roma Mart Convenience',
+      url: 'https://romamart.ca',
+      description: 'Shop Roma Mart online - groceries, global snacks, halal meat, RoCafé coffee, and more. Available 24/7 from any device with offline support.',
+      applicationCategory: 'Shopping',
+      operatingSystem: 'Any (Web Browser)',
+      offers: {
+        price: '0',
+        priceCurrency: 'CAD'
+      },
+      browserRequirements: 'Requires JavaScript. Modern browsers (Chrome, Firefox, Safari, Edge) recommended.',
+      permissions: ['Location (optional, for nearest store)']
+    }
+  }
   // Add other brand data as needed
 };
+
+/**
+ * Get the appropriate email address for a given page context
+ * @param {'general' | 'privacy' | 'accessibility' | 'technology' | 'legal' | 'support'} context - Page context
+ * @returns {string} Contextual email address
+ */
+export function getContextualEmail(context = 'general') {
+  return COMPANY_DATA.contextualEmails[context] || COMPANY_DATA.contextualEmails.general;
+}
 
 export default COMPANY_DATA;

@@ -39,9 +39,9 @@ export const ToastProvider = ({ children }) => {
     <ToastContext.Provider value={{ addToast, showSuccess, showError, showInfo }}>
       {children}
       
-      {/* Toast Container - Fixed position */}
+      {/* Toast Container - Fixed position, avoids OrderCTA overlap (56px button + safe spacing) */}
       <div
-        className="fixed bottom-4 right-4 z-[9999] flex flex-col gap-2 pointer-events-none"
+        className="fixed bottom-[calc(56px+env(safe-area-inset-bottom,1rem))] md:bottom-[calc(56px+1.5rem)] right-4 z-[9999] flex flex-col gap-2 pointer-events-none"
         aria-live="polite"
         aria-atomic="false"
       >

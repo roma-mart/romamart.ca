@@ -67,6 +67,12 @@ export const NAVIGATION_LINKS = [
     href: '/cookies',
     ariaLabel: 'Cookie policy',
     showIn: { navbar: false, footer: true, sitemap: true }
+  },
+  {
+    label: 'Return Policy',
+    href: '/return-policy',
+    ariaLabel: 'Return policy',
+    showIn: { navbar: false, footer: true, sitemap: true }
   }
 ];
 

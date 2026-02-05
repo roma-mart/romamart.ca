@@ -2,7 +2,10 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ChevronRight } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
-import COMPANY_DATA from '../config/company_data';
+import StructuredData from '../components/StructuredData';
+import COMPANY_DATA, { getContextualEmail } from '../config/company_data';
+import { normalizePhoneForTel } from '../utils/phone';
+import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 
 const PrivacyPage = () => {
 
@@ -13,11 +16,21 @@ const PrivacyPage = () => {
 
   return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>
+      <StructuredData
+        type="PrivacyPolicy"
+        data={{
+          url: 'https://romamart.ca/privacy',
+          effectiveDate: '2025-07-28'
+        }}
+      />
       <Helmet>
         <title>Privacy Policy | Roma Mart Convenience</title>
         <meta name="description" content="Learn how Roma Mart Convenience collects, uses, and protects your personal information. PIPEDA compliant privacy policy." />
         <link rel="canonical" href="https://romamart.ca/privacy" />
       </Helmet>
+
+      {/* Breadcrumb Schema */}
+      <StructuredData type="BreadcrumbList" data={{ breadcrumbs: buildBreadcrumbArray('Privacy', 'https://romamart.ca/privacy') }} />
 
       {/* Breadcrumb */}
       <nav aria-label="Breadcrumb" className="max-w-4xl mx-auto px-4 mb-8">
@@ -46,7 +59,7 @@ const PrivacyPage = () => {
 
         <div className="prose max-w-none font-inter">
           <p className="mb-6" style={textColor}>
-            <strong>Effective Date:</strong> November 30, 2025
+            <strong>Effective Date:</strong> July 28, 2025
           </p>
 
           <section className="mb-8">
@@ -69,6 +82,8 @@ const PrivacyPage = () => {
               <li>Name and contact information (email, phone number)</li>
               <li>Messages sent via our contact form</li>
               <li>Payment information (processed securely by our payment processor)</li>
+              <li>Purchase history for loyalty programs or returns (when applicable)</li>
+              <li>Video footage from in-store security cameras (CCTV)</li>
               <li>Store visit data (if you use in-store services like ATM or BTM)</li>
             </ul>
           </section>
@@ -85,7 +100,9 @@ const PrivacyPage = () => {
               <li>Respond to customer inquiries and provide support</li>
               <li>Send marketing communications (with your consent)</li>
               <li>Improve our website and services</li>
-              <li>Comply with legal obligations</li>
+              <li>Manage customer loyalty programs (optional)</li>
+              <li>Ensure the safety and security of staff and customers</li>
+              <li>Comply with legal and regulatory requirements</li>
             </ul>
           </section>
 
@@ -106,13 +123,22 @@ const PrivacyPage = () => {
               5. Data Retention
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
-              We retain your personal information only for as long as necessary to fulfill the purposes outlined in this policy, unless a longer retention period is required by law.
+              We retain your personal information only for as long as necessary to fulfill the purposes outlined in this policy, unless a longer retention period is required by law. CCTV footage is retained for a limited time and automatically deleted unless required for a security investigation. Customer data (e.g., loyalty program information) is kept only as long as needed to provide you with service.
             </p>
           </section>
 
           <section className="mb-8">
             <h2 className="text-2xl var(--font-heading) uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
-              6. Your Rights
+              6. Sharing Your Information
+            </h2>
+            <p className="leading-relaxed mb-4" style={textColor}>
+              We do not sell or share your personal information with third parties unless required by law or needed to fulfill a service you requested (e.g., payment processing).
+            </p>
+          </section>
+
+          <section className="mb-8">
+            <h2 className="text-2xl var(--font-heading) uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
+              7. Your Rights
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
               Under PIPEDA, you have the right to:
@@ -124,21 +150,27 @@ const PrivacyPage = () => {
               <li>Withdraw consent for marketing communications</li>
               <li>File a complaint with the Privacy Commissioner of Canada</li>
             </ul>
+            <p className="leading-relaxed mb-4" style={textColor}>
+              We aim to respond to access requests within 30 days, or as required by law.
+            </p>
+            <p className="leading-relaxed" style={textColor}>
+              This privacy policy is displayed in-store, available at the checkout and upon request. By shopping with us or participating in store programs, you consent to this policy.
+            </p>
           </section>
 
           <section className="mb-8">
             <h2 className="text-2xl var(--font-heading) uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
-              7. Contact Us
+              8. Contact Us
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
               If you have questions about this Privacy Policy or wish to exercise your rights, please contact us:
             </p>
             <div className="p-6 rounded-lg" style={{ backgroundColor: 'var(--color-surface)' }}>
-              <p style={textColor}><strong>Roma Mart Corp.</strong></p>
-              <p style={textColor}>3-189 Wellington Street</p>
-              <p style={textColor}>Sarnia, ON N7T 1G6</p>
-              <p style={textColor}>Email: <a href="mailto:privacy@romamart.ca" style={{ color: 'var(--color-accent)' }}>privacy@romamart.ca</a></p>
-              <p style={textColor}>Phone: <a href="tel:+13823422000" style={{ color: 'var(--color-accent)' }}>+1 (382) 342-2000</a></p>
+              <p style={textColor}><strong>{COMPANY_DATA.legalName}</strong></p>
+              <p style={textColor}>{COMPANY_DATA.location.address.street}</p>
+              <p style={textColor}>{COMPANY_DATA.location.address.city}, {COMPANY_DATA.location.address.province} {COMPANY_DATA.location.address.postalCode}</p>
+              <p style={textColor}>Email: <a href={`mailto:${getContextualEmail('privacy')}`} style={{ color: 'var(--color-accent)' }}>{getContextualEmail('privacy')}</a></p>
+              <p style={textColor}>Phone: <a href={`tel:${normalizePhoneForTel(COMPANY_DATA.location.contact.phone)}`} style={{ color: 'var(--color-accent)' }}>{COMPANY_DATA.location.contact.phone}</a></p>
               <p className="text-sm mt-4" style={mutedTextColor}>GST/HST#: {COMPANY_DATA.gstNumber}</p>
             </div>
           </section>

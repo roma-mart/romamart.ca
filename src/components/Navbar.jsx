@@ -7,7 +7,7 @@ import { Logo } from './Logo';
 import { NAVIGATION_LINKS } from '../config/navigation';
 // Removed duplicate imports of useEffect and useState
 
-export default function Navbar() {
+export default function Navbar({ currentPage = 'home' }) {
   const [wcoActive, setWcoActive] = useState(false);
     // Window Controls Overlay detection
     useEffect(() => {
@@ -21,7 +21,7 @@ export default function Navbar() {
   const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [isHomePage, setIsHomePage] = useState(true);
+  const [isHomePage, setIsHomePage] = useState(currentPage === 'home');
   const [colorScheme, setColorScheme] = useState('light');
   const [highContrast, setHighContrast] = useState(false);
 
@@ -47,20 +47,9 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    const checkPath = () => {
-      const normalizePath = (value) => {
-        if (!value) return '/';
-        const trimmed = value.replace(/\/+$/, '');
-        return trimmed === '' ? '/' : trimmed;
-      };
-      const path = normalizePath(window.location.pathname);
-      const basePath = normalizePath(BASE_URL);
-      setIsHomePage(path === '/' || path === basePath);
-    };
-    checkPath();
-    window.addEventListener('popstate', checkPath);
-    return () => window.removeEventListener('popstate', checkPath);
-  }, [BASE_URL]);
+    // Update isHomePage when currentPage changes
+    setIsHomePage(currentPage === 'home');
+  }, [currentPage]);
 
   const scrollToSection = (sectionId) => {
     if (!sectionId) return false;

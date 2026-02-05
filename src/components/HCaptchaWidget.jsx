@@ -9,7 +9,7 @@ import HCaptcha from '@hcaptcha/react-hcaptcha';
  */
 export default function HCaptchaWidget({ onVerify, theme, scriptHost }) {
   return (
-    <div className="mb-4">
+    <div className="mb-4 flex justify-center">
       <HCaptcha
         sitekey="50b2fe65-b00b-4b9e-ad62-3ba471098be2"
         reCaptchaCompat={false}

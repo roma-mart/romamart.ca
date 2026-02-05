@@ -2,7 +2,10 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ChevronRight } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
-import COMPANY_DATA from '../config/company_data';
+import COMPANY_DATA, { getContextualEmail } from '../config/company_data';
+import { normalizePhoneForTel } from '../utils/phone';
+import StructuredData from '../components/StructuredData';
+import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 
 const TermsPage = () => {
 
@@ -18,6 +21,9 @@ const TermsPage = () => {
         <meta name="description" content="Terms and conditions for using Roma Mart Convenience services. Understand your rights and obligations." />
         <link rel="canonical" href="https://romamart.ca/terms" />
       </Helmet>
+
+      {/* Breadcrumb Schema */}
+      <StructuredData type="BreadcrumbList" data={{ breadcrumbs: buildBreadcrumbArray('Terms', 'https://romamart.ca/terms') }} />
 
       {/* Breadcrumb */}
       <nav aria-label="Breadcrumb" className="max-w-4xl mx-auto px-4 mb-8">
@@ -126,11 +132,11 @@ const TermsPage = () => {
               For questions about these Terms, please contact us:
             </p>
             <div className="p-6 rounded-lg" style={{ backgroundColor: 'var(--color-surface)' }}>
-              <p style={textColor}><strong>Roma Mart Corp.</strong></p>
-              <p style={textColor}>3-189 Wellington Street</p>
-              <p style={textColor}>Sarnia, ON N7T 1G6</p>
-              <p style={textColor}>Email: <a href="mailto:legal@romamart.ca" style={{ color: 'var(--color-accent)' }}>legal@romamart.ca</a></p>
-              <p style={textColor}>Phone: <a href="tel:+13823422000" style={{ color: 'var(--color-accent)' }}>+1 (382) 342-2000</a></p>
+              <p style={textColor}><strong>{COMPANY_DATA.legalName}</strong></p>
+              <p style={textColor}>{COMPANY_DATA.location.address.street}</p>
+              <p style={textColor}>{COMPANY_DATA.location.address.city}, {COMPANY_DATA.location.address.province} {COMPANY_DATA.location.address.postalCode}</p>
+              <p style={textColor}>Email: <a href={`mailto:${getContextualEmail('legal')}`} style={{ color: 'var(--color-accent)' }}>{getContextualEmail('legal')}</a></p>
+              <p style={textColor}>Phone: <a href={`tel:${normalizePhoneForTel(COMPANY_DATA.location.contact.phone)}`} style={{ color: 'var(--color-accent)' }}>{COMPANY_DATA.location.contact.phone}</a></p>
               <p className="text-sm mt-4" style={mutedTextColor}>GST/HST#: {COMPANY_DATA.gstNumber}</p>
             </div>
           </section>

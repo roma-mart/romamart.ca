@@ -13,39 +13,51 @@ The RoCafé menu system supports dynamic menu updates via Excel spreadsheet. Thi
    - Managed by operations staff
    - Must be placed in `public/` directory to be accessible
 
-2. **Hook**: `src/hooks/useExcelMenu.js`
-   - Fetches and parses Excel file using xlsx library
-   - Returns: `{ menuItems, loading, error }`
-   - Handles cleanup to prevent memory leaks
+2. **Context Provider**: `src/contexts/MenuContext.jsx`
+   - Centralized menu data management
+   - Single API call per session (cached and shared)
+   - Returns: `{ menuItems, loading, error }` via `useMenu()` hook
+   - Wraps app at root level in `main.jsx`
 
-3. **Transformation Utilities**: `src/utils/excelMenuTransform.js`
+3. **Legacy Hook**: `src/hooks/useExcelMenu.js`
+   - ⚠️ **Deprecated** - Use `useMenu()` from MenuContext instead
+   - Previously fetched menu data directly
+   - Replaced by MenuContext to eliminate duplicate API calls
+
+4. **Transformation Utilities**: `src/utils/excelMenuTransform.js`
    - `transformExcelToMenuItem()`: Converts Excel row to StandardizedItem format
    - `groupExcelItemsByCategory()`: Groups items by oc_page field
    - `mergeCategoriesWithFallback()`: Handles Excel vs static menu fallback
    - `EXCEL_CATEGORY_MAP`: Maps oc_page values to display metadata (icons, descriptions)
 
-4. **Page Component**: `src/pages/RoCafePage.jsx`
-   - Uses useExcelMenu hook to load data
+5. **Page Component**: `src/pages/RoCafePage.jsx`
+   - Uses `useMenu()` hook from MenuContext to load data
    - Calls groupExcelItemsByCategory to organize items
-   - Falls back to static menu if Excel fails or is empty
+   - Falls back to static menu if API fails or is empty
    - Renders using StandardizedItem component
 
 ### Data Flow
 
 ```
-Excel File (public/rocafe_menu.xlsx)
+External API (https://romamart.netlify.app/api/public-menu)
   ↓
-useExcelMenu hook (fetches + parses)
-  ↓
-Raw Excel data array
-  ↓
-transformExcelToMenuItem (converts to StandardizedItem format)
-  ↓
-groupExcelItemsByCategory (groups by oc_page)
-  ↓
-RoCafePage (renders with category expand/collapse)
-  ↓
-StandardizedItem components (display individual items)
+MenuContext (src/contexts/MenuContext.jsx)
+  ├─ Single API call on app mount
+  ├─ Caches in memory
+  └─ Provides via useMenu() hook
+    ↓
+    ├─> App.jsx (uses useMenu())
+    └─> RoCafePage.jsx (uses useMenu())
+         ↓
+       Raw Excel data array
+         ↓
+       transformExcelToMenuItem (converts to StandardizedItem format)
+         ↓
+       groupExcelItemsByCategory (groups by oc_page)
+         ↓
+       RoCafePage (renders with category expand/collapse)
+         ↓
+       StandardizedItem components (display individual items)
 ```
 
 ## Excel File Structure

@@ -11,11 +11,12 @@ import COMPANY_DATA from '../config/company_data';
 import { Logo } from './Logo';
 import TrustpilotWidget from './TrustpilotWidget';
 import { useLocationContext } from '../hooks/useLocationContext';
+import useGooglePlaceHours from '../hooks/useGooglePlaceHours';
 import { LOCATIONS, getActiveLocations } from '../data/locations';
 import { NAVIGATION_LINKS } from '../config/navigation';
 import OrderCTA from './OrderCTA';
 import Button from './Button';
-import GoogleReviews from './GoogleReviews';
+import CurrentLocalTime from './CurrentLocalTime';
 
 
 // Social platforms to control display in Footer (label, icon)
@@ -118,24 +119,34 @@ export default function Footer() {
   };
   const currentLocation = getCurrentLocation();
 
-                  <div className="mt-8 text-sm font-inter" style={{ color: 'var(--color-on-footer)' }}>
-                    {/* Prefer currentLocation, fallback to COMPANY_DATA.location (HQ) */}
-                    <div className="mb-2">
-                      <strong>Address:</strong> {currentLocation?.address?.formatted || COMPANY_DATA.location?.address?.formatted}
-                    </div>
-                    <div className="mb-2">
-                      <strong>Phone:</strong> {currentLocation?.contact?.phone || COMPANY_DATA.location?.contact?.phone}
-                    </div>
-                    <div className="mb-2">
-                      <strong>Email:</strong> {currentLocation?.contact?.email || COMPANY_DATA.location?.contact?.email}
-                    </div>
-                    <div className="mb-2">
-                      <strong>Hours:</strong> {currentLocation?.hours?.display || COMPANY_DATA.location?.hours?.display}
-                    </div>
-                  </div>
-
   const isAutoMode = selectedLocationId === 'auto';
   const activeLocations = getActiveLocations();
+
+  // Fetch live rating data from Google Places API
+  const { rating, userRatingCount } = useGooglePlaceHours(
+    currentLocation?.google?.placeId || null
+  );
+
+  // Format rating display
+  const ratingDisplay = rating ? Number(rating).toFixed(1) : null;
+  const reviewCountDisplay = userRatingCount ? userRatingCount.toLocaleString() : null;
+
+  // Generate star display based on rating
+  const renderStars = (ratingValue) => {
+    if (!ratingValue) return '⭐⭐⭐⭐⭐';
+
+    const clampedRating = Math.min(5, Math.max(0, ratingValue));
+    const roundedRating = Math.round(clampedRating * 2) / 2;
+    const fullStars = Math.floor(roundedRating);
+    const hasHalfStar = roundedRating - fullStars === 0.5;
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
+    return (
+      '⭐'.repeat(fullStars) +
+      (hasHalfStar ? '⯨' : '') +
+      '☆'.repeat(Math.max(0, emptyStars))
+    );
+  };
 
   const socialHandlers = useMemo(() => {
     const handlers = {};
@@ -150,9 +161,64 @@ export default function Footer() {
       {/* Persistent floating OrderCTA button for site-wide visibility */}
       <OrderCTA />
       <footer className="pt-16 pb-8" style={{ backgroundColor: 'var(--color-footer)', color: 'var(--color-on-footer)' }}>
-        {/* Google Reviews Carousel */}
-        <div className="mb-8 w-full">
-          <GoogleReviews />
+        {/* Google Places Reviews Carousel */}
+        {/* Google Reviews */}
+        <div className="mb-16 flex justify-center">
+          <div className="w-full max-w-3xl mx-4 px-8 py-8 rounded-2xl shadow-lg" style={{ 
+            backgroundColor: 'var(--color-surface)',
+            borderColor: 'var(--color-border)',
+            borderWidth: '1px',
+            borderStyle: 'solid'
+          }}>
+            <div className="text-center">
+              {rating ? (
+                <div className="mb-3">
+                  <div className="text-5xl font-bold mb-1" style={{ color: 'var(--color-accent)' }}>
+                    {ratingDisplay}
+                  </div>
+                  <div className="text-2xl mb-1">{renderStars(rating)}</div>
+                  {reviewCountDisplay && (
+                    <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
+                      Based on {reviewCountDisplay} reviews
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <div className="text-4xl mb-3">⭐⭐⭐⭐⭐</div>
+              )}
+              <h3 className="text-2xl font-bold mb-3" style={{ 
+                color: 'var(--color-heading)',
+                fontFamily: 'var(--font-heading)'
+              }}>
+                See What Our Customers Say
+              </h3>
+              <p className="text-base mb-6 max-w-xl mx-auto leading-relaxed" style={{ 
+                color: 'var(--color-text-muted)'
+              }}>
+                Read authentic reviews from our community on Google and discover why Roma Mart is Sarnia's favorite convenience destination.
+              </p>
+              <a
+                href={
+                  currentLocation?.google?.mapLink ||
+                  COMPANY_DATA.location?.google?.mapLink ||
+                  LOCATIONS[0]?.google?.mapLink
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-8 py-4 rounded-xl font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 hover:scale-105"
+                style={{
+                  backgroundColor: 'var(--color-accent)',
+                  color: 'var(--color-primary)',
+                  fontFamily: 'var(--font-heading)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  boxShadow: '0 4px 14px 0 rgba(228, 179, 64, 0.3)'
+                }}
+              >
+                View All Reviews on Google
+              </a>
+            </div>
+          </div>
         </div>
       <div className="max-w-7xl mx-auto p-4 grid md:grid-cols-4 gap-12 mb-12">
         <div className="p-1 col-span-1 md:col-span-2">
@@ -216,7 +282,11 @@ export default function Footer() {
             <div className="p-1">
               <h4 className="font-heading text-lg mb-6" style={{ color: 'var(--color-on-footer)' }}>Pages</h4>
               <ul className="space-y-3 font-inter" style={{ color: 'var(--color-on-footer-muted)' }}>
-                {NAVIGATION_LINKS.filter(link => link.showIn.footer && !['privacy','terms','cookies','accessibility'].includes(link.label.toLowerCase())).map(link => (
+                {NAVIGATION_LINKS.filter(link => {
+                  if (!link.showIn.footer) return false;
+                  const normalizedHref = (link.href || '').replace(/^\//, '').replace(/\/$/, '').toLowerCase();
+                  return !['privacy', 'terms', 'cookies', 'accessibility', 'return-policy'].includes(normalizedHref);
+                }).map(link => (
                   <li key={link.href}>
                     <a
                       href={`${BASE_URL}${link.href.replace('/', '')}`}
@@ -247,7 +317,11 @@ export default function Footer() {
             <div className="p-1">
               <h4 className="font-heading text-lg mb-6" style={{ color: 'var(--color-on-footer)' }}>Legal & Accessibility</h4>
               <ul className="space-y-2 font-inter" style={{ color: 'var(--color-on-footer-muted)' }}>
-                {NAVIGATION_LINKS.filter(link => link.showIn.footer && ['privacy','terms','cookies','accessibility'].includes(link.label.toLowerCase())).map(link => (
+                {NAVIGATION_LINKS.filter(link => {
+                  if (!link.showIn.footer) return false;
+                  const normalizedHref = (link.href || '').replace(/^\//, '').replace(/\/$/, '').toLowerCase();
+                  return ['privacy', 'terms', 'cookies', 'accessibility', 'return-policy'].includes(normalizedHref);
+                }).map(link => (
                   <li key={link.href}>
                     <a
                       href={`${BASE_URL}${link.href.replace('/', '')}`}
@@ -363,6 +437,11 @@ export default function Footer() {
                   Detect Nearest Store
                 </Button>
               </div>
+            </div>
+
+            {/* Current Local Time */}
+            <div className="mt-6">
+              <CurrentLocalTime location={getCurrentLocation()} />
             </div>
           </div>
         </div>
