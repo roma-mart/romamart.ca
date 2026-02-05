@@ -10,7 +10,6 @@
 import { safeString } from '../utils/schemaHelpers.js';
 import COMPANY_DATA from '../config/company_data.js';
 import { parse12hTo24h } from '../utils/dateHelpers.js';
-import { buildAmenityFeatures } from '../config/amenities.js';
 
 /**
  * Build opening hours specification from location hours data
@@ -166,10 +165,13 @@ export const buildLocationSchema = (location, _options = {}) => {
   // Add logo
   schema.logo = COMPANY_DATA.logoUrl;
 
-  // Add features/amenities dynamically from location.features (fully dynamic via SSOT)
-  const amenities = buildAmenityFeatures(location.features);
-  if (amenities.length > 0) {
-    schema.amenityFeature = amenities;
+  // Add amenities from location data (Google-recognized names, API-ready structure)
+  if (location.amenities && Array.isArray(location.amenities) && location.amenities.length > 0) {
+    schema.amenityFeature = location.amenities.map(amenity => ({
+      '@type': 'LocationFeatureSpecification',
+      name: safeString(amenity.name),
+      value: amenity.value
+    }));
   }
 
   // Add services available at location (as keywords for now, will link to Service schemas later)

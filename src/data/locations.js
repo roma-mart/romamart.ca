@@ -143,7 +143,28 @@ export const LOCATIONS = [
       // },
       // Add more menu overrides as needed
     },
-    // === FEATURES & AMENITIES ===
+    // === AMENITIES ===
+    // Google-recognized amenities for LocalBusiness schema
+    // These names match Google Business Profile attributes and schema.org LocationFeatureSpecification
+    // When locations API is implemented, return this exact structure
+    amenities: [
+      { name: 'Free Wi-Fi', value: true },
+      { name: 'Wheelchair-accessible entrance', value: true },
+      { name: 'Wheelchair-accessible parking', value: true },
+      { name: 'Restroom', value: true },
+      { name: 'Parking', value: true }
+      // Other Google Business Profile amenities to consider:
+      // { name: 'Gender-neutral restroom', value: true },
+      // { name: 'In-store pickup', value: true },
+      // { name: 'In-store shopping', value: true },
+      // { name: 'Same-day delivery', value: true },
+      // { name: 'Debit cards', value: true },
+      // { name: 'Credit cards', value: true },
+      // { name: 'NFC mobile payments', value: true }
+    ],
+
+    // === LEGACY FEATURES (DEPRECATED - Use amenities array above) ===
+    // Keeping for backward compatibility, will be removed when all code migrated
     features: {
       parking: true,
       parkingSpots: 15,

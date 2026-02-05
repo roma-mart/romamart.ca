@@ -13,7 +13,6 @@ import { buildBreadcrumbSchema } from '../schemas/breadcrumbSchema';
 import { buildWebApplicationSchema } from '../schemas/webApplicationSchema';
 import { buildServiceListSchema } from '../schemas/serviceSchema';
 import { buildLocationListSchema } from '../schemas/locationSchema';
-import { buildAmenityFeatures } from '../config/amenities';
 
 const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
   const generateSchema = () => {
@@ -172,8 +171,12 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
             '@type': 'City',
             name: COMPANY_DATA.location.address.city
           },
-          // Build amenities dynamically from location.features (location-specific, fully dynamic via SSOT)
-          amenityFeature: buildAmenityFeatures(COMPANY_DATA.location.features),
+          // Amenities from location data (Google-recognized names, API-ready structure)
+          amenityFeature: (COMPANY_DATA.location.amenities || []).map(amenity => ({
+            '@type': 'LocationFeatureSpecification',
+            name: amenity.name,
+            value: amenity.value
+          })),
           // Payment methods from COMPANY_DATA (business-wide)
           paymentAccepted: COMPANY_DATA.paymentMethods
         };
