@@ -13,7 +13,6 @@ import { buildBreadcrumbSchema } from '../schemas/breadcrumbSchema';
 import { buildWebApplicationSchema } from '../schemas/webApplicationSchema';
 import { buildServiceListSchema } from '../schemas/serviceSchema';
 import { buildLocationListSchema } from '../schemas/locationSchema';
-import { parse12hTo24h } from '../utils/dateHelpers';
 
 const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
   const generateSchema = () => {
@@ -71,37 +70,55 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
         return buildLocationListSchema(data.locations, data.options || {});
       }
 
-      case 'LocalBusiness':
+      case 'BreadcrumbList':
+        // Use centralized breadcrumb schema builder
+        return buildBreadcrumbSchema(data.breadcrumbs || data.items);
+
+      case 'LocalBusiness': {
+        // Dynamic LocalBusiness pulled from COMPANY_DATA (SSOT)
+        // Helper to parse 12h time to 24h format
+        const parse12hTo24h = (time) => {
+          if (!time || typeof time !== 'string') return null;
+          const match = time.match(/^(\d{1,2}):(\d{2})\s*(am|pm)$/i);
+          if (!match) return null;
+          const [, hoursStr, minutesStr, meridiem] = match;
+          let hours = parseInt(hoursStr, 10);
+          const minutes = parseInt(minutesStr, 10);
+          if (meridiem.toLowerCase() === 'pm' && hours !== 12) hours += 12;
+          if (meridiem.toLowerCase() === 'am' && hours === 12) hours = 0;
+          return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+        };
+
         return {
           '@context': 'https://schema.org',
           '@type': 'LocalBusiness',
-          '@id': 'https://romamart.ca/#business',
-          name: data.name || COMPANY_DATA.dba || COMPANY_DATA.legalName || 'Roma Mart Convenience',
+          '@id': `${COMPANY_DATA.baseUrl}/#business`,
+          name: data.name || COMPANY_DATA.dba || COMPANY_DATA.legalName,
           legalName: COMPANY_DATA.legalName || undefined,
-          alternateName: data.alternateName || COMPANY_DATA.dba || 'Roma Mart',
-          description: data.description || 'Your daily stop & go convenience store in Sarnia, Ontario. Fresh RoCafé beverages, ATM, Bitcoin ATM, printing, and more.',
-          url: 'https://romamart.ca',
-          telephone: data.telephone || COMPANY_DATA.contact?.phone || COMPANY_DATA.location.contact.phone || '+1-382-342-2000',
-          email: data.email || COMPANY_DATA.contact?.email || COMPANY_DATA.location.contact.email || 'contact@romamart.ca',
-          priceRange: '$$',
-          image: data.image || 'https://romamart.ca/images/store-front.jpg',
-          logo: 'https://romamart.ca/logo.png',
+          alternateName: data.alternateName || COMPANY_DATA.dba,
+          description: data.description || 'Your daily stop & go convenience store. Fresh RoCafé beverages, ATM, Bitcoin ATM, printing, and more.',
+          url: COMPANY_DATA.baseUrl,
+          telephone: data.telephone || COMPANY_DATA.contact.phone || COMPANY_DATA.location.contact.phone,
+          email: data.email || COMPANY_DATA.contact.email || COMPANY_DATA.location.contact.email,
+          priceRange: COMPANY_DATA.defaults.priceRange,
+          image: data.image || `${COMPANY_DATA.baseUrl}/images/store-front.jpg`,
+          logo: COMPANY_DATA.logoUrl,
           brand: {
             '@type': 'Brand',
-            name: COMPANY_DATA.dba || 'Roma Mart Convenience'
+            name: COMPANY_DATA.dba
           },
           address: {
             '@type': 'PostalAddress',
-            streetAddress: data.address?.street || COMPANY_DATA.address?.street || COMPANY_DATA.location.address.street || '189-3 Wellington Street',
-            addressLocality: data.address?.city || COMPANY_DATA.address?.city || COMPANY_DATA.location.address.city || 'Sarnia',
-            addressRegion: data.address?.province || COMPANY_DATA.address?.province || COMPANY_DATA.location.address.province || 'ON',
-            postalCode: data.address?.postalCode || COMPANY_DATA.address?.postalCode || COMPANY_DATA.location.address.postalCode || 'N7T 1G6',
-            addressCountry: COMPANY_DATA.address?.country || COMPANY_DATA.location.address.country || 'CA'
+            streetAddress: data.address?.street || COMPANY_DATA.address.street || COMPANY_DATA.location.address.street,
+            addressLocality: data.address?.city || COMPANY_DATA.address.city || COMPANY_DATA.location.address.city,
+            addressRegion: data.address?.province || COMPANY_DATA.address.province || COMPANY_DATA.location.address.province,
+            postalCode: data.address?.postalCode || COMPANY_DATA.address.postalCode || COMPANY_DATA.location.address.postalCode,
+            addressCountry: COMPANY_DATA.defaults.country
           },
           geo: {
             '@type': 'GeoCoordinates',
-            latitude: data.geo?.latitude || COMPANY_DATA.location?.google?.coordinates?.lat || 42.970389,
-            longitude: data.geo?.longitude || COMPANY_DATA.location?.google?.coordinates?.lng || -82.404589
+            latitude: data.geo?.latitude || COMPANY_DATA.location.google.coordinates.lat,
+            longitude: data.geo?.longitude || COMPANY_DATA.location.google.coordinates.lng
           },
           hasMap: COMPANY_DATA.location?.google?.mapLink || undefined,
           openingHoursSpecification: data.hours || (
@@ -142,58 +159,57 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
                 ]
               : []
           ),
-          timeZone: COMPANY_DATA.location?.hours?.timezone || 'America/Toronto',
+          timeZone: COMPANY_DATA.defaults.timezone,
           sameAs: data.socialLinks || Object.values(COMPANY_DATA.socialLinks),
           contactPoint: {
             '@type': 'ContactPoint',
             contactType: 'customer service',
-            telephone: COMPANY_DATA.contact?.phone || COMPANY_DATA.location?.contact?.phone || '+1-382-342-2000',
-            email: COMPANY_DATA.contact?.email || COMPANY_DATA.location?.contact?.email || 'contact@romamart.ca'
+            telephone: COMPANY_DATA.contact.phone || COMPANY_DATA.location.contact.phone,
+            email: COMPANY_DATA.contact.email || COMPANY_DATA.location.contact.email
           },
           areaServed: {
             '@type': 'City',
-            name: COMPANY_DATA.location?.address?.city || 'Sarnia'
+            name: COMPANY_DATA.location.address.city
           },
+          // Build amenities from location.features (location-specific, not hardcoded)
           amenityFeature: [
-            {
+            ...(COMPANY_DATA.location.features?.wifi ? [{
               '@type': 'LocationFeatureSpecification',
               name: 'Free WiFi',
               value: true
-            },
-            {
+            }] : []),
+            ...(COMPANY_DATA.location.features?.parking ? [{
               '@type': 'LocationFeatureSpecification',
               name: 'Parking',
               value: true
-            },
-            {
+            }] : []),
+            ...(COMPANY_DATA.location.features?.wheelchairAccessible ? [{
               '@type': 'LocationFeatureSpecification',
               name: 'Wheelchair Accessible',
               value: true
-            }
+            }] : [])
           ],
-          paymentAccepted: ['Cash', 'Credit Card', 'Debit Card', 'Interac', 'Visa', 'Mastercard', 'American Express', 'Bitcoin']
+          // Payment methods from COMPANY_DATA (business-wide)
+          paymentAccepted: COMPANY_DATA.paymentMethods
         };
-
-      case 'BreadcrumbList':
-        // Use centralized breadcrumb schema builder
-        return buildBreadcrumbSchema(data.breadcrumbs || data.items);
+      }
 
       case 'WebSite':
         return {
           '@context': 'https://schema.org',
           '@type': 'WebSite',
-          '@id': 'https://romamart.ca/#website',
-          url: 'https://romamart.ca',
-          name: 'Roma Mart Convenience',
-          description: data.description || 'Your daily stop & go convenience store in Sarnia, Ontario.',
+          '@id': `${COMPANY_DATA.baseUrl}/#website`,
+          url: COMPANY_DATA.baseUrl,
+          name: COMPANY_DATA.dba,
+          description: data.description || 'Your daily stop & go convenience store',
           publisher: {
-            '@id': 'https://romamart.ca/#business'
+            '@id': `${COMPANY_DATA.baseUrl}/#business`
           },
           potentialAction: {
             '@type': 'SearchAction',
             target: {
               '@type': 'EntryPoint',
-              urlTemplate: 'https://romamart.ca/search?q={search_term_string}'
+              urlTemplate: `${COMPANY_DATA.baseUrl}/search?q={search_term_string}`
             },
             'query-input': 'required name=search_term_string'
           }
@@ -201,7 +217,7 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
 
       case 'Product': {
         const menuItem = data.menuItem || data.item || data;
-        const itemUrl = data.itemUrl || data.url || 'https://romamart.ca';
+        const itemUrl = data.itemUrl || data.url || COMPANY_DATA.baseUrl;
         const options = {
           priceInCents: data.priceInCents,
           currency: data.currency
@@ -214,37 +230,41 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
         return {
           '@context': 'https://schema.org',
           '@type': 'Organization',
-          '@id': 'https://romamart.ca/#organization',
-          name: COMPANY_DATA.legalName || 'Roma Mart Corp.',
-          alternateName: COMPANY_DATA.dba || 'Roma Mart Convenience',
-          url: 'https://romamart.ca',
-          logo: 'https://romamart.ca/logo.png',
-          description: 'Roma Mart Corp. is a community-first convenience store in Sarnia, Ontario, offering essentials, RoCafé beverages, and local services.',
-          email: COMPANY_DATA.contact?.email || 'contact@romamart.ca',
-          telephone: COMPANY_DATA.contact?.phone || '+1-382-342-2000',
+          '@id': `${COMPANY_DATA.baseUrl}/#organization`,
+          name: COMPANY_DATA.legalName,
+          alternateName: COMPANY_DATA.dba,
+          url: COMPANY_DATA.baseUrl,
+          logo: COMPANY_DATA.logoUrl,
+          description: `${COMPANY_DATA.legalName} is a community-first convenience store offering essentials, RoCafé beverages, and local services.`,
+          email: COMPANY_DATA.contact.email,
+          telephone: COMPANY_DATA.contact.phone,
           address: {
             '@type': 'PostalAddress',
-            streetAddress: COMPANY_DATA.address?.street || COMPANY_DATA.location?.address?.street || '189-3 Wellington Street',
-            addressLocality: COMPANY_DATA.address?.city || COMPANY_DATA.location?.address?.city || 'Sarnia',
-            addressRegion: COMPANY_DATA.address?.province || COMPANY_DATA.location?.address?.province || 'ON',
-            postalCode: COMPANY_DATA.address?.postalCode || COMPANY_DATA.location?.address?.postalCode || 'N7T 1G6',
-            addressCountry: COMPANY_DATA.address?.country === 'Canada' ? 'CA' : (COMPANY_DATA.address?.country || 'CA')
+            streetAddress: COMPANY_DATA.address.street || COMPANY_DATA.location.address.street,
+            addressLocality: COMPANY_DATA.address.city || COMPANY_DATA.location.address.city,
+            addressRegion: COMPANY_DATA.address.province || COMPANY_DATA.location.address.province,
+            postalCode: COMPANY_DATA.address.postalCode || COMPANY_DATA.location.address.postalCode,
+            addressCountry: COMPANY_DATA.defaults.country
           },
           contactPoint: {
             '@type': 'ContactPoint',
             contactType: 'customer service',
-            telephone: COMPANY_DATA.contact?.phone || '+1-382-342-2000',
-            email: COMPANY_DATA.contact?.email || 'contact@romamart.ca'
+            telephone: COMPANY_DATA.contact.phone,
+            email: COMPANY_DATA.contact.email
           },
           sameAs: Object.values(COMPANY_DATA.socialLinks || {}),
           taxID: COMPANY_DATA.gstNumber || undefined,
-          naicsCode: COMPANY_DATA.naicsCode || '4541',
+          naicsCode: COMPANY_DATA.naicsCode,
           numberOfEmployees: COMPANY_DATA.location?.metadata?.employeeCount
             ? {
                 '@type': 'QuantitativeValue',
                 value: COMPANY_DATA.location.metadata.employeeCount
               }
-            : undefined
+            : undefined,
+          // Link to main LocalBusiness location
+          location: {
+            '@id': `${COMPANY_DATA.baseUrl}/#business`
+          }
         };
 
       case 'PrivacyPolicy':

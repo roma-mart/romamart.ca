@@ -38,12 +38,13 @@ export const buildServiceSchema = (service, options = {}) => {
 
   const description = safeString(service.description || service.tagline || '');
   const serviceType = safeString(service.category || 'Service');
-  const serviceUrl = options.serviceUrl || 'https://romamart.ca/services';
-  const providerUrl = options.providerUrl || 'https://romamart.ca';
+  const serviceUrl = options.serviceUrl || `${COMPANY_DATA.baseUrl}${COMPANY_DATA.endpoints.services}`;
+  const providerUrl = options.providerUrl || COMPANY_DATA.baseUrl;
 
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'Service',
+    ...(service.id ? { '@id': `${COMPANY_DATA.baseUrl}${COMPANY_DATA.endpoints.services}#${safeString(service.id)}` } : {}),
     name,
     ...(description ? { description } : {}),
     ...(serviceType ? { serviceType } : {}),
@@ -52,14 +53,18 @@ export const buildServiceSchema = (service, options = {}) => {
     provider: {
       '@type': 'LocalBusiness',
       '@id': `${providerUrl}/#business`,
-      name: COMPANY_DATA.dba || 'Roma Mart Convenience',
+      name: COMPANY_DATA.dba,
       url: providerUrl
     },
     areaServed: {
       '@type': 'City',
-      name: COMPANY_DATA.location?.address?.city || 'Sarnia',
-      addressRegion: COMPANY_DATA.location?.address?.province || 'ON',
-      addressCountry: COMPANY_DATA.location?.address?.country || 'CA'
+      name: COMPANY_DATA.location.address.city,
+      addressRegion: COMPANY_DATA.location.address.province,
+      addressCountry: COMPANY_DATA.defaults.country
+    },
+    brand: {
+      '@type': 'Brand',
+      name: COMPANY_DATA.dba
     }
   };
 
@@ -98,6 +103,14 @@ export const buildServiceSchema = (service, options = {}) => {
       '@type': 'Place',
       identifier: safeString(locationId)
     }));
+  }
+
+  // Add broker if service is provided through an intermediary
+  if (service.broker) {
+    schema.broker = {
+      '@type': 'Organization',
+      name: safeString(service.broker)
+    };
   }
 
   return schema;

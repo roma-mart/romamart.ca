@@ -115,20 +115,20 @@ export const buildLocationSchema = (location, _options = {}) => {
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
-    '@id': location.id ? `https://romamart.ca/#location-${location.id}` : undefined,
+    '@id': location.id ? `${COMPANY_DATA.baseUrl}/#location-${location.id}` : undefined,
     name,
     ...(location.shortName ? { alternateName: safeString(location.shortName) } : {}),
     ...(location.description ? { description: safeString(location.description) } : {}),
-    url: 'https://romamart.ca/locations',
-    telephone: safeString(contact.phone || COMPANY_DATA.contact?.phone || '+1-382-342-2000'),
-    email: safeString(contact.email || COMPANY_DATA.contact?.email || 'contact@romamart.ca'),
+    url: `${COMPANY_DATA.baseUrl}${COMPANY_DATA.endpoints.locations}`,
+    telephone: safeString(contact.phone || COMPANY_DATA.contact.phone),
+    email: safeString(contact.email || COMPANY_DATA.contact.email),
     address: {
       '@type': 'PostalAddress',
       streetAddress: safeString(address.street),
       addressLocality: safeString(address.city),
       addressRegion: safeString(address.province),
       postalCode: safeString(address.postalCode),
-      addressCountry: address.country || 'CA'
+      addressCountry: address.country || COMPANY_DATA.defaults.country
     }
   };
 
@@ -163,7 +163,7 @@ export const buildLocationSchema = (location, _options = {}) => {
   }
 
   // Add logo
-  schema.logo = 'https://romamart.ca/logo.png';
+  schema.logo = COMPANY_DATA.logoUrl;
 
   // Add features/amenities
   if (location.features && typeof location.features === 'object') {
@@ -218,8 +218,19 @@ export const buildLocationSchema = (location, _options = {}) => {
 
   // Add price range if this is headquarters (primary location)
   if (location.isPrimary || location.metadata?.isHeadquarters) {
-    schema.priceRange = '$$';
+    schema.priceRange = COMPANY_DATA.defaults.priceRange;
   }
+
+  // Add brand
+  schema.brand = {
+    '@type': 'Brand',
+    name: COMPANY_DATA.dba
+  };
+
+  // Link to parent organization
+  schema.parentOrganization = {
+    '@id': `${COMPANY_DATA.baseUrl}/#organization`
+  };
 
   return schema;
 };

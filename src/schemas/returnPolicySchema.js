@@ -5,16 +5,15 @@
  * @since February 4, 2026
  */
 
+import COMPANY_DATA from '../config/company_data.js';
 import { safeString } from '../utils/schemaHelpers.js';
 
-const BASE_URL = 'https://romamart.ca';
-
 export const buildReturnPolicySchema = (data = {}) => {
-  const name = safeString(data.name || 'Roma Mart Returns & Refund Policy');
-  const url = data.url || `${BASE_URL}/return-policy`;
+  const name = safeString(data.name || `${COMPANY_DATA.dba} Returns & Refund Policy`);
+  const url = data.url || `${COMPANY_DATA.baseUrl}${COMPANY_DATA.endpoints.returnPolicy}`;
   const description = safeString(
     data.description ||
-    'All Roma Mart Corp. sales are final. Returns accepted only for faulty products confirmed to be faulty due to an issue that existed prior to purchase.'
+    `All ${COMPANY_DATA.legalName} sales are final. Returns accepted only for faulty products confirmed to be faulty due to an issue that existed prior to purchase.`
   );
 
   return {
@@ -24,7 +23,7 @@ export const buildReturnPolicySchema = (data = {}) => {
     name,
     url,
     description,
-    applicableCountry: 'CA',
+    applicableCountry: COMPANY_DATA.defaults.country,
     returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
     merchantReturnDays: 1,
     itemCondition: 'https://schema.org/DamagedCondition',
@@ -32,12 +31,12 @@ export const buildReturnPolicySchema = (data = {}) => {
     returnFees: 'https://schema.org/FreeReturn',
     returnShippingFeesAmount: {
       '@type': 'MonetaryAmount',
-      currency: 'CAD',
+      currency: COMPANY_DATA.defaults.currency,
       value: '0'
     },
     restockingFee: {
       '@type': 'MonetaryAmount',
-      currency: 'CAD',
+      currency: COMPANY_DATA.defaults.currency,
       value: '0'
     },
     returnPolicySeasonalOverride: [],
