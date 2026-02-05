@@ -78,16 +78,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Broker field added to Service schemas (optional)
   - SearchAction added to WebSite schema
 
+- **Phase 5 Schema Validation (100% Compliance Target):**
+  - Fixed empty @id bug in Product, Service, Location schemas (prevented ItemList detection)
+  - Removed invalid naicsCode property from Organization schema
+  - Removed invalid PrivacyPolicy schema type (not recognized by Schema.org)
+  - Removed invalid timeZone property from static LocalBusiness schema
+  - All 11 pages validated through Schema.org validator
+  - Zero invalid properties or types remaining
+
 #### Fixes
 
-- Fixed invalid hasOfferCatalog in LocalBusiness (causing 4 Product snippet errors)
-- Resolved LocalBusiness schema duplication (static vs dynamic)
-- Fixed prerender script hardcoded serviceMap (now imports from SSOT)
-- Fixed CodeQL sanitization vulnerability (iterative regex for XSS protection)
+- **Phase 5 Critical Fixes:**
+  - Empty @id fields causing duplicate IDs (ProductList not detected on homepage)
+  - Organization naicsCode property not recognized by Schema.org
+  - PrivacyPolicy invalid schema type (removed - 404 on schema.org)
+  - LocalBusiness timeZone property not recognized by Schema.org
+
+- **Phase 3-4 Fixes:**
+  - Invalid hasOfferCatalog in LocalBusiness (causing 4 Product snippet errors)
+  - LocalBusiness schema duplication (static vs dynamic)
+  - Prerender script hardcoded serviceMap (now imports from SSOT)
+  - CodeQL sanitization vulnerability (iterative regex for XSS protection)
 
 #### Documentation
 
-- STRUCTURED_DATA_MASTER_PLAN.md v4.0.0 (comprehensive Phase 2-4 documentation)
+- STRUCTURED_DATA_MASTER_PLAN.md v5.0.0 (comprehensive Phase 2-5 documentation)
+- Phase 5 schema validation and bug fixes documented
+- Page-by-page validation results documented
 - Phase 4 schema audit integrated into master plan
 - Amenities architecture migration documented
 - Data management documentation updated with new amenities structure

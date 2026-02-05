@@ -650,8 +650,14 @@ const id = menuItem.id ? safeString(menuItem.id) : '';
 
 ### Step 3: Final Deployment & Verification 🔄 NEXT
 
+**Commits Created:**
+- ✅ `95048a9` - fix(schema): prevent empty @id fields in Product, Service, and Location schemas
+- ✅ `e54844c` - fix(schema): remove unsupported naicsCode from Organization schema
+- ✅ `5223c85` - fix(seo): remove invalid Schema.org properties and types
+- ✅ `b8b34bd` - fix(seo): remove invalid timeZone property from LocalBusiness schema
+
 **Pending Tasks:**
-1. ⏳ Commit all schema validation fixes
+1. ⏳ Create PR and merge to main
 2. ⏳ Deploy changes to GitHub Pages
 3. ⏳ Run Schema.org validator on all pages post-deployment
 4. ⏳ Document final compliance scores
