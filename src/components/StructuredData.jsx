@@ -11,6 +11,8 @@ import { buildPrivacyPolicySchema } from '../schemas/privacyPolicySchema';
 import { buildReturnPolicySchema } from '../schemas/returnPolicySchema';
 import { buildBreadcrumbSchema } from '../schemas/breadcrumbSchema';
 import { buildWebApplicationSchema } from '../schemas/webApplicationSchema';
+import { buildServiceListSchema } from '../schemas/serviceSchema';
+import { buildLocationListSchema } from '../schemas/locationSchema';
 import { parse12hTo24h } from '../utils/dateHelpers';
 
 const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
@@ -47,6 +49,26 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
             item: product
           }))
         };
+      }
+
+      case 'ServiceList': {
+        // Build ItemList containing all Service schemas
+        if (!data.services || !Array.isArray(data.services)) {
+          return null;
+        }
+
+        // Use the centralized schema builder
+        return buildServiceListSchema(data.services, data.options || {});
+      }
+
+      case 'LocationList': {
+        // Build ItemList containing all LocalBusiness (location) schemas
+        if (!data.locations || !Array.isArray(data.locations)) {
+          return null;
+        }
+
+        // Use the centralized schema builder
+        return buildLocationListSchema(data.locations, data.options || {});
       }
 
       case 'LocalBusiness':

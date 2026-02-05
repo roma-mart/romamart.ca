@@ -4,7 +4,8 @@ import { ChevronRight, MapPin, Phone, ExternalLink, Building2 } from 'lucide-rea
 import ShareButton from '../components/ShareButton';
 import CopyButton from '../components/CopyButton';
 import Button from '../components/Button';
-import { getActiveLocations, formatDistance, getPreferredLocations } from '../data/locations';
+import { formatDistance, getPreferredLocations } from '../data/locations';
+import { useLocations } from '../contexts/LocationsContext';
 import LocationImageCarousel from '../components/LocationImageCarousel';
 import LiveHoursDisplay from '../components/LiveHoursDisplay';
 import { useAutoLocation } from '../hooks/useAutoLocation';
@@ -13,6 +14,12 @@ import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 import { normalizePhoneForTel } from '../utils/phone';
 
 const LocationsPage = () => {
+  // Fetch locations from API with fallback to static data
+  const { locations: allLocations } = useLocations();
+
+  // Filter to only active locations (status === 'open')
+  const activeLocations = allLocations.filter(loc => loc.status === 'open');
+
   const [userLoadedMaps, setUserLoadedMaps] = useState(() => []);
   const [userCoords, setUserCoords] = useState(null);
 
@@ -33,7 +40,7 @@ const LocationsPage = () => {
 
   const sortedLocations = getPreferredLocations({
     userCoords,
-    locations: getActiveLocations()
+    locations: activeLocations
   });
   const preferredLocationId = sortedLocations[0]?.id;
   const loadedMaps = (() => {
@@ -71,6 +78,17 @@ const LocationsPage = () => {
 
       {/* Breadcrumb Schema */}
       <StructuredData type="BreadcrumbList" data={{ breadcrumbs: buildBreadcrumbArray('Locations', 'https://romamart.ca/locations') }} />
+
+      {/* Location List Schema */}
+      {activeLocations.length > 0 && (
+        <StructuredData
+          type="LocationList"
+          data={{
+            locations: activeLocations,
+            options: {}
+          }}
+        />
+      )}
 
       <nav aria-label="Breadcrumb" className="max-w-7xl mx-auto px-4 mb-8">
         <ol className="flex items-center gap-2 text-sm font-inter">

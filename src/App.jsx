@@ -29,6 +29,8 @@ import { SERVICES_FEATURED } from './data/services.jsx';
 import Phone from 'lucide-react/dist/esm/icons/phone.js';
 import Clock from 'lucide-react/dist/esm/icons/clock.js';
 import { useMenu } from './contexts/MenuContext';
+import { useServices } from './contexts/ServicesContext';
+import { useLocations } from './contexts/LocationsContext';
 import { transformExcelToMenuItem } from './utils/excelMenuTransform';
 import HCaptchaWidget from './components/HCaptchaWidget';
 import StructuredData from './components/StructuredData';
@@ -601,11 +603,22 @@ function App() {
   // Fetch menu data from API for homepage featured schemas + RoCafe section
   // Menu is now provided via MenuProvider context to avoid duplicate API calls
   const { menuItems, loading } = useMenu();
-  
+
+  // Fetch services data from API with fallback to static SERVICES
+  const { services } = useServices();
+
+  // Fetch locations data from API with fallback to static LOCATIONS
+  const { locations } = useLocations();
+
   // Only include featured items for homepage schemas (limited selection)
   const featuredSchemaItems = useMemo(() => {
     return menuItems.filter(item => item.featured);
   }, [menuItems]);
+
+  // Only include featured services for homepage schemas
+  const featuredServices = useMemo(() => {
+    return services.filter(service => service.featured);
+  }, [services]);
   
   // Prices in API are always in cents
   const schemaPriceInCents = true;
@@ -648,6 +661,29 @@ function App() {
                 itemUrl: 'https://romamart.ca/rocafe',
                 priceInCents: schemaPriceInCents
               }))
+            }}
+          />
+        )}
+        {/* Homepage Service Schemas (Featured Services Only) */}
+        {currentPage === 'home' && featuredServices.length > 0 && (
+          <StructuredData
+            type="ServiceList"
+            data={{
+              services: featuredServices,
+              options: {
+                serviceUrl: 'https://romamart.ca/services',
+                providerUrl: 'https://romamart.ca'
+              }
+            }}
+          />
+        )}
+        {/* Homepage Location Schemas */}
+        {currentPage === 'home' && locations.length > 0 && (
+          <StructuredData
+            type="LocationList"
+            data={{
+              locations: locations,
+              options: {}
             }}
           />
         )}
