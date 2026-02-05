@@ -121,6 +121,11 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
             longitude: data.geo?.longitude || COMPANY_DATA.location.google.coordinates.lng
           },
           hasMap: COMPANY_DATA.location?.google?.mapLink || undefined,
+          currenciesAccepted: COMPANY_DATA.defaults.currency,
+          areaServed: {
+            '@type': 'City',
+            name: data.address?.city || COMPANY_DATA.address?.city || COMPANY_DATA.location.address.city
+          },
           openingHoursSpecification: data.hours || (
             COMPANY_DATA.location?.hours?.daily
               ? [
@@ -190,6 +195,11 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
           url: COMPANY_DATA.baseUrl,
           name: COMPANY_DATA.dba,
           description: data.description || 'Your daily stop & go convenience store',
+          inLanguage: 'en-CA',
+          copyrightYear: new Date().getFullYear(),
+          copyrightHolder: {
+            '@id': `${COMPANY_DATA.baseUrl}/#organization`
+          },
           publisher: {
             '@id': `${COMPANY_DATA.baseUrl}/#business`
           },
@@ -243,6 +253,10 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
           sameAs: Object.values(COMPANY_DATA.socialLinks || {}),
           taxID: COMPANY_DATA.gstNumber || undefined,
           naicsCode: COMPANY_DATA.naicsCode,
+          areaServed: {
+            '@type': 'City',
+            name: COMPANY_DATA.address?.city || COMPANY_DATA.location.address.city
+          },
           numberOfEmployees: COMPANY_DATA.location?.metadata?.employeeCount
             ? {
                 '@type': 'QuantitativeValue',

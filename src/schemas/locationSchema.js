@@ -189,6 +189,17 @@ export const buildLocationSchema = (location, _options = {}) => {
     schema.priceRange = COMPANY_DATA.defaults.priceRange;
   }
 
+  // Add currencies accepted
+  schema.currenciesAccepted = COMPANY_DATA.defaults.currency;
+
+  // Add area served (city/region where location operates)
+  if (address.city) {
+    schema.areaServed = {
+      '@type': 'City',
+      name: safeString(address.city)
+    };
+  }
+
   // Add brand
   schema.brand = {
     '@type': 'Brand',
