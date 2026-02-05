@@ -6,7 +6,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import COMPANY_DATA from '../config/company_data';
-import { SERVICES } from '../data/services';
 import { buildMenuItemSchema } from '../schemas/menuItemSchema';
 import { buildPrivacyPolicySchema } from '../schemas/privacyPolicySchema';
 import { buildReturnPolicySchema } from '../schemas/returnPolicySchema';
@@ -132,18 +131,6 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
           areaServed: {
             '@type': 'City',
             name: COMPANY_DATA.location?.address?.city || 'Sarnia'
-          },
-          hasOfferCatalog: {
-            '@type': 'OfferCatalog',
-            name: 'Services & Products',
-            itemListElement: SERVICES.map(service => ({
-              '@type': 'Offer',
-              itemOffered: {
-                '@type': 'Service',
-                name: service.name,
-                description: service.description
-              }
-            }))
           },
           amenityFeature: [
             {
