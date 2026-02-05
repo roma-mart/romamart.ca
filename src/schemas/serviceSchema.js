@@ -40,15 +40,16 @@ export const buildServiceSchema = (service, options = {}) => {
   const serviceType = safeString(service.category || 'Service');
   const serviceUrl = options.serviceUrl || `${COMPANY_DATA.baseUrl}${COMPANY_DATA.endpoints.services}`;
   const providerUrl = options.providerUrl || COMPANY_DATA.baseUrl;
+  const id = service.id ? safeString(service.id) : '';
 
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'Service',
-    ...(service.id ? { '@id': `${COMPANY_DATA.baseUrl}${COMPANY_DATA.endpoints.services}#${safeString(service.id)}` } : {}),
+    ...(id ? { '@id': `${COMPANY_DATA.baseUrl}${COMPANY_DATA.endpoints.services}#${id}` } : {}),
     name,
     ...(description ? { description } : {}),
     ...(serviceType ? { serviceType } : {}),
-    ...(service.id ? { identifier: safeString(service.id) } : {}),
+    ...(id ? { identifier: id } : {}),
     url: serviceUrl,
     provider: {
       '@type': 'LocalBusiness',

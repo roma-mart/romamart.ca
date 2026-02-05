@@ -111,11 +111,12 @@ export const buildLocationSchema = (location, _options = {}) => {
   const contact = location.contact || {};
   const coords = location.google?.coordinates || {};
   const hours = location.hours || {};
+  const id = location.id ? safeString(location.id) : '';
 
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
-    '@id': location.id ? `${COMPANY_DATA.baseUrl}/#location-${location.id}` : undefined,
+    ...(id ? { '@id': `${COMPANY_DATA.baseUrl}/#location-${id}` } : {}),
     name,
     ...(location.shortName ? { alternateName: safeString(location.shortName) } : {}),
     ...(location.description ? { description: safeString(location.description) } : {}),

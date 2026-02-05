@@ -153,11 +153,12 @@ export const buildMenuItemSchema = (menuItem, itemUrl, options = {}) => {
 
   const offers = buildOffers(menuItem.sizes || [], resolvedOptions);
   const image = safeString(menuItem.image || '');
+  const id = menuItem.id ? safeString(menuItem.id) : '';
 
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'Product',
-    ...(menuItem.id ? { '@id': `${itemUrl}#${safeString(menuItem.id)}` } : {}),
+    ...(id ? { '@id': `${itemUrl}#${id}` } : {}),
     name,
     ...(description ? { description } : {}),
     ...(keywords.length ? { keywords } : {}),
@@ -165,7 +166,7 @@ export const buildMenuItemSchema = (menuItem, itemUrl, options = {}) => {
     ...(allergyWarning.length ? { allergyWarning } : {}),
     ...(offers ? { offers } : {}),
     ...(image ? { image } : {}),
-    ...(menuItem.id ? { sku: safeString(menuItem.id) } : {}),
+    ...(id ? { sku: id } : {}),
     ...(itemUrl ? { url: itemUrl } : {}),
     // Category for better product classification
     ...(categories.length ? { category: safeString(categories[0]) } : { category: COMPANY_DATA.defaults.productCategory }),
