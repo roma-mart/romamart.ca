@@ -201,7 +201,7 @@ describe('buildReturnPolicySchema', () => {
       const schema = buildReturnPolicySchema({});
 
       expect(schema).toBeDefined();
-      expect(schema['@type']).toBe('ReturnPolicy');
+      expect(schema['@type']).toBe('MerchantReturnPolicy');
       expect(schema.name).toBe('Roma Mart Convenience Returns & Refund Policy');
     });
 
