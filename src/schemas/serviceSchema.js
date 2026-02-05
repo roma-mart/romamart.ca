@@ -58,9 +58,7 @@ export const buildServiceSchema = (service, options = {}) => {
     },
     areaServed: {
       '@type': 'City',
-      name: COMPANY_DATA.location.address.city,
-      addressRegion: COMPANY_DATA.location.address.province,
-      addressCountry: COMPANY_DATA.defaults.country
+      name: COMPANY_DATA.location.address.city
     },
     brand: {
       '@type': 'Brand',
@@ -95,14 +93,6 @@ export const buildServiceSchema = (service, options = {}) => {
       '@type': 'OpeningHoursSpecification',
       name: safeString(service.availability)
     };
-  }
-
-  // Add location availability if specified
-  if (service.availableAt && Array.isArray(service.availableAt) && service.availableAt.length > 0) {
-    schema.availableAtOrFrom = service.availableAt.map(locationId => ({
-      '@type': 'Place',
-      identifier: safeString(locationId)
-    }));
   }
 
   // Add broker if service is provided through an intermediary

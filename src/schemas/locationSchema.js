@@ -152,11 +152,6 @@ export const buildLocationSchema = (location, _options = {}) => {
     schema.openingHoursSpecification = openingHours;
   }
 
-  // Add timezone
-  if (hours.timezone) {
-    schema.timeZone = safeString(hours.timezone);
-  }
-
   // Add primary photo if available
   if (location.photos?.primary) {
     schema.image = safeString(location.photos.primary);

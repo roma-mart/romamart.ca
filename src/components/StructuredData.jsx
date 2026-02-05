@@ -164,7 +164,6 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
                 ]
               : []
           ),
-          timeZone: COMPANY_DATA.defaults.timezone,
           sameAs: data.socialLinks || Object.values(COMPANY_DATA.socialLinks),
           contactPoint: {
             '@type': 'ContactPoint',
