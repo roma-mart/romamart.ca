@@ -1,8 +1,8 @@
 # Structured Data Implementation - Master Plan
 
-**Status:** Phase 5 Complete - Empty @id Bug Fix
+**Status:** Phase 5 In Progress - Schema Validation & Bug Fixes
 **Last Updated:** February 6, 2026
-**Version:** 5.0.0 (Phase 5 Complete - Critical Schema Validation Fix)
+**Version:** 5.0.0 (Phase 5 - Validation & Fixes In Progress)
 **Created By:** GitHub Copilot + Roma Mart Team
 **Audience:** Development team, colleague, AI assistants (for continuity)
 
@@ -525,13 +525,13 @@ ALL schemas now pull exclusively from Single Source of Truth (COMPANY_DATA):
 
 ---
 
-## Phase 5: Empty @id Bug Fix (February 6, 2026) ✅ COMPLETE
+## Phase 5: Schema Validation & Bug Fixes (February 6, 2026) 🔄 IN PROGRESS
 
-**Duration:** 1 Day (February 6, 2026)
-**Status:** ✅ Complete
-**Issue:** Critical schema validation failure
+**Duration:** 1-2 Days (February 6, 2026)
+**Status:** 🔄 In Progress
+**Scope:** Validator testing on all pages, bug detection, fixing, re-validation
 
-### Problem Discovered
+### Step 1: Empty @id Bug Fix ✅ FIXED
 
 Schema.org validator was not detecting ProductList on homepage despite it rendering correctly in HTML. Investigation revealed:
 
@@ -575,12 +575,15 @@ const id = menuItem.id ? safeString(menuItem.id) : '';
    - Same pattern for LocalBusiness @id
    - Consistent with other builders
 
-### Quality Assurance
+### Quality Assurance (Step 1)
 
 **Build & Lint:**
 - ✅ Build: Success (9.49s)
 - ✅ ESLint: 0 errors
 - ✅ Prerender: All 11 routes generated successfully
+
+**Commit:**
+- `95048a9` - fix(schema): prevent empty @id fields in Product, Service, and Location schemas
 
 **Expected Results After Deployment:**
 - ProductList will be detected by Schema.org validator
@@ -588,9 +591,30 @@ const id = menuItem.id ? safeString(menuItem.id) : '';
 - Services and Locations protected from empty ID issues
 - All 3 ItemLists properly validated
 
-### Phase 5 Commits
+### Step 2: Full Validation Testing 🔄 NEXT
 
-- `[commit hash]` - fix(schema): prevent empty @id fields in Product, Service, and Location schemas
+**Pending Tasks:**
+1. ⏳ Deploy changes to GitHub Pages
+2. ⏳ Run Schema.org validator on all pages:
+   - Homepage (/)
+   - /services
+   - /rocafe
+   - /locations
+   - /about
+   - Policy pages (privacy, terms, return-policy, cookies)
+   - /contact
+   - /accessibility
+3. ⏳ Document any remaining errors/warnings
+4. ⏳ Fix additional issues if found
+5. ⏳ Re-validate until clean
+
+### Step 3: Final Verification 📋 NOT STARTED
+
+**Pending:**
+- Confirm all errors from original validator report are resolved
+- Verify commit 186a55b fixes (timeZone, availableAtOrFrom, etc.) show in validator
+- Document final compliance scores
+- Mark Phase 5 complete
 
 ### Technical Notes
 
@@ -2323,15 +2347,15 @@ Build schema builders that:
 
 **File:** STRUCTURED_DATA_MASTER_PLAN.md
 **Version:** 5.0.0
-**Status:** Phase 5 Complete - Critical @id Bug Fixed (ProductList Now Validates)
+**Status:** Phase 5 In Progress - Validation & Bug Fixes
 **Created:** February 4, 2026
 **Last Reviewed:** February 6, 2026
-**Next Review:** After deployment and validator testing
+**Next Review:** After Phase 5 completion
 
 **How to Use This Document:**
 
 1. **First time reading:** Read Part 1 (Architecture) to understand the system
-2. **Implementation:** Review Phase 5 (Empty @id Fix) for latest critical fix
+2. **Implementation:** Review Phase 5 (Validation & Fixes) for current work
 3. **Technical details:** Refer to Part 4 (Schema Examples) when coding
 4. **Questions:** Check Part 10 (Quick Reference) first
 5. **Deployment:** Follow Part 8 (Deployment Checklist)
@@ -2342,7 +2366,7 @@ Build schema builders that:
 - **Phase 2:** Policy Schemas & Core Implementation (Completed Feb 4, 2026)
 - **Phase 3:** Service & Location Schemas (Completed Feb 5, 2026)
 - **Phase 4:** Schema Audit & Architecture Refinement (Completed Feb 5, 2026)
-- **Phase 5:** Empty @id Bug Fix (Completed Feb 6, 2026)
+- **Phase 5:** Schema Validation & Bug Fixes (In Progress - Feb 6, 2026)
 - **Phase 6:** API Migration for Services & Locations (Future)
 
 This is the single source of truth for this project. All decisions and trade-offs are documented here.
