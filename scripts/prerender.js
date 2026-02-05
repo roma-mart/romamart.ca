@@ -4,6 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import COMPANY_DATA from '../src/config/company_data.js';
+import { buildAmenityFeatures } from '../src/config/amenities.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -218,12 +219,8 @@ const buildStructuredData = () => {
         openingHoursSpecification,
         timeZone: hours.timezone || 'America/Toronto',
         sameAs: Object.values(COMPANY_DATA.socialLinks || {}),
-        amenityFeature: [
-          { '@type': 'LocationFeatureSpecification', name: 'Free WiFi', value: true },
-          { '@type': 'LocationFeatureSpecification', name: 'Parking', value: true },
-          { '@type': 'LocationFeatureSpecification', name: 'Wheelchair Accessible', value: true }
-        ],
-        paymentAccepted: ['Cash', 'Credit Card', 'Debit Card', 'Interac', 'Visa', 'Mastercard', 'American Express', 'Bitcoin']
+        amenityFeature: buildAmenityFeatures(location?.features || {}),
+        paymentAccepted: COMPANY_DATA.paymentMethods || ['Cash', 'Credit Card', 'Debit Card', 'Interac', 'Visa', 'Mastercard', 'American Express', 'Bitcoin']
       },
       {
         '@type': 'WebSite',

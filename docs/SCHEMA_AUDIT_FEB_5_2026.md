@@ -824,10 +824,12 @@ COMPANY_DATA = {
 **Critical Distinction**: Not all data belongs in COMPANY_DATA. Smart architecture recognizes the difference:
 
 **Location-Specific Data** (varies per location):
-- **Amenities**: WiFi, parking, wheelchair accessibility, restrooms, seating
+- **Amenities**: WiFi, parking, wheelchair accessibility, restrooms, seating, outdoor seating, drive-through, delivery
 - **Source**: `location.features` object in locations.js
-- **Usage**: `COMPANY_DATA.location.features.wifi`, `COMPANY_DATA.location.features.parking`, etc.
+- **Mapping**: Centralized in `src/config/amenities.js` (AMENITY_FEATURE_MAP)
+- **Usage**: `buildAmenityFeatures(location.features)` - fully dynamic, no hardcoded feature checks
 - **Schema Impact**: Each location can have different amenities in LocationSchema and LocalBusiness schema
+- **Extensibility**: Add new features to locations.js + amenities.js → automatically included in all schemas
 
 **Business-Wide Data** (uniform across all locations):
 - **Payment Methods**: Cash, cards, Bitcoin, etc.
@@ -837,23 +839,59 @@ COMPANY_DATA = {
 - **Usage**: `COMPANY_DATA.paymentMethods`, `COMPANY_DATA.returnPolicy`, `COMPANY_DATA.defaults.ageRestriction`
 - **Schema Impact**: All schemas reference the same business-wide values
 
-**Implementation in StructuredData.jsx (LocalBusiness case)**:
+**Implementation - Fully Dynamic Amenities (NO hardcoded feature names)**:
+
+1. **Centralized Mapping** (`src/config/amenities.js`):
 ```javascript
-// Location-specific amenities (from location.features)
-amenityFeature: [
-  ...(COMPANY_DATA.location.features?.wifi ? [{ ... }] : []),
-  ...(COMPANY_DATA.location.features?.parking ? [{ ... }] : []),
-  ...(COMPANY_DATA.location.features?.wheelchairAccessible ? [{ ... }] : [])
-],
-// Business-wide payment methods (from COMPANY_DATA root)
-paymentAccepted: COMPANY_DATA.paymentMethods
+export const AMENITY_FEATURE_MAP = {
+  wifi: 'Free WiFi',
+  wheelchairAccessible: 'Wheelchair Accessible',
+  parking: 'Parking Available',
+  restroom: 'Public Restroom',
+  seating: 'Indoor Seating',
+  outdoorSeating: 'Outdoor Seating',
+  driveThrough: 'Drive-Through',
+  deliveryAvailable: 'Delivery Available'
+  // Add more as needed - all schemas automatically adapt
+};
+
+export function buildAmenityFeatures(features) {
+  // Dynamically iterates ALL features, maps to schema names, builds LocationFeatureSpecification
+  return Object.entries(features)
+    .filter(([key, value]) => AMENITY_FEATURE_MAP[key] && value === true)
+    .map(([key]) => ({
+      '@type': 'LocationFeatureSpecification',
+      name: AMENITY_FEATURE_MAP[key],
+      value: true
+    }));
+}
 ```
+
+2. **Usage in Schemas** (StructuredData.jsx, locationSchema.js, prerender.js):
+```javascript
+import { buildAmenityFeatures } from '../config/amenities';
+
+// LocalBusiness schema
+amenityFeature: buildAmenityFeatures(COMPANY_DATA.location.features)
+
+// Location schema
+amenityFeature: buildAmenityFeatures(location.features)
+```
+
+**Benefits of This Architecture**:
+- **100% Dynamic**: No hardcoded feature names anywhere in schemas
+- **Single Source of Truth**: All amenity names defined once in amenities.js
+- **Auto-Extensible**: Add new feature to locations.js + mapping → all schemas include it automatically
+- **Multi-Location Ready**: Each location can have different features
+- **Easy Maintenance**: Change amenity names in one place → updates everywhere
+- **Consistent Naming**: Impossible to have mismatched amenity names across schemas
 
 This architecture enables:
 - Multi-location support with location-specific amenities
 - Consistent business-wide policies and practices
 - API-ready design (locations API can return different features per location)
 - No hardcoding while respecting data ownership boundaries
+- True extensibility (add new features without touching schema code)
 
 ### Only Intentionally Static Schema
 **WebSite (index.html)** - Minimal hardcoded schema for instant SearchAction SEO (pre-JS load). This is the ONLY schema with hardcoded values, and it's intentional for performance. All dynamic schemas pull from COMPANY_DATA.

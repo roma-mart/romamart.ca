@@ -10,6 +10,7 @@
 import { safeString } from '../utils/schemaHelpers.js';
 import COMPANY_DATA from '../config/company_data.js';
 import { parse12hTo24h } from '../utils/dateHelpers.js';
+import { buildAmenityFeatures } from '../config/amenities.js';
 
 /**
  * Build opening hours specification from location hours data
@@ -165,45 +166,10 @@ export const buildLocationSchema = (location, _options = {}) => {
   // Add logo
   schema.logo = COMPANY_DATA.logoUrl;
 
-  // Add features/amenities
-  if (location.features && typeof location.features === 'object') {
-    const amenities = [];
-
-    if (location.features.wifi) {
-      amenities.push({
-        '@type': 'LocationFeatureSpecification',
-        name: 'Free WiFi',
-        value: true
-      });
-    }
-
-    if (location.features.parking) {
-      amenities.push({
-        '@type': 'LocationFeatureSpecification',
-        name: 'Parking Available',
-        value: true
-      });
-    }
-
-    if (location.features.wheelchairAccessible) {
-      amenities.push({
-        '@type': 'LocationFeatureSpecification',
-        name: 'Wheelchair Accessible',
-        value: true
-      });
-    }
-
-    if (location.features.restroom) {
-      amenities.push({
-        '@type': 'LocationFeatureSpecification',
-        name: 'Restroom',
-        value: true
-      });
-    }
-
-    if (amenities.length > 0) {
-      schema.amenityFeature = amenities;
-    }
+  // Add features/amenities dynamically from location.features (fully dynamic via SSOT)
+  const amenities = buildAmenityFeatures(location.features);
+  if (amenities.length > 0) {
+    schema.amenityFeature = amenities;
   }
 
   // Add services available at location (as keywords for now, will link to Service schemas later)

@@ -13,6 +13,7 @@ import { buildBreadcrumbSchema } from '../schemas/breadcrumbSchema';
 import { buildWebApplicationSchema } from '../schemas/webApplicationSchema';
 import { buildServiceListSchema } from '../schemas/serviceSchema';
 import { buildLocationListSchema } from '../schemas/locationSchema';
+import { buildAmenityFeatures } from '../config/amenities';
 
 const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
   const generateSchema = () => {
@@ -171,24 +172,8 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
             '@type': 'City',
             name: COMPANY_DATA.location.address.city
           },
-          // Build amenities from location.features (location-specific, not hardcoded)
-          amenityFeature: [
-            ...(COMPANY_DATA.location.features?.wifi ? [{
-              '@type': 'LocationFeatureSpecification',
-              name: 'Free WiFi',
-              value: true
-            }] : []),
-            ...(COMPANY_DATA.location.features?.parking ? [{
-              '@type': 'LocationFeatureSpecification',
-              name: 'Parking',
-              value: true
-            }] : []),
-            ...(COMPANY_DATA.location.features?.wheelchairAccessible ? [{
-              '@type': 'LocationFeatureSpecification',
-              name: 'Wheelchair Accessible',
-              value: true
-            }] : [])
-          ],
+          // Build amenities dynamically from location.features (location-specific, fully dynamic via SSOT)
+          amenityFeature: buildAmenityFeatures(COMPANY_DATA.location.features),
           // Payment methods from COMPANY_DATA (business-wide)
           paymentAccepted: COMPANY_DATA.paymentMethods
         };
