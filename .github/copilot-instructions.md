@@ -61,10 +61,40 @@ npm run preview                # Preview production build
 - See component READMEs in each directory for specific conventions
 
 ### Data Management
-- **Single source of truth:** `src/data/locations.js` for all store data
+
+**Architecture:** API-first with graceful fallback to static data
+
+#### Context Providers (100% API-Ready)
+- **MenuContext** (`src/contexts/MenuContext.jsx`) - RoCafé menu items
+  - API: `https://romamart.netlify.app/api/public-menu`
+  - Fallback: Empty array on error
+  - Usage: `const { menuItems, loading, error } = useMenu()`
+
+- **ServicesContext** (`src/contexts/ServicesContext.jsx`) - Services offered
+  - API: `https://romamart.netlify.app/api/public-services`
+  - Fallback: Static `SERVICES` from `src/data/services.jsx`
+  - Usage: `const { services, loading, error, source } = useServices()`
+
+- **LocationsContext** (`src/contexts/LocationsContext.jsx`) - Store locations
+  - API: `https://romamart.netlify.app/api/public-locations`
+  - Fallback: Static `LOCATIONS` from `src/data/locations.js`
+  - Usage: `const { locations, loading, error, source } = useLocations()`
+
+- **LocationContext** (`src/contexts/LocationContext.js`) - User location state
+  - Manages selected location, geolocation, nearest location
+  - Usage: `const { selectedLocation, userLocation } = useLocationContext()`
+
+#### Critical Rules
+- ✅ **DO:** Always use context providers (`useMenu()`, `useServices()`, `useLocations()`)
+- ❌ **DON'T:** Import static data directly (e.g., `import { SERVICES } from './data/services'`)
+- ✅ **DO:** Use helper functions that accept data as parameters
+- ❌ **DON'T:** Use helper functions that import static data internally
+
+#### Static Data Files (Fallback Only)
+- `src/data/services.jsx` - 15 services with categories, features, availability
+- `src/data/locations.js` - Store locations with hours, coordinates, amenities
+- `src/data/rocafe-menu.js` - Menu items (fallback for MenuContext)
 - Location types: convenience_store, minimart, vending_machine, atm_standalone, etc.
-- Add locations by copying existing structure, don't create new schemas
-- Use LocationContext (`src/contexts/LocationContext.js`) for location state
 
 ### Accessibility (WCAG 2.2 AA+)
 - All interactive elements need `:focus-visible` styles
@@ -153,12 +183,18 @@ Multi-dimensional validation across:
 6. Test with `npm run check:all`
 
 ### Adding a New Location
+**Note:** Once the Locations API is live, locations should be added via the API backend, not by editing static files.
+
+For now (static data period):
 1. Open `src/data/locations.js`
 2. Copy existing location object structure
 3. Fill in all required fields (no nulls for critical data)
 4. Add Google Place ID and coordinates
 5. Specify services array (atm, bitcoin_atm, rocafe, etc.)
-6. Test on Locations page
+6. Add to amenities array (Google Business Profile compliant naming)
+7. Test on Locations page
+
+**All components will automatically use the new location via LocationsContext.**
 
 ### Creating a Component
 1. Use functional component with hooks
@@ -179,6 +215,36 @@ import { CSS_VARS } from '../utils/theme';
 
 // ❌ WRONG - Hardcoded color
 <div style={{ color: '#020178' }}>
+```
+
+### Working with Data (API-First Pattern)
+```jsx
+// ✅ CORRECT - Use context providers
+import { useServices } from '../contexts/ServicesContext';
+import { useLocations } from '../contexts/LocationsContext';
+
+function MyComponent() {
+  const { services } = useServices();
+  const { locations } = useLocations();
+
+  // Filter or transform data as needed
+  const activeServices = services.filter(s => s.status === 'available');
+
+  return <div>{/* Use activeServices */}</div>;
+}
+
+// ❌ WRONG - Direct static import bypasses API
+import { SERVICES } from '../data/services';
+import { LOCATIONS } from '../data/locations';
+
+// ❌ WRONG - Using helper that imports static data
+import { getActiveLocations } from '../data/locations';
+const locations = getActiveLocations(); // This uses static LOCATIONS internally
+
+// ✅ CORRECT - Helper that accepts data parameter
+import { getPreferredLocation } from '../data/locations';
+const { locations } = useLocations();
+const preferred = getPreferredLocation({ userCoords, locations });
 ```
 
 ## Build & Deployment
@@ -254,6 +320,59 @@ Before going live on custom domain:
 
 ## External API Integration
 
+### Data APIs (Context Providers)
+
+All data APIs follow the same pattern: API-first with graceful fallback to static data.
+
+#### MenuContext API
+- **Endpoint:** `https://romamart.netlify.app/api/public-menu`
+- **Method:** GET
+- **Response:** `{ success: boolean, menuItems: Array }`
+- **Fallback:** Empty array on error
+- **Implementation:** `src/contexts/MenuContext.jsx`
+- **Consumer Components:** App.jsx, RoCafePage.jsx
+
+#### ServicesContext API
+- **Endpoint:** `https://romamart.netlify.app/api/public-services`
+- **Method:** GET
+- **Response:** `{ success: boolean, services: Array }`
+- **Fallback:** Static `SERVICES` from `src/data/services.jsx`
+- **Implementation:** `src/contexts/ServicesContext.jsx`
+- **Consumer Components:** App.jsx (ServicesSection), ServicesPage.jsx
+- **Required Fields:** `id`, `name`, `featured` (boolean for homepage filtering)
+
+#### LocationsContext API
+- **Endpoint:** `https://romamart.netlify.app/api/public-locations`
+- **Method:** GET
+- **Response:** `{ success: boolean, locations: Array }`
+- **Fallback:** Static `LOCATIONS` from `src/data/locations.js`
+- **Implementation:** `src/contexts/LocationsContext.jsx`
+- **Consumer Components:** App.jsx (Locations, ContactSection), Footer.jsx, LocationsPage.jsx
+- **Required Fields:** `id`, `status` (for filtering active locations)
+
+#### API Pattern Example
+```jsx
+// ✅ CORRECT: Use context provider
+import { useServices } from '../contexts/ServicesContext';
+
+function MyComponent() {
+  const { services, loading, error, source } = useServices();
+
+  if (loading) return <LoadingSpinner />;
+  if (error) return <ErrorMessage />; // Fallback already applied
+
+  return (
+    <div>
+      {services.map(service => <ServiceCard key={service.id} {...service} />)}
+      {source === 'static' && <p>Using cached data</p>}
+    </div>
+  );
+}
+
+// ❌ WRONG: Direct static import bypasses API system
+import { SERVICES } from '../data/services';
+```
+
 ### Web3Forms Contact API
 - **Endpoint:** `https://api.web3forms.com/submit`
 - **Method:** POST with JSON body
@@ -262,14 +381,12 @@ Before going live on custom domain:
 - **Error Handling:** Falls back to queuing in IndexedDB if offline
 - **Rate Limiting:** None client-side; service handles rate limits
 
-**Pattern for API calls:**
-```jsx
-const response = await fetch('https://api.web3forms.com/submit', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ access_key: import.meta.env.VITE_WEB3FORMS_KEY, ...formData })
-});
-```
+### Google Places API
+- **Purpose:** Live hours and ratings for locations
+- **Implementation:** `src/hooks/useGooglePlaceHours.js`
+- **Caching:** 1-hour IndexedDB cache to reduce API calls
+- **Circuit Breaker:** Protection against rate limiting
+- **Fallback:** Uses static hours from location data
 
 ## Development Tooling & Code Style
 
@@ -288,13 +405,22 @@ const response = await fetch('https://api.web3forms.com/submit', {
   - `bugfix/*` - Bug fixes
   - `hotfix/*` - Critical production fixes
   - `docs/*` - Documentation updates
-  - `chore/*` - Maintenance tasks
+  - `chore/*` - Maintenance tasks, dependency updates, tooling
 - **Commit conventions:** Follow [Conventional Commits](https://www.conventionalcommits.org/)
   - Format: `<type>(<scope>): <description>`
   - Types: feat, fix, docs, style, refactor, perf, test, build, ci, chore
 - **Manual quality checks required** before commit: `npm run check:all`
 - **Git hooks:** Not configured (see [TOOLING_RECOMMENDATIONS.md](TOOLING_RECOMMENDATIONS.md) for Husky setup)
 - **Pull requests:** Required for all changes to `main` (see [PULL_REQUEST_TEMPLATE.md](PULL_REQUEST_TEMPLATE.md))
+  - Comprehensive checklist: automated tests, manual testing, accessibility, security
+  - Browser testing requirements: Chrome/Edge, Firefox, Safari
+  - Light/dark mode verification required
+
+### Issue Templates
+- **Bug Report** (`.github/ISSUE_TEMPLATE/bug_report.yml`) - Detailed bug reports with severity, affected area, environment info
+- **Feature Request** (`.github/ISSUE_TEMPLATE/feature_request.yml`) - New feature proposals with priority levels
+- **Documentation** (`.github/ISSUE_TEMPLATE/documentation.yml`) - Documentation improvements
+- **Maintenance** (`.github/ISSUE_TEMPLATE/maintenance.yml`) - Chore tasks, dependency updates, tooling improvements
 
 ### Testing Strategy
 - **No automated test suite** - Quality enforced via:
@@ -365,6 +491,7 @@ const response = await fetch('https://api.web3forms.com/submit', {
 
 ---
 
-**Last Updated:** December 3, 2025  
-**Maintained by:** GitHub Copilot  
+**Last Updated:** February 5, 2026
+**Maintained by:** GitHub Copilot & Claude Code
 **Codebase Version:** React 19 + Vite 7 (ESM)
+**API Status:** 100% API-ready (Menu, Services, Locations contexts)
