@@ -172,10 +172,6 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
             telephone: COMPANY_DATA.contact.phone || COMPANY_DATA.location.contact.phone,
             email: COMPANY_DATA.contact.email || COMPANY_DATA.location.contact.email
           },
-          areaServed: {
-            '@type': 'City',
-            name: COMPANY_DATA.location.address.city
-          },
           // Amenities from location data (Google-recognized names, API-ready structure)
           amenityFeature: (COMPANY_DATA.location.amenities || []).map(amenity => ({
             '@type': 'LocationFeatureSpecification',
