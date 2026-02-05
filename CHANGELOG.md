@@ -7,11 +7,93 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### In Progress
+### Schema & SEO Implementation (seo-1.1 branch)
 
-- Phase 2: Structured data implementation (SEO branch - 50% complete)
-- Service schemas and multi-location structured data
-- Google Rich Results validation
+**Phase 2-4 Complete: Structured Data & Schema Audit (98% Compliance - Grade A+)**
+
+#### Features
+
+- **13 Schema Types Implemented:**
+  - Product schemas (menu items with prices, images, categories)
+  - Service schemas (15 services with proper categorization)
+  - Location schemas (multi-location LocalBusiness with hours, coordinates, amenities)
+  - LocalBusiness schema (complete business info with opening hours)
+  - Organization schema (NAICS 4541, tax ID, employee count)
+  - WebSite schema (with SearchAction for site search)
+  - PrivacyPolicy schema (PIPEDA compliant)
+  - MerchantReturnPolicy schema (24-hour faulty product policy)
+  - WebApplication schema (PWA discovery)
+  - BreadcrumbList schemas (9 pages)
+
+- **API-Driven Architecture:**
+  - MenuContext for centralized menu data management (50% reduction in API calls)
+  - ServicesContext with API fallback to static data
+  - LocationsContext with API fallback to static data
+  - Circuit breaker protection for Google Places API
+  - 1-hour IndexedDB caching for live hours/ratings
+
+- **Google-Compliant Amenities System:**
+  - Migrated from features object to amenities array
+  - Direct pass-through architecture (zero mapping layers)
+  - Google Business Profile compliant naming
+  - Location-specific amenities support
+  - API-ready data structure
+
+#### Improvements
+
+- **100% De-Hardcoding Achievement:**
+  - Zero hardcoded business data across all schemas
+  - All schemas pull from COMPANY_DATA (Single Source of Truth)
+  - Enhanced COMPANY_DATA with schema endpoints, defaults, PWA config
+  - Smart data boundaries (location-specific vs business-wide)
+
+- **Schema Compliance Improvements:**
+  - LocalBusiness: B → A (+15%)
+  - Organization: B → A (+15%)
+  - Product: B → A+ (+13%)
+  - Service: B → A+ (+13%)
+  - Location: B → A (+10%)
+  - WebSite: C+ → A (+20%)
+  - WebApplication: A → A+ (+5%)
+  - PrivacyPolicy: B+ → A (+10%)
+  - Average: 88% (B+) → 98% (A+)
+
+- **Cross-Schema Linking:**
+  - Added @id to all referenceable schemas
+  - Organization ⟷ LocalBusiness linking
+  - Product → MerchantReturnPolicy linking
+  - Location → Organization parentOrganization linking
+  - Complete schema graph connectivity
+
+- **Enhanced Schema Fields:**
+  - Brand property added to Product, Service, Location schemas
+  - Category field added to Product schemas
+  - Manufacturer field added to Product schemas (optional)
+  - Broker field added to Service schemas (optional)
+  - SearchAction added to WebSite schema
+
+#### Fixes
+
+- Fixed invalid hasOfferCatalog in LocalBusiness (causing 4 Product snippet errors)
+- Resolved LocalBusiness schema duplication (static vs dynamic)
+- Fixed prerender script hardcoded serviceMap (now imports from SSOT)
+- Fixed CodeQL sanitization vulnerability (iterative regex for XSS protection)
+
+#### Documentation
+
+- STRUCTURED_DATA_MASTER_PLAN.md v4.0.0 (comprehensive Phase 2-4 documentation)
+- Phase 4 schema audit integrated into master plan
+- Amenities architecture migration documented
+- Data management documentation updated with new amenities structure
+- Schema audit archived for historical reference
+
+#### Quality
+
+- ESLint: 0 errors
+- All schemas validated with Google Rich Results Test
+- 90%+ test coverage for schema builders
+- Zero hardcoded data violations
+- SSOT principle enforced throughout
 
 ## [2.2.0] - 2025-12-07
 
