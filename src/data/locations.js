@@ -162,22 +162,6 @@ export const LOCATIONS = [
       // { name: 'Credit cards', value: true },
       // { name: 'NFC mobile payments', value: true }
     ],
-
-    // === LEGACY FEATURES (DEPRECATED - Use amenities array above) ===
-    // Keeping for backward compatibility, will be removed when all code migrated
-    features: {
-      parking: true,
-      parkingSpots: 15,
-      wheelchairAccessible: true,
-      wifi: true,
-      wifiPassword: null,
-      restroom: true,
-      seating: false,
-      seatingCapacity: 0,
-      outdoorSeating: false,
-      driveThrough: false,
-      deliveryAvailable: false
-    },
     // === PHOTOS ===
     photos: {
       // Main exterior shot
@@ -338,13 +322,15 @@ export const getActiveLocationCount = () => {
 };
 
 /**
- * Check if location has specific feature
+ * Check if location has specific amenity
  * @param {Object} location - Location object
- * @param {string} feature - Feature name
- * @returns {boolean} Has feature
+ * @param {string} amenityName - Amenity name (e.g., 'Free Wi-Fi', 'Parking')
+ * @returns {boolean} Has amenity
  */
-export const hasFeature = (location, feature) => {
-  return location.features?.[feature] === true;
+export const hasAmenity = (location, amenityName) => {
+  return location.amenities?.some(amenity =>
+    amenity.name === amenityName && amenity.value === true
+  ) || false;
 };
 
 /**
@@ -573,7 +559,7 @@ export default {
   getHeadquarters,
   getTotalLocationCount,
   getActiveLocationCount,
-  hasFeature,
+  hasAmenity,
   hasService,
   getStatusText,
   getFormattedAddress,

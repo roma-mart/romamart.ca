@@ -93,7 +93,7 @@ const buildOpeningHours = (hours) => {
  * @param {Object} location.hours - Hours object
  * @param {Object} location.google - Google Maps data
  * @param {Array<string>} location.services - Array of service IDs available at location
- * @param {Object} location.features - Location features (wifi, parking, etc.)
+ * @param {Array<Object>} location.amenities - Array of amenity objects with name and value
  * @param {Object} options - Optional overrides
  * @returns {Object|null} LocalBusiness schema object
  */

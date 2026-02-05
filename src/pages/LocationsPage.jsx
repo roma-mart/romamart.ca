@@ -248,15 +248,15 @@ const LocationsPage = () => {
                   </div>
 
                   <div>
-                    <h3 className="font-bold mb-3" style={textColor}>Available Services</h3>
+                    <h3 className="font-bold mb-3" style={textColor}>Amenities</h3>
                     <div className="flex flex-wrap gap-2">
-                      {location.features.map((feature, idx) => (
+                      {(location.amenities || []).map((amenity, idx) => (
                         <span
                           key={idx}
                           className="px-3 py-1 rounded-full text-sm font-inter font-semibold"
                           style={{ backgroundColor: 'rgba(228, 179, 64, 0.15)', color: 'var(--color-text)' }}
                         >
-                          {feature}
+                          {amenity.name}
                         </span>
                       ))}
                     </div>
