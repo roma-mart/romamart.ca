@@ -619,24 +619,34 @@ const id = menuItem.id ? safeString(menuItem.id) : '';
 
 **Note:** MerchantReturnPolicy on return-policy page is VALID ✅ and remains unchanged
 
+#### Return Policy Page
+**What We Expected:** BreadcrumbList, MerchantReturnPolicy, WebSite (from static HTML)
+**What Validator Detected:** BreadcrumbList ✅, MerchantReturnPolicy ✅, WebSite ❌ (timeZone property not recognized on LocalBusiness)
+
+**Issue:** Static LocalBusiness schema (nested in WebSite as publisher) included unsupported `timeZone: 'America/Toronto'` property
+**Fix:** Removed line 219 from `scripts/prerender.js`
+**Reasoning:** Schema.org doesn't recognize timeZone as a valid LocalBusiness property. Timezone information is only needed for JavaScript date calculations, not schema markup.
+
 #### Terms & Cookies Pages
 **Status:** Already correct ✅ - Only BreadcrumbList schemas (no invalid types)
 
 **Files Modified:**
 1. `src/components/StructuredData.jsx` - Removed naicsCode line, removed PrivacyPolicy case and import
 2. `src/pages/PrivacyPage.jsx` - Removed PrivacyPolicy StructuredData component
+3. `scripts/prerender.js` - Removed timeZone property from static LocalBusiness schema
 
 ### Quality Assurance (Step 2)
 
 **Build & Lint:**
-- ✅ Build: Success (10.42s)
+- ✅ Build: Success (9.41s)
 - ✅ ESLint: 0 errors
 - ✅ Prerender: All 11 routes generated successfully
 
 **Expected Results After Deployment:**
 - About page Organization schema will validate cleanly
 - Privacy page will show only BreadcrumbList (valid)
-- No invalid Schema.org types remaining
+- Return policy page WebSite will validate cleanly (no timeZone error)
+- No invalid Schema.org types or properties remaining
 
 ### Step 3: Final Deployment & Verification 🔄 NEXT
 
