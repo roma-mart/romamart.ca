@@ -91,18 +91,12 @@ const LocationButton = React.forwardRef(({
     <motion.button
       ref={ref}
       type="button"
+      {...props}
       className={`button location ${className}`.trim()}
       style={mergedStyle}
       onClick={handleClick}
-      onKeyDown={e => {
-        if ((e.key === 'Enter' || e.key === ' ') && !disabled && !loading) {
-          e.preventDefault();
-          handleClick(e);
-        }
-      }}
       disabled={disabled || loading}
       {...ariaProps}
-      {...props}
       {...LOCATION_ANIMATION}
     >
       {loading ? (

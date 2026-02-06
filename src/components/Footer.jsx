@@ -425,17 +425,9 @@ export default function Footer() {
               <div className="mt-8 flex justify-center">
                 <LocationButton
                   ariaLabel="Detect Nearest Store"
-                  onClick={e => {
-                    if (e.type === 'click' || (e.type === 'keydown' && (e.key === 'Enter' || e.key === ' '))) {
-                      setSelectedLocationId('auto');
-                    }
+                  onClick={() => {
+                    setSelectedLocationId('auto');
                   }}
-                  onKeyDown={e => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      setSelectedLocationId('auto');
-                    }
-                  }}
-                  tabIndex={0}
                 >
                   Detect Nearest Store
                 </LocationButton>

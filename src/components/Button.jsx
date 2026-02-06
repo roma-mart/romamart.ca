@@ -220,7 +220,7 @@ const Button = React.forwardRef(({
   const motionProps = VARIANT_ANIMATION[variant] || {};
   const hasAnimation = motionProps && Object.keys(motionProps).length > 0;
 
-  // Accessibility: If rendering as <a>, ensure role and keyboard support for non-standard cases
+  // Accessibility: If rendering as <a>, keep native link semantics
   if (href) {
     const handleLinkClick = (e) => {
       if (disabled || loadingProp) {
@@ -236,17 +236,10 @@ const Button = React.forwardRef(({
       className: allClasses,
       style: mergedStyle,
       onClick: handleLinkClick,
-      onKeyDown: e => {
-        if ((e.key === 'Enter' || e.key === ' ') && !disabled && !loadingProp) {
-          e.preventDefault();
-          handleLinkClick(e);
-        }
-      },
       onMouseEnter: handleMouseEnter,
       onMouseLeave: handleMouseLeave,
       onMouseDown: handleMouseDown,
       onMouseUp: handleMouseUp,
-      role: 'button',
       'aria-disabled': disabled || loadingProp || undefined,
       ...ariaProps,
       ...props,

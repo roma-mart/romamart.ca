@@ -42,17 +42,21 @@ export default function Navbar({ currentPage = 'home' }) {
 
   useEffect(() => {
     let ticking = false;
+    let rafId;
     const handleScroll = () => {
       if (!ticking) {
         ticking = true;
-        requestAnimationFrame(() => {
+        rafId = requestAnimationFrame(() => {
           setScrolled(window.scrollY > 20);
           ticking = false;
         });
       }
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
   }, []);
 
   useEffect(() => {
