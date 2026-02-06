@@ -477,7 +477,7 @@
 - [ ] **Error Messages:** Add proper error identification & suggestions
 - [ ] **Focus Indicators:** Ensure 3:1 contrast on focus outline
 - [ ] **Non-Text Contrast:** Fix UI component contrast (3:1)
-- [ ] **Reduced Motion:** Respect `prefers-reduced-motion` media query
+- [x] **Reduced Motion:** Respect `prefers-reduced-motion` media query (hero animations use `useReducedMotion()` from Framer Motion)
 - [ ] **Resizable Text:** Test at 200% zoom
 - [ ] **Link Purpose:** Ensure all links have clear text/context
 - [ ] **Multiple Navigation Methods:** Add sitemap or search
@@ -633,7 +633,7 @@ module.exports = {
 3. **Following 2 Weeks:**
    - [ ] Implement Phase 2 (AA compliance)
    - [ ] Add ARIA labels & semantic HTML
-   - [ ] Respect `prefers-reduced-motion`
+   - [x] Respect `prefers-reduced-motion`
 
 4. **Ongoing:**
    - [ ] Set up CI/CD with ESLint jsx-a11y plugin
