@@ -146,7 +146,7 @@ const ServicesPage = () => {
           <div className="grid md:grid-cols-2 gap-8 mb-6">
             {/* Tobacco/Vape Section */}
             <div>
-              <h4 className="text-headingfont-bold text-lg mb-3" style={{ color: 'var(--color-heading)' }}>Tobacco & Vapour Products</h4>
+              <h4 className="text-heading font-bold text-lg mb-3" style={{ color: 'var(--color-heading)' }}>Tobacco & Vapour Products</h4>
               <div className="p-4 rounded-lg border-2 mb-4" style={{ backgroundColor: 'var(--color-error-bg)', borderColor: 'var(--color-error)' }}>
                 <div className="flex items-start gap-3">
                   <div className="text-3xl">🚭</div>
@@ -173,7 +173,7 @@ const ServicesPage = () => {
 
             {/* Lottery Section */}
             <div>
-              <h4 className="text-headingfont-bold text-lg mb-3" style={{ color: 'var(--color-heading)' }}>Lottery Products</h4>
+              <h4 className="text-heading font-bold text-lg mb-3" style={{ color: 'var(--color-heading)' }}>Lottery Products</h4>
               <div className="p-4 rounded-lg border-2 mb-4" style={{ backgroundColor: 'var(--color-warning-bg)', borderColor: COLORS.yellow }}>
                 <div className="flex items-start gap-3">
                   <div className="text-3xl">🎫</div>

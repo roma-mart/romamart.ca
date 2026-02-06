@@ -222,59 +222,39 @@ const Button = React.forwardRef(({
 
   // Accessibility: If rendering as <a>, ensure role and keyboard support for non-standard cases
   if (href) {
+    const handleLinkClick = (e) => {
+      if (disabled || loadingProp) {
+        e.preventDefault();
+        return;
+      }
+      handleClick(e);
+    };
+    const linkProps = {
+      ref,
+      href: disabled ? undefined : href,
+      tabIndex: disabled ? -1 : tabIndex,
+      className: allClasses,
+      style: mergedStyle,
+      onClick: handleLinkClick,
+      onKeyDown: e => {
+        if ((e.key === 'Enter' || e.key === ' ') && !disabled && !loadingProp) {
+          e.preventDefault();
+          handleLinkClick(e);
+        }
+      },
+      onMouseEnter: handleMouseEnter,
+      onMouseLeave: handleMouseLeave,
+      onMouseDown: handleMouseDown,
+      onMouseUp: handleMouseUp,
+      role: 'button',
+      'aria-disabled': disabled || loadingProp || undefined,
+      ...ariaProps,
+      ...props,
+    };
     if (hasAnimation) {
-      return (
-        <motion.a
-          ref={ref}
-          href={href}
-          tabIndex={tabIndex}
-          className={allClasses}
-          style={mergedStyle}
-          onClick={handleClick}
-          onKeyDown={e => {
-            if ((e.key === 'Enter' || e.key === ' ') && !disabled && !loadingProp) {
-              e.preventDefault();
-              handleClick(e);
-            }
-          }}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-          onMouseDown={handleMouseDown}
-          onMouseUp={handleMouseUp}
-          role="button"
-          {...ariaProps}
-          {...props}
-          {...motionProps}
-        >
-          {renderContent()}
-        </motion.a>
-      );
+      return (<motion.a {...linkProps} {...motionProps}>{renderContent()}</motion.a>);
     }
-    return (
-      <a
-        ref={ref}
-        href={href}
-        tabIndex={tabIndex}
-        className={allClasses}
-        style={mergedStyle}
-        onClick={handleClick}
-        onKeyDown={e => {
-          if ((e.key === 'Enter' || e.key === ' ') && !disabled && !loadingProp) {
-            e.preventDefault();
-            handleClick(e);
-          }
-        }}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        onMouseDown={handleMouseDown}
-        onMouseUp={handleMouseUp}
-        role="button"
-        {...ariaProps}
-        {...props}
-      >
-        {renderContent()}
-      </a>
-    );
+    return (<a {...linkProps}>{renderContent()}</a>);
   }
 
   // Unified click handler for all variants

@@ -262,7 +262,7 @@ const AboutPage = () => {
               >
                 {value.icon}
               </div>
-              <h3 className="text-headingtext-xl mb-3" style={{ color: 'var(--color-heading)' }}>
+              <h3 className="text-heading text-xl mb-3" style={{ color: 'var(--color-heading)' }}>
                 {value.title}
               </h3>
               <p className="font-inter text-sm leading-relaxed" style={mutedTextColor}>
@@ -332,7 +332,7 @@ const AboutPage = () => {
                     style={{ backgroundColor: 'var(--color-primary)' }}
                   />
                 </div>
-                <h3 className="text-headingtext-2xl mb-2" style={{ color: 'var(--color-heading)' }}>
+                <h3 className="text-heading text-2xl mb-2" style={{ color: 'var(--color-heading)' }}>
                   {member.name}
                 </h3>
                 <p className="text-sm font-inter font-bold uppercase tracking-wider mb-4" style={{ color: 'var(--color-accent)' }}>

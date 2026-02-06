@@ -192,7 +192,7 @@ const ContactPage = () => {
 
           {/* Contact Form */}
           <div className="p-8 rounded-2xl shadow-lg border" style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
-            <h3 className="text-headingtext-2xl mb-6" style={{ color: 'var(--color-heading)' }}>
+            <h3 className="text-heading text-2xl mb-6" style={{ color: 'var(--color-heading)' }}>
               Send a Message
             </h3>
 
