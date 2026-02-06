@@ -629,7 +629,8 @@ function App() {
   // Only include featured items for homepage schemas (limited selection)
   const featuredSchemaItems = useMemo(() => {
     const featured = menuItems.filter(item => item.featured);
-    console.info('[App.jsx] Featured menu items for homepage:', {
+    // eslint-disable-next-line no-console
+    console.log('[App.jsx] Featured menu items for homepage:', {
       totalMenuItems: menuItems.length,
       featuredCount: featured.length,
       featuredItems: featured.map(item => ({ id: item.id, name: item.name }))
@@ -676,7 +677,8 @@ function App() {
         {/* Homepage Product Schemas (Featured Items Only - Primary Source for Google) */}
         {currentPage === 'home' && featuredSchemaItems.length > 0 && (
           <>
-            {console.info('[App.jsx] Rendering ProductList schema on homepage with', featuredSchemaItems.length, 'items')}
+            {/* eslint-disable-next-line no-console */}
+            {console.log('[App.jsx] Rendering ProductList schema on homepage with', featuredSchemaItems.length, 'items')}
             <StructuredData
               type="ProductList"
               data={{

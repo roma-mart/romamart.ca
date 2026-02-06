@@ -19,7 +19,8 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
       case 'ProductList': {
         // Build ItemList containing all Product schemas
         // More efficient than multiple <script> tags
-        console.info('[StructuredData] ProductList rendering - Input:', {
+        // eslint-disable-next-line no-console
+        console.log('[StructuredData] ProductList rendering - Input:', {
           hasProducts: !!data.products,
           isArray: Array.isArray(data.products),
           productCount: data.products?.length || 0
@@ -41,7 +42,8 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
           ))
           .filter(Boolean); // Remove null schemas
 
-        console.info('[StructuredData] ProductList - Generated schemas:', {
+        // eslint-disable-next-line no-console
+        console.log('[StructuredData] ProductList - Generated schemas:', {
           inputCount: data.products.length,
           outputCount: productSchemas.length,
           sampleProduct: productSchemas[0] ? productSchemas[0].name : 'N/A'
@@ -62,7 +64,8 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
           }))
         };
 
-        console.info('[StructuredData] ProductList - Final schema:', {
+        // eslint-disable-next-line no-console
+        console.log('[StructuredData] ProductList - Final schema:', {
           type: schema['@type'],
           itemCount: schema.itemListElement.length
         });

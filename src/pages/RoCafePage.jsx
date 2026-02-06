@@ -45,7 +45,8 @@ const RoCafePage = () => {
   const schemaMenuItems = menuItems;
 
   // Log menu items for debugging
-  console.info('[RoCafePage] Menu items for ProductList schema:', {
+  // eslint-disable-next-line no-console
+  console.log('[RoCafePage] Menu items for ProductList schema:', {
     totalItems: schemaMenuItems.length,
     sampleItems: schemaMenuItems.slice(0, 3).map(item => ({ id: item.id, name: item.name }))
   });
@@ -68,7 +69,8 @@ const RoCafePage = () => {
       {/* Full menu Product schemas (API-only, no fallback) */}
       {schemaMenuItems.length > 0 && (
         <>
-          {console.info('[RoCafePage] Rendering ProductList schema with', schemaMenuItems.length, 'items')}
+          {/* eslint-disable-next-line no-console */}
+          {console.log('[RoCafePage] Rendering ProductList schema with', schemaMenuItems.length, 'items')}
           <StructuredData
             type="ProductList"
             data={{
