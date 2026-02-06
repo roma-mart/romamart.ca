@@ -5,12 +5,16 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import COMPANY_DATA from '../src/config/company_data.js';
 import { buildMenuItemSchema } from '../src/schemas/menuItemSchema.js';
+import { buildServiceListSchema } from '../src/schemas/serviceSchema.js';
+import { buildLocationListSchema } from '../src/schemas/locationSchema.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Menu API endpoint - same as MenuContext
+// API endpoints - same as Context providers
 const MENU_API_URL = 'https://romamart.netlify.app/api/public-menu';
+const SERVICES_API_URL = 'https://romamart.netlify.app/api/public-services';
+const LOCATIONS_API_URL = 'https://romamart.netlify.app/api/public-locations';
 
 // Routes to prerender
 const BASE_URL = 'https://romamart.ca';
@@ -188,6 +192,70 @@ async function fetchMenuData() {
 }
 
 /**
+ * Fetches services data from API for prerendering ServiceList schemas
+ * Returns empty array if API unavailable (services schemas handled by React client-side with static fallback)
+ * @returns {Promise<Array>} Services array
+ */
+async function fetchServicesData() {
+  try {
+    console.log('Fetching services data from API for prerendering...');
+    const response = await fetch(SERVICES_API_URL);
+
+    if (!response.ok) {
+      console.warn(`Warning: Services API returned ${response.status}. ServiceList schemas will use React client-side rendering.`);
+      return [];
+    }
+
+    const data = await response.json();
+
+    if (!data.success || !Array.isArray(data.services)) {
+      console.warn('Warning: Invalid services API response. ServiceList schemas will use React client-side rendering.');
+      return [];
+    }
+
+    const services = data.services;
+    console.log(`✓ Fetched ${services.length} services from API (${services.filter(s => s.featured).length} featured)`);
+    return services;
+  } catch (error) {
+    console.warn('Warning: Failed to fetch services data. ServiceList schemas will use React client-side rendering.');
+    console.warn('  Error:', error.message);
+    return [];
+  }
+}
+
+/**
+ * Fetches locations data from API for prerendering LocationList schemas
+ * Returns empty array if API unavailable (locations schemas handled by React client-side with static fallback)
+ * @returns {Promise<Array>} Locations array
+ */
+async function fetchLocationsData() {
+  try {
+    console.log('Fetching locations data from API for prerendering...');
+    const response = await fetch(LOCATIONS_API_URL);
+
+    if (!response.ok) {
+      console.warn(`Warning: Locations API returned ${response.status}. LocationList schemas will use React client-side rendering.`);
+      return [];
+    }
+
+    const data = await response.json();
+
+    if (!data.success || !Array.isArray(data.locations)) {
+      console.warn('Warning: Invalid locations API response. LocationList schemas will use React client-side rendering.');
+      return [];
+    }
+
+    const locations = data.locations;
+    console.log(`✓ Fetched ${locations.length} locations from API`);
+    return locations;
+  } catch (error) {
+    console.warn('Warning: Failed to fetch locations data. LocationList schemas will use React client-side rendering.');
+    console.warn('  Error:', error.message);
+    return [];
+  }
+}
+
+/**
  * Builds ProductList schema for menu items
  * @param {Array} menuItems - Menu items to include
  * @param {boolean} featuredOnly - Only include featured items
@@ -233,7 +301,8 @@ function buildProductListSchema(menuItems, featuredOnly = false) {
   };
 }
 
-const buildStructuredData = (routePath = '/', menuItems = []) => {
+const buildStructuredData = (routePath = '/', apiData = {}) => {
+  const { menuItems = [], services = [], locations = [] } = apiData;
   const location = COMPANY_DATA.location;
   const address = location?.address || {};
   const contact = location?.contact || {};
@@ -333,6 +402,44 @@ const buildStructuredData = (routePath = '/', menuItems = []) => {
     }
   }
 
+  // Add ServiceList for homepage (featured services only)
+  if (routePath === '/' && services.length > 0) {
+    const featuredServices = services.filter(s => s.featured === true);
+    if (featuredServices.length > 0) {
+      const serviceListSchema = buildServiceListSchema(featuredServices, { companyData: COMPANY_DATA });
+      if (serviceListSchema) {
+        graph.push(serviceListSchema);
+      }
+    }
+  }
+
+  // Add ServiceList for services page (all services)
+  if (routePath === '/services' && services.length > 0) {
+    const serviceListSchema = buildServiceListSchema(services, { companyData: COMPANY_DATA });
+    if (serviceListSchema) {
+      graph.push(serviceListSchema);
+    }
+  }
+
+  // Add LocationList for homepage (all locations)
+  if (routePath === '/' && locations.length > 0) {
+    const locationListSchema = buildLocationListSchema(locations, { companyData: COMPANY_DATA });
+    if (locationListSchema) {
+      graph.push(locationListSchema);
+    }
+  }
+
+  // Add LocationList for locations page (active locations only)
+  if (routePath === '/locations' && locations.length > 0) {
+    const activeLocations = locations.filter(loc => loc.status === 'open');
+    if (activeLocations.length > 0) {
+      const locationListSchema = buildLocationListSchema(activeLocations, { companyData: COMPANY_DATA });
+      if (locationListSchema) {
+        graph.push(locationListSchema);
+      }
+    }
+  }
+
   const schema = {
     '@context': 'https://schema.org',
     '@graph': graph
@@ -368,8 +475,14 @@ async function prerender() {
     process.exit(1);
   }
 
-  // Fetch menu data once for all routes
-  const menuItems = await fetchMenuData();
+  // Fetch all API data in parallel for maximum efficiency
+  console.log('\n📡 Fetching API data for prerendering...\n');
+  const [menuItems, services, locations] = await Promise.all([
+    fetchMenuData(),
+    fetchServicesData(),
+    fetchLocationsData()
+  ]);
+  console.log('\n✓ API data fetching complete\n');
 
   const indexTemplate = fs.readFileSync(indexPath, 'utf-8');
 
@@ -445,7 +558,7 @@ async function prerender() {
       )
       .replace(
         /<script type="application\/ld\+json">[\s\S]*?<\/script>/,
-        `<script type="application/ld+json">${buildStructuredData(route.path, menuItems)}</script>`
+        `<script type="application/ld+json">${buildStructuredData(route.path, { menuItems, services, locations })}</script>`
       );
 
     fs.writeFileSync(outputPath, html);
