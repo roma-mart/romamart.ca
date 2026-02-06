@@ -12,9 +12,9 @@ This document provides complete specifications for implementing three public API
 
 **What You Need to Implement:**
 
-1. **Services API** (`/api/public-services`) - 15 convenience store services with filtering
+1. **Services API** (`/api/public-services`) - 14 convenience store services with filtering
 2. **Locations API** (`/api/public-locations`) - Multi-location store information with hours, coordinates, amenities
-3. **Menu API Enhancement** - Add missing fields (calories, dietary info, featured flag) to existing endpoint
+3. **Menu API Enhancement** - Add missing fields (calories data, dietary info, customizations) to existing endpoint
 
 **What to Plan For (Future):**
 
@@ -46,6 +46,8 @@ This document provides complete specifications for implementing three public API
     "description": "Rich, bold espresso shot",
     "image": null,
     "badge": "bestseller",
+    "featured": false,           // ✅ Already exists
+    "calories": null,             // ✅ Field exists, needs data population
     "sizes": [
       { "name": "Single", "price": 249 },
       { "name": "Double", "price": 349 }
@@ -58,12 +60,20 @@ This document provides complete specifications for implementing three public API
 }
 ```
 
+### Fields That Need Data Population
+
+**These fields exist but are currently null - populate them:**
+
+| Field | Type | Current | Description | Example |
+|-------|------|---------|-------------|---------|
+| `calories` | number | null | Nutritional info | `120` |
+| `tagline` | string | null | Short marketing tagline | `"Bold and smooth"` |
+| `description` | string | null | Detailed description | `"Rich, bold espresso shot"` |
+
 ### Missing Fields (Add These)
 
 | Field | Type | Required | Description | Example |
 |-------|------|----------|-------------|---------|
-| `featured` | boolean | **YES** | Homepage featured items filter | `true` |
-| `tagline` | string | No | Short marketing tagline | `"Bold and smooth"` |
 | `prepTime` | string | No | Preparation time | `"3-5 min"` |
 | `customizations` | array | No | Available customizations | `["Extra shot", "Oat milk", "Vanilla syrup"]` |
 | `allergens` | array | No | Allergen warnings | `["dairy", "tree nuts"]` |
@@ -73,7 +83,9 @@ This document provides complete specifications for implementing three public API
 | `flavorProfile` | array | No | Flavor tags | `["sweet", "bitter", "creamy", "fruity"]` |
 | `availability` | string | No | When available | `"store_hours"`, `"24_7"`, `"seasonal"` |
 
-**Note on `category` field:** Already exists in current API. Verify values match the Complete Field Enumerations section (9 categories: hot-coffee, iced-coffee, tea, fresh-juice, smoothies, frappes, specialty, food, seasonal).
+**Note on `category` vs `categories` field:** Current API returns `categories` (plural array). Frontend expects `category` (singular string). Either rename to `category` or update field spec.
+
+**Note on `featured` field:** ✅ Already implemented in API! All items currently have `featured: false`. Frontend filters by `featured: true` for homepage display (max 6 items).
 
 **Calories Field (CRITICAL for sizes):**
 ```json
@@ -144,7 +156,7 @@ This document provides complete specifications for implementing three public API
 | `tagline` | string | No | Short marketing tagline | `"Cash when you need it"` |
 | `description` | string | **YES** | Full service description | `"24/7 cash withdrawal services with low fees..."` |
 | `icon` | string | No | Icon identifier | `"banknote"`, `"bitcoin"`, `"ticket"` |
-| `category` | string | **YES** | Service category | `"financial"`, `"convenience"`, `"food_beverage"` |
+| `category` | string | **YES** | Service category | `"financial"`, `"food"`, `"retail"`, `"convenience"`, `"age_restricted"` |
 | `availableAt` | array | **YES** | Location IDs where available | `["loc-wellington-001"]` |
 | `availability` | string | **Recommended** | When available (see note below) | `"store_hours"`, `"24_7"`, `"seasonal"` |
 | `features` | array | No | Service features | `["24/7 access", "Low fees", "Multiple currencies"]` |
@@ -764,13 +776,14 @@ Before marking APIs production-ready, test these scenarios:
 - [ ] Error handling: Returns 404 gracefully if no locations
 
 ### Menu API Enhancement Testing
-- [ ] All menu items include `featured: true/false`
-- [ ] `sizes` array includes `calories` field for each size
-- [ ] `customizations` array populated where applicable
-- [ ] `allergens` array uses standard allergen names
-- [ ] `dietary` array includes diet tags (vegetarian, vegan, gluten-free)
-- [ ] `temperature`, `caffeineLevel`, `flavorProfile` populated for beverages
-- [ ] `prepTime` realistic (3-5 min, 5-10 min, 10-15 min)
+- [ ] At least 4-6 menu items have `featured: true` (for homepage display)
+- [ ] `sizes` array includes `calories` field populated for each size (not null)
+- [ ] `tagline` and `description` fields populated (not null)
+- [ ] `customizations` array added and populated where applicable
+- [ ] `allergens` array added and uses standard allergen names
+- [ ] `dietary` array added with diet tags (vegetarian, vegan, gluten-free)
+- [ ] `temperature`, `caffeineLevel`, `flavorProfile` added for beverages
+- [ ] `prepTime` added with realistic values (3-5 min, 5-10 min, 10-15 min)
 - [ ] Price in cents (249 = $2.49)
 - [ ] Backward compatibility maintained with existing fields
 - [ ] Performance: Response time < 500ms (larger payload)
@@ -861,7 +874,9 @@ Your APIs should handle these scenarios gracefully:
 
 ### Phase 3: Menu API Enhancement (Week 3-4)
 - Add missing fields to existing endpoint
-- Populate calories, dietary info, featured flags
+- Populate calories data for all sizes
+- Add dietary info, allergens, customizations
+- Mark featured items (set `featured: true` for homepage items)
 - Test backward compatibility
 - Monitor performance (larger payload)
 
