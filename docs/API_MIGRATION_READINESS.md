@@ -88,8 +88,6 @@ This document provides complete specifications for implementing three public API
 | `flavorProfile` | array | No | Flavor tags | `["sweet", "bitter", "creamy", "fruity"]` |
 | `availability` | string | No | When available | `"store_hours"`, `"24_7"`, `"seasonal"` |
 
-**Note on `category` vs `categories` field:** Current API returns `categories` (plural array). Frontend expects `category` (singular string). Either rename to `category` or update field spec.
-
 **Note on `featured` field:** ✅ Already implemented in API! All items currently have `featured: false`. Frontend filters by `featured: true` for homepage display (max 6 items).
 
 **Calories Field (CRITICAL for sizes):**
