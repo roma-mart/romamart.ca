@@ -19,7 +19,14 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
       case 'ProductList': {
         // Build ItemList containing all Product schemas
         // More efficient than multiple <script> tags
+        console.info('[StructuredData] ProductList rendering - Input:', {
+          hasProducts: !!data.products,
+          isArray: Array.isArray(data.products),
+          productCount: data.products?.length || 0
+        });
+
         if (!data.products || !Array.isArray(data.products)) {
+          console.warn('[StructuredData] ProductList - No valid products array');
           return null;
         }
 
@@ -34,11 +41,18 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
           ))
           .filter(Boolean); // Remove null schemas
 
+        console.info('[StructuredData] ProductList - Generated schemas:', {
+          inputCount: data.products.length,
+          outputCount: productSchemas.length,
+          sampleProduct: productSchemas[0] ? productSchemas[0].name : 'N/A'
+        });
+
         if (productSchemas.length === 0) {
+          console.warn('[StructuredData] ProductList - All schemas filtered out (returned null)');
           return null;
         }
 
-        return {
+        const schema = {
           '@context': 'https://schema.org',
           '@type': 'ItemList',
           itemListElement: productSchemas.map((product, index) => ({
@@ -47,6 +61,13 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
             item: product
           }))
         };
+
+        console.info('[StructuredData] ProductList - Final schema:', {
+          type: schema['@type'],
+          itemCount: schema.itemListElement.length
+        });
+
+        return schema;
       }
 
       case 'ServiceList': {

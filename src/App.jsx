@@ -628,7 +628,13 @@ function App() {
 
   // Only include featured items for homepage schemas (limited selection)
   const featuredSchemaItems = useMemo(() => {
-    return menuItems.filter(item => item.featured);
+    const featured = menuItems.filter(item => item.featured);
+    console.info('[App.jsx] Featured menu items for homepage:', {
+      totalMenuItems: menuItems.length,
+      featuredCount: featured.length,
+      featuredItems: featured.map(item => ({ id: item.id, name: item.name }))
+    });
+    return featured;
   }, [menuItems]);
 
   // Only include featured services for homepage schemas
@@ -669,16 +675,19 @@ function App() {
                 )}
         {/* Homepage Product Schemas (Featured Items Only - Primary Source for Google) */}
         {currentPage === 'home' && featuredSchemaItems.length > 0 && (
-          <StructuredData
-            type="ProductList"
-            data={{
-              products: featuredSchemaItems.map(item => ({
-                menuItem: item,
-                itemUrl: 'https://romamart.ca/rocafe',
-                priceInCents: schemaPriceInCents
-              }))
-            }}
-          />
+          <>
+            {console.info('[App.jsx] Rendering ProductList schema on homepage with', featuredSchemaItems.length, 'items')}
+            <StructuredData
+              type="ProductList"
+              data={{
+                products: featuredSchemaItems.map(item => ({
+                  menuItem: item,
+                  itemUrl: 'https://romamart.ca/rocafe',
+                  priceInCents: schemaPriceInCents
+                }))
+              }}
+            />
+          </>
         )}
         {/* Homepage Service Schemas (Featured Services Only) */}
         {currentPage === 'home' && featuredServices.length > 0 && (

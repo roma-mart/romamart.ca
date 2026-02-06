@@ -43,7 +43,13 @@ const RoCafePage = () => {
 
   // No fallback for schemas - API-only (ensures accuracy)
   const schemaMenuItems = menuItems;
-  
+
+  // Log menu items for debugging
+  console.info('[RoCafePage] Menu items for ProductList schema:', {
+    totalItems: schemaMenuItems.length,
+    sampleItems: schemaMenuItems.slice(0, 3).map(item => ({ id: item.id, name: item.name }))
+  });
+
   // API always returns prices in cents
   const schemaPriceInCents = true;
 
@@ -61,16 +67,19 @@ const RoCafePage = () => {
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>
       {/* Full menu Product schemas (API-only, no fallback) */}
       {schemaMenuItems.length > 0 && (
-        <StructuredData
-          type="ProductList"
-          data={{
-            products: schemaMenuItems.map(item => ({
-              menuItem: item,
-              itemUrl: 'https://romamart.ca/rocafe',
-              priceInCents: schemaPriceInCents
-            }))
-          }}
-        />
+        <>
+          {console.info('[RoCafePage] Rendering ProductList schema with', schemaMenuItems.length, 'items')}
+          <StructuredData
+            type="ProductList"
+            data={{
+              products: schemaMenuItems.map(item => ({
+                menuItem: item,
+                itemUrl: 'https://romamart.ca/rocafe',
+                priceInCents: schemaPriceInCents
+              }))
+            }}
+          />
+        </>
       )}
       <Helmet>
         <title>RoCafé Menu | Roma Mart Convenience</title>
