@@ -14,10 +14,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Consolidated API fetching in prerender.js with Promise.all
 - Branch safety check for production deployments
 - Staging and production deployment separation
+- Complete field enumerations in API_MIGRATION_READINESS.md
 
 ### Fixed
 - Schema.org validator detection for ProductList schemas
 - LocationList homepage schema to match display logic
+- StandardizedItem.jsx now uses ServicesContext instead of static import
+- Service count corrected from 15 to 14 in API documentation
+- Service category enumerations corrected in API documentation
+- Frontend readiness status updated to 100% complete in API documentation
 - console.info eslint errors in diagnostic logging
 - GitHub Pages base path for staging deployment
 - SPA routing on GitHub Pages
@@ -25,13 +30,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Services and Locations APIs fetched at build time
 - ServiceList and LocationList schemas prerendered when APIs available
+- Version bumped from 2.3.0 to 2.3.1
+- CHANGELOG.md consolidated (removed verbose prose from 2.3.0 and 2.3.1)
 
 ### Documentation
+- API_MIGRATION_READINESS.md completely rewritten with comprehensive field specifications
 - Prerender analysis archived
 - Master plan updated with Step 3.1
-- API migration readiness updated with fallback removal strategy
+- Removed outdated "frontend fixes needed" section from API documentation
 
-**Commits:** e0279b9, 2b3dc70, 9823326, 5c0cefe, e803f30, ef04bca, ff4f30f, ce1f285, 2e463e8, 30767f7
+**Commits:** e0279b9, 2b3dc70, 9823326, 5c0cefe, e803f30, ef04bca, ff4f30f, ce1f285, 2e463e8, 30767f7, 217a741, 69758a7, e5ac42e
 
 
 
