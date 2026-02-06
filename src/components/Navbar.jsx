@@ -41,8 +41,17 @@ export default function Navbar({ currentPage = 'home' }) {
   }, []);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', handleScroll);
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(() => {
+          setScrolled(window.scrollY > 20);
+          ticking = false;
+        });
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -238,7 +247,7 @@ export default function Navbar({ currentPage = 'home' }) {
                 <a
                   key="home"
                   href={BASE_URL}
-                  className="px-3 py-4 text-lg font-bold var(--font-heading) uppercase border-b flex items-center gap-2"
+                  className="px-3 py-4 text-lg font-bold text-heading uppercase border-b flex items-center gap-2"
                   style={{ color: 'var(--color-heading)', borderColor: 'var(--color-surface)' }}
                   aria-label="Go to homepage"
                   title="Home"
@@ -258,7 +267,7 @@ export default function Navbar({ currentPage = 'home' }) {
                       handleMenuClose();
                     }
                   }}
-                  className="block px-3 py-4 text-lg font-bold var(--font-heading) uppercase border-b"
+                  className="block px-3 py-4 text-lg font-bold text-heading uppercase border-b"
                   style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-heading)', borderColor: 'var(--color-surface)' }}
                   aria-label={link.ariaLabel || link.label}
                   title={link.label}
@@ -277,7 +286,7 @@ export default function Navbar({ currentPage = 'home' }) {
                     handleOrderClick();
                   }
                 }}
-                className="block px-3 py-4 text-center rounded-lg font-bold var(--font-heading) uppercase mt-4"
+                className="block px-3 py-4 text-center rounded-lg font-bold text-heading uppercase mt-4"
                 style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)' }}
               >
                 ORDER NOW
