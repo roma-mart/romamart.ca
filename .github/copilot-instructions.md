@@ -2,10 +2,18 @@
 
 ## Project Overview
 
-Roma Mart 2.0 is a **React 19 + Vite 7** progressive web app for a multi-location convenience store chain. Built with accessibility-first, dark-mode-native, and quality-enforced architecture.
+Roma Mart 2.0 is a **React 18.3.1 + Vite 7** progressive web app for a multi-location convenience store chain. Built with accessibility-first, dark-mode-native, and quality-enforced architecture.
 
-**Stack:** React 19, Vite 7, Tailwind CSS, Framer Motion, ESM modules  
+**Stack:** React 18.3.1, Vite 7, Tailwind CSS, Framer Motion, ESM modules
 **Deployment:** GitHub Pages (staging), custom domain (production)
+
+### Current Status (Feb 2026)
+
+An expert-consolidated audit identified 56 problems and produced 55 recommendations organized into 8 sprints across 4 phases. See planning documents for details:
+- **[docs/ROADMAP.md](../docs/ROADMAP.md)** -- Sprint plan, phase breakdown, domain scorecard
+- **[docs/EXPERT_AUDIT_FEB_2026.md](../docs/EXPERT_AUDIT_FEB_2026.md)** -- Full audit findings and recommendations (R1-R55)
+- **[docs/API_MIGRATION_READINESS.md](../docs/API_MIGRATION_READINESS.md)** -- Backend API spec for @Fern-Ali
+- **GitHub Issues:** #98-#106 (sprint issues), #107 (backend API), tracked on [RomaMart UI Roadmap](https://github.com/orgs/roma-mart/projects/4) project board
 
 ## Critical Architecture Principles
 
@@ -54,7 +62,7 @@ npm run preview                # Preview production build
 - Example: Use `var(--color-primary)` not `#020178`
 
 ### Component Architecture
-- **Functional components only** with hooks (React 19)
+- **Functional components only** with hooks (React 18.3.1)
 - Lazy load pages: `const Page = lazy(() => import('./pages/Page'))`
 - Use `react-helmet-async` for SEO on all pages
 - Follow structure: `src/components/` (reusable), `src/pages/` (routed)
@@ -292,6 +300,9 @@ Before going live on custom domain:
 
 | File | Purpose |
 |------|---------|
+| `docs/ROADMAP.md` | Sprint plan and audit-driven roadmap |
+| `docs/EXPERT_AUDIT_FEB_2026.md` | Expert-consolidated codebase audit |
+| `docs/API_MIGRATION_READINESS.md` | Backend API specification for migration |
 | `docs/DEVELOPMENT_ETHOS.md` | 25 core principles guiding all development |
 | `docs/ARCHITECTURE.md` | High-level system design and conventions |
 | `docs/QUALITY_SYSTEM.md` | Comprehensive quality standards documentation |
@@ -410,7 +421,7 @@ import { SERVICES } from '../data/services';
   - Format: `<type>(<scope>): <description>`
   - Types: feat, fix, docs, style, refactor, perf, test, build, ci, chore
 - **Manual quality checks required** before commit: `npm run check:all`
-- **Git hooks:** Not configured (see [TOOLING_RECOMMENDATIONS.md](TOOLING_RECOMMENDATIONS.md) for Husky setup)
+- **Git hooks:** Husky v9 configured but currently broken (fix tracked in Sprint 4 / #101)
 - **Pull requests:** Required for all changes to `main` (see [PULL_REQUEST_TEMPLATE.md](PULL_REQUEST_TEMPLATE.md))
   - Comprehensive checklist: automated tests, manual testing, accessibility, security
   - Browser testing requirements: Chrome/Edge, Firefox, Safari
@@ -423,7 +434,8 @@ import { SERVICES } from '../data/services';
 - **Maintenance** (`.github/ISSUE_TEMPLATE/maintenance.yml`) - Chore tasks, dependency updates, tooling improvements
 
 ### Testing Strategy
-- **No automated test suite** - Quality enforced via:
+- **Vitest test suite:** 11 test files, ~122 tests (schema validation, utilities)
+- Quality also enforced via:
   1. ESLint + Stylelint (syntax & patterns)
   2. Universal quality checker (`check-quality.js` - 1000+ rules)
   3. Meta-checker (`check-checker-integrity.js` - validates quality system)
@@ -491,7 +503,7 @@ import { SERVICES } from '../data/services';
 
 ---
 
-**Last Updated:** February 5, 2026
+**Last Updated:** February 6, 2026
 **Maintained by:** GitHub Copilot & Claude Code
-**Codebase Version:** React 19 + Vite 7 (ESM)
-**API Status:** 100% API-ready (Menu, Services, Locations contexts)
+**Codebase Version:** React 18.3.1 + Vite 7 (ESM)
+**API Status:** Menu API live (200 OK); Services & Locations APIs pending (#107) -- frontend uses static fallback
