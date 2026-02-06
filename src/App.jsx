@@ -74,7 +74,7 @@ function Hero({ onTrackOrder }) {
 
   return (
     <div id="hero-section" className="relative min-h-[90vh] flex items-center overflow-hidden" style={{ backgroundColor: 'var(--color-primary)' }}>
-      <img src={getAssetUrl('/images/pattern.png')} alt="Brand pattern background" className="absolute inset-0 w-full h-full object-cover opacity-20 z-0" aria-hidden="true"  loading="lazy" />
+      <img src={getAssetUrl('/images/pattern.png')} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20 z-0" aria-hidden="true" />
       <div className="absolute inset-0 bg-gradient-to-r from-blue-950 via-blue-900 to-transparent opacity-90 z-0" />
       <div className="relative z-10 max-w-7xl mx-auto px-4 w-full pt-20">
         <div className="grid md:grid-cols-2 gap-12 items-center">
