@@ -1,0 +1,135 @@
+/**
+ * LocationButton Component
+ * Self-contained geolocation button extracted from Button.jsx (R7).
+ * Used exclusively by Footer.jsx for "Detect Nearest Store" functionality.
+ */
+
+import React, { useEffect } from 'react';
+import { motion } from 'framer-motion';
+import PropTypes from 'prop-types';
+import { useGeolocation } from '../hooks/useBrowserFeatures';
+import { useToast } from './ToastContainer';
+import { MapPin, Loader } from 'lucide-react';
+import { CSS_VARS } from '../utils/theme';
+
+const LOCATION_STYLE = {
+  backgroundColor: 'var(--color-location-bg, var(--color-accent))',
+  color: 'var(--color-location-text, var(--color-primary))',
+  fontWeight: 700,
+  fontFamily: CSS_VARS.heading,
+  border: '2px solid var(--color-primary)',
+  boxShadow: '0 2px 8px var(--color-accent-shadow, rgba(228,179,64,0.10))',
+};
+
+const LOCATION_ANIMATION = {
+  whileHover: { scale: 1.05, boxShadow: '0 8px 24px var(--color-location-shadow, rgba(64,179,228,0.18))' },
+  whileTap: { scale: 0.97, boxShadow: '0 2px 8px var(--color-location-shadow, rgba(64,179,228,0.10))' },
+  transition: { duration: 0.18 },
+};
+
+const LocationButton = React.forwardRef(({
+  onLocationFound,
+  onClick,
+  className = '',
+  style = {},
+  children,
+  disabled = false,
+  ariaLabel,
+  ...props
+}, ref) => {
+  const { getCurrentLocation, location, loading, error, canUseGeolocation } = useGeolocation();
+  const { showSuccess, showError } = useToast();
+
+  useEffect(() => {
+    if (location) {
+      if (onLocationFound) {
+        onLocationFound({
+          coords: {
+            latitude: location.latitude,
+            longitude: location.longitude,
+          },
+        });
+      }
+      showSuccess('Location found! Sorting stores by distance...');
+    }
+  }, [location, onLocationFound, showSuccess]);
+
+  useEffect(() => {
+    if (error) {
+      showError(`Location error: ${error}`);
+    }
+  }, [error, showError]);
+
+  if (!canUseGeolocation) return null;
+
+  const mergedStyle = {
+    minHeight: 44,
+    minWidth: 44,
+    outline: 'none',
+    transition: 'background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s',
+    borderRadius: 12,
+    padding: '12px 28px',
+    cursor: disabled || loading ? 'not-allowed' : 'pointer',
+    opacity: disabled ? 0.6 : 1,
+    WebkitTapHighlightColor: 'transparent',
+    ...LOCATION_STYLE,
+    ...style,
+  };
+
+  const handleClick = (e) => {
+    if (disabled || loading) return;
+    getCurrentLocation(e);
+    if (onClick) onClick(e);
+  };
+
+  const ariaProps = {};
+  if (ariaLabel) {
+    ariaProps['aria-label'] = ariaLabel;
+  }
+
+  return (
+    <motion.button
+      ref={ref}
+      type="button"
+      className={`button location ${className}`.trim()}
+      style={mergedStyle}
+      onClick={handleClick}
+      onKeyDown={e => {
+        if ((e.key === 'Enter' || e.key === ' ') && !disabled && !loading) {
+          e.preventDefault();
+          handleClick(e);
+        }
+      }}
+      disabled={disabled || loading}
+      {...ariaProps}
+      {...props}
+      {...LOCATION_ANIMATION}
+    >
+      {loading ? (
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+          <Loader size={20} className="animate-spin" />
+          Looking for you...
+        </span>
+      ) : (
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+          <MapPin size={20} />
+          {children || 'Update location'}
+        </span>
+      )}
+    </motion.button>
+  );
+});
+
+LocationButton.displayName = 'LocationButton';
+
+LocationButton.propTypes = {
+  onLocationFound: PropTypes.func,
+  onClick: PropTypes.func,
+  className: PropTypes.string,
+  style: PropTypes.object,
+  children: PropTypes.node,
+  disabled: PropTypes.bool,
+  ariaLabel: PropTypes.string,
+};
+
+export default LocationButton;
