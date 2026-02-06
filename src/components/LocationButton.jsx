@@ -37,13 +37,15 @@ const LocationButton = React.forwardRef(({
   ariaLabel,
   ...props
 }, ref) => {
-  const { requestLocation, userLocation, loading, error, canUseGeolocation } = useLocationContext();
+  const { forceRequestLocation, userLocation, loading, error, canUseGeolocation } = useLocationContext();
   const { showSuccess, showError } = useToast();
-  const hasNotifiedLocation = useRef(false);
+  const clickPending = useRef(false);
+  const lastError = useRef(null);
 
+  // Toast + callback only after user-initiated click (not on mount with cached data)
   useEffect(() => {
-    if (userLocation && userLocation.latitude && userLocation.longitude && !hasNotifiedLocation.current) {
-      hasNotifiedLocation.current = true;
+    if (userLocation && userLocation.latitude && userLocation.longitude && clickPending.current) {
+      clickPending.current = false;
       if (onLocationFound) {
         onLocationFound({
           coords: {
@@ -57,7 +59,8 @@ const LocationButton = React.forwardRef(({
   }, [userLocation, onLocationFound, showSuccess]);
 
   useEffect(() => {
-    if (error) {
+    if (error && error !== lastError.current) {
+      lastError.current = error;
       showError(`Location error: ${error}`);
     }
   }, [error, showError]);
@@ -80,7 +83,8 @@ const LocationButton = React.forwardRef(({
 
   const handleClick = (e) => {
     if (disabled || loading) return;
-    requestLocation();
+    clickPending.current = true;
+    forceRequestLocation();
     if (onClick) onClick(e);
   };
 
