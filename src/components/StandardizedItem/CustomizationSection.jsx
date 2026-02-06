@@ -33,7 +33,7 @@ export default function CustomizationSection({
       {customizations.map((customization, custIdx) => (
         <div key={custIdx}>
           <h4 
-            className="text-sm font-bold var(--font-heading) mb-2"
+            className="text-sm font-bold text-heading mb-2"
             style={{ color: 'var(--color-heading)' }}
           >
             {customization.type}

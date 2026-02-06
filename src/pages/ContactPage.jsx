@@ -86,7 +86,7 @@ const ContactPage = () => {
       <section className="max-w-7xl mx-auto px-4 mb-16">
         <div className="flex flex-wrap items-start justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-4xl md:text-5xl var(--font-heading) uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
+            <h1 className="text-4xl md:text-5xl uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
               Contact <span style={{ color: 'var(--color-accent)' }}>Us</span>
             </h1>
             <p className="text-lg font-inter leading-relaxed max-w-3xl" style={textColor}>
@@ -105,7 +105,7 @@ const ContactPage = () => {
         <div className="grid lg:grid-cols-2 gap-12">
           {/* Contact Information */}
           <div>
-            <h2 className="text-2xl var(--font-heading) mb-8" style={{ color: 'var(--color-heading)' }}>
+            <h2 className="text-2xl mb-8" style={{ color: 'var(--color-heading)' }}>
               Get In Touch
             </h2>
 
@@ -192,7 +192,7 @@ const ContactPage = () => {
 
           {/* Contact Form */}
           <div className="p-8 rounded-2xl shadow-lg border" style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
-            <h3 className="var(--font-heading) text-2xl mb-6" style={{ color: 'var(--color-heading)' }}>
+            <h3 className="text-headingtext-2xl mb-6" style={{ color: 'var(--color-heading)' }}>
               Send a Message
             </h3>
 

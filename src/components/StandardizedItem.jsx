@@ -233,7 +233,7 @@ const StandardizedItem = ({ item, itemType, defaultExpanded = false }) => {
           {features.length > 0 && (
             <div className="mb-4">
               <h4 
-                className="text-sm font-bold var(--font-heading) mb-2"
+                className="text-sm font-bold text-heading mb-2"
                 style={{ 
                   color: 'var(--color-heading)',
                   fontFamily: tokens?.fonts?.heading || 'inherit',

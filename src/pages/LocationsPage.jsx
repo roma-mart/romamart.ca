@@ -103,7 +103,7 @@ const LocationsPage = () => {
       <section className="max-w-7xl mx-auto px-4 mb-16">
         <div className="flex flex-wrap items-start justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-4xl md:text-5xl var(--font-heading) uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
+            <h1 className="text-4xl md:text-5xl uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
               Our <span style={{ color: 'var(--color-accent)' }}>Locations</span>
             </h1>
             <p className="text-lg font-inter leading-relaxed max-w-3xl" style={textColor}>
@@ -180,7 +180,7 @@ const LocationsPage = () => {
                 )}
 
                 <div className="flex items-start justify-between mb-6">
-                  <h2 className="text-3xl var(--font-heading)" style={{ color: 'var(--color-heading)' }}>
+                  <h2 className="text-3xl" style={{ color: 'var(--color-heading)' }}>
                     {location.name}
                   </h2>
                   <div 
@@ -357,7 +357,7 @@ const LocationsPage = () => {
 
       <section className="max-w-7xl mx-auto px-4 mt-20">
         <div className="p-12 rounded-3xl text-center" style={{ backgroundColor: 'var(--color-primary)' }}>
-          <h2 className="text-3xl md:text-4xl var(--font-heading) uppercase mb-4" style={{ color: 'var(--color-text-on-primary)' }}>
+          <h2 className="text-3xl md:text-4xl uppercase mb-4" style={{ color: 'var(--color-text-on-primary)' }}>
             Visit Us Today
           </h2>
           <p className="font-inter text-lg mb-8 max-w-2xl mx-auto" style={{ color: 'var(--color-text-on-primary)', opacity: 0.9 }}>
