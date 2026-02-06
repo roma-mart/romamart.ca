@@ -216,7 +216,6 @@ const buildStructuredData = () => {
           longitude: coords.lng || -82.404589
         },
         openingHoursSpecification,
-        timeZone: hours.timezone || 'America/Toronto',
         sameAs: Object.values(COMPANY_DATA.socialLinks || {}),
         amenityFeature: (location?.amenities || []).map(amenity => ({
           '@type': 'LocationFeatureSpecification',

@@ -144,7 +144,7 @@ describe('buildReturnPolicySchema', () => {
 
     it('should sanitize HTML in description', () => {
       const schema = buildReturnPolicySchema({
-        description: '<img src=x onerror=alert(1)>Safe Description'
+        description: '<img src=x onerror=alert(1) alt="">Safe Description'
       });
 
       expect(schema.description).not.toContain('<img');

@@ -16,13 +16,6 @@ const PrivacyPage = () => {
 
   return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>
-      <StructuredData
-        type="PrivacyPolicy"
-        data={{
-          url: 'https://romamart.ca/privacy',
-          effectiveDate: '2025-07-28'
-        }}
-      />
       <Helmet>
         <title>Privacy Policy | Roma Mart Convenience</title>
         <meta name="description" content="Learn how Roma Mart Convenience collects, uses, and protects your personal information. PIPEDA compliant privacy policy." />

@@ -1,8 +1,8 @@
 # Structured Data Implementation - Master Plan
 
-**Status:** Phase 4 Complete - Schema Audit & Architecture Refinement Completed
-**Last Updated:** February 5, 2026
-**Version:** 4.0.0 (Phase 4 Complete - Audit, De-hardcoding, & Amenities Migration)
+**Status:** Phase 5 In Progress - Schema Validation & Bug Fixes
+**Last Updated:** February 6, 2026
+**Version:** 5.0.0 (Phase 5 - Validation & Fixes In Progress)
 **Created By:** GitHub Copilot + Roma Mart Team
 **Audience:** Development team, colleague, AI assistants (for continuity)
 
@@ -522,6 +522,159 @@ ALL schemas now pull exclusively from Single Source of Truth (COMPANY_DATA):
 - ✅ API developer sees exact structure needed
 - ✅ Zero code changes for business data updates
 - ✅ Future-proof architecture (API migration ready)
+
+---
+
+## Phase 5: Schema Validation & Bug Fixes (February 6, 2026) 🔄 IN PROGRESS
+
+**Duration:** 1-2 Days (February 6, 2026)
+**Status:** 🔄 In Progress
+**Scope:** Validator testing on all pages, bug detection, fixing, re-validation
+
+### Step 1: Empty @id Bug Fix ✅ FIXED
+
+Schema.org validator was not detecting ProductList on homepage despite it rendering correctly in HTML. Investigation revealed:
+
+**Root Cause:**
+- All 4 Product schemas had identical @id: `"@id": "https://romamart.ca/rocafe#"` (empty after `#`)
+- API returns menu items with empty ID fields (`id: ""`)
+- Schema builders checked `if (menuItem.id)` which is truthy for empty strings
+- Generated @id with nothing after the hash: `${itemUrl}#${safeString("")}` → `"url#"`
+- Schema.org validators reject ItemLists when all items have duplicate @ids
+
+**Impact:**
+- ProductList completely ignored by validator (showed only 2 ItemLists instead of 3)
+- Services and Locations also vulnerable to same issue with empty IDs
+- 4 featured products invisible to search engines
+
+### Fix Implemented
+
+Applied consistent pattern across all schema builders:
+
+**Pattern:**
+```javascript
+// BEFORE (Buggy):
+...(menuItem.id ? { '@id': `${itemUrl}#${safeString(menuItem.id)}` } : {}),
+
+// AFTER (Fixed):
+const id = menuItem.id ? safeString(menuItem.id) : '';
+...(id ? { '@id': `${itemUrl}#${id}` } : {}),
+```
+
+**Files Updated:**
+1. `src/schemas/menuItemSchema.js` (Lines 156-161, 169)
+   - Extract and sanitize ID first
+   - Only add @id if non-empty after sanitization
+   - Only add sku if non-empty
+
+2. `src/schemas/serviceSchema.js` (Lines 43-48, 52)
+   - Same pattern for Service @id and identifier
+   - Prevents empty `@id` fields
+
+3. `src/schemas/locationSchema.js` (Lines 114-119)
+   - Same pattern for LocalBusiness @id
+   - Consistent with other builders
+
+### Quality Assurance (Step 1)
+
+**Build & Lint:**
+- ✅ Build: Success (9.49s)
+- ✅ ESLint: 0 errors
+- ✅ Prerender: All 11 routes generated successfully
+
+**Commit:**
+- `95048a9` - fix(schema): prevent empty @id fields in Product, Service, and Location schemas
+
+**Expected Results After Deployment:**
+- ProductList will be detected by Schema.org validator
+- All Products will have unique @ids (or no @id if unavailable)
+- Services and Locations protected from empty ID issues
+- All 3 ItemLists properly validated
+
+### Step 2: Additional Schema Validation Fixes ✅ FIXED
+
+**Page-by-Page Validation Results:**
+
+#### About Page
+**What We Expected:** BreadcrumbList, Organization schema
+**What Validator Detected:** BreadcrumbList ✅, Organization ❌ (naicsCode property not recognized)
+
+**Issue:** Organization schema included unsupported `naicsCode: '4541'` property
+**Fix:** Removed line 250 from `src/components/StructuredData.jsx`
+**Reasoning:** While NAICS codes are useful for business classification, Schema.org doesn't support them
+
+#### Privacy Page
+**What We Expected:** BreadcrumbList, PrivacyPolicy schema
+**What Validator Detected:** BreadcrumbList ✅, PrivacyPolicy ❌ (@type not recognized), WebSite ✅
+
+**Issue:** PrivacyPolicy is not a valid Schema.org type (404 on schema.org/PrivacyPolicy)
+**Fix:** Removed PrivacyPolicy schema from `src/pages/PrivacyPage.jsx` and case from `src/components/StructuredData.jsx`
+**Reasoning:**
+- Schema.org doesn't have a PrivacyPolicy type
+- Valid WebPage subtypes don't include policy pages
+- BreadcrumbList already provides navigation context
+- Invalid schema provides no SEO benefit
+
+**Valid Schema.org WebPage Subtypes:** AboutPage, CheckoutPage, CollectionPage, ContactPage, FAQPage, ItemPage, MedicalWebPage, ProfilePage, QAPage, RealEstateListing, SearchResultsPage
+
+**Note:** MerchantReturnPolicy on return-policy page is VALID ✅ and remains unchanged
+
+#### Return Policy Page
+**What We Expected:** BreadcrumbList, MerchantReturnPolicy, WebSite (from static HTML)
+**What Validator Detected:** BreadcrumbList ✅, MerchantReturnPolicy ✅, WebSite ❌ (timeZone property not recognized on LocalBusiness)
+
+**Issue:** Static LocalBusiness schema (nested in WebSite as publisher) included unsupported `timeZone: 'America/Toronto'` property
+**Fix:** Removed line 219 from `scripts/prerender.js`
+**Reasoning:** Schema.org doesn't recognize timeZone as a valid LocalBusiness property. Timezone information is only needed for JavaScript date calculations, not schema markup.
+
+#### Terms & Cookies Pages
+**Status:** Already correct ✅ - Only BreadcrumbList schemas (no invalid types)
+
+**Files Modified:**
+1. `src/components/StructuredData.jsx` - Removed naicsCode line, removed PrivacyPolicy case and import
+2. `src/pages/PrivacyPage.jsx` - Removed PrivacyPolicy StructuredData component
+3. `scripts/prerender.js` - Removed timeZone property from static LocalBusiness schema
+
+### Quality Assurance (Step 2)
+
+**Build & Lint:**
+- ✅ Build: Success (9.41s)
+- ✅ ESLint: 0 errors
+- ✅ Prerender: All 11 routes generated successfully
+
+**Expected Results After Deployment:**
+- About page Organization schema will validate cleanly
+- Privacy page will show only BreadcrumbList (valid)
+- Return policy page WebSite will validate cleanly (no timeZone error)
+- No invalid Schema.org types or properties remaining
+
+### Step 3: Final Deployment & Verification 🔄 NEXT
+
+**Commits Created:**
+- ✅ `95048a9` - fix(schema): prevent empty @id fields in Product, Service, and Location schemas
+- ✅ `e54844c` - fix(schema): remove unsupported naicsCode from Organization schema
+- ✅ `5223c85` - fix(seo): remove invalid Schema.org properties and types
+- ✅ `b8b34bd` - fix(seo): remove invalid timeZone property from LocalBusiness schema
+
+**Pending Tasks:**
+1. ⏳ Create PR and merge to main
+2. ⏳ Deploy changes to GitHub Pages
+3. ⏳ Run Schema.org validator on all pages post-deployment
+4. ⏳ Document final compliance scores
+5. ⏳ Mark Phase 5 complete
+
+### Technical Notes
+
+**Why This Matters:**
+- @id must be globally unique within a page
+- Empty @ids (`"#"`) are treated as duplicates
+- Validators skip entire ItemLists with duplicate item @ids
+- API data quality issue exposed (IDs should never be empty)
+
+**Future Prevention:**
+- All schema builders now follow consistent ID sanitization pattern
+- Empty IDs result in omitted @id field (valid per Schema.org)
+- Pattern can be unit tested to prevent regression
 
 ---
 
@@ -2240,16 +2393,16 @@ Build schema builders that:
 ## Document Information
 
 **File:** STRUCTURED_DATA_MASTER_PLAN.md
-**Version:** 4.0.0
-**Status:** Phase 4 Complete - All Schemas Audited & Refined (98% Compliance - Grade A+)
+**Version:** 5.0.0
+**Status:** Phase 5 In Progress - Validation & Bug Fixes
 **Created:** February 4, 2026
-**Last Reviewed:** February 5, 2026
-**Next Review:** After Phase 5 (API Migration) completion
+**Last Reviewed:** February 6, 2026
+**Next Review:** After Phase 5 completion
 
 **How to Use This Document:**
 
 1. **First time reading:** Read Part 1 (Architecture) to understand the system
-2. **Implementation:** Review Phase 4 (Audit & Refinement) for latest improvements
+2. **Implementation:** Review Phase 5 (Validation & Fixes) for current work
 3. **Technical details:** Refer to Part 4 (Schema Examples) when coding
 4. **Questions:** Check Part 10 (Quick Reference) first
 5. **Deployment:** Follow Part 8 (Deployment Checklist)
@@ -2260,6 +2413,7 @@ Build schema builders that:
 - **Phase 2:** Policy Schemas & Core Implementation (Completed Feb 4, 2026)
 - **Phase 3:** Service & Location Schemas (Completed Feb 5, 2026)
 - **Phase 4:** Schema Audit & Architecture Refinement (Completed Feb 5, 2026)
-- **Phase 5:** API Migration for Services & Locations (Future)
+- **Phase 5:** Schema Validation & Bug Fixes (In Progress - Feb 6, 2026)
+- **Phase 6:** API Migration for Services & Locations (Future)
 
 This is the single source of truth for this project. All decisions and trade-offs are documented here.

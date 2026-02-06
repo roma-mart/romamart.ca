@@ -7,7 +7,6 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import COMPANY_DATA from '../config/company_data';
 import { buildMenuItemSchema } from '../schemas/menuItemSchema';
-import { buildPrivacyPolicySchema } from '../schemas/privacyPolicySchema';
 import { buildReturnPolicySchema } from '../schemas/returnPolicySchema';
 import { buildBreadcrumbSchema } from '../schemas/breadcrumbSchema';
 import { buildWebApplicationSchema } from '../schemas/webApplicationSchema';
@@ -164,7 +163,6 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
                 ]
               : []
           ),
-          timeZone: COMPANY_DATA.defaults.timezone,
           sameAs: data.socialLinks || Object.values(COMPANY_DATA.socialLinks),
           contactPoint: {
             '@type': 'ContactPoint',
@@ -248,7 +246,6 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
           },
           sameAs: Object.values(COMPANY_DATA.socialLinks || {}),
           taxID: COMPANY_DATA.gstNumber || undefined,
-          naicsCode: COMPANY_DATA.naicsCode,
           areaServed: {
             '@type': 'City',
             name: COMPANY_DATA.address?.city || COMPANY_DATA.location.address.city
@@ -264,9 +261,6 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
             '@id': `${COMPANY_DATA.baseUrl}/#business`
           }
         };
-
-      case 'PrivacyPolicy':
-        return buildPrivacyPolicySchema(data);
 
       case 'ReturnPolicy':
         return buildReturnPolicySchema(data);

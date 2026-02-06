@@ -40,15 +40,16 @@ export const buildServiceSchema = (service, options = {}) => {
   const serviceType = safeString(service.category || 'Service');
   const serviceUrl = options.serviceUrl || `${COMPANY_DATA.baseUrl}${COMPANY_DATA.endpoints.services}`;
   const providerUrl = options.providerUrl || COMPANY_DATA.baseUrl;
+  const id = service.id ? safeString(service.id) : '';
 
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'Service',
-    ...(service.id ? { '@id': `${COMPANY_DATA.baseUrl}${COMPANY_DATA.endpoints.services}#${safeString(service.id)}` } : {}),
+    ...(id ? { '@id': `${COMPANY_DATA.baseUrl}${COMPANY_DATA.endpoints.services}#${id}` } : {}),
     name,
     ...(description ? { description } : {}),
     ...(serviceType ? { serviceType } : {}),
-    ...(service.id ? { identifier: safeString(service.id) } : {}),
+    ...(id ? { identifier: id } : {}),
     url: serviceUrl,
     provider: {
       '@type': 'LocalBusiness',
@@ -58,9 +59,7 @@ export const buildServiceSchema = (service, options = {}) => {
     },
     areaServed: {
       '@type': 'City',
-      name: COMPANY_DATA.location.address.city,
-      addressRegion: COMPANY_DATA.location.address.province,
-      addressCountry: COMPANY_DATA.defaults.country
+      name: COMPANY_DATA.location.address.city
     },
     brand: {
       '@type': 'Brand',
@@ -95,14 +94,6 @@ export const buildServiceSchema = (service, options = {}) => {
       '@type': 'OpeningHoursSpecification',
       name: safeString(service.availability)
     };
-  }
-
-  // Add location availability if specified
-  if (service.availableAt && Array.isArray(service.availableAt) && service.availableAt.length > 0) {
-    schema.availableAtOrFrom = service.availableAt.map(locationId => ({
-      '@type': 'Place',
-      identifier: safeString(locationId)
-    }));
   }
 
   // Add broker if service is provided through an intermediary
