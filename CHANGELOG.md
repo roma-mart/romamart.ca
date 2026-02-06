@@ -303,6 +303,7 @@ Initial Create React App implementation. Deprecated and replaced by v2.0.0.
 
 | Version | Date         | Description                           |
 |---------|--------------|---------------------------------------|
+| 2.3.0   | Feb 6, 2026  | Schema validation and SEO improvements |
 | 2.2.0   | Dec 7, 2025  | Unified components, centralized data  |
 | 2.1.0   | Dec 4, 2025  | RoCafé menu system                    |
 | 2.0.0   | Dec 3, 2025  | Major rewrite with React 19 + Vite 7  |
