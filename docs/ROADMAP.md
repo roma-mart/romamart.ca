@@ -166,6 +166,13 @@ Work is grouped into 8 logical sprints based on domain alignment, dependency rel
 - **Scope:** Fix 10 documentation-vs-reality discrepancies
 - **Labels:** `documentation`
 
+### Nice-to-Have (Low Priority)
+These are non-critical enhancements to consider after all sprints are complete:
+
+| Idea | Detail | Notes |
+|------|--------|-------|
+| Battery-aware motion reduction | Combine `useBatteryStatus()` with `useReducedMotion()` to disable animations when battery < 15% and not charging | Battery Status API is Chromium-only (removed from Firefox over privacy/fingerprinting concerns) -- requires graceful fallback |
+
 ---
 
 ## Business Tasks (Non-Code)
