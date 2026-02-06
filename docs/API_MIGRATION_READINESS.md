@@ -1169,6 +1169,239 @@ When ready to implement, here's the complete specification:
 
 ---
 
+## Image Strategy & CDN Architecture
+
+All APIs include image fields for rich visual content. This section documents the complete image handling strategy.
+
+### Image Fields Across APIs
+
+| API | Field | Type | Purpose | Example |
+|-----|-------|------|---------|---------|
+| **Menu API** | `image` | string (URL) | Product photo | `"https://cdn.romamart.ca/menu/espresso.jpg"` |
+| **Services API** | `partner.logo` | string (URL) | Partner branding | `"https://cdn.romamart.ca/partners/genesis-coin.png"` |
+| **Locations API** | `images.storefront` | string (URL) | Store exterior | `"https://cdn.romamart.ca/locations/wellington-storefront.jpg"` |
+| **Locations API** | `images.interior` | string (URL) | Store interior | `"https://cdn.romamart.ca/locations/wellington-interior.jpg"` |
+| **Company Data API** | `logoUrl` | string (URL) | Company logo | `"https://romamart.ca/logo.png"` |
+
+### Recommended Architecture: CDN URLs
+
+**Option 1: External CDN (Recommended for Production)**
+```json
+{
+  "image": "https://cdn.romamart.ca/menu/espresso-500w.jpg"
+}
+```
+
+**Pros:**
+- Fast global delivery
+- Automatic image optimization (WebP, AVIF)
+- Responsive image variants (multiple sizes)
+- Caching at edge locations
+- Reduces API server bandwidth
+
+**Recommended Services:**
+- Cloudflare Images
+- Cloudinary
+- imgix
+- AWS CloudFront + S3
+
+**Option 2: API Server Public Directory**
+```json
+{
+  "image": "https://romamart.netlify.app/images/menu/espresso.jpg"
+}
+```
+
+**Pros:**
+- Simple setup (files in `/public/images/`)
+- No external dependencies
+- Good for MVP/testing
+
+**Cons:**
+- Higher server bandwidth usage
+- No automatic optimization
+- Single resolution (no responsive variants)
+
+**Option 3: Null Values (Current State)**
+```json
+{
+  "image": null
+}
+```
+
+**Use for:**
+- Items without photos yet
+- Services that don't need images
+- Placeholder state during development
+
+**Frontend Behavior:** Webapp shows generic placeholder icon when `image` is null.
+
+### File Organization Recommendations
+
+```
+cdn.romamart.ca/
+├── menu/
+│   ├── espresso-500w.jpg          # Mobile
+│   ├── espresso-1000w.jpg         # Tablet
+│   ├── espresso-1500w.jpg         # Desktop
+│   ├── bubble-tea-500w.jpg
+│   └── ...
+├── services/
+│   └── (optional - most services use icons, not photos)
+├── partners/
+│   ├── genesis-coin-logo.png
+│   ├── olg-logo.png
+│   └── ...
+├── locations/
+│   ├── wellington-storefront-800w.jpg
+│   ├── wellington-storefront-1600w.jpg
+│   ├── wellington-interior-800w.jpg
+│   └── ...
+└── logos/
+    ├── romamart-logo.png
+    ├── romamart-logo.svg
+    └── ...
+```
+
+### Image Specifications
+
+**Menu Items (`image` field):**
+- **Format:** JPG (85% quality) or WebP
+- **Dimensions:** 500px width (mobile), 1000px (tablet), 1500px (desktop)
+- **Aspect Ratio:** 1:1 (square) or 4:3
+- **Max File Size:** 150KB (mobile), 300KB (desktop)
+- **Background:** White or transparent (PNG/WebP)
+- **Naming:** `{item-id}-{width}w.{ext}` (e.g., `espresso-500w.jpg`)
+
+**Service Partner Logos (`partner.logo` field):**
+- **Format:** PNG (transparent) or SVG
+- **Dimensions:** 200px × 100px (max)
+- **Aspect Ratio:** Preserve original (centered in container)
+- **Max File Size:** 50KB
+- **Background:** Transparent
+- **Naming:** `{partner-name}-logo.{ext}` (e.g., `genesis-coin-logo.png`)
+
+**Location Photos (`images.storefront`, `images.interior`):**
+- **Format:** JPG (85% quality) or WebP
+- **Dimensions:** 800px width (mobile), 1600px (desktop)
+- **Aspect Ratio:** 16:9 (landscape)
+- **Max File Size:** 200KB (mobile), 500KB (desktop)
+- **Naming:** `{location-id}-{type}-{width}w.{ext}` (e.g., `wellington-storefront-800w.jpg`)
+
+**Company Logo (`logoUrl`):**
+- **Format:** PNG (transparent) or SVG
+- **Dimensions:** 300px × 150px (max)
+- **Max File Size:** 100KB
+- **Background:** Transparent
+- **Naming:** `romamart-logo.{ext}`
+
+### Responsive Image Strategy (CDN)
+
+If using a CDN, return base URL and frontend will request appropriate size:
+
+```json
+{
+  "image": "https://cdn.romamart.ca/menu/espresso.jpg"
+}
+```
+
+**CDN auto-generates variants:**
+- `https://cdn.romamart.ca/menu/espresso.jpg?w=500` (mobile)
+- `https://cdn.romamart.ca/menu/espresso.jpg?w=1000` (tablet)
+- `https://cdn.romamart.ca/menu/espresso.jpg?w=1500` (desktop)
+- `https://cdn.romamart.ca/menu/espresso.jpg?w=500&f=webp` (WebP format)
+
+**Frontend Implementation:**
+```html
+<img
+  srcset="
+    https://cdn.romamart.ca/menu/espresso.jpg?w=500 500w,
+    https://cdn.romamart.ca/menu/espresso.jpg?w=1000 1000w,
+    https://cdn.romamart.ca/menu/espresso.jpg?w=1500 1500w
+  "
+  sizes="(max-width: 768px) 500px, (max-width: 1200px) 1000px, 1500px"
+  src="https://cdn.romamart.ca/menu/espresso.jpg?w=1000"
+  alt="Espresso"
+/>
+```
+
+### Image URL Validation
+
+**Valid URL patterns:**
+```javascript
+// CDN URLs (recommended)
+"https://cdn.romamart.ca/menu/espresso.jpg"
+"https://images.romamart.ca/menu/espresso-500w.webp"
+
+// API server URLs (acceptable)
+"https://romamart.netlify.app/images/menu/espresso.jpg"
+
+// External URLs (partner logos only)
+"https://www.genesiscoin.com/images/logo.png"
+
+// Null (acceptable - shows placeholder)
+null
+```
+
+**Invalid patterns:**
+```javascript
+// Relative paths (don't use)
+"/images/menu/espresso.jpg"
+
+// File system paths (don't use)
+"C:\\uploads\\espresso.jpg"
+
+// Data URIs (too large for API responses)
+"data:image/jpeg;base64,..."
+```
+
+### Frontend Fallback Behavior
+
+**When `image` is null or URL fails to load:**
+- Menu items: Generic food/beverage icon
+- Services: Service-specific icon (from `icon` field)
+- Locations: Generic storefront placeholder
+- Partner logos: Text-only partner name
+
+**Error handling:** Frontend silently falls back to placeholder, no broken image icons shown to users.
+
+### Implementation Priority
+
+1. **Phase 1 (Optional):** Return `null` for all images
+   - Webapp already handles this gracefully
+   - No blocker for API launch
+
+2. **Phase 2 (Recommended):** Add high-impact images
+   - Featured menu items (4-6 items)
+   - Location storefronts (all locations)
+   - Partner logos where applicable
+
+3. **Phase 3 (Future):** Complete image library
+   - All menu items
+   - Location interiors
+   - Service photos (if desired)
+
+### Storage & Upload Strategy
+
+**Manual Upload (Simple):**
+- Upload images to CDN or `/public/images/` directory
+- Hardcode URLs in database
+- Good for initial launch (< 100 images)
+
+**Admin Panel (Future):**
+- Build image upload interface
+- Generate responsive variants automatically
+- Store URLs in database
+- Good for scale (> 100 images)
+
+**Image Optimization Tools:**
+- ImageMagick (CLI)
+- Sharp (Node.js library)
+- Squoosh (web-based)
+- TinyPNG (lossy compression)
+
+---
+
 ## Questions? Contact Frontend Team
 
 **Implementation Questions:**
