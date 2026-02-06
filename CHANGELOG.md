@@ -7,212 +7,69 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Features
+## [2.3.1] - 2026-02-06
 
-- **Prerendered ProductList Schemas:**
-  - Menu items (Product schemas) now prerendered into static HTML at build time
-  - Homepage: 4 featured products in static HTML (detectable by validators)
-  - RoCafé page: All 75 products in static HTML (detectable by validators)
-  - Fixes Schema.org validator detection issue (schemas were only visible after JS hydration)
-  - Zero runtime performance impact (schemas already in DOM)
-  - Build time impact: ~2-3 seconds for API fetch
+### Added
+- ProductList schemas prerendered into static HTML at build time
+- Consolidated API fetching in prerender.js with Promise.all
+- Branch safety check for production deployments
+- Staging and production deployment separation
 
-- **Consolidated API Fetching for Prerendering:**
-  - Services and Locations APIs now fetched at build time (parallel with Menu API)
-  - Single Promise.all call for maximum efficiency
-  - Future-proof: Zero code changes when Services/Locations APIs go live
-  - Graceful fallback: Empty arrays if APIs unavailable (client-side React uses static fallback)
-  - Prerendered ServiceList and LocationList schemas when APIs available
+### Fixed
+- Schema.org validator detection for ProductList schemas
+- LocationList homepage schema to match display logic
+- console.info eslint errors in diagnostic logging
+- GitHub Pages base path for staging deployment
+- SPA routing on GitHub Pages
 
-- **Deployment Safety Improvements:**
-  - Branch safety check prevents accidental production deploys from wrong branch
-  - Staging (`/atlas`) and production (`/`) deployment separation
-  - Environment-specific configuration validation
+### Changed
+- Services and Locations APIs fetched at build time
+- ServiceList and LocationList schemas prerendered when APIs available
 
-### Improvements
+### Documentation
+- Prerender analysis archived
+- Master plan updated with Step 3.1
+- API migration readiness updated with fallback removal strategy
 
-- **SEO & Schema Detection:**
-  - ProductList schemas now detectable by Schema.org validator in static HTML
-  - ServiceList and LocationList schemas ready for API prerendering
-  - Fixed timing/hydration issue where validators couldn't see dynamically rendered schemas
-  - Established reusable pattern for all future API-driven schema prerendering
-
-- **LocationList Schema Accuracy:**
-  - Homepage now includes only primary location in schema (matches actual display)
-  - Was incorrectly including all locations (mismatch between schema and display)
-  - Locations page correctly includes all active locations for SEO indexing
-  - Display sorting (by distance/primary) intentionally differs from schema (UI convenience)
-
-- **Documentation:**
-  - Comprehensive prerender analysis created and archived (`docs/archive/PRERENDER_SYSTEMATIC_FIX_ANALYSIS.md`)
-  - Master plan updated with consolidated API fetching strategy (Step 3.1)
-  - Static fallback removal strategy documented (3-phase approach with stability requirements)
-  - API migration readiness updated with Part 8: Static Fallback Removal Strategy
-  - Clear timeline: DO NOT remove fallbacks until 1-2 months of proven API stability
-
-### Fixes
-
-- **Diagnostic Logging Cleanup:**
-  - Resolved console.info eslint errors in diagnostic logging
-  - ProductList rendering logs properly exempt from production restrictions
-  - Preserved essential production diagnostics (MenuContext, API failures)
-
-- **GitHub Pages Configuration:**
-  - Restored base path for staging deployment (`/atlas`)
-  - Fixed routing issues for GitHub Pages SPA
-  - Environment-specific base URL handling
-
-### Internal
-
-- **Build-Time API Pattern Established:**
-  - Menu API: Fetched at build, prerendered ✅
-  - Services API: Fetched at build, graceful fallback ✅
-  - Locations API: Fetched at build, graceful fallback ✅
-  - Pattern ready for Company Data API when implemented
-  - Estimated effort for future API migrations: 1-2 hours each (pattern proven)
-
-- **Static Fallback Strategy Documented:**
-  - Phase 1: Prerender (no static imports) - COMPLETE ✅
-  - Phase 2: Context providers (remove static imports after API stability) - PLANNED
-  - Phase 3: Archive static data files (keep for emergency rollback) - PLANNED
-  - Requires: 1-2 months stability + monitoring + team consensus before removal
-
-### Commits in this Release
-
-- `e0279b9` - feat(seo): prerender ProductList schemas for homepage and RoCafé pages
-- `2b3dc70` - feat(build): consolidate API fetching for Services and Locations in prerender
-- `9823326` - fix(seo): correct LocationList prerender logic for homepage
-- `5c0cefe` - docs(api): document static fallback removal strategy
-- `e803f30` - docs: consolidate prerender analysis into master plan
-- `ef04bca` - fix(lint): resolve console.info eslint errors in diagnostic logging
-- `ff4f30f` - feat(deploy): add branch safety check to prevent accidental production deploys
-- `ce1f285` - feat(deploy): add staging and production deployment separation
-- `2e463e8` - fix(config): restore GitHub Pages base path for staging deployment
-- `30767f7` - debug(schema): add comprehensive logging for ProductList rendering
+**Commits:** e0279b9, 2b3dc70, 9823326, 5c0cefe, e803f30, ef04bca, ff4f30f, ce1f285, 2e463e8, 30767f7
 
 
 
 ## [2.3.0] - 2026-02-06
 
-### Features
+### Added
+- 13 Schema.org types implemented: Product, Service, Location, LocalBusiness, Organization, WebSite, MerchantReturnPolicy, WebApplication, BreadcrumbList
+- MenuContext for centralized API data management
+- ServicesContext with API fallback
+- LocationsContext with API fallback
+- Circuit breaker for Google Places API
+- IndexedDB caching for live hours and ratings
+- Google-compliant amenities system
+- Sitemap trailing slashes for GitHub Pages routing
 
-- **13 Schema Types Implemented:**
-  - Product schemas (menu items with prices, images, categories)
-  - Service schemas (15 services with proper categorization)
-  - Location schemas (multi-location LocalBusiness with hours, coordinates, amenities)
-  - LocalBusiness schema (complete business info with opening hours)
-  - Organization schema (tax ID, employee count)
-  - WebSite schema (with SearchAction for site search)
-  - MerchantReturnPolicy schema (24-hour faulty product policy)
-  - WebApplication schema (PWA discovery)
-  - BreadcrumbList schemas (11 pages)
+### Improved
+- Schema compliance: Average 88% → 98%
+- All schemas now pull from COMPANY_DATA
+- Enhanced COMPANY_DATA with schema endpoints and PWA config
+- Cross-schema linking with @id fields
+- Brand, category, manufacturer, broker fields added to schemas
+- SearchAction added to WebSite schema
 
-- **API-Driven Architecture:**
-  - MenuContext for centralized menu data management (50% reduction in API calls)
-  - ServicesContext with API fallback to static data
-  - LocationsContext with API fallback to static data
-  - Circuit breaker protection for Google Places API
-  - 1-hour IndexedDB caching for live hours/ratings
-
-- **100% API-Ready Components:**
-  - App.jsx ServicesSection now uses context provider (not static SERVICES_FEATURED)
-  - App.jsx Locations and ContactSection use context provider (not static helpers)
-  - Footer.jsx uses LocationsContext (not static getActiveLocations)
-  - Zero code changes needed when Services/Locations APIs go live
-
-- **Google-Compliant Amenities System:**
-  - Migrated from features object to amenities array
-  - Direct pass-through architecture (zero mapping layers)
-  - Google Business Profile compliant naming
-  - Location-specific amenities support
-  - API-ready data structure
-
-- **Sitemap Enhancements:**
-  - Added trailing slashes to all URLs for proper GitHub Pages routing
-  - Prevents redirect overhead for crawlers
-
-### Improvements
-
-- **100% De-Hardcoding Achievement:**
-  - Zero hardcoded business data across all schemas
-  - All schemas pull from COMPANY_DATA (Single Source of Truth)
-  - Enhanced COMPANY_DATA with schema endpoints, defaults, PWA config
-  - Smart data boundaries (location-specific vs business-wide)
-
-- **Schema Compliance Improvements (Phase 2-4):**
-  - LocalBusiness: B → A (+15%)
-  - Organization: B → A (+15%)
-  - Product: B → A+ (+13%)
-  - Service: B → A+ (+13%)
-  - Location: B → A (+10%)
-  - WebSite: C+ → A (+20%)
-  - WebApplication: A → A+ (+5%)
-  - Average: 88% (B+) → 98% (A+)
-
-- **Phase 5 Schema Validation (100% Compliance):**
-  - Fixed empty @id bug in Product, Service, Location schemas (prevented ItemList detection)
-  - Removed invalid naicsCode property from Organization schema
-  - Removed invalid PrivacyPolicy schema type (not recognized by Schema.org)
-  - Removed invalid timeZone property from static LocalBusiness schema
-  - Removed invalid availableAtOrFrom property from LocalBusiness schema
-  - All 11 pages validated through Schema.org validator
-  - Zero invalid properties or types remaining
-
-- **Cross-Schema Linking:**
-  - Added @id to all referenceable schemas
-  - Organization ⟷ LocalBusiness linking
-  - Product → MerchantReturnPolicy linking
-  - Location → Organization parentOrganization linking
-  - Complete schema graph connectivity
-
-- **Enhanced Schema Fields:**
-  - Brand property added to Product, Service, Location schemas
-  - Category field added to Product schemas
-  - Manufacturer field added to Product schemas (optional)
-  - Broker field added to Service schemas (optional)
-  - SearchAction added to WebSite schema
-
-### Fixes
-
-- **Phase 5 Critical Schema Validation Fixes:**
-  - Empty @id fields causing duplicate IDs (ProductList not detected on homepage)
-  - Organization naicsCode property not recognized by Schema.org
-  - PrivacyPolicy invalid schema type (removed - 404 on schema.org)
-  - LocalBusiness timeZone property not recognized by Schema.org
-  - LocalBusiness availableAtOrFrom property not recognized by Schema.org
-
-- **Phase 3-4 Schema Fixes:**
-  - Invalid hasOfferCatalog in LocalBusiness (causing 4 Product snippet errors)
-  - LocalBusiness schema duplication (static vs dynamic)
-  - Prerender script hardcoded serviceMap (now imports from SSOT)
-  - CodeQL sanitization vulnerability (iterative regex for XSS protection)
-
-- **Test Quality:**
-  - Added alt attributes to XSS test cases for quality checker compliance
-  - Resolved 2 HIGH priority accessibility warnings in test files
+### Fixed
+- Empty @id bug in Product, Service, Location schemas
+- Invalid naicsCode in Organization schema
+- Invalid PrivacyPolicy schema type
+- Invalid timeZone in LocalBusiness schema
+- Invalid availableAtOrFrom in LocalBusiness schema
+- Invalid hasOfferCatalog in LocalBusiness
+- LocalBusiness schema duplication
+- CodeQL sanitization vulnerability
+- XSS test accessibility warnings
 
 ### Documentation
-
-- STRUCTURED_DATA_MASTER_PLAN.md v5.0.0 (comprehensive Phase 2-5 documentation)
-- Phase 5 schema validation and bug fixes documented
-- Page-by-page validation results documented (all 11 pages)
-- Phase 4 schema audit integrated into master plan
-- Amenities architecture migration documented
-- Data management documentation updated with new amenities structure
-- Schema audit archived for historical reference
-- CHANGELOG.md updated with version 2.3.0
-
-### Quality
-
-- ESLint: 0 errors
-- Quality checker: 0 HIGH priority issues
-- Meta-checker integrity: Passes
-- Build: All 11 routes prerendered successfully
-- All schemas validated with Schema.org Markup Validator
-- 90%+ test coverage for schema builders
-- Zero hardcoded data violations
-- SSOT principle enforced throughout
-- 100% Schema.org compliance target achieved
+- STRUCTURED_DATA_MASTER_PLAN.md v5.0.0
+- Amenities architecture migration guide
+- Schema audit archived
 
 ## [2.2.0] - 2025-12-07
 
@@ -388,6 +245,7 @@ Initial Create React App implementation. Deprecated and replaced by v2.0.0.
 
 | Version | Date         | Description                           |
 |---------|--------------|---------------------------------------|
+| 2.3.1   | Feb 6, 2026  | Prerendered schemas and API consolidation |
 | 2.3.0   | Feb 6, 2026  | Schema validation and SEO improvements |
 | 2.2.0   | Dec 7, 2025  | Unified components, centralized data  |
 | 2.1.0   | Dec 4, 2025  | RoCafé menu system                    |
