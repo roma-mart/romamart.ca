@@ -421,15 +421,20 @@ const buildStructuredData = (routePath = '/', apiData = {}) => {
     }
   }
 
-  // Add LocationList for homepage (all locations)
+  // Add LocationList for homepage (primary location only - matches display)
   if (routePath === '/' && locations.length > 0) {
-    const locationListSchema = buildLocationListSchema(locations, { companyData: COMPANY_DATA });
-    if (locationListSchema) {
-      graph.push(locationListSchema);
+    // Homepage displays only primary location, schema should match
+    const primaryLocation = locations.find(loc => loc.isPrimary) || locations[0];
+    if (primaryLocation) {
+      const locationListSchema = buildLocationListSchema([primaryLocation], { companyData: COMPANY_DATA });
+      if (locationListSchema) {
+        graph.push(locationListSchema);
+      }
     }
   }
 
-  // Add LocationList for locations page (active locations only)
+  // Add LocationList for locations page (all active locations for SEO)
+  // Display sorts by distance/primary, but schema includes all active for indexing
   if (routePath === '/locations' && locations.length > 0) {
     const activeLocations = locations.filter(loc => loc.status === 'open');
     if (activeLocations.length > 0) {
