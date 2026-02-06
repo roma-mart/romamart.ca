@@ -7,6 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.3] - 2026-02-06
+
+### Performance
+- Throttled Navbar scroll handler with `requestAnimationFrame` + `{ passive: true }` to eliminate 60+ re-renders/sec (R22)
+- Extracted `LocationButton` component from `Button` -- geolocation hook only runs when needed, not on every `<Button>` render (R7)
+- Added plain `<button>`/`<a>` render path for non-animated Button variants instead of always using `<motion.button>` (R7)
+
+### Fixed
+- 72 instances of invalid `var(--font-heading)` in className attributes replaced with `text-heading` utility class or removed (CSS selectors already apply heading font to h1-h3) (R17)
+- Body font `--font-body` corrected from Outfit to Inter to match design spec (R19)
+- Hero animations now respect `prefers-reduced-motion` via Framer Motion `useReducedMotion()` hook (R6)
+- `LocationButton` wired to `LocationContext` instead of independent `useGeolocation()` -- single source of truth for location state (R7)
+- `CSS_VARS.heading` (a color variable) was incorrectly used as `fontFamily` in LocationButton -- replaced with `var(--font-heading)`
+- `usePageVisibility()` returns a boolean but was destructured as object -- `isVisible` was always undefined
+- Disabled `<a>` links now prevent navigation with `e.preventDefault()` and expose `aria-disabled`
+- Removed `role="button"` from `<a>` elements to preserve native link semantics for screen readers
+- Navbar `requestAnimationFrame` callback now cancelled on unmount to prevent stale state updates
+- 5 missing-space class concatenation bugs (e.g. `text-headingtext-xl`) caught and fixed via Copilot review
+
+### Removed
+- Dead `useBatteryStatus` import and battery workaround code from App.jsx
+- `location` variant from Button component (replaced by standalone LocationButton)
+- Independent `useGeolocation()` from LocationButton (replaced by LocationContext)
+
+### Documentation
+- Updated `.github/copilot-instructions.md` with typography rules, LocationButton docs, hero image guidance, reduced-motion notes
+- Marked `prefers-reduced-motion` as complete in `docs/ACCESSIBILITY_COMPLIANCE.md`
+- Added Nice-to-Have section to `docs/ROADMAP.md` with battery-aware motion reduction idea
+- Version bumped from 2.3.1 to 2.3.3
+
 ## [2.3.1] - 2026-02-06
 
 ### Added
@@ -259,6 +289,7 @@ Initial Create React App implementation. Deprecated and replaced by v2.0.0.
 
 | Version | Date         | Description                           |
 |---------|--------------|---------------------------------------|
+| 2.3.3   | Feb 6, 2026  | Performance & LCP optimization |
 | 2.3.1   | Feb 6, 2026  | Prerendered schemas and API consolidation |
 | 2.3.0   | Feb 6, 2026  | Schema validation and SEO improvements |
 | 2.2.0   | Dec 7, 2025  | Unified components, centralized data  |
