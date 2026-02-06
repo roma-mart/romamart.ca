@@ -14,7 +14,9 @@ This document provides complete specifications for implementing three public API
 
 1. **Services API** (`/api/public-services`) - 14 convenience store services with filtering
 2. **Locations API** (`/api/public-locations`) - Multi-location store information with hours, coordinates, amenities
-3. **Menu API Enhancement** - Add missing fields (calories data, dietary info, customizations) to existing endpoint
+3. **Menu API Enhancement** - Add missing fields (calories data, dietary info, customizations, **images**)
+
+**CRITICAL for SEO:** Menu item images are required for Google Product rich results. At minimum, featured items (4-6) must have images.
 
 **What to Plan For (Future):**
 
@@ -64,11 +66,14 @@ This document provides complete specifications for implementing three public API
 
 **These fields exist but are currently null - populate them:**
 
-| Field | Type | Current | Description | Example |
-|-------|------|---------|-------------|---------|
-| `calories` | number | null | Nutritional info | `120` |
-| `tagline` | string | null | Short marketing tagline | `"Bold and smooth"` |
-| `description` | string | null | Detailed description | `"Rich, bold espresso shot"` |
+| Field | Type | Current | Priority | Description | Example |
+|-------|------|---------|----------|-------------|---------|
+| `image` | string (URL) | null | **CRITICAL** | Product photo (required for Google rich results) | `"https://cdn.romamart.ca/menu/espresso.jpg"` |
+| `calories` | number | null | High | Nutritional info | `120` |
+| `tagline` | string | null | Medium | Short marketing tagline | `"Bold and smooth"` |
+| `description` | string | null | High | Detailed description | `"Rich, bold espresso shot"` |
+
+**⚠️ `image` field is CRITICAL:** Google Product rich results require an image. At minimum, populate images for all **featured items** (4-6 items for homepage). See Image Strategy section for implementation guidance.
 
 ### Missing Fields (Add These)
 
@@ -776,6 +781,8 @@ Before marking APIs production-ready, test these scenarios:
 - [ ] Error handling: Returns 404 gracefully if no locations
 
 ### Menu API Enhancement Testing
+- [ ] **CRITICAL: At least 4-6 featured items have `image` URLs populated (not null)**
+- [ ] **Image URLs are valid and return actual images (not 404)**
 - [ ] At least 4-6 menu items have `featured: true` (for homepage display)
 - [ ] `sizes` array includes `calories` field populated for each size (not null)
 - [ ] `tagline` and `description` fields populated (not null)
@@ -874,11 +881,13 @@ Your APIs should handle these scenarios gracefully:
 
 ### Phase 3: Menu API Enhancement (Week 3-4)
 - Add missing fields to existing endpoint
+- **Populate image URLs for at least 4-6 featured items (CRITICAL for SEO)**
 - Populate calories data for all sizes
 - Add dietary info, allergens, customizations
 - Mark featured items (set `featured: true` for homepage items)
 - Test backward compatibility
 - Monitor performance (larger payload)
+- **Verify images load correctly in browsers**
 
 ### Phase 4: Stability Testing (Week 5-6)
 - Run load tests (100+ concurrent users)
@@ -1171,17 +1180,32 @@ When ready to implement, here's the complete specification:
 
 ## Image Strategy & CDN Architecture
 
+**⚠️ CRITICAL for SEO:** Product (menu item) images are **required** for Google Product rich results. Services and Locations images are optional but recommended.
+
 All APIs include image fields for rich visual content. This section documents the complete image handling strategy.
 
 ### Image Fields Across APIs
 
-| API | Field | Type | Purpose | Example |
-|-----|-------|------|---------|---------|
-| **Menu API** | `image` | string (URL) | Product photo | `"https://cdn.romamart.ca/menu/espresso.jpg"` |
-| **Services API** | `partner.logo` | string (URL) | Partner branding | `"https://cdn.romamart.ca/partners/genesis-coin.png"` |
-| **Locations API** | `images.storefront` | string (URL) | Store exterior | `"https://cdn.romamart.ca/locations/wellington-storefront.jpg"` |
-| **Locations API** | `images.interior` | string (URL) | Store interior | `"https://cdn.romamart.ca/locations/wellington-interior.jpg"` |
-| **Company Data API** | `logoUrl` | string (URL) | Company logo | `"https://romamart.ca/logo.png"` |
+| API | Field | Type | Required for SEO? | Purpose | Example |
+|-----|-------|------|-------------------|---------|---------|
+| **Menu API** | `image` | string (URL) | **YES - CRITICAL** | Product photo | `"https://cdn.romamart.ca/menu/espresso.jpg"` |
+| **Services API** | `partner.logo` | string (URL) | No (optional) | Partner branding | `"https://cdn.romamart.ca/partners/genesis-coin.png"` |
+| **Locations API** | `images.storefront` | string (URL) | No (recommended) | Store exterior | `"https://cdn.romamart.ca/locations/wellington-storefront.jpg"` |
+| **Locations API** | `images.interior` | string (URL) | No (optional) | Store interior | `"https://cdn.romamart.ca/locations/wellington-interior.jpg"` |
+| **Company Data API** | `logoUrl` | string (URL) | No (optional) | Company logo | `"https://romamart.ca/logo.png"` |
+
+### Why Menu Images Are Critical
+
+**Google Product Rich Results Requirements:**
+1. **Image field is mandatory** for Product schema eligibility
+2. Without images: Products won't appear in Google Shopping, Image Search, or rich results
+3. Impact: Significant loss in organic traffic and conversions
+4. Google documentation: "image is required for Product markup"
+
+**Minimum Viable Launch:**
+- At least **4-6 featured menu items** must have images (homepage display)
+- All items should have images for full SEO benefit
+- Can start with null and add gradually, but featured items are blocking
 
 ### Recommended Architecture: CDN URLs
 
@@ -1367,19 +1391,39 @@ null
 
 ### Implementation Priority
 
-1. **Phase 1 (Optional):** Return `null` for all images
-   - Webapp already handles this gracefully
-   - No blocker for API launch
+**⚠️ Critical Path (Blocking SEO):**
 
-2. **Phase 2 (Recommended):** Add high-impact images
-   - Featured menu items (4-6 items)
-   - Location storefronts (all locations)
-   - Partner logos where applicable
+1. **Menu API Featured Items (URGENT):**
+   - **Must have:** 4-6 featured menu item images
+   - **Why:** Homepage Product rich results require images
+   - **Timeline:** Before API launch or immediately after
+   - **Can use:** Simple CDN upload or API server public directory
+   - **File naming:** `espresso.jpg`, `latte.jpg`, etc.
 
-3. **Phase 3 (Future):** Complete image library
-   - All menu items
-   - Location interiors
+**Recommended Path (High Impact):**
+
+2. **All Menu Items (High Priority):**
+   - Add images for all 75 menu items
+   - Full Google Shopping and search visibility
+   - Can roll out incrementally after launch
+
+3. **Location Storefronts (Recommended):**
+   - Store exterior photos for all locations
+   - Improves LocalBusiness schema
+   - Helps with Google Maps visibility
+
+**Optional Path (Nice to Have):**
+
+4. **Location Interiors & Partner Logos (Optional):**
+   - Interior photos for locations
+   - Partner branding logos
    - Service photos (if desired)
+
+**Implementation Timeline:**
+- **Week 0 (Before launch):** Featured menu items (4-6 images) - CRITICAL
+- **Week 1-2:** Remaining menu items (batch upload)
+- **Week 3-4:** Location storefronts
+- **Future:** Interiors, partner logos as needed
 
 ### Storage & Upload Strategy
 
