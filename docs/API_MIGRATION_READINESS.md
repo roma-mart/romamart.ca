@@ -1148,8 +1148,7 @@ When ready to implement, here's the complete specification:
 | `pwa.webApplication` | object | Yes | PWA metadata for WebApplication schema |
 
 **Notes:**
-- This API is **not urgent** - frontend has static COMPANY_DATA as SSOT
-- Implement only when business requirements change frequently
+- This API is **not urgent** but would be useful right after services and locations support delivered - frontend has static COMPANY_DATA as SSOT
 - Frontend will continue using static data until API proven stable
 - Primary use case: Multi-brand expansion, franchise management, dynamic theming
 
