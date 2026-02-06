@@ -2,18 +2,23 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
 // Get your repository name from the URL: github.com/username/repository-name
-// *** IMPORTANT: Replace 'roma-mart-site' with the actual name of your GitHub repo ***
-const REPO_NAME = 'romamart.ca'; 
+const REPO_NAME = 'romamart.ca';
+
+// Environment-based base path
+// Staging (GitHub Pages): /romamart.ca/
+// Production (Custom domain): /
+const BASE_PATH = process.env.VITE_STAGING === 'true' ? `/${REPO_NAME}/` : '/';
 
 export default defineConfig({
   plugins: [
     react(),
   ],
   // ----------------------------------------------------
-  // IMPORTANT: This sets the correct base path for assets
-  // GitHub Pages: /${REPO_NAME}/ | Production: /
+  // Base path controlled by VITE_STAGING environment variable
+  // Staging (GitHub Pages subdomain): /${REPO_NAME}/
+  // Production (custom domain or Netlify): /
   // ----------------------------------------------------
-  base: `/${REPO_NAME}/`, 
+  base: BASE_PATH, 
   build: {
     sourcemap: false, // Disable source maps to avoid lucide-react corruption issues
     rollupOptions: {

@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build --mode production && node scripts/prerender.js",
+    "build:staging": "cross-env VITE_STAGING=true vite build --mode production && node scripts/prerender.js",
     "build:ssg": "vite-ssg build",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -19,7 +20,8 @@
     "precommit": "npm run lint && npm run check:quality",
     "prepush": "npm run check:all && npm run build",
     "preview": "vite preview",
-    "deploy": "npm run build && gh-pages -d dist"
+    "deploy": "npm run build && gh-pages -d dist",
+    "deploy:staging": "npm run build:staging && gh-pages -d dist"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^7.1.0",
@@ -46,6 +48,7 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
     "autoprefixer": "^10.4.22",
+    "cross-env": "^10.1.0",
     "eslint": "^9.39.1",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react-hooks": "^7.0.1",
