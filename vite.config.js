@@ -11,8 +11,9 @@ export default defineConfig({
   ],
   // ----------------------------------------------------
   // IMPORTANT: This sets the correct base path for assets
+  // GitHub Pages: /${REPO_NAME}/ | Production: /
   // ----------------------------------------------------
-  base: `/`, 
+  base: `/${REPO_NAME}/`, 
   build: {
     sourcemap: false, // Disable source maps to avoid lucide-react corruption issues
     rollupOptions: {
