@@ -863,41 +863,175 @@ Your APIs should handle these scenarios gracefully:
 
 ---
 
-## Deployment Strategy
+## Deployment Strategy & Implementation Priorities
+
+This section consolidates all API implementation priorities (functionality, data population, images) into a phased rollout plan.
 
 ### Phase 1: Services API (Week 1-2)
+
+**Core Implementation:** 🚨 **URGENT**
 - Implement `/api/public-services` endpoint
-- Populate database with 14 services
+- Populate database with 14 services (all core fields)
+- Set `status: "available"` for 10 active services
+- Set `status: "coming_soon"` for 4 future services (printing, package services, money transfer, lottery)
 - Test with frontend staging environment
 - Document any field discrepancies
 
+**Images:** 🟢 **Low Priority** (optional)
+- Partner logos only where applicable (Genesis Coin, OLG)
+- Can launch with `partner.logo: null` for all services
+- Most services use icons (from `icon` field), not photos
+
+**Success Criteria:**
+- All 14 services return with accurate availability data
+- Coming soon badges display correctly on frontend
+- No breaking changes to existing menu API
+
+---
+
 ### Phase 2: Locations API (Week 2-3)
+
+**Core Implementation:** 🚨 **URGENT**
 - Implement `/api/public-locations` endpoint
-- Populate database with location data
+- Populate database with location data (address, hours, contact)
+- Set `isPrimary: true` for headquarters location
 - Integrate Google Places API for ratings/coordinates
 - Test multi-location scenarios
+- Verify frontend location picker works
+
+**Images:** 🟡 **Medium Priority** (recommended)
+- `images.storefront`: Recommended for all locations (improves local SEO)
+- `images.interior`: Optional (nice to have)
+- Can launch with `images: { storefront: null, interior: null }`
+- Add storefront photos in weeks following launch
+
+**Success Criteria:**
+- Location picker displays all locations correctly
+- Primary location identified for schema.org data
+- Hours and contact info accurate
+
+---
 
 ### Phase 3: Menu API Enhancement (Week 3-4)
-- Add missing fields to existing endpoint
-- **Populate image URLs for at least 4-6 featured items (CRITICAL for SEO)**
-- Populate calories data for all sizes
-- Add dietary info, allergens, customizations
-- Mark featured items (set `featured: true` for homepage items)
-- Test backward compatibility
-- Monitor performance (larger payload)
-- **Verify images load correctly in browsers**
+
+**Core Implementation:** 🔴 **High Priority**
+- Add missing fields to existing `/api/public-menu` endpoint
+- Populate `calories` data for all sizes (nutritional transparency)
+- Add `dietary` arrays (vegetarian, vegan, gluten-free, halal, kosher)
+- Add `allergens` arrays (nuts, dairy, soy, etc.)
+- Add `customizations` arrays (milk alternatives, sugar-free)
+- Mark featured items: set `featured: true` for 4-6 homepage items
+- Add `tagline` for marketing copy
+- Expand `description` fields with rich detail
+- Test backward compatibility (new fields should not break existing frontend)
+- Monitor performance (payload increases from ~15KB to ~50KB)
+
+**Images:** 🚨 **CRITICAL** (blocking SEO)
+
+1. **Minimum Viable (URGENT - Phase 3 completion):**
+   - **Must have:** Image URLs for 4-6 featured menu items
+   - **Why:** Homepage Product rich results require images for Google eligibility
+   - **Blocking:** Without images, Product schemas won't appear in Google rich results
+   - **Can use:** Simple CDN upload or `/images/menu/` directory initially
+   - **Verify:** Images load correctly in browsers (CORS, https, file size)
+
+2. **Complete Coverage (High Priority - Weeks 4-6):**
+   - **Should have:** Image URLs for all 75 menu items
+   - **Why:** Full Google Shopping, Image Search, and rich results visibility
+   - **Impact:** Significant SEO boost, higher click-through rates, increased conversions
+   - **Timeline:** Can add incrementally after Phase 3 launch
+
+**Success Criteria:**
+- All new fields return valid data (no null values for featured items)
+- 4-6 featured items have images AND calories AND dietary info
+- Google Rich Results Test passes for Product schemas (images visible)
+- No performance degradation (response time < 500ms)
+
+---
 
 ### Phase 4: Stability Testing (Week 5-6)
+
+**Backend Testing:** 🔴 **High Priority**
 - Run load tests (100+ concurrent users)
-- Monitor error rates and response times
-- Fix any performance bottlenecks
-- Document API versioning strategy
+- Monitor error rates and response times across all 3 endpoints
+- Fix any performance bottlenecks (slow queries, memory leaks)
+- Test CDN caching behavior (5-minute TTL)
+- Verify database indexes optimize common queries
+
+**Data Quality:** 🔴 **High Priority**
+- Add remaining 70 menu item images (if not done in Phase 3)
+- Add location storefront photos (if not done in Phase 2)
+- Audit all field data for accuracy (prices, descriptions, hours)
+- Test edge cases (closed stores, unavailable services, out-of-stock items)
+
+**Documentation:** 🟡 **Medium Priority**
+- Document API versioning strategy for future breaking changes
+- Update frontend integration guide with real-world learnings
+- Create backend maintenance runbook
+
+**Success Criteria:**
+- All endpoints handle 10+ req/sec with < 500ms response time
+- No errors in production logs
+- All menu items have images (or documented reason why not)
+
+---
 
 ### Phase 5: Production Rollout (Week 7+)
-- Deploy to production
-- Monitor for 1-2 weeks
-- Frontend team removes static fallbacks once APIs stable for 1-2 months
-- Document lessons learned
+
+**Go-Live:** 🚨 **URGENT**
+- Deploy all 3 APIs to production
+- Monitor for 1-2 weeks with alerts on error rates and response times
+- Communicate with frontend team (APIs now authoritative source)
+- Keep static fallbacks active (safety net for 1-2 months)
+
+**Post-Launch (Weeks 8-10):**
+- Add any missing images (partner logos, location interiors)
+- Optimize based on real-world usage patterns
+- Plan for seasonal Menu API updates (pumpkin spice lattes, etc.)
+- Discuss Company Data API implementation timeline
+
+**Fallback Removal (Months 3-4):**
+- Frontend team removes static fallbacks once APIs proven stable for 1-2 months
+- Monitor for any issues after fallback removal
+- Document lessons learned and API best practices
+
+**Success Criteria:**
+- 99.9% uptime for all 3 endpoints
+- Zero critical bugs reported by frontend team
+- SEO validation: Product schemas appear in Google Search Console
+
+---
+
+### Implementation Priority Summary
+
+**By Urgency:**
+- 🚨 **URGENT (Blocking):**
+  - Services API core functionality (Phase 1)
+  - Locations API core functionality (Phase 2)
+  - Menu API enhancements + 4-6 featured item images (Phase 3)
+
+- 🔴 **High Priority (Major impact):**
+  - All 75 menu item images (Weeks 4-6)
+  - Stability testing and load optimization (Phase 4)
+  - Production rollout and monitoring (Phase 5)
+
+- 🟡 **Medium Priority (Recommended):**
+  - Location storefront photos (Phase 2 or after)
+  - Documentation and runbooks (Phase 4)
+
+- 🟢 **Low Priority (Optional):**
+  - Partner logos for services (anytime)
+  - Location interior photos (anytime)
+
+**By Timeline:**
+```
+Week 1-2:   Services API (14 services, partner logos optional)
+Week 2-3:   Locations API (all fields, storefront photos recommended)
+Week 3-4:   Menu API enhancements + 4-6 featured item images (CRITICAL)
+Week 5-6:   Stability testing + remaining 70 menu images (high priority)
+Week 7-8:   Production rollout + monitoring
+Week 8+:    Post-launch optimization, optional images, static fallback removal planning
+```
 
 ---
 
@@ -1386,56 +1520,6 @@ null
 - Partner logos: Text-only partner name
 
 **Error handling:** Frontend silently falls back to placeholder, no broken image icons shown to users.
-
-### Implementation Priority by API
-
-**Phase 1-2: Services & Locations APIs (Weeks 1-3)**
-
-**Services API Images:**
-- Priority: **Low** (optional)
-- Most services use icons, not photos
-- Partner logos only where applicable (Genesis Coin, OLG)
-- Can launch Services API with `partner.logo: null`
-
-**Locations API Images:**
-- Priority: **Medium-High** (recommended)
-- `images.storefront`: Recommended for all locations
-- `images.interior`: Optional (nice to have)
-- Can launch Locations API with `images: { storefront: null, interior: null }`
-- Add images in weeks following launch
-
-**Phase 3: Menu API Enhancement (Weeks 3-4)**
-
-**⚠️ CRITICAL - Menu Item Images (BLOCKING SEO):**
-
-1. **Minimum Viable (URGENT):**
-   - **Must have:** 4-6 featured menu item images
-   - **Why:** Homepage Product rich results require images for Google eligibility
-   - **Timeline:** Phase 3 completion (same time as other enhancements)
-   - **Blocking:** Without images, Product schemas won't appear in Google rich results
-   - **Can use:** Simple CDN upload or `/images/menu/` directory initially
-
-2. **Complete Coverage (High Priority):**
-   - **Should have:** All 75 menu item images
-   - **Why:** Full Google Shopping, Image Search, and rich results visibility
-   - **Timeline:** Can add incrementally after Phase 3 (weeks 4-6)
-   - **Impact:** Significant SEO boost, higher click-through rates
-
-**Realistic Implementation Timeline:**
-
-```
-Week 1-2:   Services API (partner logos optional)
-Week 2-3:   Locations API (storefront photos recommended)
-Week 3-4:   Menu API enhancements + 4-6 featured item images (CRITICAL)
-Week 4-6:   Add remaining 70 menu item images (high priority)
-Week 6+:    Add location interiors, additional partner logos (optional)
-```
-
-**Priority Summary:**
-- 🚨 **URGENT:** 4-6 featured menu item images (Phase 3 - blocking SEO)
-- 🔴 **High:** All 75 menu item images (Weeks 4-6 - major SEO impact)
-- 🟡 **Medium:** Location storefront photos (Phase 2 or after - recommended)
-- 🟢 **Low:** Partner logos, location interiors (optional - add as needed)
 
 ### Storage & Upload Strategy
 
