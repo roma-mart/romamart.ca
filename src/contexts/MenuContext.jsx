@@ -43,6 +43,7 @@ export function MenuProvider({ children }) {
 
         if (!cancelled) setMenuItems(menu);
       } catch (err) {
+        // Error logging is permanent (not temporary debug logs) for production diagnostics
         console.error('[MenuContext] Failed to fetch menu data:', err);
         if (!cancelled) setError(err.message || 'Failed to load menu data');
       } finally {
