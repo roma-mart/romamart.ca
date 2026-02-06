@@ -1,22 +1,22 @@
 /**
  * LocationButton Component
- * Self-contained geolocation button extracted from Button.jsx (R7).
+ * Geolocation button that integrates with LocationContext for a single
+ * source of truth. Extracted from Button.jsx (R7).
  * Used exclusively by Footer.jsx for "Detect Nearest Store" functionality.
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import PropTypes from 'prop-types';
-import { useGeolocation } from '../hooks/useBrowserFeatures';
+import { useLocationContext } from '../hooks/useLocationContext';
 import { useToast } from './ToastContainer';
 import { MapPin, Loader } from 'lucide-react';
-import { CSS_VARS } from '../utils/theme';
 
 const LOCATION_STYLE = {
   backgroundColor: 'var(--color-location-bg, var(--color-accent))',
   color: 'var(--color-location-text, var(--color-primary))',
   fontWeight: 700,
-  fontFamily: CSS_VARS.heading,
+  fontFamily: 'var(--font-heading)',
   border: '2px solid var(--color-primary)',
   boxShadow: '0 2px 8px var(--color-accent-shadow, rgba(228,179,64,0.10))',
 };
@@ -37,22 +37,24 @@ const LocationButton = React.forwardRef(({
   ariaLabel,
   ...props
 }, ref) => {
-  const { getCurrentLocation, location, loading, error, canUseGeolocation } = useGeolocation();
+  const { requestLocation, userLocation, loading, error, canUseGeolocation } = useLocationContext();
   const { showSuccess, showError } = useToast();
+  const hasNotifiedLocation = useRef(false);
 
   useEffect(() => {
-    if (location) {
+    if (userLocation && userLocation.latitude && userLocation.longitude && !hasNotifiedLocation.current) {
+      hasNotifiedLocation.current = true;
       if (onLocationFound) {
         onLocationFound({
           coords: {
-            latitude: location.latitude,
-            longitude: location.longitude,
+            latitude: userLocation.latitude,
+            longitude: userLocation.longitude,
           },
         });
       }
       showSuccess('Location found! Sorting stores by distance...');
     }
-  }, [location, onLocationFound, showSuccess]);
+  }, [userLocation, onLocationFound, showSuccess]);
 
   useEffect(() => {
     if (error) {
@@ -78,7 +80,7 @@ const LocationButton = React.forwardRef(({
 
   const handleClick = (e) => {
     if (disabled || loading) return;
-    getCurrentLocation(e);
+    requestLocation();
     if (onClick) onClick(e);
   };
 

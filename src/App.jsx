@@ -614,7 +614,7 @@ const LoadingFallback = () => (
 function App() {
   const pathname = typeof window !== 'undefined' ? window.location.pathname.replace(BASE_URL, '/') : '/';
   useServiceWorker();
-  const { isVisible } = usePageVisibility();
+  const isVisible = usePageVisibility();
 
   // Fetch menu data from API for homepage featured schemas + RoCafe section
   // Menu is now provided via MenuProvider context to avoid duplicate API calls
