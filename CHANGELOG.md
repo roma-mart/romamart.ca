@@ -7,23 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Schema & SEO Implementation (seo-1.1 branch)
+## [2.3.0] - 2026-02-06
 
-**Phase 2-4 Complete: Structured Data & Schema Audit (98% Compliance - Grade A+)**
-
-#### Features
+### Features
 
 - **13 Schema Types Implemented:**
   - Product schemas (menu items with prices, images, categories)
   - Service schemas (15 services with proper categorization)
   - Location schemas (multi-location LocalBusiness with hours, coordinates, amenities)
   - LocalBusiness schema (complete business info with opening hours)
-  - Organization schema (NAICS 4541, tax ID, employee count)
+  - Organization schema (tax ID, employee count)
   - WebSite schema (with SearchAction for site search)
-  - PrivacyPolicy schema (PIPEDA compliant)
   - MerchantReturnPolicy schema (24-hour faulty product policy)
   - WebApplication schema (PWA discovery)
-  - BreadcrumbList schemas (9 pages)
+  - BreadcrumbList schemas (11 pages)
 
 - **API-Driven Architecture:**
   - MenuContext for centralized menu data management (50% reduction in API calls)
@@ -45,7 +42,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Location-specific amenities support
   - API-ready data structure
 
-#### Improvements
+- **Sitemap Enhancements:**
+  - Added trailing slashes to all URLs for proper GitHub Pages routing
+  - Prevents redirect overhead for crawlers
+
+### Improvements
 
 - **100% De-Hardcoding Achievement:**
   - Zero hardcoded business data across all schemas
@@ -53,7 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Enhanced COMPANY_DATA with schema endpoints, defaults, PWA config
   - Smart data boundaries (location-specific vs business-wide)
 
-- **Schema Compliance Improvements:**
+- **Schema Compliance Improvements (Phase 2-4):**
   - LocalBusiness: B → A (+15%)
   - Organization: B → A (+15%)
   - Product: B → A+ (+13%)
@@ -61,8 +62,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Location: B → A (+10%)
   - WebSite: C+ → A (+20%)
   - WebApplication: A → A+ (+5%)
-  - PrivacyPolicy: B+ → A (+10%)
   - Average: 88% (B+) → 98% (A+)
+
+- **Phase 5 Schema Validation (100% Compliance):**
+  - Fixed empty @id bug in Product, Service, Location schemas (prevented ItemList detection)
+  - Removed invalid naicsCode property from Organization schema
+  - Removed invalid PrivacyPolicy schema type (not recognized by Schema.org)
+  - Removed invalid timeZone property from static LocalBusiness schema
+  - Removed invalid availableAtOrFrom property from LocalBusiness schema
+  - All 11 pages validated through Schema.org validator
+  - Zero invalid properties or types remaining
 
 - **Cross-Schema Linking:**
   - Added @id to all referenceable schemas
@@ -78,45 +87,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Broker field added to Service schemas (optional)
   - SearchAction added to WebSite schema
 
-- **Phase 5 Schema Validation (100% Compliance Target):**
-  - Fixed empty @id bug in Product, Service, Location schemas (prevented ItemList detection)
-  - Removed invalid naicsCode property from Organization schema
-  - Removed invalid PrivacyPolicy schema type (not recognized by Schema.org)
-  - Removed invalid timeZone property from static LocalBusiness schema
-  - All 11 pages validated through Schema.org validator
-  - Zero invalid properties or types remaining
+### Fixes
 
-#### Fixes
-
-- **Phase 5 Critical Fixes:**
+- **Phase 5 Critical Schema Validation Fixes:**
   - Empty @id fields causing duplicate IDs (ProductList not detected on homepage)
   - Organization naicsCode property not recognized by Schema.org
   - PrivacyPolicy invalid schema type (removed - 404 on schema.org)
   - LocalBusiness timeZone property not recognized by Schema.org
+  - LocalBusiness availableAtOrFrom property not recognized by Schema.org
 
-- **Phase 3-4 Fixes:**
+- **Phase 3-4 Schema Fixes:**
   - Invalid hasOfferCatalog in LocalBusiness (causing 4 Product snippet errors)
   - LocalBusiness schema duplication (static vs dynamic)
   - Prerender script hardcoded serviceMap (now imports from SSOT)
   - CodeQL sanitization vulnerability (iterative regex for XSS protection)
 
-#### Documentation
+- **Test Quality:**
+  - Added alt attributes to XSS test cases for quality checker compliance
+  - Resolved 2 HIGH priority accessibility warnings in test files
+
+### Documentation
 
 - STRUCTURED_DATA_MASTER_PLAN.md v5.0.0 (comprehensive Phase 2-5 documentation)
 - Phase 5 schema validation and bug fixes documented
-- Page-by-page validation results documented
+- Page-by-page validation results documented (all 11 pages)
 - Phase 4 schema audit integrated into master plan
 - Amenities architecture migration documented
 - Data management documentation updated with new amenities structure
 - Schema audit archived for historical reference
+- CHANGELOG.md updated with version 2.3.0
 
-#### Quality
+### Quality
 
 - ESLint: 0 errors
-- All schemas validated with Google Rich Results Test
+- Quality checker: 0 HIGH priority issues
+- Meta-checker integrity: Passes
+- Build: All 11 routes prerendered successfully
+- All schemas validated with Schema.org Markup Validator
 - 90%+ test coverage for schema builders
 - Zero hardcoded data violations
 - SSOT principle enforced throughout
+- 100% Schema.org compliance target achieved
 
 ## [2.2.0] - 2025-12-07
 
