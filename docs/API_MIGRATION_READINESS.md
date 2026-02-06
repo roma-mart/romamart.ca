@@ -949,6 +949,154 @@ const data = COMPANY_DATA.field;
 
 ---
 
+## Part 8: Static Fallback Removal Strategy
+
+**Important:** Static fallbacks should NOT be removed immediately when APIs go live. They serve as safety nets during the transition period.
+
+### Current State (February 6, 2026)
+
+**Prerender Architecture:**
+- Menu API: Fetched at build time, prerendered into static HTML ✅
+- Services API: Fetched at build time, graceful fallback to empty array (client-side React uses static fallback) ✅
+- Locations API: Fetched at build time, graceful fallback to empty array (client-side React uses static fallback) ✅
+- All APIs fetched in parallel using Promise.all for maximum efficiency
+
+**Runtime Architecture:**
+- MenuContext: API-only (no static fallback) - reference implementation ✅
+- ServicesContext: API with static SERVICES fallback 🔄
+- LocationsContext: API with static LOCATIONS fallback 🔄
+- CompanyData: Static only (no context yet) ❌
+
+### When To Remove Static Fallbacks
+
+**DO NOT REMOVE** until all these conditions are met:
+1. API has been stable in production for 1-2 months
+2. Zero API downtime incidents observed
+3. Load testing validates API can handle traffic
+4. Monitoring/alerting in place for API failures
+5. Team consensus that API is production-ready
+
+**Reference Timeline:**
+- Menu Items API: Stable for 2+ months → API-only architecture proven successful
+- Services/Locations APIs: Prove stability before fallback removal
+- Company Data API: New implementation required first (see Part 3)
+
+### Phased Removal Process
+
+**Phase 1: Prerender (Already Complete)**
+
+Scripts/prerender.js already implements clean API-only pattern:
+```javascript
+// ✅ CORRECT: No static imports in prerender
+async function fetchServicesData() {
+  try {
+    const response = await fetch(SERVICES_API_URL);
+    if (!response.ok) return []; // Empty array fallback
+    return (await response.json()).services;
+  } catch (error) {
+    return []; // Graceful fallback - client handles static data
+  }
+}
+```
+
+When APIs go live: Zero changes needed in prerender.js ✅
+
+**Phase 2: Context Providers (After API Stability Proven)**
+
+Only remove static imports from context providers after 1-2 months of stable production:
+
+```javascript
+// BEFORE (current - safe transition):
+import { SERVICES } from '../data/services';
+export function ServicesProvider({ children }) {
+  const [services, setServices] = useState(SERVICES); // Static fallback
+  // ... fetch from API, fall back to static on failure
+}
+
+// AFTER (API-only - clean code):
+export function ServicesProvider({ children }) {
+  const [services, setServices] = useState([]); // Start empty
+  // ... fetch from API, no static fallback needed
+  // API stability proven, monitoring in place
+}
+```
+
+**Files to Update:**
+- `src/contexts/ServicesContext.jsx` - Remove SERVICES import and static fallback
+- `src/contexts/LocationsContext.jsx` - Remove LOCATIONS import and static fallback
+
+**Phase 3: Archive Static Data Files**
+
+Once context providers are API-only, archive static data files:
+
+```bash
+# Create archive directory
+mkdir -p src/data/archive
+
+# Move static files (keep for emergency rollback reference)
+git mv src/data/services.jsx src/data/archive/services.jsx
+git mv src/data/locations.js src/data/archive/locations.js
+
+# Update imports in any legacy files that still reference them
+# (Should be zero if migration was complete)
+```
+
+**Phase 4: Remove Static Imports from Components**
+
+Search for any remaining static imports:
+```bash
+grep -r "from.*data/services" src/
+grep -r "from.*data/locations" src/
+```
+
+Fix any remaining files (should be ~2-3 files identified in Part 1 & 2 of this document).
+
+### Risk Mitigation
+
+**Emergency Rollback Capability:**
+1. Keep archived static files in `src/data/archive/` indefinitely
+2. Document rollback process in runbook
+3. Test rollback process before removing fallbacks
+4. Monitor API health metrics after fallback removal
+
+**Monitoring Required Before Fallback Removal:**
+- API uptime > 99.9% over 30 days
+- Response time < 500ms p95
+- Error rate < 0.1%
+- Traffic capacity validated at 10x current load
+
+**Rollback Process (If Needed After Removal):**
+```javascript
+// Quick rollback in context provider:
+import { SERVICES } from '../data/archive/services';
+const [services, setServices] = useState(SERVICES);
+// Redeploy - 5 minute fix
+```
+
+### Documentation References
+
+**Detailed Implementation:**
+- Master Plan: `docs/STRUCTURED_DATA_MASTER_PLAN.md` - Step 3.1: Static Fallback Removal Strategy
+- See sections on Phase 1-3 removal process with code examples
+
+**Related Documentation:**
+- `docs/PRERENDER_SYSTEMATIC_FIX_ANALYSIS.md` - Build-time API fetching patterns
+- This document (Part 1-2) - Files requiring static import removal
+
+### Success Criteria
+
+Before marking static fallback removal complete, verify:
+- [ ] APIs stable in production for 1-2 months
+- [ ] Zero API downtime incidents
+- [ ] Context providers use API-only pattern
+- [ ] Static data files archived (not deleted)
+- [ ] All components use context providers (no static imports)
+- [ ] Rollback process documented and tested
+- [ ] Monitoring/alerting in place
+- [ ] Team consensus achieved
+
+---
+
 ## Conclusion
 
 **Services & Locations:** 90-95% ready, only 3-4 files need updates (2-3 hours work)

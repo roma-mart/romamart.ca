@@ -848,6 +848,116 @@ graph.push(schema);
 - ✅ Created `docs/PRERENDER_SYSTEMATIC_FIX_ANALYSIS.md` with comprehensive analysis
 - ✅ Covers root cause, solution, best practices, future migration patterns
 
+### Step 3.1: Consolidated API Fetching & LocationList Fix ✅ FIXED
+
+**Follow-Up Improvements (February 6, 2026):**
+
+After establishing the ProductList prerender pattern, we proactively consolidated all API fetching and fixed LocationList logic.
+
+**1. Consolidated API Fetching**
+
+Extended prerender.js to fetch Services and Locations APIs in parallel with Menu API:
+
+```javascript
+// Parallel API fetching using Promise.all (prerender.js:478-485)
+console.log('\n📡 Fetching API data for prerendering...\n');
+const [menuItems, services, locations] = await Promise.all([
+  fetchMenuData(),
+  fetchServicesData(),
+  fetchLocationsData()
+]);
+console.log('\n✓ API data fetching complete\n');
+```
+
+**Benefits:**
+- Single point of API fetching for all prerendering
+- Maximum efficiency via parallel requests
+- Future-proof: When Services/Locations APIs go live, zero code changes needed
+- Graceful fallback: Returns empty arrays if APIs unavailable (client-side React handles static fallback)
+
+**2. Fixed LocationList Homepage Logic**
+
+**Issue Discovery:**
+User identified mismatch between homepage LocationList schema and actual display:
+- Homepage DISPLAYS: Only primary location (via `locations.find(loc => loc.isPrimary) || locations[0]`)
+- Homepage SCHEMA (before fix): ALL locations (incorrect)
+
+**Fix Applied:**
+```javascript
+// Homepage: primary location only (prerender.js:424-434)
+if (routePath === '/' && locations.length > 0) {
+  const primaryLocation = locations.find(loc => loc.isPrimary) || locations[0];
+  if (primaryLocation) {
+    const locationListSchema = buildLocationListSchema([primaryLocation], { companyData: COMPANY_DATA });
+    if (locationListSchema) graph.push(locationListSchema);
+  }
+}
+```
+
+**Locations Page Verified:**
+- Uses all active locations in schema (correct for SEO)
+- Display sorts by distance/primary (UI convenience)
+- Intentional difference for better search engine coverage
+
+**3. Static Fallback Removal Strategy**
+
+**Current Architecture:**
+- Services: Context provider with static fallback (SERVICES array)
+- Locations: Context provider with static fallback (LOCATIONS array)
+- Menu Items: API-only (reference implementation, no static fallback)
+
+**When APIs Go Live (Production Ready):**
+
+**Phase 1: Remove Build-Time Static Imports from Prerender**
+Currently prerender.js gracefully falls back to empty arrays when APIs unavailable:
+```javascript
+// Services API unavailable → returns []
+// Client-side React uses static SERVICES fallback
+// Prerender skips ServiceList schemas (client renders instead)
+```
+
+When API is production-ready:
+- No changes needed in prerender.js (already returns empty arrays)
+- APIs will be available at build time
+- Schemas will be prerendered from API data
+
+**Phase 2: Remove Runtime Static Imports from Context Providers**
+
+Only after API is proven stable in production:
+
+```javascript
+// BEFORE (current - API-ready with static fallback):
+import { SERVICES } from '../data/services';
+const [services, setServices] = useState(SERVICES); // Start with static
+
+// AFTER (API-only - clean code):
+const [services, setServices] = useState([]); // Start empty
+// Context fetches from API, no static import needed
+```
+
+**Phase 3: Archive Static Data Files**
+
+Once all context providers are API-only:
+- Move `src/data/services.jsx` → `src/data/archive/services.jsx`
+- Move `src/data/locations.js` → `src/data/archive/locations.js`
+- Keep for emergency rollback reference only
+- Remove from active codebase to prevent accidental usage
+
+**Risk Mitigation:**
+- DO NOT remove static fallbacks until APIs are proven stable in production
+- Menu Items API has been stable for 2+ months (reference implementation)
+- Services/Locations APIs should prove stability before fallback removal
+- Keep archived static files for emergency rollback capability
+
+**Timeline:**
+- Services API fallback removal: After 1-2 months of stable production
+- Locations API fallback removal: After 1-2 months of stable production
+- Company Data API: New implementation (see API_MIGRATION_READINESS.md Part 3)
+
+**Commits:**
+- ✅ `2b3dc70` - feat(build): consolidate API fetching for Services and Locations in prerender
+- ✅ `9823326` - fix(seo): correct LocationList prerender logic for homepage
+
 ### Step 4: Final Deployment & Verification 🔄 NEXT
 
 **Commits Created:**
