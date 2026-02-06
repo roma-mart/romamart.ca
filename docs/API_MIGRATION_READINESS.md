@@ -1080,7 +1080,7 @@ const [services, setServices] = useState(SERVICES);
 - See sections on Phase 1-3 removal process with code examples
 
 **Related Documentation:**
-- `docs/PRERENDER_SYSTEMATIC_FIX_ANALYSIS.md` - Build-time API fetching patterns
+- `docs/archive/PRERENDER_SYSTEMATIC_FIX_ANALYSIS.md` - Detailed analysis (archived for historical reference)
 - This document (Part 1-2) - Files requiring static import removal
 
 ### Success Criteria
