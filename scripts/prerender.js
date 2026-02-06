@@ -4,9 +4,13 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import COMPANY_DATA from '../src/config/company_data.js';
+import { buildMenuItemSchema } from '../src/schemas/menuItemSchema.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Menu API endpoint - same as MenuContext
+const MENU_API_URL = 'https://romamart.netlify.app/api/public-menu';
 
 // Routes to prerender
 const BASE_URL = 'https://romamart.ca';
@@ -157,7 +161,79 @@ const normalizeCountry = (country) => {
   return 'CA';
 };
 
-const buildStructuredData = () => {
+/**
+ * Fetches menu data from API for prerendering ProductList schemas
+ * @returns {Promise<Array>} Menu items array
+ */
+async function fetchMenuData() {
+  try {
+    console.log('Fetching menu data from API for prerendering...');
+    const response = await fetch(MENU_API_URL);
+
+    if (!response.ok) {
+      console.warn(`Warning: Menu API returned ${response.status}. ProductList schemas will be skipped in static HTML.`);
+      return [];
+    }
+
+    const data = await response.json();
+    const menuItems = data.menu || [];
+
+    console.log(`✓ Fetched ${menuItems.length} menu items (${menuItems.filter(i => i.featured).length} featured)`);
+    return menuItems;
+  } catch (error) {
+    console.warn('Warning: Failed to fetch menu data. ProductList schemas will be skipped in static HTML.');
+    console.warn('  Error:', error.message);
+    return [];
+  }
+}
+
+/**
+ * Builds ProductList schema for menu items
+ * @param {Array} menuItems - Menu items to include
+ * @param {boolean} featuredOnly - Only include featured items
+ * @returns {Object|null} ProductList schema or null if no items
+ */
+function buildProductListSchema(menuItems, featuredOnly = false) {
+  if (!Array.isArray(menuItems) || menuItems.length === 0) {
+    return null;
+  }
+
+  const items = featuredOnly
+    ? menuItems.filter(item => item.featured === true)
+    : menuItems;
+
+  if (items.length === 0) {
+    return null;
+  }
+
+  // Build Product schemas using same logic as StructuredData component
+  const productSchemas = items
+    .map(menuItem => buildMenuItemSchema(
+      menuItem,
+      'https://romamart.ca/rocafe',
+      {
+        currency: 'CAD',
+        priceInCents: true // Menu API uses cents
+      }
+    ))
+    .filter(Boolean);
+
+  if (productSchemas.length === 0) {
+    return null;
+  }
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    itemListElement: productSchemas.map((product, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      item: product
+    }))
+  };
+}
+
+const buildStructuredData = (routePath = '/', menuItems = []) => {
   const location = COMPANY_DATA.location;
   const address = location?.address || {};
   const contact = location?.contact || {};
@@ -186,61 +262,80 @@ const buildStructuredData = () => {
       : null
   ].filter(Boolean);
 
+  // Build base @graph with LocalBusiness and WebSite
+  const graph = [
+    {
+      '@type': 'LocalBusiness',
+      '@id': `${BASE_URL}/#business`,
+      name: COMPANY_DATA.dba || COMPANY_DATA.legalName || 'Roma Mart Convenience',
+      legalName: COMPANY_DATA.legalName || undefined,
+      alternateName: COMPANY_DATA.dba ? COMPANY_DATA.legalName : 'Roma Mart',
+      description: 'Your daily stop & go convenience store in Sarnia, Ontario. Fresh RoCafé beverages, ATM, Bitcoin ATM, printing, and more.',
+      url: BASE_URL,
+      telephone: contact.phone || '+1-382-342-2000',
+      email: contact.email || 'contact@romamart.ca',
+      priceRange: '$$',
+      image: 'https://romamart.ca/images/store-front.jpg',
+      logo: 'https://romamart.ca/logo.png',
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: address.street || '3-189 Wellington Street',
+        addressLocality: address.city || 'Sarnia',
+        addressRegion: address.province || 'ON',
+        postalCode: address.postalCode || 'N7T 1G6',
+        addressCountry: normalizeCountry(address.country) || 'CA'
+      },
+      geo: {
+        '@type': 'GeoCoordinates',
+        latitude: coords.lat || 42.970389,
+        longitude: coords.lng || -82.404589
+      },
+      openingHoursSpecification,
+      sameAs: Object.values(COMPANY_DATA.socialLinks || {}),
+      amenityFeature: (location?.amenities || []).map(amenity => ({
+        '@type': 'LocationFeatureSpecification',
+        name: amenity.name,
+        value: amenity.value
+      })),
+      paymentAccepted: COMPANY_DATA.paymentMethods || ['Cash', 'Credit Card', 'Debit Card', 'Interac', 'Visa', 'Mastercard', 'American Express', 'Bitcoin']
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${BASE_URL}/#website`,
+      url: BASE_URL,
+      name: COMPANY_DATA.dba || 'Roma Mart Convenience',
+      description: 'Your daily stop & go convenience store in Sarnia, Ontario.',
+      publisher: { '@id': `${BASE_URL}/#business` },
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: {
+          '@type': 'EntryPoint',
+          urlTemplate: `${BASE_URL}/search?q={search_term_string}`
+        },
+        'query-input': 'required name=search_term_string'
+      }
+    }
+  ];
+
+  // Add ProductList for homepage (featured items only)
+  if (routePath === '/' && menuItems.length > 0) {
+    const productListSchema = buildProductListSchema(menuItems, true);
+    if (productListSchema) {
+      graph.push(productListSchema);
+    }
+  }
+
+  // Add ProductList for RoCafé page (all menu items)
+  if (routePath === '/rocafe' && menuItems.length > 0) {
+    const productListSchema = buildProductListSchema(menuItems, false);
+    if (productListSchema) {
+      graph.push(productListSchema);
+    }
+  }
+
   const schema = {
     '@context': 'https://schema.org',
-    '@graph': [
-      {
-        '@type': 'LocalBusiness',
-        '@id': `${BASE_URL}/#business`,
-        name: COMPANY_DATA.dba || COMPANY_DATA.legalName || 'Roma Mart Convenience',
-        legalName: COMPANY_DATA.legalName || undefined,
-        alternateName: COMPANY_DATA.dba ? COMPANY_DATA.legalName : 'Roma Mart',
-        description: 'Your daily stop & go convenience store in Sarnia, Ontario. Fresh RoCafé beverages, ATM, Bitcoin ATM, printing, and more.',
-        url: BASE_URL,
-        telephone: contact.phone || '+1-382-342-2000',
-        email: contact.email || 'contact@romamart.ca',
-        priceRange: '$$',
-        image: 'https://romamart.ca/images/store-front.jpg',
-        logo: 'https://romamart.ca/logo.png',
-        address: {
-          '@type': 'PostalAddress',
-          streetAddress: address.street || '3-189 Wellington Street',
-          addressLocality: address.city || 'Sarnia',
-          addressRegion: address.province || 'ON',
-          postalCode: address.postalCode || 'N7T 1G6',
-          addressCountry: normalizeCountry(address.country) || 'CA'
-        },
-        geo: {
-          '@type': 'GeoCoordinates',
-          latitude: coords.lat || 42.970389,
-          longitude: coords.lng || -82.404589
-        },
-        openingHoursSpecification,
-        sameAs: Object.values(COMPANY_DATA.socialLinks || {}),
-        amenityFeature: (location?.amenities || []).map(amenity => ({
-          '@type': 'LocationFeatureSpecification',
-          name: amenity.name,
-          value: amenity.value
-        })),
-        paymentAccepted: COMPANY_DATA.paymentMethods || ['Cash', 'Credit Card', 'Debit Card', 'Interac', 'Visa', 'Mastercard', 'American Express', 'Bitcoin']
-      },
-      {
-        '@type': 'WebSite',
-        '@id': `${BASE_URL}/#website`,
-        url: BASE_URL,
-        name: COMPANY_DATA.dba || 'Roma Mart Convenience',
-        description: 'Your daily stop & go convenience store in Sarnia, Ontario.',
-        publisher: { '@id': `${BASE_URL}/#business` },
-        potentialAction: {
-          '@type': 'SearchAction',
-          target: {
-            '@type': 'EntryPoint',
-            urlTemplate: `${BASE_URL}/search?q={search_term_string}`
-          },
-          'query-input': 'required name=search_term_string'
-        }
-      }
-    ]
+    '@graph': graph
   };
 
   return JSON.stringify(schema);
@@ -267,11 +362,14 @@ const buildSitemapXml = (routeList, lastModDate) => {
 async function prerender() {
   const distPath = path.resolve(__dirname, '../dist');
   const indexPath = path.join(distPath, 'index.html');
-  
+
   if (!fs.existsSync(indexPath)) {
     console.error('Build output not found. Run `npm run build` first.');
     process.exit(1);
   }
+
+  // Fetch menu data once for all routes
+  const menuItems = await fetchMenuData();
 
   const indexTemplate = fs.readFileSync(indexPath, 'utf-8');
 
@@ -347,7 +445,7 @@ async function prerender() {
       )
       .replace(
         /<script type="application\/ld\+json">[\s\S]*?<\/script>/,
-        `<script type="application/ld+json">${buildStructuredData()}</script>`
+        `<script type="application/ld+json">${buildStructuredData(route.path, menuItems)}</script>`
       );
 
     fs.writeFileSync(outputPath, html);
