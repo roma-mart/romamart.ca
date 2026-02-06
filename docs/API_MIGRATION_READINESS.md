@@ -1387,41 +1387,55 @@ null
 
 **Error handling:** Frontend silently falls back to placeholder, no broken image icons shown to users.
 
-### Implementation Priority
+### Implementation Priority by API
 
-**⚠️ Critical Path (Blocking SEO):**
+**Phase 1-2: Services & Locations APIs (Weeks 1-3)**
 
-1. **Menu API Featured Items (URGENT):**
+**Services API Images:**
+- Priority: **Low** (optional)
+- Most services use icons, not photos
+- Partner logos only where applicable (Genesis Coin, OLG)
+- Can launch Services API with `partner.logo: null`
+
+**Locations API Images:**
+- Priority: **Medium-High** (recommended)
+- `images.storefront`: Recommended for all locations
+- `images.interior`: Optional (nice to have)
+- Can launch Locations API with `images: { storefront: null, interior: null }`
+- Add images in weeks following launch
+
+**Phase 3: Menu API Enhancement (Weeks 3-4)**
+
+**⚠️ CRITICAL - Menu Item Images (BLOCKING SEO):**
+
+1. **Minimum Viable (URGENT):**
    - **Must have:** 4-6 featured menu item images
-   - **Why:** Homepage Product rich results require images
-   - **Timeline:** Before API launch or immediately after
-   - **Can use:** Simple CDN upload or API server public directory
-   - **File naming:** `espresso.jpg`, `latte.jpg`, etc.
+   - **Why:** Homepage Product rich results require images for Google eligibility
+   - **Timeline:** Phase 3 completion (same time as other enhancements)
+   - **Blocking:** Without images, Product schemas won't appear in Google rich results
+   - **Can use:** Simple CDN upload or `/images/menu/` directory initially
 
-**Recommended Path (High Impact):**
+2. **Complete Coverage (High Priority):**
+   - **Should have:** All 75 menu item images
+   - **Why:** Full Google Shopping, Image Search, and rich results visibility
+   - **Timeline:** Can add incrementally after Phase 3 (weeks 4-6)
+   - **Impact:** Significant SEO boost, higher click-through rates
 
-2. **All Menu Items (High Priority):**
-   - Add images for all 75 menu items
-   - Full Google Shopping and search visibility
-   - Can roll out incrementally after launch
+**Realistic Implementation Timeline:**
 
-3. **Location Storefronts (Recommended):**
-   - Store exterior photos for all locations
-   - Improves LocalBusiness schema
-   - Helps with Google Maps visibility
+```
+Week 1-2:   Services API (partner logos optional)
+Week 2-3:   Locations API (storefront photos recommended)
+Week 3-4:   Menu API enhancements + 4-6 featured item images (CRITICAL)
+Week 4-6:   Add remaining 70 menu item images (high priority)
+Week 6+:    Add location interiors, additional partner logos (optional)
+```
 
-**Optional Path (Nice to Have):**
-
-4. **Location Interiors & Partner Logos (Optional):**
-   - Interior photos for locations
-   - Partner branding logos
-   - Service photos (if desired)
-
-**Implementation Timeline:**
-- **Week 0 (Before launch):** Featured menu items (4-6 images) - CRITICAL
-- **Week 1-2:** Remaining menu items (batch upload)
-- **Week 3-4:** Location storefronts
-- **Future:** Interiors, partner logos as needed
+**Priority Summary:**
+- 🚨 **URGENT:** 4-6 featured menu item images (Phase 3 - blocking SEO)
+- 🔴 **High:** All 75 menu item images (Weeks 4-6 - major SEO impact)
+- 🟡 **Medium:** Location storefront photos (Phase 2 or after - recommended)
+- 🟢 **Low:** Partner logos, location interiors (optional - add as needed)
 
 ### Storage & Upload Strategy
 
