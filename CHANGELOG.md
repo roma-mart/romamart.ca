@@ -7,6 +7,91 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Features
+
+- **Prerendered ProductList Schemas:**
+  - Menu items (Product schemas) now prerendered into static HTML at build time
+  - Homepage: 4 featured products in static HTML (detectable by validators)
+  - RoCafé page: All 75 products in static HTML (detectable by validators)
+  - Fixes Schema.org validator detection issue (schemas were only visible after JS hydration)
+  - Zero runtime performance impact (schemas already in DOM)
+  - Build time impact: ~2-3 seconds for API fetch
+
+- **Consolidated API Fetching for Prerendering:**
+  - Services and Locations APIs now fetched at build time (parallel with Menu API)
+  - Single Promise.all call for maximum efficiency
+  - Future-proof: Zero code changes when Services/Locations APIs go live
+  - Graceful fallback: Empty arrays if APIs unavailable (client-side React uses static fallback)
+  - Prerendered ServiceList and LocationList schemas when APIs available
+
+- **Deployment Safety Improvements:**
+  - Branch safety check prevents accidental production deploys from wrong branch
+  - Staging (`/atlas`) and production (`/`) deployment separation
+  - Environment-specific configuration validation
+
+### Improvements
+
+- **SEO & Schema Detection:**
+  - ProductList schemas now detectable by Schema.org validator in static HTML
+  - ServiceList and LocationList schemas ready for API prerendering
+  - Fixed timing/hydration issue where validators couldn't see dynamically rendered schemas
+  - Established reusable pattern for all future API-driven schema prerendering
+
+- **LocationList Schema Accuracy:**
+  - Homepage now includes only primary location in schema (matches actual display)
+  - Was incorrectly including all locations (mismatch between schema and display)
+  - Locations page correctly includes all active locations for SEO indexing
+  - Display sorting (by distance/primary) intentionally differs from schema (UI convenience)
+
+- **Documentation:**
+  - Comprehensive prerender analysis created and archived (`docs/archive/PRERENDER_SYSTEMATIC_FIX_ANALYSIS.md`)
+  - Master plan updated with consolidated API fetching strategy (Step 3.1)
+  - Static fallback removal strategy documented (3-phase approach with stability requirements)
+  - API migration readiness updated with Part 8: Static Fallback Removal Strategy
+  - Clear timeline: DO NOT remove fallbacks until 1-2 months of proven API stability
+
+### Fixes
+
+- **Diagnostic Logging Cleanup:**
+  - Resolved console.info eslint errors in diagnostic logging
+  - ProductList rendering logs properly exempt from production restrictions
+  - Preserved essential production diagnostics (MenuContext, API failures)
+
+- **GitHub Pages Configuration:**
+  - Restored base path for staging deployment (`/atlas`)
+  - Fixed routing issues for GitHub Pages SPA
+  - Environment-specific base URL handling
+
+### Internal
+
+- **Build-Time API Pattern Established:**
+  - Menu API: Fetched at build, prerendered ✅
+  - Services API: Fetched at build, graceful fallback ✅
+  - Locations API: Fetched at build, graceful fallback ✅
+  - Pattern ready for Company Data API when implemented
+  - Estimated effort for future API migrations: 1-2 hours each (pattern proven)
+
+- **Static Fallback Strategy Documented:**
+  - Phase 1: Prerender (no static imports) - COMPLETE ✅
+  - Phase 2: Context providers (remove static imports after API stability) - PLANNED
+  - Phase 3: Archive static data files (keep for emergency rollback) - PLANNED
+  - Requires: 1-2 months stability + monitoring + team consensus before removal
+
+### Commits in this Release
+
+- `e0279b9` - feat(seo): prerender ProductList schemas for homepage and RoCafé pages
+- `2b3dc70` - feat(build): consolidate API fetching for Services and Locations in prerender
+- `9823326` - fix(seo): correct LocationList prerender logic for homepage
+- `5c0cefe` - docs(api): document static fallback removal strategy
+- `e803f30` - docs: consolidate prerender analysis into master plan
+- `ef04bca` - fix(lint): resolve console.info eslint errors in diagnostic logging
+- `ff4f30f` - feat(deploy): add branch safety check to prevent accidental production deploys
+- `ce1f285` - feat(deploy): add staging and production deployment separation
+- `2e463e8` - fix(config): restore GitHub Pages base path for staging deployment
+- `30767f7` - debug(schema): add comprehensive logging for ProductList rendering
+
+
+
 ## [2.3.0] - 2026-02-06
 
 ### Features
