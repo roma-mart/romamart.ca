@@ -23,7 +23,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import PropTypes from 'prop-types';
-import { CSS_VARS } from '../utils/theme';
 
 // Per-variant vibration strength (ms or array)
 const VARIANT_VIBRATION = {
@@ -87,7 +86,7 @@ const VARIANT_STYLES = {
     backgroundColor: 'var(--color-accent)',
     color: 'var(--color-primary)',
     fontWeight: 700,
-    fontFamily: CSS_VARS.heading,
+    fontFamily: 'var(--font-heading)',
     border: 'none',
     boxShadow: '0 4px 16px var(--color-accent-shadow, rgba(228,179,64,0.15))',
   },
@@ -95,7 +94,7 @@ const VARIANT_STYLES = {
     backgroundColor: 'var(--color-primary)',
     color: 'var(--color-accent)',
     fontWeight: 600,
-    fontFamily: CSS_VARS.heading,
+    fontFamily: 'var(--font-heading)',
     border: '2px solid var(--color-accent)',
     boxShadow: 'none',
   },
@@ -103,7 +102,7 @@ const VARIANT_STYLES = {
     backgroundColor: 'var(--color-accent)',
     color: 'var(--color-primary)',
     fontWeight: 700,
-    fontFamily: CSS_VARS.heading,
+    fontFamily: 'var(--font-heading)',
     border: 'none',
     borderRadius: '9999px', // fully rounded
     boxShadow: '0 4px 16px var(--color-accent-shadow, rgba(228,179,64,0.15))',
@@ -116,7 +115,7 @@ const VARIANT_STYLES = {
     backgroundColor: 'var(--color-accent)',
     color: 'var(--color-primary)',
     fontWeight: 700,
-    fontFamily: CSS_VARS.heading,
+    fontFamily: 'var(--font-heading)',
     border: 'none',
     borderRadius: '9999px', // fully rounded
     boxShadow: '0 4px 16px var(--color-accent-shadow, rgba(228,179,64,0.15))',

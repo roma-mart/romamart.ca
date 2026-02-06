@@ -89,7 +89,7 @@ This guide outlines the steps to implement a unified typography system for the R
 Before:
 
 ```jsx
-<h1 style={{ fontFamily: 'Poppins, sans-serif', fontSize: '1.5rem' }}>
+<h1 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.5rem' }}>
   Welcome to Roma Mart
 </h1>
 ```

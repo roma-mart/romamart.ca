@@ -16,7 +16,7 @@ export default {
         'brand-black': '#151515'
       },
       fontFamily: {
-        display: ['Poppins', 'system-ui', 'sans-serif'],
+        display: ['Outfit', 'system-ui', 'sans-serif'],
         inter: ['Inter', 'system-ui', 'sans-serif']
       }
     },

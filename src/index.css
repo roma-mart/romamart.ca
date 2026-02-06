@@ -212,7 +212,7 @@
   --color-success-bg: #ECFDF5;
 
   /* Typography tokens */
-  --font-heading: 'Outfit', sans-serif;
+  --font-heading: 'Outfit', system-ui, sans-serif;
   --font-body: 'Inter', system-ui, sans-serif;
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
