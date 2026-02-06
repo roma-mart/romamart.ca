@@ -648,20 +648,222 @@ const id = menuItem.id ? safeString(menuItem.id) : '';
 - Return policy page WebSite will validate cleanly (no timeZone error)
 - No invalid Schema.org types or properties remaining
 
-### Step 3: Final Deployment & Verification 🔄 NEXT
+### Step 3: ProductList Schema Detection Fix ✅ FIXED
+
+**Issue Discovery:**
+After deploying fixes for empty @id fields, Schema.org validator STILL didn't detect ProductList schemas on homepage or RoCafé page, despite:
+- Console logs proving schemas render successfully
+- Browser DevTools showing valid JSON-LD in DOM
+- All schema validation passing when tested directly
+
+**Root Cause Analysis:**
+
+Browser console logs revealed a timing/hydration issue:
+
+```
+[MenuContext] Fetching menu data from API: https://romamart.netlify.app/api/public-menu
+[App.jsx] Featured menu items for homepage: {totalMenuItems: 0, featuredCount: 0}
+// ... ~500ms delay while API returns ...
+[MenuContext] Menu data received: {totalItems: 75, featuredItems: 4}
+[App.jsx] Rendering ProductList schema on homepage with 4 items
+[StructuredData] ProductList - Final schema: {type: 'ItemList', itemCount: 4}
+```
+
+**The Problem:**
+1. Initial page load: menuItems = 0 (before API fetch completes)
+2. Static HTML (generated at build time) has NO ProductList schemas
+3. Schema.org validator checks static HTML, NOT client-side hydration
+4. After ~500ms: API returns, schemas render dynamically via React
+5. Validator already finished checking → ProductList not detected
+
+**Why ServiceList and LocationList Were Detected:**
+- Both use static data with API fallback (data available at prerender time)
+- Prerender script could inject these schemas into static HTML
+- Validators saw schemas immediately in initial HTML
+
+**Why ProductList Failed:**
+- Menu data is API-only (no static fallback - intentional design for multi-tenancy)
+- Prerender script had no menu data at build time
+- Static HTML contained NO ProductList schemas
+- Validators don't wait for JavaScript hydration
+
+### Fix Implemented: Build-Time API Prerendering
+
+Modified `scripts/prerender.js` to fetch menu data during build and inject ProductList schemas into static HTML.
+
+**Key Changes:**
+
+1. **Added Menu API Fetching** (prerender.js:164-184)
+```javascript
+async function fetchMenuData() {
+  try {
+    console.log('Fetching menu data from API for prerendering...');
+    const response = await fetch(MENU_API_URL);
+    const data = await response.json();
+    const menuItems = data.menu || [];
+    console.log(`✓ Fetched ${menuItems.length} menu items (${menuItems.filter(i => i.featured).length} featured)`);
+    return menuItems;
+  } catch (error) {
+    console.warn('Warning: Failed to fetch menu data. ProductList schemas will be skipped.');
+    return []; // Graceful fallback
+  }
+}
+```
+
+2. **Added ProductList Schema Builder** (prerender.js:192-230)
+```javascript
+function buildProductListSchema(menuItems, featuredOnly = false) {
+  const items = featuredOnly
+    ? menuItems.filter(item => item.featured === true)
+    : menuItems;
+
+  const productSchemas = items
+    .map(menuItem => buildMenuItemSchema(
+      menuItem,
+      'https://romamart.ca/rocafe',
+      { currency: 'CAD', priceInCents: true }
+    ))
+    .filter(Boolean);
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    itemListElement: productSchemas.map((product, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      item: product
+    }))
+  };
+}
+```
+
+3. **Enhanced buildStructuredData for Route Context** (prerender.js:236-342)
+```javascript
+const buildStructuredData = (routePath = '/', menuItems = []) => {
+  const graph = [
+    { '@type': 'LocalBusiness', ... },
+    { '@type': 'WebSite', ... }
+  ];
+
+  // Add ProductList for homepage (featured items only)
+  if (routePath === '/' && menuItems.length > 0) {
+    const productListSchema = buildProductListSchema(menuItems, true);
+    if (productListSchema) {
+      graph.push(productListSchema);
+    }
+  }
+
+  // Add ProductList for RoCafé page (all menu items)
+  if (routePath === '/rocafe' && menuItems.length > 0) {
+    const productListSchema = buildProductListSchema(menuItems, false);
+    if (productListSchema) {
+      graph.push(productListSchema);
+    }
+  }
+
+  return JSON.stringify({ '@context': 'https://schema.org', '@graph': graph });
+};
+```
+
+### Verification Results
+
+**Build Output:**
+```
+Fetching menu data from API for prerendering...
+✓ Fetched 75 menu items (4 featured)
+Prerendering /...
+  ✓ C:\src\romamart.ca\dist\index.html
+Prerendering /rocafe...
+  ✓ C:\src\romamart.ca\dist\rocafe\index.html
+```
+
+**Static HTML Validation:**
+```bash
+# Homepage: 1 ItemList, 4 Product schemas
+grep -o '"@type":"ItemList"' dist/index.html | wc -l  # Output: 1
+grep -o '"@type":"Product"' dist/index.html | wc -l   # Output: 4
+
+# RoCafé: 1 ItemList, 75 Product schemas
+grep -o '"@type":"ItemList"' dist/rocafe/index.html | wc -l  # Output: 1
+grep -o '"@type":"Product"' dist/rocafe/index.html | wc -l   # Output: 75
+```
+
+**Schema Structure (Python Verification):**
+```python
+# Homepage @graph now contains:
+["LocalBusiness", "WebSite", "ItemList"]  # ProductList added!
+
+# RoCafé @graph now contains:
+["LocalBusiness", "WebSite", "ItemList"]  # ProductList added!
+```
+
+### Quality Assurance (Step 3)
+
+**Build & Lint:**
+- ✅ Build: Success (12.35s - includes API fetch time)
+- ✅ ESLint: 0 errors
+- ✅ Prerender: All 11 routes generated successfully
+- ✅ Static HTML contains ProductList schemas
+
+**Commit:**
+- ✅ `e0279b9` - feat(seo): prerender ProductList schemas for homepage and RoCafé pages
+
+**Expected Results After Deployment:**
+- Schema.org validator will detect ProductList on homepage (4 featured products)
+- Schema.org validator will detect ProductList on RoCafé page (75 products)
+- All 3 ItemLists properly detected (ProductList, ServiceList, LocationList)
+- Zero impact on client-side performance (schemas already in DOM)
+
+### Impact & Future Pattern
+
+**Established Pattern for API-Driven Schemas:**
+
+This fix establishes a reusable pattern for future API migrations:
+
+```javascript
+// Pattern for any API-driven schema prerendering:
+async function fetchApiData() {
+  const response = await fetch(API_URL);
+  return response.ok ? (await response.json()).data : []; // Graceful fallback
+}
+
+// In prerender():
+const apiData = await fetchApiData();
+const schema = buildSchemaList(apiData);
+graph.push(schema);
+```
+
+**When Services/Locations Go API-Only:**
+- Services API: Apply same prerender pattern (~1-2 hours)
+- Locations API: Apply same prerender pattern (~1-2 hours)
+- Company Data API: Apply same prerender pattern (~3-4 hours due to wider impact)
+
+**Benefits:**
+- SEO-critical schemas visible to validators immediately
+- Zero runtime performance impact
+- Minimal build time increase (~2-3 seconds for API fetch)
+- Pattern established saves future development time
+
+**Documentation:**
+- ✅ Created `docs/PRERENDER_SYSTEMATIC_FIX_ANALYSIS.md` with comprehensive analysis
+- ✅ Covers root cause, solution, best practices, future migration patterns
+
+### Step 4: Final Deployment & Verification 🔄 NEXT
 
 **Commits Created:**
 - ✅ `95048a9` - fix(schema): prevent empty @id fields in Product, Service, and Location schemas
 - ✅ `e54844c` - fix(schema): remove unsupported naicsCode from Organization schema
 - ✅ `5223c85` - fix(seo): remove invalid Schema.org properties and types
 - ✅ `b8b34bd` - fix(seo): remove invalid timeZone property from LocalBusiness schema
+- ✅ `e0279b9` - feat(seo): prerender ProductList schemas for homepage and RoCafé pages
 
 **Pending Tasks:**
-1. ⏳ Create PR and merge to main
-2. ⏳ Deploy changes to GitHub Pages
-3. ⏳ Run Schema.org validator on all pages post-deployment
-4. ⏳ Document final compliance scores
-5. ⏳ Mark Phase 5 complete
+1. ⏳ Clean up temporary debugging logs (console.log statements added for diagnosis)
+2. ⏳ Create PR and merge to main
+3. ⏳ Deploy changes to GitHub Pages
+4. ⏳ Run Sche.org validator on all pages post-deployment
+5. ⏳ Document final compliance scores
+6. ⏳ Mark Phase 5 complete
 
 ### Technical Notes
 
