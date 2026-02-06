@@ -145,7 +145,7 @@ Work is grouped into 8 logical sprints based on domain alignment, dependency rel
 - **Scope:** R18, R35, R36, R37, R39, R43
 - **Template:** Feature Request
 - **Labels:** `ux-ui`, `enhancement`, `priority-medium`
-- **Effort:** 3-4 hours
+- **Includes:** Audit sitewide button implementations for consistency (16 Button component usages, 24 raw `<button>` elements). Review whether raw buttons in carousel/accordion/utility contexts should share baseline styles or tokens with the Button component. Not a full unification — just identify and resolve any styling/a11y inconsistencies.
 
 ### Sprint 7: "Testing Expansion"
 - **Branch:** `test/critical-coverage`
