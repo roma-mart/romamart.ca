@@ -4,9 +4,17 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import COMPANY_DATA from '../src/config/company_data.js';
+import { buildMenuItemSchema } from '../src/schemas/menuItemSchema.js';
+import { buildServiceListSchema } from '../src/schemas/serviceSchema.js';
+import { buildLocationListSchema } from '../src/schemas/locationSchema.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// API endpoints - same as Context providers
+const MENU_API_URL = 'https://romamart.netlify.app/api/public-menu';
+const SERVICES_API_URL = 'https://romamart.netlify.app/api/public-services';
+const LOCATIONS_API_URL = 'https://romamart.netlify.app/api/public-locations';
 
 // Routes to prerender
 const BASE_URL = 'https://romamart.ca';
@@ -157,7 +165,144 @@ const normalizeCountry = (country) => {
   return 'CA';
 };
 
-const buildStructuredData = () => {
+/**
+ * Fetches menu data from API for prerendering ProductList schemas
+ * @returns {Promise<Array>} Menu items array
+ */
+async function fetchMenuData() {
+  try {
+    console.log('Fetching menu data from API for prerendering...');
+    const response = await fetch(MENU_API_URL);
+
+    if (!response.ok) {
+      console.warn(`Warning: Menu API returned ${response.status}. ProductList schemas will be skipped in static HTML.`);
+      return [];
+    }
+
+    const data = await response.json();
+    const menuItems = data.menu || [];
+
+    console.log(`✓ Fetched ${menuItems.length} menu items (${menuItems.filter(i => i.featured).length} featured)`);
+    return menuItems;
+  } catch (error) {
+    console.warn('Warning: Failed to fetch menu data. ProductList schemas will be skipped in static HTML.');
+    console.warn('  Error:', error.message);
+    return [];
+  }
+}
+
+/**
+ * Fetches services data from API for prerendering ServiceList schemas
+ * Returns empty array if API unavailable (services schemas handled by React client-side with static fallback)
+ * @returns {Promise<Array>} Services array
+ */
+async function fetchServicesData() {
+  try {
+    console.log('Fetching services data from API for prerendering...');
+    const response = await fetch(SERVICES_API_URL);
+
+    if (!response.ok) {
+      console.warn(`Warning: Services API returned ${response.status}. ServiceList schemas will use React client-side rendering.`);
+      return [];
+    }
+
+    const data = await response.json();
+
+    if (!data.success || !Array.isArray(data.services)) {
+      console.warn('Warning: Invalid services API response. ServiceList schemas will use React client-side rendering.');
+      return [];
+    }
+
+    const services = data.services;
+    console.log(`✓ Fetched ${services.length} services from API (${services.filter(s => s.featured).length} featured)`);
+    return services;
+  } catch (error) {
+    console.warn('Warning: Failed to fetch services data. ServiceList schemas will use React client-side rendering.');
+    console.warn('  Error:', error.message);
+    return [];
+  }
+}
+
+/**
+ * Fetches locations data from API for prerendering LocationList schemas
+ * Returns empty array if API unavailable (locations schemas handled by React client-side with static fallback)
+ * @returns {Promise<Array>} Locations array
+ */
+async function fetchLocationsData() {
+  try {
+    console.log('Fetching locations data from API for prerendering...');
+    const response = await fetch(LOCATIONS_API_URL);
+
+    if (!response.ok) {
+      console.warn(`Warning: Locations API returned ${response.status}. LocationList schemas will use React client-side rendering.`);
+      return [];
+    }
+
+    const data = await response.json();
+
+    if (!data.success || !Array.isArray(data.locations)) {
+      console.warn('Warning: Invalid locations API response. LocationList schemas will use React client-side rendering.');
+      return [];
+    }
+
+    const locations = data.locations;
+    console.log(`✓ Fetched ${locations.length} locations from API`);
+    return locations;
+  } catch (error) {
+    console.warn('Warning: Failed to fetch locations data. LocationList schemas will use React client-side rendering.');
+    console.warn('  Error:', error.message);
+    return [];
+  }
+}
+
+/**
+ * Builds ProductList schema for menu items
+ * @param {Array} menuItems - Menu items to include
+ * @param {boolean} featuredOnly - Only include featured items
+ * @returns {Object|null} ProductList schema or null if no items
+ */
+function buildProductListSchema(menuItems, featuredOnly = false) {
+  if (!Array.isArray(menuItems) || menuItems.length === 0) {
+    return null;
+  }
+
+  const items = featuredOnly
+    ? menuItems.filter(item => item.featured === true)
+    : menuItems;
+
+  if (items.length === 0) {
+    return null;
+  }
+
+  // Build Product schemas using same logic as StructuredData component
+  const productSchemas = items
+    .map(menuItem => buildMenuItemSchema(
+      menuItem,
+      'https://romamart.ca/rocafe',
+      {
+        currency: 'CAD',
+        priceInCents: true // Menu API uses cents
+      }
+    ))
+    .filter(Boolean);
+
+  if (productSchemas.length === 0) {
+    return null;
+  }
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    itemListElement: productSchemas.map((product, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      item: product
+    }))
+  };
+}
+
+const buildStructuredData = (routePath = '/', apiData = {}) => {
+  const { menuItems = [], services = [], locations = [] } = apiData;
   const location = COMPANY_DATA.location;
   const address = location?.address || {};
   const contact = location?.contact || {};
@@ -186,61 +331,123 @@ const buildStructuredData = () => {
       : null
   ].filter(Boolean);
 
+  // Build base @graph with LocalBusiness and WebSite
+  const graph = [
+    {
+      '@type': 'LocalBusiness',
+      '@id': `${BASE_URL}/#business`,
+      name: COMPANY_DATA.dba || COMPANY_DATA.legalName || 'Roma Mart Convenience',
+      legalName: COMPANY_DATA.legalName || undefined,
+      alternateName: COMPANY_DATA.dba ? COMPANY_DATA.legalName : 'Roma Mart',
+      description: 'Your daily stop & go convenience store in Sarnia, Ontario. Fresh RoCafé beverages, ATM, Bitcoin ATM, printing, and more.',
+      url: BASE_URL,
+      telephone: contact.phone || '+1-382-342-2000',
+      email: contact.email || 'contact@romamart.ca',
+      priceRange: '$$',
+      image: 'https://romamart.ca/images/store-front.jpg',
+      logo: 'https://romamart.ca/logo.png',
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: address.street || '3-189 Wellington Street',
+        addressLocality: address.city || 'Sarnia',
+        addressRegion: address.province || 'ON',
+        postalCode: address.postalCode || 'N7T 1G6',
+        addressCountry: normalizeCountry(address.country) || 'CA'
+      },
+      geo: {
+        '@type': 'GeoCoordinates',
+        latitude: coords.lat || 42.970389,
+        longitude: coords.lng || -82.404589
+      },
+      openingHoursSpecification,
+      sameAs: Object.values(COMPANY_DATA.socialLinks || {}),
+      amenityFeature: (location?.amenities || []).map(amenity => ({
+        '@type': 'LocationFeatureSpecification',
+        name: amenity.name,
+        value: amenity.value
+      })),
+      paymentAccepted: COMPANY_DATA.paymentMethods || ['Cash', 'Credit Card', 'Debit Card', 'Interac', 'Visa', 'Mastercard', 'American Express', 'Bitcoin']
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${BASE_URL}/#website`,
+      url: BASE_URL,
+      name: COMPANY_DATA.dba || 'Roma Mart Convenience',
+      description: 'Your daily stop & go convenience store in Sarnia, Ontario.',
+      publisher: { '@id': `${BASE_URL}/#business` },
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: {
+          '@type': 'EntryPoint',
+          urlTemplate: `${BASE_URL}/search?q={search_term_string}`
+        },
+        'query-input': 'required name=search_term_string'
+      }
+    }
+  ];
+
+  // Add ProductList for homepage (featured items only)
+  if (routePath === '/' && menuItems.length > 0) {
+    const productListSchema = buildProductListSchema(menuItems, true);
+    if (productListSchema) {
+      graph.push(productListSchema);
+    }
+  }
+
+  // Add ProductList for RoCafé page (all menu items)
+  if (routePath === '/rocafe' && menuItems.length > 0) {
+    const productListSchema = buildProductListSchema(menuItems, false);
+    if (productListSchema) {
+      graph.push(productListSchema);
+    }
+  }
+
+  // Add ServiceList for homepage (featured services only)
+  if (routePath === '/' && services.length > 0) {
+    const featuredServices = services.filter(s => s.featured === true);
+    if (featuredServices.length > 0) {
+      const serviceListSchema = buildServiceListSchema(featuredServices, { companyData: COMPANY_DATA });
+      if (serviceListSchema) {
+        graph.push(serviceListSchema);
+      }
+    }
+  }
+
+  // Add ServiceList for services page (all services)
+  if (routePath === '/services' && services.length > 0) {
+    const serviceListSchema = buildServiceListSchema(services, { companyData: COMPANY_DATA });
+    if (serviceListSchema) {
+      graph.push(serviceListSchema);
+    }
+  }
+
+  // Add LocationList for homepage (primary location only - matches display)
+  if (routePath === '/' && locations.length > 0) {
+    // Homepage displays only primary location, schema should match
+    const primaryLocation = locations.find(loc => loc.isPrimary) || locations[0];
+    if (primaryLocation) {
+      const locationListSchema = buildLocationListSchema([primaryLocation], { companyData: COMPANY_DATA });
+      if (locationListSchema) {
+        graph.push(locationListSchema);
+      }
+    }
+  }
+
+  // Add LocationList for locations page (all active locations for SEO)
+  // Display sorts by distance/primary, but schema includes all active for indexing
+  if (routePath === '/locations' && locations.length > 0) {
+    const activeLocations = locations.filter(loc => loc.status === 'open');
+    if (activeLocations.length > 0) {
+      const locationListSchema = buildLocationListSchema(activeLocations, { companyData: COMPANY_DATA });
+      if (locationListSchema) {
+        graph.push(locationListSchema);
+      }
+    }
+  }
+
   const schema = {
     '@context': 'https://schema.org',
-    '@graph': [
-      {
-        '@type': 'LocalBusiness',
-        '@id': `${BASE_URL}/#business`,
-        name: COMPANY_DATA.dba || COMPANY_DATA.legalName || 'Roma Mart Convenience',
-        legalName: COMPANY_DATA.legalName || undefined,
-        alternateName: COMPANY_DATA.dba ? COMPANY_DATA.legalName : 'Roma Mart',
-        description: 'Your daily stop & go convenience store in Sarnia, Ontario. Fresh RoCafé beverages, ATM, Bitcoin ATM, printing, and more.',
-        url: BASE_URL,
-        telephone: contact.phone || '+1-382-342-2000',
-        email: contact.email || 'contact@romamart.ca',
-        priceRange: '$$',
-        image: 'https://romamart.ca/images/store-front.jpg',
-        logo: 'https://romamart.ca/logo.png',
-        address: {
-          '@type': 'PostalAddress',
-          streetAddress: address.street || '3-189 Wellington Street',
-          addressLocality: address.city || 'Sarnia',
-          addressRegion: address.province || 'ON',
-          postalCode: address.postalCode || 'N7T 1G6',
-          addressCountry: normalizeCountry(address.country) || 'CA'
-        },
-        geo: {
-          '@type': 'GeoCoordinates',
-          latitude: coords.lat || 42.970389,
-          longitude: coords.lng || -82.404589
-        },
-        openingHoursSpecification,
-        sameAs: Object.values(COMPANY_DATA.socialLinks || {}),
-        amenityFeature: (location?.amenities || []).map(amenity => ({
-          '@type': 'LocationFeatureSpecification',
-          name: amenity.name,
-          value: amenity.value
-        })),
-        paymentAccepted: COMPANY_DATA.paymentMethods || ['Cash', 'Credit Card', 'Debit Card', 'Interac', 'Visa', 'Mastercard', 'American Express', 'Bitcoin']
-      },
-      {
-        '@type': 'WebSite',
-        '@id': `${BASE_URL}/#website`,
-        url: BASE_URL,
-        name: COMPANY_DATA.dba || 'Roma Mart Convenience',
-        description: 'Your daily stop & go convenience store in Sarnia, Ontario.',
-        publisher: { '@id': `${BASE_URL}/#business` },
-        potentialAction: {
-          '@type': 'SearchAction',
-          target: {
-            '@type': 'EntryPoint',
-            urlTemplate: `${BASE_URL}/search?q={search_term_string}`
-          },
-          'query-input': 'required name=search_term_string'
-        }
-      }
-    ]
+    '@graph': graph
   };
 
   return JSON.stringify(schema);
@@ -267,11 +474,20 @@ const buildSitemapXml = (routeList, lastModDate) => {
 async function prerender() {
   const distPath = path.resolve(__dirname, '../dist');
   const indexPath = path.join(distPath, 'index.html');
-  
+
   if (!fs.existsSync(indexPath)) {
     console.error('Build output not found. Run `npm run build` first.');
     process.exit(1);
   }
+
+  // Fetch all API data in parallel for maximum efficiency
+  console.log('\n📡 Fetching API data for prerendering...\n');
+  const [menuItems, services, locations] = await Promise.all([
+    fetchMenuData(),
+    fetchServicesData(),
+    fetchLocationsData()
+  ]);
+  console.log('\n✓ API data fetching complete\n');
 
   const indexTemplate = fs.readFileSync(indexPath, 'utf-8');
 
@@ -347,7 +563,7 @@ async function prerender() {
       )
       .replace(
         /<script type="application\/ld\+json">[\s\S]*?<\/script>/,
-        `<script type="application/ld+json">${buildStructuredData()}</script>`
+        `<script type="application/ld+json">${buildStructuredData(route.path, { menuItems, services, locations })}</script>`
       );
 
     fs.writeFileSync(outputPath, html);

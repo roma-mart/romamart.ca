@@ -7,127 +7,83 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [2.3.0] - 2026-02-06
+## [2.3.1] - 2026-02-06
 
-### Features
+### Added
+- ProductList schemas prerendered into static HTML at build time
+- Consolidated API fetching in prerender.js with Promise.all
+- Branch safety check for production deployments
+- Staging and production deployment separation
+- Complete field enumerations in API_MIGRATION_READINESS.md
 
-- **13 Schema Types Implemented:**
-  - Product schemas (menu items with prices, images, categories)
-  - Service schemas (15 services with proper categorization)
-  - Location schemas (multi-location LocalBusiness with hours, coordinates, amenities)
-  - LocalBusiness schema (complete business info with opening hours)
-  - Organization schema (tax ID, employee count)
-  - WebSite schema (with SearchAction for site search)
-  - MerchantReturnPolicy schema (24-hour faulty product policy)
-  - WebApplication schema (PWA discovery)
-  - BreadcrumbList schemas (11 pages)
+### Fixed
+- Schema.org validator detection for ProductList schemas
+- LocationList homepage schema to match display logic
+- StandardizedItem.jsx now uses ServicesContext instead of static import
+- Service count corrected from 15 to 14 in API documentation (again - final check)
+- Service category values corrected in all examples ("food" not "food_beverage")
+- Menu API featured field documentation (already exists in API, not missing)
+- Frontend readiness status updated to 100% complete in API documentation
+- console.info eslint errors in diagnostic logging
+- GitHub Pages base path for staging deployment
+- SPA routing on GitHub Pages
 
-- **API-Driven Architecture:**
-  - MenuContext for centralized menu data management (50% reduction in API calls)
-  - ServicesContext with API fallback to static data
-  - LocationsContext with API fallback to static data
-  - Circuit breaker protection for Google Places API
-  - 1-hour IndexedDB caching for live hours/ratings
-
-- **100% API-Ready Components:**
-  - App.jsx ServicesSection now uses context provider (not static SERVICES_FEATURED)
-  - App.jsx Locations and ContactSection use context provider (not static helpers)
-  - Footer.jsx uses LocationsContext (not static getActiveLocations)
-  - Zero code changes needed when Services/Locations APIs go live
-
-- **Google-Compliant Amenities System:**
-  - Migrated from features object to amenities array
-  - Direct pass-through architecture (zero mapping layers)
-  - Google Business Profile compliant naming
-  - Location-specific amenities support
-  - API-ready data structure
-
-- **Sitemap Enhancements:**
-  - Added trailing slashes to all URLs for proper GitHub Pages routing
-  - Prevents redirect overhead for crawlers
-
-### Improvements
-
-- **100% De-Hardcoding Achievement:**
-  - Zero hardcoded business data across all schemas
-  - All schemas pull from COMPANY_DATA (Single Source of Truth)
-  - Enhanced COMPANY_DATA with schema endpoints, defaults, PWA config
-  - Smart data boundaries (location-specific vs business-wide)
-
-- **Schema Compliance Improvements (Phase 2-4):**
-  - LocalBusiness: B → A (+15%)
-  - Organization: B → A (+15%)
-  - Product: B → A+ (+13%)
-  - Service: B → A+ (+13%)
-  - Location: B → A (+10%)
-  - WebSite: C+ → A (+20%)
-  - WebApplication: A → A+ (+5%)
-  - Average: 88% (B+) → 98% (A+)
-
-- **Phase 5 Schema Validation (100% Compliance):**
-  - Fixed empty @id bug in Product, Service, Location schemas (prevented ItemList detection)
-  - Removed invalid naicsCode property from Organization schema
-  - Removed invalid PrivacyPolicy schema type (not recognized by Schema.org)
-  - Removed invalid timeZone property from static LocalBusiness schema
-  - Removed invalid availableAtOrFrom property from LocalBusiness schema
-  - All 11 pages validated through Schema.org validator
-  - Zero invalid properties or types remaining
-
-- **Cross-Schema Linking:**
-  - Added @id to all referenceable schemas
-  - Organization ⟷ LocalBusiness linking
-  - Product → MerchantReturnPolicy linking
-  - Location → Organization parentOrganization linking
-  - Complete schema graph connectivity
-
-- **Enhanced Schema Fields:**
-  - Brand property added to Product, Service, Location schemas
-  - Category field added to Product schemas
-  - Manufacturer field added to Product schemas (optional)
-  - Broker field added to Service schemas (optional)
-  - SearchAction added to WebSite schema
-
-### Fixes
-
-- **Phase 5 Critical Schema Validation Fixes:**
-  - Empty @id fields causing duplicate IDs (ProductList not detected on homepage)
-  - Organization naicsCode property not recognized by Schema.org
-  - PrivacyPolicy invalid schema type (removed - 404 on schema.org)
-  - LocalBusiness timeZone property not recognized by Schema.org
-  - LocalBusiness availableAtOrFrom property not recognized by Schema.org
-
-- **Phase 3-4 Schema Fixes:**
-  - Invalid hasOfferCatalog in LocalBusiness (causing 4 Product snippet errors)
-  - LocalBusiness schema duplication (static vs dynamic)
-  - Prerender script hardcoded serviceMap (now imports from SSOT)
-  - CodeQL sanitization vulnerability (iterative regex for XSS protection)
-
-- **Test Quality:**
-  - Added alt attributes to XSS test cases for quality checker compliance
-  - Resolved 2 HIGH priority accessibility warnings in test files
+### Changed
+- Services and Locations APIs fetched at build time
+- ServiceList and LocationList schemas prerendered when APIs available
+- Version bumped from 2.3.0 to 2.3.1
+- CHANGELOG.md consolidated (removed verbose prose from 2.3.0 and 2.3.1)
 
 ### Documentation
+- API_MIGRATION_READINESS.md completely rewritten with comprehensive field specifications
+- Company Data API field enumerations added (all valid values for future implementation)
+- Image Strategy & CDN Architecture section added (230+ lines covering all APIs)
+- Image requirements clarified as CRITICAL for SEO (Google Product rich results require images)
+- Deployment Strategy & Implementation Priorities consolidated into single section
+- PR description reformatted to follow PULL_REQUEST_TEMPLATE.md structure
+- Prerender analysis archived
+- Master plan updated with Step 3.1
+- Removed outdated "frontend fixes needed" section from API documentation
 
-- STRUCTURED_DATA_MASTER_PLAN.md v5.0.0 (comprehensive Phase 2-5 documentation)
-- Phase 5 schema validation and bug fixes documented
-- Page-by-page validation results documented (all 11 pages)
-- Phase 4 schema audit integrated into master plan
-- Amenities architecture migration documented
-- Data management documentation updated with new amenities structure
-- Schema audit archived for historical reference
-- CHANGELOG.md updated with version 2.3.0
+**Commits:** e0279b9, 2b3dc70, 9823326, 5c0cefe, e803f30, ef04bca, ff4f30f, ce1f285, 2e463e8, 30767f7, 217a741, 69758a7, e5ac42e, 1865a90, 0f5b8e9, 530d1c9, 8f784db, d3cea71, 69a41f9, 69c6308, 13bd068, 2f66d83, fd01980, 49c7826, 119adb6
 
-### Quality
 
-- ESLint: 0 errors
-- Quality checker: 0 HIGH priority issues
-- Meta-checker integrity: Passes
-- Build: All 11 routes prerendered successfully
-- All schemas validated with Schema.org Markup Validator
-- 90%+ test coverage for schema builders
-- Zero hardcoded data violations
-- SSOT principle enforced throughout
-- 100% Schema.org compliance target achieved
+
+## [2.3.0] - 2026-02-06
+
+### Added
+- 13 Schema.org types implemented: Product, Service, Location, LocalBusiness, Organization, WebSite, MerchantReturnPolicy, WebApplication, BreadcrumbList
+- MenuContext for centralized API data management
+- ServicesContext with API fallback
+- LocationsContext with API fallback
+- Circuit breaker for Google Places API
+- IndexedDB caching for live hours and ratings
+- Google-compliant amenities system
+- Sitemap trailing slashes for GitHub Pages routing
+
+### Improved
+- Schema compliance: Average 88% → 98%
+- All schemas now pull from COMPANY_DATA
+- Enhanced COMPANY_DATA with schema endpoints and PWA config
+- Cross-schema linking with @id fields
+- Brand, category, manufacturer, broker fields added to schemas
+- SearchAction added to WebSite schema
+
+### Fixed
+- Empty @id bug in Product, Service, Location schemas
+- Invalid naicsCode in Organization schema
+- Invalid PrivacyPolicy schema type
+- Invalid timeZone in LocalBusiness schema
+- Invalid availableAtOrFrom in LocalBusiness schema
+- Invalid hasOfferCatalog in LocalBusiness
+- LocalBusiness schema duplication
+- CodeQL sanitization vulnerability
+- XSS test accessibility warnings
+
+### Documentation
+- STRUCTURED_DATA_MASTER_PLAN.md v5.0.0
+- Amenities architecture migration guide
+- Schema audit archived
 
 ## [2.2.0] - 2025-12-07
 
@@ -303,6 +259,7 @@ Initial Create React App implementation. Deprecated and replaced by v2.0.0.
 
 | Version | Date         | Description                           |
 |---------|--------------|---------------------------------------|
+| 2.3.1   | Feb 6, 2026  | Prerendered schemas and API consolidation |
 | 2.3.0   | Feb 6, 2026  | Schema validation and SEO improvements |
 | 2.2.0   | Dec 7, 2025  | Unified components, centralized data  |
 | 2.1.0   | Dec 4, 2025  | RoCafé menu system                    |
