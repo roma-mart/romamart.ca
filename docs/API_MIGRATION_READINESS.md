@@ -1008,6 +1008,151 @@ When ready to implement, here's the complete specification:
 }
 ```
 
+### Company Data Field Enumerations
+
+**priceRange values:**
+```javascript
+"$"     // Budget (under $10 average)
+"$$"    // Moderate ($10-$25 average) - Current value
+"$$$"   // Upscale ($25-$50 average)
+"$$$$"  // Fine dining/luxury (over $50 average)
+```
+
+**country values (ISO 3166-1 alpha-2):**
+```javascript
+"CA"    // Canada - Current value
+"US"    // United States (for future US locations)
+```
+
+**currency values (ISO 4217):**
+```javascript
+"CAD"   // Canadian Dollar - Current value
+"USD"   // US Dollar (for future US locations)
+```
+
+**timezone values (IANA timezone database):**
+```javascript
+"America/Toronto"     // Eastern Time (ON) - Current value
+"America/Vancouver"   // Pacific Time (BC)
+"America/Edmonton"    // Mountain Time (AB)
+"America/Winnipeg"    // Central Time (MB)
+"America/Halifax"     // Atlantic Time (NS)
+"America/New_York"    // Eastern Time (US)
+```
+
+**ageRestriction values:**
+```javascript
+"19+"   // Ontario legal age - Current value
+"18+"   // Other provinces (AB, MB, QC)
+"21+"   // US states if expanding
+```
+
+**paymentMethods (extensible array):**
+```javascript
+// Current accepted methods:
+[
+  "Cash",
+  "Credit Card",
+  "Debit Card",
+  "Interac",
+  "Visa",
+  "Mastercard",
+  "American Express",
+  "Bitcoin"
+]
+
+// Additional values for future expansion:
+"Apple Pay"
+"Google Pay"
+"PayPal"
+"Discover"
+"JCB"
+"UnionPay"
+"Ethereum"
+```
+
+**returnMethod (Schema.org enum):**
+```javascript
+"https://schema.org/ReturnInStore"         // Current - in-store returns only
+"https://schema.org/ReturnByMail"          // Mail returns
+"https://schema.org/ReturnAtKiosk"         // Self-service kiosk
+```
+
+**returnFees (Schema.org enum):**
+```javascript
+"https://schema.org/FreeReturn"            // Current - no fees
+"https://schema.org/ReturnFeesCustomerResponsibility"  // Customer pays
+"https://schema.org/ReturnShippingFees"    // Shipping fees apply
+```
+
+**itemCondition (Schema.org enum):**
+```javascript
+"https://schema.org/DamagedCondition"      // Current - faulty products only
+"https://schema.org/NewCondition"          // Unused/unopened items
+"https://schema.org/UsedCondition"         // Opened/used items
+```
+
+**returnPolicyCategory (Schema.org enum):**
+```javascript
+"https://schema.org/MerchantReturnFiniteReturnWindow"    // Current - 24-hour window
+"https://schema.org/MerchantReturnNotPermitted"          // No returns
+"https://schema.org/MerchantReturnUnlimitedWindow"       // Unlimited time
+"https://schema.org/MerchantReturnUnspecified"           // Case-by-case
+```
+
+**applicationCategory (Schema.org enum for PWA):**
+```javascript
+"Shopping"              // Current - e-commerce/retail
+"Business"              // B2B applications
+"Entertainment"         // Media/games
+"Lifestyle"             // General lifestyle apps
+"Utilities"             // Tools/utilities
+```
+
+**operatingSystem (PWA):**
+```javascript
+"Any (Web Browser)"     // Current - browser-based PWA
+"Windows 10+"           // Windows native
+"macOS 11+"             // macOS native
+"iOS 14+"               // iOS native
+"Android 10+"           // Android native
+```
+
+### Company Data Field Specification
+
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| `legalName` | string | Yes | Legal registered business name |
+| `dba` | string | Yes | "Doing Business As" name |
+| `gstNumber` | string | Yes | GST/HST registration number |
+| `naicsCode` | string | Yes | 4-digit NAICS industry code |
+| `naicsDescription` | string | Yes | Human-readable NAICS description |
+| `baseUrl` | string | Yes | Base URL (no trailing slash) |
+| `logoUrl` | string | Yes | Full URL to company logo |
+| `onlineStoreUrl` | string | Optional | URL to ordering platform (null if not available) |
+| `endpoints` | object | Yes | Schema endpoint paths (all relative, start with /) |
+| `defaults.priceRange` | string | Yes | Schema.org price range (see enums above) |
+| `defaults.country` | string | Yes | ISO 3166-1 alpha-2 country code |
+| `defaults.currency` | string | Yes | ISO 4217 currency code |
+| `defaults.timezone` | string | Yes | IANA timezone identifier |
+| `defaults.ageRestriction` | string | Yes | Minimum age for restricted items |
+| `paymentMethods` | array | Yes | Array of accepted payment method strings |
+| `returnPolicy` | object | Yes | All fields use Schema.org enums (see above) |
+| `socialLinks` | object | Yes | Full URLs to social media profiles |
+| `address` | object | Yes | Same structure as Location API address |
+| `contact.phone` | string | Yes | E.164 format preferred |
+| `contact.email` | string | Yes | General contact email |
+| `contact.web3FormsAccessKey` | string | API only | Contact form API key (not public) |
+| `contextualEmails` | object | Yes | Specialized email addresses for different contexts |
+| `trustpilotReviewUrl` | string | Optional | Full URL to Trustpilot review page |
+| `pwa.webApplication` | object | Yes | PWA metadata for WebApplication schema |
+
+**Notes:**
+- This API is **not urgent** - frontend has static COMPANY_DATA as SSOT
+- Implement only when business requirements change frequently
+- Frontend will continue using static data until API proven stable
+- Primary use case: Multi-brand expansion, franchise management, dynamic theming
+
 ---
 
 ## Questions? Contact Frontend Team
