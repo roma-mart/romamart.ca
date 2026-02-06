@@ -64,8 +64,9 @@ const LocationButton = React.forwardRef(({
   }, [userLocation, onLocationFound, showSuccess]);
 
   useEffect(() => {
-    if (error && error !== lastError.current) {
+    if (error && error !== lastError.current && clickPending.current) {
       lastError.current = error;
+      clickPending.current = false;
       showError(`Location error: ${error}`);
     }
   }, [error, showError]);

@@ -812,7 +812,7 @@ function checkBrandConsistency() {
               line: lineNum,
               message: 'Headings should use Outfit (var(--font-heading)), not Inter',
               code: line.trim().substring(0, 80),
-              fix: 'Add className="text-heading" to heading elements',
+              fix: 'Remove the Inter font class/style — headings inherit Outfit from CSS element selectors (index.css h1-h3 rule)',
             });
           }
         }

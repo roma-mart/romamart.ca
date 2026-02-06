@@ -148,7 +148,7 @@ const Button = React.forwardRef(({
   disabled = false,
   loading: loadingProp = false,
   analyticsEvent,
-  vibrationPattern = 10,
+  vibrationPattern,
   className = '',
   style = {},
   tabIndex,
@@ -160,7 +160,6 @@ const Button = React.forwardRef(({
   const mergedStyle = {
     minHeight: 44,
     minWidth: 44,
-    outline: 'none',
     transition: 'background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s',
     borderRadius: 12,
     padding: variant === 'icon' ? 8 : '12px 28px',
@@ -253,7 +252,7 @@ const Button = React.forwardRef(({
   function handleClick(e) {
     if (disabled) return;
     // Vibration per variant
-    const vibrateStrength = typeof vibrationPattern !== 'undefined' ? vibrationPattern : VARIANT_VIBRATION[variant];
+    const vibrateStrength = vibrationPattern ?? VARIANT_VIBRATION[variant];
     if (typeof window !== 'undefined' && window.navigator && window.navigator.vibrate && vibrateStrength) {
       window.navigator.vibrate(vibrateStrength);
     }
