@@ -1,8 +1,4 @@
-/* Updated font import to include Outfit and Inter */
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&family=Inter:wght@400;700&display=swap');
-
-/* Import Inter and Outfit from Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@600;800&display=swap');
+/* Fonts loaded via <link> in index.html -- do NOT duplicate with @import */
 
 /* --- Window Controls Overlay (WCO) Support --- */
 .navbar-wco {
@@ -134,6 +130,7 @@
     --color-text-muted: #333;
     --color-primary: #000080; /* Navy blue with high contrast */
     --color-accent: #B8860B; /* Dark goldenrod - more contrast than yellow */
+    --color-on-accent: #000; /* Black on dark goldenrod for max contrast */
     --color-heading: #000080;
     --color-icon: #000080;
   }
@@ -184,6 +181,7 @@
   /* Brand colors - semantic usage */
   --color-primary: #020178; /* Navy - headings, primary elements */
   --color-accent: #E4B340; /* Yellow - CTAs, highlights */
+  --color-on-accent: #151515; /* Dark text on yellow accent backgrounds */
   --color-accent-bg: color-mix(in srgb, #E4B340 12%, transparent); /* Accent background for icons/cards */
   --color-accent-hover: #C99A2B; /* Slightly darker accent for hover */
 
@@ -240,6 +238,7 @@
     --color-text-muted: #a8a8a8;
     --color-primary: #001540; /* Dark Navy - headings, primary elements */
     --color-accent: #E4B340; /* Yellow - CTAs, highlights */
+    --color-on-accent: #151515; /* Dark text on yellow accent backgrounds */
     --color-heading: #E4B340;
     --color-icon: #E4B340;
     --color-location-bg: #093A5E; /* Deep blue for location button */
