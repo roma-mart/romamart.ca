@@ -35,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Documentation
 - API_MIGRATION_READINESS.md completely rewritten with comprehensive field specifications
+- Company Data API field enumerations added (all valid values for future implementation)
 - Prerender analysis archived
 - Master plan updated with Step 3.1
 - Removed outdated "frontend fixes needed" section from API documentation
