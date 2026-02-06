@@ -44,7 +44,12 @@ const LocationButton = React.forwardRef(({
 
   // Toast + callback only after user-initiated click (not on mount with cached data)
   useEffect(() => {
-    if (userLocation && userLocation.latitude && userLocation.longitude && clickPending.current) {
+    const hasValidCoords =
+      userLocation !== null && userLocation !== undefined &&
+      Number.isFinite(userLocation.latitude) &&
+      Number.isFinite(userLocation.longitude);
+
+    if (hasValidCoords && clickPending.current) {
       clickPending.current = false;
       if (onLocationFound) {
         onLocationFound({
@@ -70,7 +75,6 @@ const LocationButton = React.forwardRef(({
   const mergedStyle = {
     minHeight: 44,
     minWidth: 44,
-    outline: 'none',
     transition: 'background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s',
     borderRadius: 12,
     padding: '12px 28px',
