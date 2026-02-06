@@ -19,7 +19,7 @@
     "precommit": "npm run lint && npm run check:quality",
     "prepush": "npm run check:all && npm run build",
     "preview": "vite preview",
-    "deploy": "npm run build && gh-pages -d dist"
+    "deploy": "node scripts/ensure-main-branch.js && npm run build && gh-pages -d dist"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^7.1.0",

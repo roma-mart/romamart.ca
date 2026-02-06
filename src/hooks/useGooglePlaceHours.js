@@ -120,15 +120,25 @@ const CACHE_DURATION = !Number.isNaN(parsedCacheDuration) ? parsedCacheDuration 
 // In-memory cache to avoid redundant API calls
 const hoursCache = new Map();
 
+// Track in-flight requests to prevent duplicate concurrent API calls
+// Multiple components mounting simultaneously would otherwise fire duplicate requests
+const pendingRequests = new Map();
+
 /**
  * Fetches place details including opening hours from Google Places API
- * 
+ *
  * @param {string} placeId - Google Place ID
  * @returns {Promise<Object>} Place details with opening hours
  */
 async function fetchPlaceDetails(placeId) {
   if (!placeId) {
     throw new Error('Place ID is required');
+  }
+
+  // Check if there's already a pending request for this place ID
+  // If so, return that promise to avoid duplicate concurrent requests
+  if (pendingRequests.has(placeId)) {
+    return pendingRequests.get(placeId);
   }
 
   // Fail fast if API key not configured - this is not an error to show users,
@@ -157,39 +167,50 @@ async function fetchPlaceDetails(placeId) {
   // Set HTTP referrer restrictions to limit abuse. See: https://console.cloud.google.com/
   const url = `https://places.googleapis.com/v1/places/${placeId}?key=${GOOGLE_API_KEY}`;
 
-  try {
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Goog-FieldMask': fields
+  // Create the request promise and store it to prevent duplicate concurrent requests
+  const requestPromise = (async () => {
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Goog-FieldMask': fields
+        }
+      });
+
+      if (!response.ok) {
+        // Record the failure for circuit breaker
+        circuitBreakers.googlePlaces.recordFailure(response.status);
+
+        if (import.meta.env.DEV) {
+          console.warn(`Places API error (${response.status}): ${response.statusText}`);
+        }
+
+        // Return null - component will use fallback hours
+        return null;
       }
-    });
-    
-    if (!response.ok) {
-      // Record the failure for circuit breaker
-      circuitBreakers.googlePlaces.recordFailure(response.status);
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      // Record network errors (note: circuit breaker only counts quota-related statuses)
+      circuitBreakers.googlePlaces.recordFailure(error);
 
       if (import.meta.env.DEV) {
-        console.warn(`Places API error (${response.status}): ${response.statusText}`);
+        console.error('Error fetching place details:', error);
       }
 
-      // Return null - component will use fallback hours
       return null;
+    } finally {
+      // Clean up pending request tracking after completion (success or failure)
+      pendingRequests.delete(placeId);
     }
+  })();
 
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    // Record network errors (note: circuit breaker only counts quota-related statuses)
-    circuitBreakers.googlePlaces.recordFailure(error);
-    
-    if (import.meta.env.DEV) {
-      console.error('Error fetching place details:', error);
-    }
-    
-    return null;
-  }
+  // Store the promise so concurrent requests can reuse it
+  pendingRequests.set(placeId, requestPromise);
+
+  return requestPromise;
 }
 
 /**

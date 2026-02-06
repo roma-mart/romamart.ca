@@ -83,11 +83,6 @@ export const buildServiceSchema = (service, options = {}) => {
     }
   }
 
-  // Add age restriction if applicable
-  if (service.ageRestricted === true) {
-    schema.typicalAgeRange = '19-';
-  }
-
   // Add availability if specified
   if (service.availability) {
     schema.hoursAvailable = {
