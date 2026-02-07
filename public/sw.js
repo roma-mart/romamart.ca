@@ -50,31 +50,21 @@ async function trimCache(cacheName, maxEntries) {
 
 // Install event - cache essential assets
 self.addEventListener('install', (event) => {
-  console.log('[Service Worker] Installing...');
-  
   event.waitUntil(
     caches.open(CACHE_VERSION)
-      .then((cache) => {
-        console.log('[Service Worker] Precaching assets');
-        return cache.addAll(PRECACHE_ASSETS);
-      })
+      .then((cache) => cache.addAll(PRECACHE_ASSETS))
   );
 });
 
 // Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
-  console.log('[Service Worker] Activating...');
-  
   event.waitUntil(
     caches.keys()
       .then((cacheNames) => {
         return Promise.all(
           cacheNames
             .filter((cacheName) => cacheName !== CACHE_VERSION)
-            .map((cacheName) => {
-              console.log('[Service Worker] Deleting old cache:', cacheName);
-              return caches.delete(cacheName);
-            })
+            .map((cacheName) => caches.delete(cacheName))
         );
       })
       .then(() => self.clients.claim())
@@ -113,7 +103,7 @@ self.addEventListener('fetch', (event) => {
 async function networkFirstStrategy(request) {
   try {
     const networkResponse = await fetch(request);
-    
+
     // Cache successful responses
     if (networkResponse.ok) {
       const cache = await caches.open(CACHE_VERSION);
@@ -125,18 +115,16 @@ async function networkFirstStrategy(request) {
   } catch {
     // Network failed, try cache
     const cachedResponse = await caches.match(request);
-    
+
     if (cachedResponse) {
-      console.log('[Service Worker] Serving from cache:', request.url);
       return cachedResponse;
     }
-    
+
     // No cache available, serve offline page for HTML requests
     if (request.destination === 'document') {
-      console.log('[Service Worker] Serving offline page');
       return caches.match(`${BASE_URL}offline.html`);
     }
-    
+
     // For other resources, return error
     return new Response('Network error', {
       status: 408,
@@ -150,15 +138,14 @@ async function networkFirstStrategy(request) {
  */
 async function cacheFirstStrategy(request) {
   const cachedResponse = await caches.match(request);
-  
+
   if (cachedResponse) {
-    console.log('[Service Worker] Serving from cache:', request.url);
     return cachedResponse;
   }
-  
+
   try {
     const networkResponse = await fetch(request);
-    
+
     // Cache successful responses
     if (networkResponse.ok) {
       const cache = await caches.open(CACHE_VERSION);
@@ -167,8 +154,7 @@ async function cacheFirstStrategy(request) {
     }
 
     return networkResponse;
-  } catch (error) {
-    console.error('[Service Worker] Fetch failed:', error);
+  } catch {
     return new Response('Network error', {
       status: 408,
       headers: { 'Content-Type': 'text/plain' }
@@ -178,8 +164,6 @@ async function cacheFirstStrategy(request) {
 
 // Message handler for communication with main app
 self.addEventListener('message', (event) => {
-  console.log('[Service Worker] Message received:', event.data);
-
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }

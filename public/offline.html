@@ -6,18 +6,18 @@
   <title>Offline - Roma Mart</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    /* Brand colors match src/index.css design tokens.
+       Update both files if brand colors change. */
     :root {
       --color-primary: #020178;
       --color-accent: #E4B340;
       --color-text-on-primary: #fff;
-      --color-bg: #151515;
     }
     @media (prefers-color-scheme: dark) {
       :root {
         --color-primary: #001540;
         --color-accent: #E4B340;
         --color-text-on-primary: #fff;
-        --color-bg: #151515;
       }
     }
     body {
@@ -69,7 +69,7 @@
 <body>
   <main class="container" tabindex="-1">
     <div class="logo" aria-label="Roma Mart Logo">RM</div>
-    <div class="offline-icon" aria-hidden="true">📡</div>
+    <div class="offline-icon" aria-hidden="true">&#x1F4E1;</div>
     <h1>You're Offline</h1>
     <p>It looks like you've lost your internet connection.</p>
     <div class="info-box">
@@ -79,7 +79,7 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
         </svg>
-        <span id="location-address">3-189 Wellington Street, Sarnia, ON</span>
+        <span id="location-address">3-189 Wellington Street, Sarnia, ON  N7T 1G6</span>
       </div>
       <div class="contact-item">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -91,7 +91,7 @@
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
-        <span>Mon–Thu, Sat–Sun: 8:30 AM – 9 PM | Fri: 3 PM – 9 PM</span>
+        <span id="location-hours">Mon-Thu, Sat-Sun: 8:30 AM - 9:00 PM | Fri: 3:00 PM - 9:00 PM</span>
       </div>
     </div>
     <a href="/" onclick="location.reload();return false" class="button" aria-label="Try reloading the page">Try Again</a>
@@ -99,9 +99,13 @@
   </main>
   <script>
     (function() {
-      const LOCATIONS = [
-        { id: 'wellington', name: 'Roma Mart - Wellington', address: '3-189 Wellington Street, Sarnia, ON  N7T 1G6', phone: '+1 (382) 342-2000', coordinates: { lat: 42.970389, lng: -82.404589 }, isPrimary: true }
+      // Location data injected at build time from src/data/locations.js (SSOT).
+      // Dev-mode fallback values below; production uses build-injected data.
+      const LOCATIONS = /* __OFFLINE_LOCATIONS__ */ [
+        { id: 'loc-wellington-001', name: 'Roma Mart Convenience', address: '3-189 Wellington Street, Sarnia, ON  N7T 1G6', phone: '+1 (382) 342-2000', coordinates: { lat: 42.970389, lng: -82.404589 }, isPrimary: true }
       ];
+      // Haversine distance — duplicated from src/data/locations.js because
+      // this page must be fully self-contained for offline use.
       function calculateDistance(lat1, lon1, lat2, lon2) {
         const R = 6371;
         const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -120,13 +124,13 @@
           document.getElementById('location-name').textContent = nearest.name;
           document.getElementById('location-address').textContent = nearest.address;
           const distanceText = minDistance < 1 ? Math.round(minDistance * 1000) + 'm away' : minDistance.toFixed(1) + 'km away';
-          document.getElementById('location-distance').textContent = 'Nearest store: ' + distanceText + ' • This page works offline';
+          document.getElementById('location-distance').textContent = 'Nearest store: ' + distanceText + ' \u2022 This page works offline';
         } else {
           const hq = LOCATIONS.find(loc => loc.isPrimary) || LOCATIONS[0];
           document.getElementById('location-name').textContent = hq.name + ' (Headquarters)';
           document.getElementById('location-address').textContent = hq.address;
         }
-      } catch (e) { console.error('Error loading stored location:', e); }
+      } catch (e) { /* offline fallback — errors are non-critical */ }
     })();
   </script>
 </body>

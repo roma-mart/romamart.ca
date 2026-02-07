@@ -530,6 +530,69 @@ function injectServiceWorkerPrecache(distPath) {
   console.log(`✓ Injected ${count} Vite bundle asset(s) into sw.js precache list`);
 }
 
+/**
+ * Inject SSOT location data into dist/offline.html.
+ * Replaces the __OFFLINE_LOCATIONS__ placeholder and id-anchored static content
+ * with real data from COMPANY_DATA (sourced from src/data/locations.js).
+ */
+function injectOfflineLocationData(distPath) {
+  const offlinePath = path.join(distPath, 'offline.html');
+
+  if (!fs.existsSync(offlinePath)) {
+    console.warn('⚠️  offline.html not found in dist — skipping location data injection');
+    return;
+  }
+
+  let content = fs.readFileSync(offlinePath, 'utf-8');
+  const loc = COMPANY_DATA.location;
+
+  if (!loc) {
+    console.warn('⚠️  No primary location in COMPANY_DATA — skipping offline injection');
+    return;
+  }
+
+  const LOCATIONS_PLACEHOLDER = /\/\* __OFFLINE_LOCATIONS__ \*\/ \[[\s\S]*?\]/;
+
+  if (!LOCATIONS_PLACEHOLDER.test(content)) {
+    console.warn('⚠️  __OFFLINE_LOCATIONS__ placeholder not found in offline.html — skipping injection');
+    return;
+  }
+
+  const phoneRaw = loc.contact.phone.replace(/[^+\d]/g, '');
+  const locationsJson = JSON.stringify([{
+    id: loc.id,
+    name: loc.name,
+    address: loc.address.formatted,
+    phone: loc.contact.phone,
+    coordinates: loc.google.coordinates,
+    isPrimary: loc.isPrimary,
+  }]);
+
+  // Replace JS LOCATIONS array
+  content = content.replace(LOCATIONS_PLACEHOLDER, locationsJson);
+
+  // Replace static HTML using id-anchored patterns
+  content = content.replace(
+    /(<h3 id="location-name">)[^<]*/,
+    `$1${loc.name}`
+  );
+  content = content.replace(
+    /(<span id="location-address">)[^<]*/,
+    `$1${loc.address.formatted}`
+  );
+  content = content.replace(
+    /<a href="tel:[^"]*" class="contact-link">[^<]*/,
+    `<a href="tel:${phoneRaw}" class="contact-link">${loc.contact.phone}`
+  );
+  content = content.replace(
+    /(<span id="location-hours">)[^<]*/,
+    `$1${loc.hours.display}`
+  );
+
+  fs.writeFileSync(offlinePath, content);
+  console.log('✓ Injected SSOT location data into offline.html');
+}
+
 async function prerender() {
   const distPath = path.resolve(__dirname, '../dist');
   const indexPath = path.join(distPath, 'index.html');
@@ -541,6 +604,9 @@ async function prerender() {
 
   // Inject hashed Vite bundle filenames into service worker precache list
   injectServiceWorkerPrecache(distPath);
+
+  // Inject SSOT location data into offline page
+  injectOfflineLocationData(distPath);
 
   // Fetch all API data in parallel for maximum efficiency
   console.log('\n📡 Fetching API data for prerendering...\n');
