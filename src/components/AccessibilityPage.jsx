@@ -60,7 +60,7 @@ const AccessibilityPage = () => {
           {[
             { title: 'WCAG 2.2 Level AA', link: 'https://www.w3.org/WAI/WCAG22/quickref/' },
             { title: 'AODA Compliant', link: 'https://www.ontario.ca/laws/regulation/070191' },
-            { title: 'ISO/IEC 40500:2025', link: 'https://www.iso.org/standard/80369.html' },
+            { title: 'ISO/IEC 40500', link: 'https://www.w3.org/WAI/standards-guidelines/wcag/faq/#iso' },
             { title: 'EN 301 549 (EAA)', link: 'https://www.etsi.org/deliver/etsi_en/301500_301599/301549/' }
           ].map((item, idx) => (
             <div key={idx} className="rounded-lg p-8 transition-colors" style={{ border: '2px solid var(--color-border)' }} onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--color-accent)'} onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--color-border)'}>
@@ -79,8 +79,8 @@ const AccessibilityPage = () => {
           ))}
         </div>
         <div className="mt-8 p-6 rounded-lg border-2" style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-accent)' }}>
-          <h3 className="text-lg font-bold mb-2" style={{ color: 'var(--color-heading)' }}>🚀 WCAG 3.0 Ready</h3>
-          <p style={textColor}>Our website is designed with outcome-based accessibility principles, ensuring readiness for WCAG 3.0 as it becomes the official standard.</p>
+          <h3 className="text-lg font-bold mb-2" style={{ color: 'var(--color-heading)' }}>Continuous Improvement</h3>
+          <p style={textColor}>We regularly audit our site to maintain conformance and are monitoring the development of WCAG 3.0 to adopt improvements as the standard evolves.</p>
         </div>
       </section>
 
@@ -94,14 +94,14 @@ const AccessibilityPage = () => {
               <div>
                 <h3 className="font-bold text-lg mb-1" style={textColor}>{title}</h3>
                 <p style={textColor}>
-                  {title === 'Keyboard Navigation' && 'All functionality is accessible via keyboard. Navigate with Tab, activate with Enter/Space, and close menus with Escape.'}
-                  {title === 'Visible Focus Indicators' && 'High-contrast focus outline (3px) shows keyboard focus on all interactive elements.'}
-                  {title === 'Screen Reader Support' && 'Semantic HTML, ARIA labels, and descriptive link text make our site fully compatible with NVDA, JAWS, and VoiceOver screen readers.'}
+                  {title === 'Keyboard Navigation' && 'All functionality is accessible via keyboard. Navigate with Tab, activate with Enter/Space, and close dialogs with Escape. Modal dialogs and menus trap focus to prevent keyboard users from getting lost.'}
+                  {title === 'Visible Focus Indicators' && 'High-contrast focus outline shows keyboard focus on all interactive elements, ensuring you always know where you are on the page.'}
+                  {title === 'Screen Reader Support' && 'Semantic HTML, ARIA labels, live regions for form errors and status messages, and descriptive link text ensure compatibility with NVDA, JAWS, and VoiceOver screen readers.'}
                   {title === 'Skip Navigation' && 'Press Tab to see the "Skip to main content" link, allowing you to bypass repetitive navigation elements.'}
-                  {title === 'Enhanced Color Contrast' && 'All text and UI components meet or exceed WCAG AA contrast requirements.'}
-                  {title === 'Reduced Motion Support' && 'If you enable "Reduce motion" in your operating system preferences, animations and transitions on our site will be disabled.'}
+                  {title === 'Enhanced Color Contrast' && 'Text and UI components are designed to meet WCAG AA contrast requirements across both light and dark themes.'}
+                  {title === 'Reduced Motion Support' && 'If you enable "Reduce motion" in your operating system preferences, animations and transitions on our site are minimized or disabled.'}
                   {title === 'Resizable Text & Zoom' && 'Text can be resized up to 200% without loss of content or functionality. Content reflows properly on all zoom levels.'}
-                  {title === 'Touch-Friendly Targets' && 'All buttons, links, and form inputs are at least 44×44 CSS pixels, meeting mobile accessibility standards.'}
+                  {title === 'Touch-Friendly Targets' && 'Buttons, links, and form inputs are sized for comfortable touch interaction, meeting mobile accessibility standards.'}
                 </p>
               </div>
             </div>
@@ -149,7 +149,7 @@ const AccessibilityPage = () => {
         <div className="rounded-lg p-8" style={{ backgroundColor: 'var(--color-primary)' }}>
           <p className="text-lg leading-relaxed mb-6" style={{ color: 'white' }}>Accessibility is not a feature—it's a fundamental right. We are committed to:</p>
           <ul className="space-y-3" style={{ color: 'white' }}>
-            {['Maintaining WCAG 2.2 Level AA compliance','Regular accessibility audits (quarterly reviews)','Rapid response to accessibility issues (5 business days)','Training our team on accessibility best practices','Monitoring and adopting WCAG 3.0 standards as they evolve'].map((item, idx) => (
+            {['Maintaining WCAG 2.2 Level AA conformance','Regular accessibility audits and remediation','Rapid response to accessibility issues (5 business days)','Training our team on accessibility best practices','Monitoring evolving standards including WCAG 3.0'].map((item, idx) => (
               <li className="flex items-start gap-3" key={idx}>
                 <span className="font-bold mt-1" style={{ color: 'var(--color-accent)' }}>✓</span>
                 <span>{item}</span>
@@ -158,8 +158,8 @@ const AccessibilityPage = () => {
           </ul>
         </div>
         <div className="mt-12 p-6 rounded-lg text-center" style={{ backgroundColor: 'var(--color-surface)' }}>
-          <p className="mb-4" style={textColor}><strong>Last Accessibility Audit:</strong> November 30, 2025</p>
-          <p style={textColor}><strong>Next Review Scheduled:</strong> June 30, 2026</p>
+          <p className="mb-4" style={textColor}><strong>Last Accessibility Audit:</strong> February 7, 2026</p>
+          <p style={textColor}><strong>Next Review Scheduled:</strong> May 2026</p>
         </div>
       </section>
     </div>

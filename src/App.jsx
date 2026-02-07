@@ -401,12 +401,27 @@ const ContactSection = () => {
   const [captchaToken, setCaptchaToken] = React.useState('');
   const [formStatus, setFormStatus] = React.useState('');
   const [formMessage, setFormMessage] = React.useState('');
+  const [fieldErrors, setFieldErrors] = React.useState({});
   const handleContactSubmit = useCallback(async (e) => {
     e.preventDefault();
     if (window.dataLayer) {
       window.dataLayer.push({ event: 'contact_form_submit', form_location: 'contact_section' });
     }
     const form = e.target;
+    const name = form.elements.name?.value?.trim();
+    const email = form.elements.email?.value?.trim();
+    const message = form.elements.message?.value?.trim();
+    const errors = {};
+    if (!name) errors.name = 'Name is required.';
+    if (!email) errors.email = 'Email is required.';
+    if (!message) errors.message = 'Message is required.';
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      setFormStatus('error');
+      setFormMessage('Please fill in all required fields.');
+      return;
+    }
+    setFieldErrors({});
     const formData = new FormData(form);
     if (!captchaToken) {
       setFormStatus('error');
@@ -422,6 +437,7 @@ const ContactSection = () => {
       if (response.ok) {
         setFormStatus('success');
         setFormMessage('Message sent successfully!');
+        setFieldErrors({});
         form.reset();
         setCaptchaToken('');
       } else {
@@ -512,12 +528,12 @@ const ContactSection = () => {
             <h3 className="text-2xl mb-6" style={{ color: 'var(--color-heading)' }}>Send a Message</h3>
             
             {formStatus === 'success' && (
-              <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'var(--color-success-bg)', borderColor: 'var(--color-success)' }}>
+              <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'var(--color-success-bg)', borderColor: 'var(--color-success)' }} role="status" aria-live="polite" aria-atomic="true">
                 <p className="font-inter" style={{ color: 'var(--color-success)' }}>{formMessage}</p>
               </div>
             )}
             {formStatus === 'error' && (
-              <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'var(--color-error-bg)', borderColor: 'var(--color-error)' }}>
+              <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'var(--color-error-bg)', borderColor: 'var(--color-error)' }} role="alert" aria-live="assertive" aria-atomic="true">
                 <p className="font-inter" style={{ color: 'var(--color-error)' }}>{formMessage}</p>
               </div>
             )}
@@ -531,42 +547,51 @@ const ContactSection = () => {
               <input type="hidden" name="h-captcha-response" value={captchaToken} />
 
               <div>
-                <label htmlFor="name" className="block text_sm font-bold mb-2" style={textColor}>Full Name</label>
-                <input 
-                  type="text" 
-                  name="name" 
-                  id="name"
-                  required 
+                <label htmlFor="contact-name" className="block text_sm font-bold mb-2" style={textColor}>Full Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  id="contact-name"
+                  required
+                  aria-invalid={!!fieldErrors.name}
+                  aria-describedby={fieldErrors.name ? 'contact-name-error' : undefined}
                   className="w-full px-4 py-3 rounded-lg border focus:border_navy-500 focus:ring-2 focus:ring_navy-200 outline-none transition-all"
-                  style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-surface)', color: 'var(--color-text)' }}
+                  style={{ backgroundColor: 'var(--color-surface)', borderColor: fieldErrors.name ? 'var(--color-error)' : 'var(--color-surface)', color: 'var(--color-text)' }}
                   placeholder="John Doe"
                 />
+                {fieldErrors.name && <p id="contact-name-error" className="text-sm mt-1" style={{ color: 'var(--color-error)' }}>{fieldErrors.name}</p>}
               </div>
 
               <div>
-                <label htmlFor="email" className="block text_sm font-bold mb-2" style={textColor}>Email Address</label>
-                <input 
-                  type="email" 
-                  name="email" 
-                  id="email"
-                  required 
+                <label htmlFor="contact-email" className="block text_sm font-bold mb-2" style={textColor}>Email Address</label>
+                <input
+                  type="email"
+                  name="email"
+                  id="contact-email"
+                  required
+                  aria-invalid={!!fieldErrors.email}
+                  aria-describedby={fieldErrors.email ? 'contact-email-error' : undefined}
                   className="w-full px-4 py-3 rounded-lg border focus:border_navy-500 focus:ring-2 focus:ring_navy-200 outline-none transition-all"
-                  style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-surface)', color: 'var(--color-text)' }}
+                  style={{ backgroundColor: 'var(--color-surface)', borderColor: fieldErrors.email ? 'var(--color-error)' : 'var(--color-surface)', color: 'var(--color-text)' }}
                   placeholder="john@example.com"
                 />
+                {fieldErrors.email && <p id="contact-email-error" className="text-sm mt-1" style={{ color: 'var(--color-error)' }}>{fieldErrors.email}</p>}
               </div>
 
               <div>
-                <label htmlFor="message" className="block text_sm font-bold mb-2" style={textColor}>Message</label>
-                <textarea 
-                  name="message" 
-                  id="message"
-                  required 
+                <label htmlFor="contact-message" className="block text_sm font-bold mb-2" style={textColor}>Message</label>
+                <textarea
+                  name="message"
+                  id="contact-message"
+                  required
                   rows="4"
+                  aria-invalid={!!fieldErrors.message}
+                  aria-describedby={fieldErrors.message ? 'contact-message-error' : undefined}
                   className="w-full px-4 py-3 rounded-lg border focus:border_navy-500 focus:ring-2 focus:ring_navy-200 outline-none transition-all"
-                  style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-surface)', color: 'var(--color-text)' }}
+                  style={{ backgroundColor: 'var(--color-surface)', borderColor: fieldErrors.message ? 'var(--color-error)' : 'var(--color-surface)', color: 'var(--color-text)' }}
                   placeholder="How can we help you?"
                 ></textarea>
+                {fieldErrors.message && <p id="contact-message-error" className="text-sm mt-1" style={{ color: 'var(--color-error)' }}>{fieldErrors.message}</p>}
               </div>
 
               {/* hCaptcha Widget */}

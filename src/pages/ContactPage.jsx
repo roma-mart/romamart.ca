@@ -24,13 +24,29 @@ const ContactPage = () => {
 
   const [formStatus, setFormStatus] = useState('');
   const [captchaToken, setCaptchaToken] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({});
   const { syncSupported } = useBackgroundSync();
   const { showInfo, showSuccess, showError } = useToast();
   const colorScheme = useColorScheme();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
+    const form = e.target;
+    const name = form.elements.name?.value?.trim();
+    const email = form.elements.email?.value?.trim();
+    const message = form.elements.message?.value?.trim();
+    const errors = {};
+    if (!name) errors.name = 'Name is required.';
+    if (!email) errors.email = 'Email is required.';
+    if (!message) errors.message = 'Message is required.';
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      setFormStatus('error');
+      showError('Please fill in all required fields.');
+      return;
+    }
+    setFieldErrors({});
+    const formData = new FormData(form);
     if (!captchaToken) {
       setFormStatus('error');
       showError('Please complete the captcha.');
@@ -48,7 +64,8 @@ const ContactPage = () => {
       if (response.ok) {
         setFormStatus('success');
         showSuccess('Message sent successfully!');
-        e.target.reset();
+        setFieldErrors({});
+        form.reset();
         setCaptchaToken('');
       } else {
         setFormStatus('error');
@@ -197,19 +214,19 @@ const ContactPage = () => {
             </h3>
 
             {formStatus === 'success' && (
-              <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'var(--color-success-bg)', borderColor: 'var(--color-success)' }}>
+              <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'var(--color-success-bg)', borderColor: 'var(--color-success)' }} role="status" aria-live="polite" aria-atomic="true">
                 <p className="font-inter" style={{ color: 'var(--color-success)' }}>✓ Message sent successfully! We'll get back to you soon.</p>
               </div>
             )}
 
             {formStatus === 'queued' && (
-              <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'var(--color-accent-bg, rgba(228, 179, 64, 0.1))', borderColor: 'var(--color-accent)' }}>
+              <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'var(--color-accent-bg, rgba(228, 179, 64, 0.1))', borderColor: 'var(--color-accent)' }} role="status" aria-live="polite" aria-atomic="true">
                 <p className="font-inter" style={{ color: 'var(--color-accent)' }}>📥 Message saved! Will be sent automatically when connection is restored.</p>
               </div>
             )}
 
             {formStatus === 'error' && (
-              <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'var(--color-error-bg)', borderColor: 'var(--color-error)' }}>
+              <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'var(--color-error-bg)', borderColor: 'var(--color-error)' }} role="alert" aria-live="assertive" aria-atomic="true">
                 <p className="font-inter" style={{ color: 'var(--color-error)' }}>✗ Something went wrong. Please try again.</p>
               </div>
             )}
@@ -226,10 +243,13 @@ const ContactPage = () => {
                   id="name"
                   name="name"
                   required
+                  aria-invalid={!!fieldErrors.name}
+                  aria-describedby={fieldErrors.name ? 'name-error' : undefined}
                   className="w-full px-4 py-3 rounded-lg border font-inter"
-                  style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)', color: 'var(--color-text)' }}
+                  style={{ backgroundColor: 'var(--color-surface)', borderColor: fieldErrors.name ? 'var(--color-error)' : 'var(--color-border)', color: 'var(--color-text)' }}
                   placeholder="Your name"
                 />
+                {fieldErrors.name && <p id="name-error" className="text-sm mt-1" style={{ color: 'var(--color-error)' }}>{fieldErrors.name}</p>}
               </div>
 
               <div>
@@ -239,10 +259,13 @@ const ContactPage = () => {
                   id="email"
                   name="email"
                   required
+                  aria-invalid={!!fieldErrors.email}
+                  aria-describedby={fieldErrors.email ? 'email-error' : undefined}
                   className="w-full px-4 py-3 rounded-lg border font-inter"
-                  style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)', color: 'var(--color-text)' }}
+                  style={{ backgroundColor: 'var(--color-surface)', borderColor: fieldErrors.email ? 'var(--color-error)' : 'var(--color-border)', color: 'var(--color-text)' }}
                   placeholder="your@email.com"
                 />
+                {fieldErrors.email && <p id="email-error" className="text-sm mt-1" style={{ color: 'var(--color-error)' }}>{fieldErrors.email}</p>}
               </div>
 
               <div>
@@ -264,10 +287,13 @@ const ContactPage = () => {
                   name="message"
                   required
                   rows={5}
+                  aria-invalid={!!fieldErrors.message}
+                  aria-describedby={fieldErrors.message ? 'message-error' : undefined}
                   className="w-full px-4 py-3 rounded-lg border font-inter resize-none"
-                  style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)', color: 'var(--color-text)' }}
+                  style={{ backgroundColor: 'var(--color-surface)', borderColor: fieldErrors.message ? 'var(--color-error)' : 'var(--color-border)', color: 'var(--color-text)' }}
                   placeholder="How can we help you?"
                 />
+                {fieldErrors.message && <p id="message-error" className="text-sm mt-1" style={{ color: 'var(--color-error)' }}>{fieldErrors.message}</p>}
               </div>
 
               {/* hCaptcha Widget */}
