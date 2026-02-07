@@ -48,45 +48,45 @@ const VARIANT_ANALYTICS = {
   custom: 'custom_cta',
 };
 
-// Shared spring config — consistent snappy feel across all variants
-const SPRING = { type: 'spring', stiffness: 400, damping: 30 };
+// Shared spring config — snappy with minimal overshoot (damping ratio ~0.875)
+const SPRING = { type: 'spring', stiffness: 400, damping: 35 };
 
 // Per-variant Framer Motion animation props
-// Scale tiers: primary CTAs 1.04, standard 1.03, icon 1.1
-// Only scale + boxShadow (GPU-accelerated); no backgroundColor animation
+// Scale tiers: primary CTAs 1.05, standard 1.03, icon 1.1
+// Golden halo glow (0-offset boxShadow) on all hover states
 const VARIANT_ANIMATION = {
   order: {
-    whileHover: { scale: 1.04, boxShadow: '0 10px 32px var(--color-accent-shadow, rgba(228,179,64,0.22))' },
+    whileHover: { scale: 1.05, boxShadow: '0 0 20px rgba(228,179,64,0.4), 0 10px 32px rgba(228,179,64,0.22)' },
     whileTap: { scale: 0.97 },
     transition: SPRING,
   },
   nav: {
-    whileHover: { scale: 1.03 },
+    whileHover: { scale: 1.03, boxShadow: '0 0 12px rgba(228,179,64,0.2)' },
     whileTap: { scale: 0.97 },
     transition: SPRING,
   },
   action: {
-    whileHover: { scale: 1.03, boxShadow: '0 8px 28px var(--color-accent-shadow, rgba(228,179,64,0.22))' },
+    whileHover: { scale: 1.03, boxShadow: '0 0 20px rgba(228,179,64,0.35), 0 8px 28px rgba(228,179,64,0.22)' },
     whileTap: { scale: 0.97 },
     transition: SPRING,
   },
   navlink: {
-    whileHover: { scale: 1.03 },
+    whileHover: { scale: 1.03, boxShadow: '0 0 12px rgba(228,179,64,0.2)' },
     whileTap: { scale: 0.97 },
     transition: SPRING,
   },
   icon: {
-    whileHover: { scale: 1.1 },
+    whileHover: { scale: 1.1, boxShadow: '0 0 12px rgba(228,179,64,0.25)' },
     whileTap: { scale: 0.93 },
     transition: SPRING,
   },
   secondary: {
-    whileHover: { scale: 1.03 },
+    whileHover: { scale: 1.03, boxShadow: '0 0 16px rgba(228,179,64,0.25)' },
     whileTap: { scale: 0.97 },
     transition: SPRING,
   },
   inverted: {
-    whileHover: { scale: 1.04, boxShadow: '0 8px 28px rgba(2,1,120,0.22)' },
+    whileHover: { scale: 1.05, boxShadow: '0 0 20px rgba(228,179,64,0.35), 0 8px 28px rgba(2,1,120,0.22)' },
     whileTap: { scale: 0.97 },
     transition: SPRING,
   },
