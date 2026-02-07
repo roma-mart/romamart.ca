@@ -1,523 +1,543 @@
 # Accessibility Compliance Framework
 
 **Target Standards:**
-- ✅ **WCAG 2.2 AA** (Web Content Accessibility Guidelines -- Latest Stable)
-- ✅ **AODA** (Accessibility for Ontarians with Disabilities Act -- Requires WCAG 2.0 AA minimum)
+- ✅ **WCAG 2.2 AA** (Web Content Accessibility Guidelines — Latest Stable)
+- ✅ **AODA** (Accessibility for Ontarians with Disabilities Act — Requires WCAG 2.0 AA minimum)
 - ✅ **ISO/IEC 40500** (International alignment with WCAG)
-- ✅ **EN 301 549 (EAA)** (European Accessibility Act -- Harmonizes with WCAG 2.1 AA)
+- ✅ **EN 301 549 (EAA)** (European Accessibility Act — Harmonizes with WCAG 2.1 AA)
 - 🎯 **WCAG 3.0** (Monitoring draft standard for future adoption)
 
 ---
 
-## 1. WCAG 2.2 AA Compliance Checklist
+## 1. Perceivable
 
-### 1.1 Perceivable (Information & user interface must be perceivable)
+> Information and user interface components must be presentable to users in ways they can perceive.
 
-#### **1.1.1 Text Alternatives (Level A)**
+### Guideline 1.1 — Text Alternatives
+
+#### 1.1.1 Non-text Content (Level A)
 - [ ] All images have descriptive `alt` text (non-decorative)
 - [ ] Decorative images use `alt=""` or `aria-hidden="true"`
-- [ ] Logos have meaningful `alt` text or linked label
-- [ ] Icons have `aria-label` or `title` attribute
-- [ ] Charts/infographics have text descriptions or long descriptions
+- [ ] Icons have `aria-label` or `aria-hidden="true"` (decorative when paired with text)
 
-**Status:** ⚠️ Needs Review
-- Action: Audit `src/App.jsx` for image/icon elements lacking alt text
+**Status:** ⚠️ Partial
+- Most images have correct alt text (hero sign, location thumbnails, team photos)
+- Decorative pattern images correctly use `alt=""` + `aria-hidden="true"` (App.jsx:78)
+- **Issue:** Some decorative Lucide icons next to text labels lack `aria-hidden="true"`:
+  - ContactPage.jsx: MapPin (line 132), Phone (line 151), Mail (line 170), Clock (line 189)
+  - LocationsPage.jsx: Building2 (line 166), MapPin (line 175), Phone (line 199)
+  - AccessibilityPage.jsx: CheckCircle (line 68), Mail (line 128), Phone (line 133), MapPin (line 138)
+  - App.jsx contact section: MapPin (line 471), Phone (line 487), Clock (line 506)
+- **Issue:** App.jsx:241 — `alt="RoCafe"` on sticker image is non-descriptive
 
-#### **1.1.2 Captions & Transcripts (Level A - Video/Audio)**
-- [ ] Video has synchronized captions (SRT/WebVTT)
-- [ ] Audio has transcript
-- [ ] Live audio has real-time captions
+### Guideline 1.2 — Time-based Media
 
-**Status:** ✅ N/A (No video/audio on site currently)
+#### 1.2.1 Audio-only and Video-only (Level A)
 
-#### **1.1.3 Audio Descriptions (Level A - Video)**
-- [ ] Complex visual content has audio descriptions
-- [ ] Option to toggle descriptions available
+**Status:** ✅ N/A — No audio/video content on site
 
-**Status:** ✅ N/A
+### Guideline 1.3 — Adaptable
 
-#### **1.1.4 Sensory Characteristics (Level A)**
-- [ ] Instructions don't rely solely on color, shape, size, or sound
-- [ ] Color is never the only way to identify something
-
-**Status:** ⚠️ Needs Review
-- Action: Check if any instructions rely only on color (e.g., "click the yellow button")
-
-#### **1.1.5 Images of Text (Level AA)**
-- [ ] No images of text used (use real text instead)
-- [ ] Exception: Logos and brand elements
-
-**Status:** ✅ Compliant
-
----
-
-### 1.2 Adaptable (Content must be adaptable to different presentations)
-
-#### **1.2.1 Info and Relationships (Level A)**
-- [ ] Meaningful sequence preserved when linearized (e.g., for screen readers)
+#### 1.3.1 Info and Relationships (Level A)
+- [ ] Heading hierarchy is logical and sequential
+- [ ] Lists use proper `<ul>`/`<ol>` markup
 - [ ] Relationships conveyed through markup, not just visual
 
-**Status:** ⚠️ Needs Review
-- Action: Verify semantic HTML structure (headings hierarchy, lists, etc.)
+**Status:** ⚠️ Partial
+- Every page has an `<h1>` element
+- **Issue:** Heading levels skip in several places:
+  - App.jsx lines 474, 490, 509: `<h4>` without parent `<h3>` in contact section
+  - ContactPage.jsx lines 135, 155, 174, 193: `<h4>` without parent `<h3>`
+  - ServicesPage.jsx line 144: `<h3>` used where `<h2>` expected
+  - Footer.jsx lines 288, 323: heading hierarchy issues
+- Semantic landmarks used: `<nav>`, `<main>`, page-level sections present
 
-#### **1.2.2 Meaningful Sequence (Level A)**
+#### 1.3.2 Meaningful Sequence (Level A)
 - [ ] Content sequence is logical when read linearly
 - [ ] Tab order follows visual order
 
-**Status:** ⚠️ Needs Review
+**Status:** ⚠️ Needs Manual Testing — DOM order appears logical; no CSS that reorders content detected
 
-#### **1.2.3 Sensory Characteristics (Level A)**
-- [ ] Instructions don't rely on shape, color, or spatial location alone
+#### 1.3.3 Sensory Characteristics (Level A)
+- [ ] Instructions don't rely solely on color, shape, size, or sound
 
-**Status:** ⚠️ Needs Review
+**Status:** ✅ Compliant — No sensory-only instructions found in user-facing content
 
-#### **1.2.4 Orientation (Level AA - NEW in 2.1/2.2)**
+#### 1.3.4 Orientation (Level AA)
 - [ ] Content works in both portrait and landscape
-- [ ] No orientation lock except where essential (e.g., piano app)
 
-**Status:** ✅ Compliant (Responsive design)
+**Status:** ✅ Compliant — Responsive design via Tailwind, no orientation lock
 
-#### **1.2.5 Identify Input Purpose (Level AA - NEW in 2.1/2.2)**
-- [ ] Form inputs clearly labeled
-- [ ] Input purpose is programmatically determined
-- [ ] Autocomplete attribute used (e.g., `autocomplete="email"`)
+#### 1.3.5 Identify Input Purpose (Level AA)
+- [ ] Form inputs use `autocomplete` attribute where appropriate
 
-**Status:** ⚠️ Needs Review
-- Action: Check contact form inputs for proper labels and autocomplete
+**Status:** ❌ Fail
+- **Issue:** All name/email/phone fields missing `autocomplete` attribute:
+  - ContactPage.jsx lines 243, 259, 275 — need `autoComplete="name"`, `"email"`, `"tel"`
+  - App.jsx lines 554, 570 — need `autoComplete="name"`, `"email"`
 
----
+### Guideline 1.4 — Distinguishable
 
-### 1.3 Distinguishable (Text & colors must be easy to see and hear)
-
-#### **1.3.1 Use of Color (Level A)**
+#### 1.4.1 Use of Color (Level A)
 - [ ] Color is not the only way to convey information
-- [ ] Must have an additional visual indicator (text, pattern, icon)
 
-**Status:** ⚠️ Needs Review
-- Action: Audit color-only indicators (e.g., status badges)
+**Status:** ⚠️ Needs Review — Form errors use red color but also have text messages and icons; likely compliant
 
-#### **1.3.2 Audio Control (Level A)**
-- [ ] Audio doesn't auto-play
-- [ ] If it does, there's a visible mute button
+#### 1.4.2 Audio Control (Level A)
 
-**Status:** ✅ N/A
+**Status:** ✅ N/A — No audio auto-play
 
-#### **1.3.3 Contrast (Minimum) (Level AA)**
-- [ ] Text: 4.5:1 contrast ratio (large text: 3:1)
-- [ ] Graphical elements: 3:1 contrast ratio
+#### 1.4.3 Contrast (Minimum) (Level AA)
+- [ ] Normal text: 4.5:1 contrast ratio
+- [ ] Large text (18pt+): 3:1 contrast ratio
+- [ ] UI components: 3:1 contrast ratio
 
-**Status:** ⚠️ **CRITICAL** – Needs verification
-- Action: Test contrast ratios for:
-  - Navy (#020178) on white (#FFF) – likely FAILS (too dark)
-  - Yellow (#E4B340) on white – likely FAILS (too light)
-  - Text on backgrounds in dark mode
-- Fix: Use accessibility color palette or add lighter/darker variants
+**Status:** ⚠️ Partial — Needs Measurement
+- ✅ Navy `#020178` on white `#fff`: ~13.8:1 — **Passes AAA**
+- ✅ Dark text `#151515` on yellow `#E4B340`: ~8.5:1 — **Passes AAA**
+- ✅ Muted text `#5a5a5a` on surface `#f8f8f8`: ~5.4:1 — **Passes AA**
+- ❌ Yellow accent `#E4B340` on white `#fff`: ~1.9:1 — **Fails AA** (used in ServicesPage breadcrumb link)
+- ✅ High-contrast mode (`prefers-contrast: high`) adjusts accent to `#B8860B` — mitigates for those users
+- 🎯 Dark mode values need manual verification
 
-#### **1.3.4 Contrast (Enhanced) (Level AAA)**
-- [ ] Text: 7:1 contrast ratio (large text: 4.5:1)
-
-**Status:** 🎯 Aspirational (AAA is optional but aligns with ISO 40500)
-
-#### **1.3.5 Text Spacing (Level AA - NEW in 2.1/2.2)**
-- [ ] No loss of content when text spacing is customized
-- [ ] Line height: ≥ 1.5x font size
-- [ ] Paragraph spacing: ≥ 2x font size
-- [ ] Letter spacing: ≥ 0.12x font size
-- [ ] Word spacing: ≥ 0.16x font size
-
-**Status:** ⚠️ Needs Review
-- Action: Verify CSS line-height and spacing values
-
-#### **1.3.6 Target Size (Level AAA - Touch Targets, NEW in 2.5)**
-- [ ] Interactive elements ≥ 44×44 CSS pixels (mobile)
-- [ ] Minimum 24×24 px for non-identical targets
-
-**Status:** ⚠️ Needs Review
-- Action: Check button, link, and input sizes
-
-#### **1.3.7 Visual Presentations (Level AAA)**
-- [ ] Text blocks are not full-width (max ~80 chars per line)
-- [ ] Line height ≥ 1.5
-- [ ] No justified text (left-align or right-align preferred)
-- [ ] Background colors don't interfere with readability
-
-**Status:** ⚠️ Needs Review
-
----
-
-### 1.4 Distinguishable (Continued)
-
-#### **1.4.1 Resize Text (Level AA)**
+#### 1.4.4 Resize Text (Level AA)
 - [ ] Text can be resized up to 200% without loss of function
-- [ ] No horizontal scrolling at 200% zoom
 
-**Status:** ⚠️ Needs Review
-- Action: Test at 200% zoom in browser
+**Status:** ⚠️ Needs Manual Testing — Font sizes use `rem` units throughout (tokens.js), which is correct practice
 
-#### **1.4.2 Reflow (Level AA - NEW in 2.1/2.2)**
-- [ ] No horizontal scrolling required at 320px width (mobile)
-- [ ] Content reflows to single column
+#### 1.4.5 Images of Text (Level AA)
+- [ ] No images of text used (except logos)
 
-**Status:** ✅ Likely compliant (responsive design)
+**Status:** ✅ Compliant — Only logo images and one photograph of a real-world sign
 
-#### **1.4.3 Non-Text Contrast (Level AA - NEW in 2.1/2.2)**
-- [ ] UI components have 3:1 contrast ratio
-- [ ] Graphical objects have 3:1 contrast ratio
+#### 1.4.10 Reflow (Level AA)
+- [ ] No horizontal scrolling at 320px viewport width
 
-**Status:** ⚠️ Needs Review
+**Status:** ⚠️ Needs Manual Testing — Responsive design with Tailwind breakpoints suggests compliance
+
+#### 1.4.11 Non-text Contrast (Level AA)
+- [ ] UI components and graphical objects have 3:1 contrast ratio
+
+**Status:** ⚠️ Needs Manual Testing
+
+#### 1.4.12 Text Spacing (Level AA)
+- [ ] No loss of content when text spacing is customized
+
+**Status:** ✅ Likely Compliant
+- Line heights use relative unitless values (1.2–1.75 in tokens.js)
+- Font sizes use `rem` units
+- No fixed-height containers observed that would clip text
+
+#### 1.4.13 Content on Hover or Focus (Level AA)
+- [ ] Hoverable/focusable content can be dismissed, hovered, and persists
+
+**Status:** ⚠️ Needs Review — Tooltips and hover effects exist (title attributes on social icons)
 
 ---
 
-## 2. Operable (User interface must be operable)
+## 2. Operable
 
-#### **2.1.1 Keyboard (Level A)**
+> User interface components and navigation must be operable.
+
+### Guideline 2.1 — Keyboard Accessible
+
+#### 2.1.1 Keyboard (Level A)
 - [ ] All functionality available via keyboard
-- [ ] No keyboard trap (focus can move away)
-- [ ] No reliance on pointer
+- [ ] Custom interactive elements have keyboard handlers
 
 **Status:** ✅ Compliant
-- Tab navigation works through entire site
-- Mobile menu, PWA prompt have focus traps (useFocusTrap hook)
-- Escape key closes modal dialogs
+- All buttons use semantic `<button>` or `<a>` elements
+- Custom interactive elements (StandardizedItem, CategoryAccordion) have `role="button"`, `tabIndex={0}`, keyboard handlers for Enter/Space
+- Button component includes onKeyDown handlers for all variants
 
-#### **2.1.2 Keyboard Focus Visible (Level AA)**
-- [ ] Keyboard focus is visible (outline or highlight)
-- [ ] Focus indicator has 3:1 contrast
-
-**Status:** ✅ Compliant
-- focus-visible outlines applied globally via Tailwind
-
-#### **2.1.3 No Keyboard Trap (Level A)**
+#### 2.1.2 No Keyboard Trap (Level A)
 - [ ] Focus can be moved away from any element
-- [ ] Exception: Modal dialogs (must have escape key)
+- [ ] Modal dialogs have Escape key to close
 
 **Status:** ✅ Compliant
-- Modal dialogs (mobile nav, PWA prompt) use focus traps with Escape key to close
+- `useFocusTrap` hook (src/hooks/useFocusTrap.js) handles Escape key, Tab/Shift+Tab cycling, and focus restoration
+- Used in Navbar mobile menu (line 117) and PWAInstallPrompt (line 180)
 
-#### **2.1.4 Character Key Shortcuts (Level A - NEW in 2.1/2.2)**
-- [ ] If shortcut keys exist, user can disable/remap them
-- [ ] Shortcuts don't conflict with browser/assistive tech
+#### 2.1.4 Character Key Shortcuts (Level A)
+- [ ] If shortcuts exist, user can disable/remap them
 
-**Status:** ✅ N/A (No custom shortcuts)
+**Status:** ✅ N/A — No custom keyboard shortcuts
 
-#### **2.2.1 Timing Adjustable (Level A)**
-- [ ] No content auto-advances faster than 3 seconds
-- [ ] If present, user can pause, stop, or adjust
+### Guideline 2.2 — Enough Time
 
-**Status:** ⚠️ Needs Review
-- Action: Check if carousel/animations auto-play
+#### 2.2.1 Timing Adjustable (Level A)
+- [ ] No content auto-advances without pause control
+- [ ] If present, user can pause, stop, or extend
 
-#### **2.2.2 Pause, Stop, Hide (Level A)**
+**Status:** ❌ Fail
+- **Issue:** AboutPage.jsx line 31: Hero carousel auto-advances every 5 seconds without pause/play control
+- **Issue:** LocationImageCarousel.jsx line 40: Auto-rotates every 5 seconds with no pause control
+- Manual prev/next buttons exist but no explicit pause button
+- Global `prefers-reduced-motion` CSS stops animations but may not stop JS timers
+
+#### 2.2.2 Pause, Stop, Hide (Level A)
 - [ ] Auto-playing content can be paused/stopped
-- [ ] Blinking content stops after 5 seconds or user can pause
 
-**Status:** ⚠️ Needs Review
+**Status:** ❌ Fail — Same carousel auto-play issues as 2.2.1
 
-#### **2.2.3 No Timing (Level AAA)**
-- [ ] No time-dependent content
+### Guideline 2.3 — Seizures and Physical Reactions
 
-**Status:** 🎯 Aspirational
-
-#### **2.2.4 Interruptions (Level AAA)**
-- [ ] User can postpone urgent interruptions
-
-**Status:** 🎯 Aspirational
-
-#### **2.3.1 Three Flashes (Level A)**
+#### 2.3.1 Three Flashes or Below Threshold (Level A)
 - [ ] No content flashes more than 3 times per second
-- [ ] Flash area < 25% of viewport or < 10° of visual field
 
-**Status:** ✅ Compliant
+**Status:** ✅ Compliant — No flashing content
 
-#### **2.3.2 Three Flashes (Level AAA)**
-- [ ] No flashing content at all (safer threshold)
+### Guideline 2.4 — Navigable
 
-**Status:** ✅ Compliant
-
-#### **2.4.1 Bypass Blocks (Level A)**
+#### 2.4.1 Bypass Blocks (Level A)
 - [ ] Skip navigation link present
-- [ ] Allows jumping over repetitive content
 
 **Status:** ✅ Compliant
-- Skip-to-main-content link implemented in App.jsx
+- Skip link at App.jsx:779: `<a href="#main-content" className="skip-link">Skip to main content</a>`
+- Target `id="main-content"` exists at App.jsx:781
+- CSS (index.css:93–110) hides by default, visible on focus
 
-#### **2.4.2 Page Titled (Level A)**
-- [ ] Page has descriptive title
-- [ ] Title describes page purpose
+#### 2.4.2 Page Titled (Level A)
+- [ ] Page has descriptive, unique title
 
-**Status:** ⚠️ Partially Compliant
+**Status:** ⚠️ Partial
 - Per-page titles set via react-helmet-async (e.g., "Contact Us | Roma Mart Convenience")
 - Action: Verify default/fallback title in index.html is descriptive
 
-#### **2.4.3 Focus Order (Level A)**
-- [ ] Focus order is logical and meaningful
-- [ ] Tab order follows visual order
+#### 2.4.3 Focus Order (Level A)
+- [ ] Tab order follows visual layout
+- [ ] No `tabindex` values greater than 0
 
-**Status:** ⚠️ Needs Review
+**Status:** ✅ Compliant — All tabindex values are 0 or -1; no positive values found
 
-#### **2.4.4 Link Purpose (Level A)**
+#### 2.4.4 Link Purpose (In Context) (Level A)
 - [ ] Link text describes destination or purpose
-- [ ] Avoid "Click here" or "Read more" alone
 
-**Status:** ⚠️ Needs Review
+**Status:** ⚠️ Partial
+- Most links have descriptive text or aria-labels
+- **Minor:** AccessibilityPage.jsx line 76: "Learn more" link — context available from card but link text alone is generic
+- No instances of "click here" found
 
-#### **2.4.5 Multiple Ways (Level AA)**
-- [ ] More than one way to find a page (search, sitemap, nav, links)
+#### 2.4.5 Multiple Ways (Level AA)
+- [ ] More than one way to find a page (nav, footer links, etc.)
 
-**Status:** ⚠️ Needs Review
+**Status:** ✅ Compliant — Navigation in navbar + footer links + sitemap in footer
 
-#### **2.4.6 Headings & Labels (Level AA)**
+#### 2.4.6 Headings and Labels (Level AA)
 - [ ] Headings describe page sections
 - [ ] Form labels describe input purpose
 
-**Status:** ⚠️ Needs Review
+**Status:** ✅ Compliant — Headings are descriptive, form labels clearly identify fields
 
-#### **2.4.7 Focus Visible (Level AA)**
-- [ ] Keyboard focus is always visible
+#### 2.4.7 Focus Visible (Level AA)
+- [ ] Keyboard focus indicator is always visible
 
 **Status:** ✅ Compliant
-- focus-visible styles implemented via Tailwind and global CSS
+- index.css:72–89: `:focus-visible` with 3px solid accent outline, 2px offset
+- Fallback `:focus` style for older browsers
+- Mouse-only focus correctly hidden via `:focus:not(:focus-visible)`
+- Forced-colors mode support at index.css:154
 
-#### **2.5.1 Pointer Gestures (Level A - NEW in 2.1/2.2)**
-- [ ] No path-dependent gestures (e.g., swipe to delete)
-- [ ] Single-click alternative provided
+#### 2.4.11 Focus Not Obscured (Minimum) (Level AA) — NEW in WCAG 2.2
+- [ ] Focused element is not entirely hidden by other content
 
-**Status:** ⚠️ Needs Review
+**Status:** ⚠️ Needs Manual Testing — No sticky footers or overlays detected that would obscure focus, but should test with sticky navbar
 
-#### **2.5.2 Pointer Cancellation (Level A - NEW in 2.1/2.2)**
-- [ ] Events trigger on pointer up, not down
-- [ ] User can abort by moving pointer away
+### Guideline 2.5 — Input Modalities
 
-**Status:** ⚠️ Needs Review
+#### 2.5.1 Pointer Gestures (Level A)
+- [ ] No path-dependent gestures (swipe, drag, etc.)
 
-#### **2.5.3 Label in Name (Level A - NEW in 2.1/2.2)**
-- [ ] Visible label text matches/is included in accessible name
-- [ ] Important for voice control users
+**Status:** ✅ Compliant — Carousels use button controls; no complex gestures
 
-**Status:** ⚠️ Needs Review
+#### 2.5.2 Pointer Cancellation (Level A)
+- [ ] Actions trigger on pointer up, not down
 
-#### **2.5.4 Motion Actuation (Level A - NEW in 2.1/2.2)**
-- [ ] Functionality not triggered by device motion alone
-- [ ] Keyboard/button alternative available
+**Status:** ✅ Likely Compliant — Standard button/link behavior used throughout
 
-**Status:** ✅ N/A (No motion-triggered functionality)
-
-#### **2.5.5 Target Size (Level AAA - NEW in 2.5)**
-- [ ] Interactive targets ≥ 44×44 CSS pixels (or equivalent area)
+#### 2.5.3 Label in Name (Level A)
+- [ ] Visible label text matches accessible name
 
 **Status:** ⚠️ Needs Review
 
-#### **2.5.6 Concurrent Input Mechanisms (Level AAA)**
-- [ ] Content doesn't restrict input modalities
-- [ ] Works with keyboard, mouse, touch, voice, etc.
+#### 2.5.4 Motion Actuation (Level A)
+- [ ] No device-motion-triggered features
 
-**Status:** ✅ Likely compliant
+**Status:** ✅ N/A — No motion-triggered functionality
+
+#### 2.5.7 Dragging Movements (Level AA) — NEW in WCAG 2.2
+- [ ] Dragging actions have non-dragging alternative
+
+**Status:** ✅ N/A — No drag interactions
+
+#### 2.5.8 Target Size (Minimum) (Level AA) — NEW in WCAG 2.2
+- [ ] Touch targets at least 24×24 CSS pixels
+
+**Status:** ✅ Compliant
+- Button component enforces min 44×44px on all variants (Button.jsx:111, 124, 161)
+- LocationButton: 44×44px, OrderCTA: 56×56px, Footer back-to-top: 44×44px
+- **Minor:** Carousel indicator dots (AboutPage.jsx:229, LocationImageCarousel.jsx:89) are only 8px — but per WCAG 2.5.8 exception, adjacent targets with sufficient spacing between them may be smaller
 
 ---
 
-## 3. Understandable (Content must be understandable)
+## 3. Understandable
 
-#### **3.1.1 Language of Page (Level A)**
-- [ ] Page language specified in `<html lang="en">`
-- [ ] Correct language code used
+> Information and operation of user interface must be understandable.
 
-**Status:** ✅ Compliant
-- Current: `lang="en"` ✓
+### Guideline 3.1 — Readable
 
-#### **3.1.2 Language of Parts (Level AA)**
-- [ ] Language changes marked up (e.g., `<span lang="fr">Bonjour</span>`)
+#### 3.1.1 Language of Page (Level A)
+- [ ] `<html lang="en">` present
 
-**Status:** ✅ N/A (Single language)
+**Status:** ✅ Compliant — index.html:2 has `lang="en"`
 
-#### **3.2.1 On Focus (Level A)**
-- [ ] No unexpected context changes when element receives focus
-- [ ] No auto-submission of forms
+#### 3.1.2 Language of Parts (Level AA)
+- [ ] Sections in other languages marked with `lang` attribute
 
-**Status:** ⚠️ Needs Review
+**Status:** ✅ N/A — Single-language site; borrowed terms (e.g., "Halal", "Zabiha") are commonly used in English
 
-#### **3.2.2 On Input (Level A)**
-- [ ] No unexpected context changes when user provides input
-- [ ] Form sections submit only on explicit user action
+### Guideline 3.2 — Predictable
 
-**Status:** ⚠️ Needs Review
+#### 3.2.1 On Focus (Level A)
+- [ ] No context change triggered solely by focus
 
-#### **3.2.3 Consistent Navigation (Level AA)**
-- [ ] Navigation is consistent across pages
-- [ ] Repeated components appear in same order
+**Status:** ✅ Compliant — All onFocus handlers only modify visual styles (hover effects)
 
-**Status:** ✅ Likely compliant
+#### 3.2.2 On Input (Level A)
+- [ ] No unexpected context changes on input
 
-#### **3.2.4 Consistent Identification (Level AA)**
-- [ ] Components with same function are identified consistently
+**Status:** ✅ Compliant — All onChange handlers update state only; no automatic navigation or submission
 
-**Status:** ✅ Likely compliant
+#### 3.2.3 Consistent Navigation (Level AA)
+- [ ] Navigation order consistent across pages
 
-#### **3.3.1 Error Identification (Level A)**
-- [ ] Form errors are identified and described
+**Status:** ✅ Compliant — Centralized nav config (src/config/navigation.js) used by Navbar/Footer
+
+#### 3.2.4 Consistent Identification (Level AA)
+- [ ] Same-function components identified consistently
+
+**Status:** ✅ Compliant — Unified Button component; consistent labeling ("Order Now", "Get Directions")
+
+#### 3.2.6 Consistent Help (Level A) — NEW in WCAG 2.2
+- [ ] Help/contact mechanisms in consistent location across pages
+
+**Status:** ✅ Compliant — Footer with contact info renders on all pages; Contact link in same navbar position
+
+### Guideline 3.3 — Input Assistance
+
+#### 3.3.1 Error Identification (Level A)
+- [ ] Form errors identified and described in text
 - [ ] Error location pointed out
 
 **Status:** ✅ Compliant
-- Contact forms use aria-invalid, aria-describedby, and inline error messages
-- Error containers use role="alert" with aria-live="assertive"
+- Both contact forms use `aria-invalid`, `aria-describedby`, inline error messages
+- Error containers use `role="alert"` with `aria-live="assertive"`
+- Specific error messages: "Name is required.", "Email is required.", "Message is required."
 
-#### **3.3.2 Labels or Instructions (Level A)**
-- [ ] Form inputs have labels or clear instructions
-- [ ] Required fields marked
+#### 3.3.2 Labels or Instructions (Level A)
+- [ ] All form inputs have visible labels
+- [ ] Required fields indicated
 
 **Status:** ✅ Compliant
-- All form inputs have associated labels with htmlFor
-- Required fields marked with asterisk (*)
+- All inputs have `<label htmlFor>` with matching `id`
+- Required fields marked with asterisk (*) and HTML `required` attribute
 
-#### **3.3.3 Error Suggestion (Level AA)**
-- [ ] Error suggestions provided automatically
-- [ ] No suggestion if it would compromise security
+#### 3.3.3 Error Suggestion (Level AA)
+- [ ] Suggestions provided when errors are detected
 
-**Status:** ⚠️ Needs Review
+**Status:** ⚠️ Partial
+- Required-field errors are clear ("Name is required.")
+- **Issue:** No custom email format validation — relies on browser `type="email"` validation only
+- No suggestions like "Please enter a valid email address (e.g., name@example.com)"
 
-#### **3.3.4 Error Prevention (Level AA)**
-- [ ] Forms allow review and confirmation
-- [ ] Legal submissions can be reversed
-- [ ] Data loss prevented
+#### 3.3.4 Error Prevention — Legal, Financial, Data (Level AA)
+- [ ] User can review/correct before final submission
 
-**Status:** ⚠️ Needs Review
+**Status:** ✅ N/A — Contact form only; no legal/financial transactions
 
-#### **3.3.5 Help (Level AAA)**
-- [ ] Contextual help available
-- [ ] Clear instructions provided
+#### 3.3.7 Redundant Entry (Level A) — NEW in WCAG 2.2
+- [ ] Users not asked to re-enter previously provided information
 
-**Status:** 🎯 Aspirational
+**Status:** ✅ Compliant — Single-step contact forms; no multi-step flows requiring redundant entry
 
-#### **3.4.1 Reading Level (Level AAA)**
-- [ ] Content below upper secondary level (Grade 9)
-- [ ] Or simpler version provided
+#### 3.3.8 Accessible Authentication (Minimum) (Level AA) — NEW in WCAG 2.2
+- [ ] No cognitive function test required for authentication
 
-**Status:** ⚠️ Needs Review
-
-#### **3.4.2 Pronunciation (Level AAA)**
-- [ ] Words with ambiguous pronunciation have clarification
-
-**Status:** 🎯 Aspirational
-
-#### **3.4.3 Abbreviations (Level A - NEW in 2.2)**
-- [ ] Abbreviations defined first use
-- [ ] Or abbreviation expanded in `title` or using `<abbr>`
-
-**Status:** ⚠️ Needs Review
+**Status:** ✅ Pass (with note)
+- hCaptcha used on contact form (ContactPage.jsx:299–309) — provides accessibility mode with audio challenges
+- This is a contact form, not authentication — WCAG 2.2 allows CAPTCHA for security/bot-prevention
+- Alternative contact methods (phone, email, in-person) available from same page
 
 ---
 
-## 4. Robust (Content must be robust & compatible)
+## 4. Robust
 
-#### **4.1.1 Parsing (Level A)**
-- [ ] Valid HTML (no duplicate IDs, proper nesting)
-- [ ] No malformed markup
+> Content must be robust enough to be interpreted reliably by assistive technologies.
 
-**Status:** ⚠️ Needs Review
-- Action: Run W3C HTML validator
+### Guideline 4.1 — Compatible
 
-#### **4.1.2 Name, Role, Value (Level A)**
-- [ ] All UI components have accessible name, role, and state
-- [ ] ARIA used correctly where native HTML insufficient
+#### 4.1.1 Parsing (Level A) — Obsolete in WCAG 2.2
+- Always passes in WCAG 2.2 (deprecated criterion)
+- No duplicate ID conflicts found between the two contact forms (App.jsx uses `contact-*` prefix)
+- **Minor:** BrandPatternBackground.jsx:8 uses `id="rm-swoosh"` — ensure single instance per page
 
-**Status:** ⚠️ Needs Review
-- Action: Audit ARIA implementation and semantic HTML
+#### 4.1.2 Name, Role, Value (Level A)
+- [ ] Custom components expose accessible name, role, state
 
-#### **4.1.3 Status Messages (Level AA - NEW in 2.1/2.2)**
-- [ ] Status messages announced to screen readers
-- [ ] `role="status"` or `aria-live="polite"` used
+**Status:** ⚠️ Partial
+- ✅ Mobile menu: `role="dialog"`, `aria-modal="true"`, `aria-label` (Navbar.jsx:242–244)
+- ✅ PWA prompt: `role="dialog"`, `aria-modal="true"`, `aria-labelledby`, `aria-describedby` (PWAInstallPrompt.jsx:190–193)
+- ✅ StandardizedItem: `aria-expanded`, `role="button"`, keyboard handlers (BasicView.jsx:73–74, 150, 155)
+- ✅ CategoryAccordion: `aria-expanded`, `aria-controls` (CategoryAccordionHeader.jsx:31–32)
+- **Issue:** RoCafePage.jsx line 175: `aria-controls` references `category-panel-${category.id}` but the controlled panel at line 180 has no matching `id` — broken ARIA reference
+- **Issue:** Footer.jsx line 394: `aria-describedby="footer-location-helper"` references non-existent element
 
-**Status:** ✅ Compliant
-- Contact form success uses role="status" with aria-live="polite"
-- Contact form errors use role="alert" with aria-live="assertive"
-- Toast notifications use aria-live regions
+#### 4.1.3 Status Messages (Level AA)
+- [ ] Dynamic status changes announced to assistive tech
 
-#### **4.1.4 Name, Role, Value for All Components (Level A - WCAG 3.0 Alignment)**
-- [ ] All custom components expose name, role, state via accessibility tree
-
-**Status:** ⚠️ Needs Review
+**Status:** ⚠️ Partial
+- ✅ Contact form success: `role="status"` + `aria-live="polite"` (App.jsx:531, ContactPage.jsx:217)
+- ✅ Contact form errors: `role="alert"` + `aria-live="assertive"` (App.jsx:536, ContactPage.jsx:229)
+- ✅ Toast notifications: `role="alert"` + `aria-live="polite"` (Toast.jsx:56–57)
+- ✅ Network status: `role="status"` + `aria-live="polite"` (NetworkStatus.jsx:35–36)
+- **Issue:** Loading states not announced — LiveHoursDisplay.jsx:178–192 and App.jsx:208–212 lack `aria-live` on loading indicators
 
 ---
 
 ## 5. Additional Compliance Standards
 
-### EN 301 549 (EAA) - European Accessibility Act
-- Aligns with WCAG 2.1 AA (currently; moving to WCAG 3.0)
-- **Key additions for 2025+:**
-  - ✅ WCAG 2.2 compliance
-  - ✅ Keyboard navigation (Level A)
-  - ✅ Focus visibility (Level AA)
-  - ✅ Text alternatives (Level A)
-  - ✅ Sufficient contrast (Level AA)
-  - ✅ No seizure risk (WCAG 2.3)
-  - ✅ Resizable text (Level AA)
-  - ✅ Non-text contrast (Level AA)
-  - ✅ Target size (Level AAA recommended)
+### EN 301 549 (EAA) — European Accessibility Act
+- Aligns with WCAG 2.1 AA (currently; moving to WCAG 2.2 alignment)
+- Roma Mart targets WCAG 2.2 AA, which exceeds EN 301 549 minimum
 
 ### ISO/IEC 40500
-- **Alignment:** WCAG 2.2 AA minimum (ISO/IEC 40500 is the ISO formalization of WCAG)
+- ISO/IEC 40500 is the ISO formalization of WCAG 2.0
+- Alignment maintained through WCAG 2.2 AA conformance
 - **Conformance levels:** A, AA, AAA
 - **Target for Roma Mart:** AA
 
 ### AODA (Accessibility for Ontarians with Disabilities Act)
-- **Requirement:** WCAG 2.0 AA compliance (we exceed with 2.2 AA)
+- **Requirement:** WCAG 2.0 AA compliance (we exceed with 2.2 AA target)
 - **Scope:** Websites, web applications, digital materials
 - **Deadline:** Already in effect; ongoing compliance mandatory
 - **Enforcement:** Customer complaints, accessibility audits, penalties up to $50,000
 
 ---
 
-## 6. Implementation Roadmap
+## 6. Audit Results Summary
 
-### Phase 1: Critical Issues (Fix Immediately)
-- [ ] **Contrast Ratios:** Test and fix navy/yellow on white (likely need 2nd. palette)
-- [x] **Keyboard Navigation:** Focus styles via Tailwind focus-visible, focus traps on modal dialogs (useFocusTrap hook)
-- [x] **Skip Link:** "Skip to main content" link implemented in App.jsx
-- [ ] **Page Title:** Update to descriptive title
-- [x] **Form Labels:** All inputs have associated labels with htmlFor, required fields marked with asterisk
-- [ ] **Image Alt Text:** Audit all images for descriptive alt text
-- [ ] **Semantic HTML:** Verify proper heading hierarchy, use `<nav>`, `<main>`, `<section>`, etc.
+### Self-Audit: February 7, 2026
 
-**Effort:** 2–4 hours
-**Impact:** High – fixes majority of WCAG Level A failures
+| Criterion | Level | Status | Action Required |
+|-----------|-------|--------|-----------------|
+| 1.1.1 Non-text Content | A | ⚠️ Partial | Add `aria-hidden="true"` to decorative icons |
+| 1.3.1 Info and Relationships | A | ⚠️ Partial | Fix heading hierarchy skips (h2→h4) |
+| 1.3.3 Sensory Characteristics | A | ✅ Pass | — |
+| 1.3.4 Orientation | AA | ✅ Pass | — |
+| 1.3.5 Identify Input Purpose | AA | ❌ Fail | Add `autocomplete` to name/email/phone fields |
+| 1.4.1 Use of Color | A | ⚠️ Review | Verify errors not color-only |
+| 1.4.3 Contrast (Minimum) | AA | ⚠️ Partial | Yellow `#E4B340` on white fails; other combos pass |
+| 1.4.4 Resize Text | AA | ⚠️ Review | Manual 200% zoom test needed |
+| 1.4.5 Images of Text | AA | ✅ Pass | — |
+| 1.4.10 Reflow | AA | ⚠️ Review | Manual 320px test needed |
+| 1.4.11 Non-text Contrast | AA | ⚠️ Review | Manual measurement needed |
+| 1.4.12 Text Spacing | AA | ✅ Pass | Relative units used |
+| 1.4.13 Content on Hover/Focus | AA | ⚠️ Review | Manual test needed |
+| 2.1.1 Keyboard | A | ✅ Pass | — |
+| 2.1.2 No Keyboard Trap | A | ✅ Pass | — |
+| 2.1.4 Character Key Shortcuts | A | ✅ N/A | — |
+| 2.2.1 Timing Adjustable | A | ❌ Fail | Add pause control to carousels |
+| 2.2.2 Pause, Stop, Hide | A | ❌ Fail | Same as 2.2.1 |
+| 2.3.1 Three Flashes | A | ✅ Pass | — |
+| 2.4.1 Bypass Blocks | A | ✅ Pass | — |
+| 2.4.2 Page Titled | A | ⚠️ Partial | Verify default title in index.html |
+| 2.4.3 Focus Order | A | ✅ Pass | — |
+| 2.4.4 Link Purpose (Context) | A | ⚠️ Minor | Some "Learn more" links lack full context |
+| 2.4.5 Multiple Ways | AA | ✅ Pass | — |
+| 2.4.6 Headings and Labels | AA | ✅ Pass | — |
+| 2.4.7 Focus Visible | AA | ✅ Pass | — |
+| 2.4.11 Focus Not Obscured | AA | ⚠️ Review | Manual test with sticky nav needed |
+| 2.5.1 Pointer Gestures | A | ✅ Pass | — |
+| 2.5.2 Pointer Cancellation | A | ✅ Pass | — |
+| 2.5.3 Label in Name | A | ⚠️ Review | Manual test needed |
+| 2.5.4 Motion Actuation | A | ✅ N/A | — |
+| 2.5.7 Dragging Movements | AA | ✅ N/A | — |
+| 2.5.8 Target Size (Minimum) | AA | ✅ Pass | 44px minimum enforced; carousel dots noted |
+| 3.1.1 Language of Page | A | ✅ Pass | — |
+| 3.1.2 Language of Parts | AA | ✅ N/A | — |
+| 3.2.1 On Focus | A | ✅ Pass | — |
+| 3.2.2 On Input | A | ✅ Pass | — |
+| 3.2.3 Consistent Navigation | AA | ✅ Pass | — |
+| 3.2.4 Consistent Identification | AA | ✅ Pass | — |
+| 3.2.6 Consistent Help | A | ✅ Pass | — |
+| 3.3.1 Error Identification | A | ✅ Pass | — |
+| 3.3.2 Labels or Instructions | A | ✅ Pass | — |
+| 3.3.3 Error Suggestion | AA | ⚠️ Partial | Add email format validation message |
+| 3.3.4 Error Prevention | AA | ✅ N/A | — |
+| 3.3.7 Redundant Entry | A | ✅ Pass | — |
+| 3.3.8 Accessible Authentication | AA | ✅ Pass | hCaptcha with accessibility mode; alternative contact methods available |
+| 4.1.2 Name, Role, Value | A | ⚠️ Partial | Fix broken `aria-controls` in RoCafePage, broken `aria-describedby` in Footer |
+| 4.1.3 Status Messages | AA | ⚠️ Partial | Add `aria-live` to loading states |
 
-### Phase 2: Standard Compliance (Implement for AA)
-- [x] **Error Messages:** Add proper error identification & suggestions (aria-live, aria-invalid, aria-describedby on contact forms)
-- [ ] **Focus Indicators:** Ensure 3:1 contrast on focus outline
-- [ ] **Non-Text Contrast:** Fix UI component contrast (3:1)
-- [x] **Reduced Motion:** Respect `prefers-reduced-motion` media query (hero animations use `useReducedMotion()` from Framer Motion)
-- [ ] **Resizable Text:** Test at 200% zoom
-- [ ] **Link Purpose:** Ensure all links have clear text/context
-- [ ] **Multiple Navigation Methods:** Add sitemap or search
-- [x] **ARIA Implementation:** Add ARIA labels where semantic HTML insufficient (focus traps, dialog roles, aria-modal on mobile nav and PWA prompt, aria-label on footer social icons)
+### Counts
+- ✅ **Pass / N/A:** 29
+- ⚠️ **Partial / Needs Review:** 15
+- ❌ **Fail:** 3
 
-**Effort:** 4–6 hours
-**Impact:** High – achieves WCAG 2.2 AA + ISO 40500 + AODA compliance
+### Critical Fixes Required (for AA conformance)
+1. **1.3.5:** Add `autocomplete` attributes to name, email, phone form fields
+2. **2.2.1/2.2.2:** Add pause/play controls to auto-advancing carousels, or stop auto-play when `prefers-reduced-motion` is set
+3. **4.1.2:** Fix broken `aria-controls` reference in RoCafePage accordion; fix broken `aria-describedby` in Footer
 
-### Phase 3: Enhanced & Future-Ready (AAA + WCAG 3.0)
-- [ ] **Enhanced Contrast:** Test for 7:1 ratios where possible
-- [ ] **Target Size:** Ensure buttons/links ≥ 44×44 px
-- [ ] **Color Palette Alternatives:** Provide dark mode, high-contrast mode
-- [ ] **Animated Alternatives:** Provide pause/stop for animations
-- [ ] **Status Messages:** Use `aria-live` for dynamic content updates
-- [ ] **Help & Instructions:** Add contextual help for complex features
-- [ ] **WCAG 3.0 Alignment:** Implement outcome-based checks (e.g., "Can the user perceive all content?")
+### High Priority Fixes
+4. **1.1.1:** Add `aria-hidden="true"` to decorative Lucide icons across ContactPage, LocationsPage, AccessibilityPage, App.jsx
+5. **1.3.1:** Fix heading hierarchy — change `<h4>` to `<h3>` in contact sections (App.jsx, ContactPage.jsx)
+6. **1.4.3:** Address yellow accent text on white backgrounds (consider using `#B8860B` or `--color-on-accent` text for accent links)
+7. **4.1.3:** Add `aria-live="polite"` to loading state containers
 
-**Effort:** 4–8 hours
-**Impact:** Premium accessibility – exceeds legal requirements, sets industry standard
-
-### Phase 4: Automation & Testing
-- [ ] **ESLint Plugin (jsx-a11y):** Add to CI/CD
-- [ ] **Automated Tests:** axe-core, pa11y, or similar in CI
-- [ ] **Manual Audits:** Quarterly accessibility reviews
-- [ ] **User Testing:** Test with actual assistive tech users
-- [ ] **Compliance Monitoring:** Track WCAG 3.0 & future standards
-
-**Effort:** 2–4 hours setup; ongoing maintenance
-**Impact:** Sustained compliance, catch regressions early
+### Improvements
+8. **3.3.3:** Add email format validation with descriptive error message
+9. **2.4.4:** Add `aria-label` to generic "Learn more" links
 
 ---
 
-## 7. File Structure for Compliance
+## 7. Implementation Roadmap
+
+### Phase 1: Critical Fixes (AA Blockers)
+- [ ] Add `autoComplete="name"`, `"email"`, `"tel"` to form inputs (ContactPage.jsx, App.jsx)
+- [ ] Add pause/play control or `prefers-reduced-motion` check to carousel auto-advance (AboutPage.jsx, LocationImageCarousel.jsx)
+- [ ] Add `id={`category-panel-${category.id}`}` to accordion panel in RoCafePage.jsx
+- [ ] Add or remove `aria-describedby` helper text element in Footer.jsx
+
+### Phase 2: High Priority
+- [x] **Skip Link:** Implemented in App.jsx
+- [x] **Focus Visible:** `:focus-visible` styles in index.css
+- [x] **Keyboard Navigation:** Focus traps on modal dialogs (useFocusTrap hook)
+- [x] **Error Messages:** `aria-invalid`, `aria-describedby`, `aria-live` on contact forms
+- [x] **ARIA Implementation:** Dialog roles, aria-modal on mobile nav and PWA prompt, aria-label on footer social icons
+- [x] **Reduced Motion:** `prefers-reduced-motion` respected via CSS and Framer Motion `useReducedMotion()`
+- [ ] Add `aria-hidden="true"` to decorative Lucide icons
+- [ ] Fix heading hierarchy (h4 → h3 in contact sections)
+- [ ] Fix yellow-on-white contrast for accent text links
+- [ ] Add `aria-live="polite"` to loading state containers
+
+### Phase 3: Manual Testing Required
+- [ ] Contrast ratio verification with color contrast analyzer tool
+- [ ] 200% zoom test across all pages
+- [ ] 320px viewport width reflow test
+- [ ] Screen reader testing (NVDA/JAWS on Windows, VoiceOver on Mac)
+- [ ] Keyboard-only navigation end-to-end walkthrough
+- [ ] Test with `prefers-reduced-motion` enabled — verify carousels stop
+
+### Phase 4: Automation & Ongoing
+- [ ] Set up ESLint jsx-a11y plugin in CI/CD
+- [ ] Add axe-core or pa11y automated testing
+- [ ] Quarterly accessibility audits
+- [ ] Monitor WCAG 3.0 draft updates
+
+---
+
+## 8. File Structure
 
 ```
 romamart.ca/
@@ -530,142 +550,91 @@ romamart.ca/
 │   │   ├── Navbar.jsx (mobile nav: dialog role, focus trap, aria-modal)
 │   │   ├── PWAInstallPrompt.jsx (PWA prompt: aria-modal, focus trap)
 │   │   ├── Footer.jsx (social icons: aria-label)
-│   │   └── AccessibilityPage.jsx (public accessibility statement)
+│   │   ├── AccessibilityPage.jsx (public accessibility statement)
+│   │   ├── Toast.jsx (role="alert", aria-live)
+│   │   └── NetworkStatus.jsx (role="status", aria-live)
 │   ├── pages/
 │   │   └── ContactPage.jsx (form validation, aria-live, aria-invalid)
 │   ├── App.jsx (skip link, contact form ARIA, semantic HTML)
-│   └── index.css (focus styles, reduced-motion)
+│   └── index.css (focus styles, reduced-motion, high-contrast)
 └── ...
 ```
 
 ---
 
-## 8. Testing Checklist
+## 9. Testing Checklist
 
 ### Automated Testing
-- [ ] **W3C HTML Validator:** https://validator.w3.org/
-- [ ] **axe DevTools:** https://www.deque.com/axe/devtools/
-- [ ] **WAVE (WebAIM):** https://wave.webaim.org/
-- [ ] **Lighthouse:** Chrome DevTools → Lighthouse → Accessibility
-- [ ] **Pa11y CLI:** `npx pa11y https://romamart.ca`
-- [ ] **Color Contrast Analyzer:** https://www.tpgi.com/color-contrast-checker/
+- [ ] axe DevTools: https://www.deque.com/axe/devtools/
+- [ ] WAVE (WebAIM): https://wave.webaim.org/
+- [ ] Lighthouse: Chrome DevTools → Lighthouse → Accessibility
+- [ ] Pa11y CLI: `npx pa11y https://romamart.ca`
+- [ ] Color Contrast Analyzer: https://www.tpgi.com/color-contrast-checker/
 
 ### Manual Testing
-- [ ] **Keyboard Navigation:** Tab through entire site, no traps
-- [ ] **Screen Reader:** NVDA (Windows), JAWS, or VoiceOver (Mac)
-- [ ] **Zoom Testing:** 200% and 400% zoom
-- [ ] **Color Blindness:** Simulate with browser extensions
-- [ ] **Reduced Motion:** Enable in OS, verify animations pause
-- [ ] **Touch Testing:** Mobile devices with screen reader enabled
-- [ ] **Browser Testing:** Chrome, Firefox, Safari, Edge
+- [ ] Keyboard Navigation: Tab through entire site, verify focus traps work
+- [ ] Screen Reader: NVDA (Windows), JAWS, or VoiceOver (Mac)
+- [ ] Zoom Testing: 200% and 400% zoom
+- [ ] Reduced Motion: Enable in OS, verify carousels stop and animations pause
+- [ ] Touch Testing: Mobile devices with screen reader enabled
+- [ ] Browser Testing: Chrome, Firefox, Safari, Edge
 
 ---
 
-## 9. Compliance Statements & Certifications
+## 10. Conformance Statement
 
 ### WCAG 2.2 AA Conformance Statement (Template)
 ```
 Roma Mart is committed to ensuring digital accessibility for people with disabilities.
-We strive to maintain and continually improve the accessibility of our website to conform to the Web Content Accessibility Guidelines (WCAG) 2.2 AA level.
+We strive to maintain and continually improve the accessibility of our website to conform
+to the Web Content Accessibility Guidelines (WCAG) 2.2 AA level.
 
-This website has been tested for conformance with:
+This website has been evaluated for conformance with:
 - WCAG 2.2 Level AA
 - Accessibility for Ontarians with Disabilities Act (AODA)
 - ISO/IEC 40500 (International standardization of WCAG)
 - EU Accessibility Act (EN 301 549)
+
+Known limitations:
+- Auto-advancing carousels on About page lack pause controls (fix in progress)
+- Some color contrast ratios for accent color on light backgrounds need remediation
 
 If you encounter any accessibility barriers or have feedback, please contact us at:
 accessibility@romamart.ca
 (382) 342-2000
 ```
 
-### EN 301 549 EAA Compliance Badge
-- Display on footer/about page when fully compliant
-- Link to compliance statement
-
-### ISO/IEC 40500 / WCAG 3.0 Monitoring
-- ISO/IEC 40500 is the ISO formalization of WCAG 2.0; alignment maintained through WCAG 2.2 AA conformance
-- Monitoring WCAG 3.0 draft for future adoption as the standard matures
-
 ---
 
-## 10. Recommended Tools & Resources
+## 11. Resources
 
-### ESLint Plugins
-```bash
-npm install --save-dev eslint-plugin-jsx-a11y
-```
-Update `.eslintrc.cjs`:
-```javascript
-module.exports = {
-  extends: ['plugin:jsx-a11y/recommended'],
-  rules: {
-    'jsx-a11y/alt-text': 'error',
-    'jsx-a11y/click-events-have-key-events': 'error',
-    'jsx-a11y/no-static-element-interactions': 'error',
-    'jsx-a11y/label-has-associated-control': 'error',
-    'jsx-a11y/aria-role': 'error',
-  }
-};
-```
+### Standards
+- W3C WCAG 2.2: https://www.w3.org/WAI/WCAG22/quickref/
+- WCAG 2.2 Understanding Docs: https://www.w3.org/WAI/WCAG22/Understanding/
+- AODA Standards: https://www.ontario.ca/laws/regulation/070191
+- EN 301 549: https://www.etsi.org/deliver/etsi_en/301500_301599/301549/
 
-### Monitoring & Compliance
-- **Deque Axe:** https://www.deque.com/axe/
-- **WebAIM:** https://webaim.org/
-- **TPGI Color Contrast Analyzer:** https://www.tpgi.com/
-- **NVDA Screen Reader:** https://www.nvaccess.org/
-- **Jest + axe-core:** Automated testing
-
-### Documentation & Learning
-- **W3C WCAG 2.2:** https://www.w3.org/WAI/WCAG22/quickref/
-- **WCAG 3.0 Draft:** https://www.w3.org/WAI/WCAG3/
-- **AODA Standards:** https://www.ontario.ca/laws/regulation/070191
-- **EN 301 549:** https://www.etsi.org/deliver/etsi_en/301500_301599/301549/
-
----
-
-## 11. Next Steps (Recommended Sequence)
-
-1. **Completed (Sprint 3):**
-   - [x] Focus traps on mobile nav and PWA install prompt (useFocusTrap hook)
-   - [x] ARIA labels on footer social icons
-   - [x] Form error identification with aria-live, aria-invalid, aria-describedby
-   - [x] Dialog roles and aria-modal on modal overlays
-   - [x] Skip-to-main-content link
-   - [x] Reduced motion support (useReducedMotion from Framer Motion)
-
-2. **Next Priority:**
-   - [ ] Run automated audits (Lighthouse, axe, WAVE)
-   - [ ] Test contrast ratios for brand colors
-   - [ ] Audit all images for descriptive alt text
-   - [ ] Update default page title to be descriptive
-   - [ ] Verify semantic HTML heading hierarchy
-
-3. **Following Priority:**
-   - [ ] Fix any contrast ratio failures
-   - [ ] Test at 200% zoom
-   - [ ] Add autocomplete attributes to form inputs
-   - [ ] Ensure all links have descriptive text/context
-
-4. **Ongoing:**
-   - [ ] Set up CI/CD with ESLint jsx-a11y plugin
-   - [ ] Quarterly accessibility audits
-   - [ ] Monitor WCAG 3.0 draft updates
+### Tools
+- Deque axe: https://www.deque.com/axe/
+- WebAIM: https://webaim.org/
+- TPGI Color Contrast Analyzer: https://www.tpgi.com/
+- NVDA Screen Reader: https://www.nvaccess.org/
 
 ---
 
 ## 12. Success Metrics
 
-- 🎯 **WCAG 2.2 AA:** Target zero Level A and AA failures on automated audit
-- ✅ **Keyboard Navigation:** All interactive elements accessible via keyboard, modal dialogs use focus traps
-- 🎯 **Contrast Ratios:** All text & UI components meet 4.5:1 (AA) — needs verification for brand colors
+- 🎯 **WCAG 2.2 AA:** Zero Level A and AA failures on automated audit — currently 3 failures, 15 needing review
+- ✅ **Keyboard Navigation:** All interactive elements keyboard accessible, modal dialogs use focus traps
+- 🎯 **Contrast Ratios:** All text meets 4.5:1 AA — yellow accent on white needs fix
 - ✅ **Screen Reader:** Form errors announced via aria-live, social icons labeled, dialog roles set
-- 🎯 **Zoom:** Content reflows correctly at 200%+ zoom — needs manual testing
+- 🎯 **Zoom:** Content reflows at 200%+ — needs manual testing
 - 🎯 **Automation:** ESLint jsx-a11y in CI — not yet set up
-- ✅ **Conformance Statement:** WCAG 2.2 AA + ISO/IEC 40500 + AODA + EN 301 549 conformance documented
+- ✅ **Conformance Statement:** WCAG 2.2 AA + ISO/IEC 40500 + AODA + EN 301 549 documented
 
 ---
 
 **Document Version:** 2.0
 **Last Updated:** February 7, 2026
+**Audit Performed:** February 7, 2026 (code-level self-audit)
 **Next Review:** May 2026
