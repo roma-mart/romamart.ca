@@ -12,6 +12,7 @@ export const useServiceWorker = () => {
 
   useEffect(() => {
     let updateInterval;
+    let cleanupControllerChange;
 
     // Register Service Worker
     const registerServiceWorker = async () => {
@@ -57,9 +58,13 @@ export const useServiceWorker = () => {
       registerServiceWorker();
 
       // Reload when the new SW takes control (standard pattern)
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
-        window.location.reload();
-      });
+      const handleControllerChange = () => window.location.reload();
+      navigator.serviceWorker.addEventListener('controllerchange', handleControllerChange);
+
+      // Clean up controllerchange listener
+      cleanupControllerChange = () => {
+        navigator.serviceWorker.removeEventListener('controllerchange', handleControllerChange);
+      };
     }
 
     // Online/offline status
@@ -71,6 +76,7 @@ export const useServiceWorker = () => {
 
     return () => {
       if (updateInterval) clearInterval(updateInterval);
+      if (cleanupControllerChange) cleanupControllerChange();
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
