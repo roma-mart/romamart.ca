@@ -149,10 +149,16 @@ npm run preview                # Preview production build
 - Update consent policy links to `/privacy` and `/cookies` before production cutover
 
 ### Service Worker (PWA)
-- `public/sw.js` handles offline caching, install prompts
-- Cache-first strategy for static assets
-- Network-first for API calls (when implemented)
-- Use `useServiceWorker` hook for registration
+- `public/sw.js` is the source template; Vite copies it to `dist/` during build
+- `scripts/prerender.js` injects hashed Vite bundle filenames into `dist/sw.js` via `/* __VITE_BUNDLE_ASSETS__ */` placeholder — enables offline app loading
+- Cache strategies: network-first for HTML/API, cache-first for static assets (JS/CSS/images)
+- Cache bounded by `MAX_CACHE_ENTRIES = 100` with `trimCache()` eviction
+- `CACHE_VERSION` in `sw.js` controls cache invalidation — bump when changing caching behavior
+- `self.skipWaiting()` is user-controlled via message handler only (not auto-called on install)
+- **Hooks:** `useServiceWorker()` from `src/hooks/useServiceWorker.js` — returns `{ registration, updateAvailable, skipWaiting, isOnline }`
+- **Components:**
+  - `PWAInstallPrompt` — engagement-based install prompt with focus trap, persists install state to localStorage
+  - `PWAUpdatePrompt` — persistent update notification card, wired in App.jsx with `updateAvailable`/`skipWaiting` from useServiceWorker
 
 ### External Services
 - Google Maps embeds use Places API (API key in `locations.js`)
@@ -318,6 +324,8 @@ Before going live on custom domain:
 | `scripts/check-quality.js` | Universal quality checker (1000+ rules) |
 | `scripts/check-checker-integrity.js` | Meta-checker for quality system |
 | `vite.config.js` | Build configuration and base path |
+| `public/sw.js` | Service worker source template (precache placeholder, caching strategies) |
+| `src/components/PWAUpdatePrompt.jsx` | SW update notification card |
 | `.github/dependabot.yml` | Automated dependency updates (npm weekly, GitHub Actions weekly) |
 
 ## Additional Resources

@@ -7,6 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.5.0] - 2026-02-07
+
+### Added
+- `PWAUpdatePrompt` component (`src/components/PWAUpdatePrompt.jsx`) — persistent update notification card with focus trap, ARIA alert role, and Refresh/Later actions
+- Build-time precache injection in `scripts/prerender.js` — scans `dist/assets/` for hashed Vite bundles and injects them into `dist/sw.js` PRECACHE_ASSETS array
+- `/* __VITE_BUNDLE_ASSETS__ */` placeholder in `public/sw.js` for build-time replacement
+- `trimCache()` function in service worker with `MAX_CACHE_ENTRIES = 100` to prevent unbounded cache growth
+- `controllerchange` listener in `useServiceWorker` hook for reliable SW update reload
+
+### Changed
+- Service worker CACHE_VERSION bumped from `roma-mart-v1` to `roma-mart-v2` (forces old cache cleanup)
+- `skipWaiting()` removed from install event — kept only in message handler for user-controlled updates via PWAUpdatePrompt
+- `useServiceWorker` hook `skipWaiting()` no longer calls `window.location.reload()` directly — reload triggered by `controllerchange` event (standard pattern)
+- `PWAInstallPrompt` now persists install state (`setIsInstalled(true)`) after user accepts — prompt never shows again after installation
+
+### Fixed
+- Removed broken `<link rel="stylesheet" href="/src/index.css">` from `public/offline.html` — dev-only path that 404d in production
+- Removed ~140 lines dead background sync code from `public/sw.js` (sync listener, IndexedDB helpers, analytics sync) — no code ever registered sync tags
+- Removed `useBackgroundSync` hook from `useServiceWorker.js` — wrong feature detection (`'sync' in navigator.serviceWorker` tests wrong object)
+- Cleaned up `ContactPage.jsx` — removed dead imports (`useBackgroundSync`, `getHCaptchaTheme`, `eslint-disable`, commented indexedDB import, unused `isOnline` and `showInfo`)
+- Fixed dual `self.skipWaiting()` race condition — was called in both install event and message handler
+
+### Removed
+- `useBackgroundSync` hook export from `src/hooks/useServiceWorker.js`
+- Background sync event listener and all IndexedDB helper functions from `public/sw.js`
+
+### Documentation
+- Updated `.github/copilot-instructions.md` — PWA section documents new components, build-time injection, and cache management
+
 ## [2.4.1] - 2026-02-07
 
 ### Added
@@ -355,6 +384,7 @@ Initial Create React App implementation. Deprecated and replaced by v2.0.0.
 
 | Version | Date         | Description                           |
 |---------|--------------|---------------------------------------|
+| 2.5.0   | Feb 7, 2026  | PWA resurrection: offline support, precache injection, update UI |
 | 2.4.1   | Feb 7, 2026  | DevOps cleanup: consolidated CI, Husky v9, lint-staged, commitlint, Dependabot |
 | 2.4.0   | Feb 7, 2026  | WCAG 2.2 AA: focus traps, form ARIA, heading hierarchy |
 | 2.3.3   | Feb 6, 2026  | Performance & LCP optimization |
