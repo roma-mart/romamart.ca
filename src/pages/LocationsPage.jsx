@@ -163,7 +163,7 @@ const LocationsPage = () => {
                         className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold"
                         style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)' }}
                       >
-                        <Building2 size={14} />
+                        <Building2 size={14} aria-hidden="true" />
                         HEADQUARTERS
                       </span>
                     )}
@@ -172,7 +172,7 @@ const LocationsPage = () => {
                         className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold"
                         style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)' }}
                       >
-                        <MapPin size={14} />
+                        <MapPin size={14} aria-hidden="true" />
                         {location.distanceText}
                       </span>
                     )}
@@ -196,7 +196,7 @@ const LocationsPage = () => {
 
                 <div className="space-y-6">
                   <div className="flex gap-4">
-                    <MapPin size={24} style={{ color: 'var(--color-icon)' }} className="flex-shrink-0 mt-1" />
+                    <MapPin size={24} aria-hidden="true" style={{ color: 'var(--color-icon)' }} className="flex-shrink-0 mt-1" />
                     <div className="flex-1">
                       <h3 className="font-bold mb-1" style={textColor}>Address</h3>
                       <p className="font-inter mb-2" style={mutedTextColor}>{location.address}</p>
@@ -231,7 +231,7 @@ const LocationsPage = () => {
                   />
 
                   <div className="flex gap-4">
-                    <Phone size={24} style={{ color: 'var(--color-icon)' }} className="flex-shrink-0 mt-1" />
+                    <Phone size={24} aria-hidden="true" style={{ color: 'var(--color-icon)' }} className="flex-shrink-0 mt-1" />
                     <div className="flex-1">
                       <h3 className="font-bold mb-1" style={textColor}>Phone</h3>
                       <div className="flex items-center gap-2 flex-wrap">

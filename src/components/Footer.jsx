@@ -190,12 +190,12 @@ export default function Footer() {
               ) : (
                 <div className="text-4xl mb-3">⭐⭐⭐⭐⭐</div>
               )}
-              <h3 className="text-2xl font-bold mb-3" style={{ 
+              <p className="text-2xl font-bold mb-3" style={{ 
                 color: 'var(--color-heading)',
                 fontFamily: 'var(--font-heading)'
               }}>
                 See What Our Customers Say
-              </h3>
+              </p>
               <p className="text-base mb-6 max-w-xl mx-auto leading-relaxed" style={{ 
                 color: 'var(--color-text-muted)'
               }}>
@@ -285,7 +285,7 @@ export default function Footer() {
         <div className="col-span-1 md:col-span-2 grid grid-cols-2 gap-8">
           {/* <div className="grid grid-cols-2 md:grid-cols-2 gap-12"> */}
             <div className="p-1">
-              <h4 className="font-heading text-lg mb-6" style={{ color: 'var(--color-on-footer)' }}>Pages</h4>
+              <p className="font-heading text-lg mb-6" style={{ color: 'var(--color-on-footer)' }}>Pages</p>
               <ul className="space-y-3 font-inter" style={{ color: 'var(--color-on-footer-muted)' }}>
                 {NAVIGATION_LINKS.filter(link => {
                   if (!link.showIn.footer) return false;
@@ -320,7 +320,7 @@ export default function Footer() {
               </ul>
             </div>
             <div className="p-1">
-              <h4 className="font-heading text-lg mb-6" style={{ color: 'var(--color-on-footer)' }}>Legal & Accessibility</h4>
+              <p className="font-heading text-lg mb-6" style={{ color: 'var(--color-on-footer)' }}>Legal & Accessibility</p>
               <ul className="space-y-2 font-inter" style={{ color: 'var(--color-on-footer-muted)' }}>
                 {NAVIGATION_LINKS.filter(link => {
                   if (!link.showIn.footer) return false;
@@ -412,6 +412,7 @@ export default function Footer() {
                   <path d="M6 8l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
+              <p id="footer-location-helper" className="sr-only">Select your preferred Roma Mart location to see relevant contact information</p>
 
             <div className="mt-2 text-xs font-inter text-center" style={{ color: 'var(--color-on-footer-subtle)', width: '100%' }}>
               {isAutoMode ? (

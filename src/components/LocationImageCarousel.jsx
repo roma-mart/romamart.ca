@@ -4,7 +4,7 @@
  * Shows primary, exterior, and interior images
  * Keyboard, ARIA, and lazy loading support
  */
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import LazyImage from './LazyImage';
 
 const getImageList = (photos, locationName) => {
@@ -34,11 +34,16 @@ const LocationImageCarousel = ({ photos, locationName }) => {
     setCurrent(idx);
   }, []);
 
-  // Auto-advance every 5s
+  // Auto-advance every 5s, pause on hover/focus
+  const isPaused = useRef(false);
   useEffect(() => {
     if (images.length <= 1) return;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
     const timer = setInterval(() => {
-      setCurrent(prev => (prev + 1) % images.length);
+      if (!isPaused.current) {
+        setCurrent(prev => (prev + 1) % images.length);
+      }
     }, 5000);
     return () => clearInterval(timer);
   }, [images.length]);
@@ -48,7 +53,13 @@ const LocationImageCarousel = ({ photos, locationName }) => {
   if (!images.length) return null;
 
   return (
-    <div className="relative h-full min-h-[18rem] max-h-[28rem] rounded-2xl overflow-hidden shadow-lg mb-4">
+    <div
+      className="relative h-full min-h-[18rem] max-h-[28rem] rounded-2xl overflow-hidden shadow-lg mb-4"
+      onMouseEnter={() => { isPaused.current = true; }}
+      onMouseLeave={() => { isPaused.current = false; }}
+      onFocus={() => { isPaused.current = true; }}
+      onBlur={() => { isPaused.current = false; }}
+    >
       {/* Left/Right Scroll Buttons for Carousel */}
       {images.length > 1 && current > 0 && (
         <button

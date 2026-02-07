@@ -65,15 +65,15 @@ const AccessibilityPage = () => {
           ].map((item, idx) => (
             <div key={idx} className="rounded-lg p-8 transition-colors" style={{ border: '2px solid var(--color-border)' }} onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--color-accent)'} onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--color-border)'}>
               <div className="flex items-start gap-4 mb-4">
-                <CheckCircle size={32} style={{ color: 'var(--color-accent)' }} className="flex-shrink-0 mt-1" />
+                <CheckCircle size={32} aria-hidden="true" style={{ color: 'var(--color-accent)' }} className="flex-shrink-0 mt-1" />
                 <div>
                   <h3 className="text-xl font-bold" style={{ color: 'var(--color-heading)' }}>{item.title}</h3>
                   <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>Web accessibility standard</p>
                 </div>
               </div>
               <p className="mb-4 leading-relaxed" style={textColor}>Our website conforms to internationally recognized accessibility standards and practices.</p>
-              <a href={item.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 hover:underline font-medium" style={{ color: 'var(--color-accent)' }}>
-                Learn more <ExternalLink size={16} />
+              <a href={item.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 hover:underline font-medium" style={{ color: 'var(--color-accent)' }} aria-label={`Learn more about ${item.title}`}>
+                Learn more <ExternalLink size={16} aria-hidden="true" />
               </a>
             </div>
           ))}
@@ -90,7 +90,7 @@ const AccessibilityPage = () => {
         <div className="space-y-6">
           {['Keyboard Navigation','Visible Focus Indicators','Screen Reader Support','Skip Navigation','Enhanced Color Contrast','Reduced Motion Support','Resizable Text & Zoom','Touch-Friendly Targets'].map((title, i) => (
             <div className="flex gap-4" key={i}>
-              <CheckCircle size={24} style={{ color: 'var(--color-accent)' }} className="flex-shrink-0 mt-1" />
+              <CheckCircle size={24} aria-hidden="true" style={{ color: 'var(--color-accent)' }} className="flex-shrink-0 mt-1" />
               <div>
                 <h3 className="font-bold text-lg mb-1" style={textColor}>{title}</h3>
                 <p style={textColor}>
@@ -125,17 +125,17 @@ const AccessibilityPage = () => {
         <p className="mb-8 leading-relaxed" style={textColor}>If you encounter any accessibility barriers or have suggestions for improvement, we'd like to hear from you. Please contact us using any of the methods below:</p>
         <div className="grid md:grid-cols-3 gap-6">
           <div className="p-6 rounded-lg border" style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
-            <Mail size={32} className="mb-4" style={{ color: 'var(--color-icon)' }} />
+            <Mail size={32} aria-hidden="true" className="mb-4" style={{ color: 'var(--color-icon)' }} />
             <h3 className="font-bold text-lg mb-2" style={textColor}>Email</h3>
             <a href={`mailto:${COMPANY_DATA.location.contact.email}`} className="hover:underline break-all" style={{ color: 'var(--color-accent)' }}>{COMPANY_DATA.location.contact.email}</a>
           </div>
           <div className="p-6 rounded-lg border" style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
-            <Phone size={32} className="mb-4" style={{ color: 'var(--color-icon)' }} />
+            <Phone size={32} aria-hidden="true" className="mb-4" style={{ color: 'var(--color-icon)' }} />
             <h3 className="font-bold text-lg mb-2" style={textColor}>Phone</h3>
             <a href={`tel:${COMPANY_DATA.location.contact.phone}`} className="hover:underline" style={{ color: 'var(--color-accent)' }}>{COMPANY_DATA.location.contact.phone}</a>
           </div>
           <div className="p-6 rounded-lg border" style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
-            <MapPin size={32} className="mb-4" style={{ color: 'var(--color-icon)' }} />
+            <MapPin size={32} aria-hidden="true" className="mb-4" style={{ color: 'var(--color-icon)' }} />
             <h3 className="font-bold text-lg mb-2" style={textColor}>Visit Us</h3>
             <p className="text-sm" style={textColor}>{COMPANY_DATA.location.address.formatted}</p>
           </div>

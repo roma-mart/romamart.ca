@@ -37,7 +37,11 @@ const ContactPage = () => {
     const message = form.elements.message?.value?.trim();
     const errors = {};
     if (!name) errors.name = 'Name is required.';
-    if (!email) errors.email = 'Email is required.';
+    if (!email) {
+      errors.email = 'Email is required.';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errors.email = 'Please enter a valid email address (e.g., name@example.com).';
+    }
     if (!message) errors.message = 'Message is required.';
     if (Object.keys(errors).length > 0) {
       setFieldErrors(errors);
@@ -129,10 +133,10 @@ const ContactPage = () => {
             <div className="space-y-8">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'var(--color-surface)' }}>
-                  <MapPin style={{ color: 'var(--color-icon)' }} />
+                  <MapPin aria-hidden="true" style={{ color: 'var(--color-icon)' }} />
                 </div>
                 <div>
-                  <h4 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Visit Us</h4>
+                  <h3 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Visit Us</h3>
                   <p style={textColor}>{COMPANY_DATA.location.address.formatted}</p>
                   <a 
                     href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(COMPANY_DATA.location.address.formatted)}`}
@@ -149,10 +153,10 @@ const ContactPage = () => {
 
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'var(--color-surface)' }}>
-                  <Phone style={{ color: 'var(--color-icon)' }} />
+                  <Phone aria-hidden="true" style={{ color: 'var(--color-icon)' }} />
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Call Us</h4>
+                  <h3 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Call Us</h3>
                   <div className="flex items-center gap-2 flex-wrap">
                     <a href={`tel:${normalizePhoneForTel(COMPANY_DATA.location.contact.phone)}`} className="hover:underline" style={{ color: 'var(--color-accent)' }}>
                       {COMPANY_DATA.location.contact.phone}
@@ -168,10 +172,10 @@ const ContactPage = () => {
 
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'var(--color-surface)' }}>
-                  <Mail style={{ color: 'var(--color-icon)' }} />
+                  <Mail aria-hidden="true" style={{ color: 'var(--color-icon)' }} />
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Email Us</h4>
+                  <h3 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Email Us</h3>
                   <div className="flex items-center gap-2 flex-wrap">
                     <a href={`mailto:${COMPANY_DATA.location.contact.email}`} className="hover:underline" style={{ color: 'var(--color-accent)' }}>
                       {COMPANY_DATA.location.contact.email}
@@ -187,10 +191,10 @@ const ContactPage = () => {
 
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'var(--color-surface)' }}>
-                  <Clock style={{ color: 'var(--color-icon)' }} />
+                  <Clock aria-hidden="true" style={{ color: 'var(--color-icon)' }} />
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Hours</h4>
+                  <h3 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Hours</h3>
                   <LiveHoursDisplay 
                     placeId={COMPANY_DATA.location.google.placeId}
                     fallbackHours={{
@@ -243,6 +247,7 @@ const ContactPage = () => {
                   id="name"
                   name="name"
                   required
+                  autoComplete="name"
                   aria-invalid={!!fieldErrors.name}
                   aria-describedby={fieldErrors.name ? 'name-error' : undefined}
                   className="w-full px-4 py-3 rounded-lg border font-inter"
@@ -259,6 +264,7 @@ const ContactPage = () => {
                   id="email"
                   name="email"
                   required
+                  autoComplete="email"
                   aria-invalid={!!fieldErrors.email}
                   aria-describedby={fieldErrors.email ? 'email-error' : undefined}
                   className="w-full px-4 py-3 rounded-lg border font-inter"
@@ -274,6 +280,7 @@ const ContactPage = () => {
                   type="tel"
                   id="phone"
                   name="phone"
+                  autoComplete="tel"
                   className="w-full px-4 py-3 rounded-lg border font-inter"
                   style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)', color: 'var(--color-text)' }}
                   placeholder="(555) 123-4567"

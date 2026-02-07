@@ -67,16 +67,16 @@ const ServicesPage = () => {
           <li>
             <a
               href={`${BASE_URL}`}
-              style={{ color: 'var(--color-accent)', opacity: 0.7 }}
-              onMouseOver={e => e.currentTarget.style.color = 'var(--color-accent-hover)'}
-              onFocus={e => e.currentTarget.style.color = 'var(--color-accent-hover)'}
-              onMouseOut={e => e.currentTarget.style.color = 'var(--color-accent)'}
-              onBlur={e => e.currentTarget.style.color = 'var(--color-accent)'}
+              style={{ color: 'var(--color-text-muted)' }}
+              onMouseOver={e => e.currentTarget.style.color = 'var(--color-accent)'}
+              onFocus={e => e.currentTarget.style.color = 'var(--color-accent)'}
+              onMouseOut={e => e.currentTarget.style.color = 'var(--color-text-muted)'}
+              onBlur={e => e.currentTarget.style.color = 'var(--color-text-muted)'}
             >
               Home
             </a>
           </li>
-          <li aria-hidden="true"><ChevronRight size={16} style={{ color: 'var(--color-accent)', opacity: 0.7 }} /></li>
+          <li aria-hidden="true"><ChevronRight size={16} style={{ color: 'var(--color-text-muted)' }} /></li>
           <li aria-current="page" className="font-semibold" style={textColor}>Services</li>
         </ol>
       </nav>
@@ -141,7 +141,7 @@ const ServicesPage = () => {
       {/* Compliance Notice with SFOA Signage - Keep existing */}
       <section className="max-w-7xl mx-auto px-4 mt-16">
         <div className="p-8 rounded-xl border" style={{ backgroundColor: 'var(--color-bg)', borderColor: 'var(--color-border)' }}>
-          <h3 className="text-2xl mb-6" style={{ color: 'var(--color-heading)' }}>Age-Restricted Products Compliance</h3>
+          <h2 className="text-2xl mb-6" style={{ color: 'var(--color-heading)' }}>Age-Restricted Products Compliance</h2>
           
           <div className="grid md:grid-cols-2 gap-8 mb-6">
             {/* Tobacco/Vape Section */}

@@ -206,8 +206,8 @@ const RoCafeSection = ({ menuItems, loading }) => {
             {/* Featured Menu Items with StandardizedItem */}
             <div className="space-y-3 mb-8">
               {loading ? (
-                <div className="text-center py-4" style={{ color: 'var(--color-text-on-primary)' }}>
-                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2" style={{ borderColor: 'var(--color-accent)' }}></div>
+                <div className="text-center py-4" role="status" aria-live="polite" style={{ color: 'var(--color-text-on-primary)' }}>
+                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2" aria-hidden="true" style={{ borderColor: 'var(--color-accent)' }}></div>
                   <p className="mt-2 text-sm font-inter">Loading menu...</p>
                 </div>
               ) : (
@@ -238,7 +238,7 @@ const RoCafeSection = ({ menuItems, loading }) => {
             <div className="relative aspect-square rounded-full overflow-hidden border-8 border-white/5 shadow-2xl">
                <img 
                  src={getAssetUrl('/stickers-rocafe-lightblue.png')}
-                 alt="RoCafe"
+                 alt="RoCafé sticker logo in light blue"
                  className="w-full h-full object-cover hover:scale-110 transition-transform duration-700"
                  loading="lazy"
                />
@@ -413,7 +413,11 @@ const ContactSection = () => {
     const message = form.elements.message?.value?.trim();
     const errors = {};
     if (!name) errors.name = 'Name is required.';
-    if (!email) errors.email = 'Email is required.';
+    if (!email) {
+      errors.email = 'Email is required.';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errors.email = 'Please enter a valid email address (e.g., name@example.com).';
+    }
     if (!message) errors.message = 'Message is required.';
     if (Object.keys(errors).length > 0) {
       setFieldErrors(errors);
@@ -468,10 +472,10 @@ const ContactSection = () => {
             <div className="space-y-8">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'var(--color-surface)' }}>
-                  <MapPin style={{ color: 'var(--color-icon)' }} />
+                  <MapPin aria-hidden="true" style={{ color: 'var(--color-icon)' }} />
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Visit Us</h4>
+                  <h3 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Visit Us</h3>
                   <p className="mb-2" style={textColor}>{primaryLocation.address.formatted}</p>
                   <CopyButton 
                     text={primaryLocation.address.formatted}
@@ -484,10 +488,10 @@ const ContactSection = () => {
 
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'var(--color-surface)' }}>
-                  <Phone style={{ color: 'var(--color-icon)' }} />
+                  <Phone aria-hidden="true" style={{ color: 'var(--color-icon)' }} />
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Call Us</h4>
+                  <h3 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Call Us</h3>
                   <div className="flex items-center gap-2 flex-wrap">
                     <a href={`tel:${COMPANY_DATA.location.contact.phone}`} className="hover:underline" style={{ color: 'var(--color-accent)' }}>
                       {COMPANY_DATA.location.contact.phone}
@@ -503,10 +507,10 @@ const ContactSection = () => {
 
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'var(--color-surface)' }}>
-                  <Clock style={{ color: 'var(--color-icon)' }} />
+                  <Clock aria-hidden="true" style={{ color: 'var(--color-icon)' }} />
                 </div>
                 <div>
-                  <h4 className="font-bold text-lg" style={{ color: 'var(--color-accent)' }}>Hours</h4>
+                  <h3 className="font-bold text-lg" style={{ color: 'var(--color-accent)' }}>Hours</h3>
                   <LiveHoursDisplay
                     placeId={primaryLocation.google.placeId}
                     fallbackHours={{
@@ -553,6 +557,7 @@ const ContactSection = () => {
                   name="name"
                   id="contact-name"
                   required
+                  autoComplete="name"
                   aria-invalid={!!fieldErrors.name}
                   aria-describedby={fieldErrors.name ? 'contact-name-error' : undefined}
                   className="w-full px-4 py-3 rounded-lg border focus:border_navy-500 focus:ring-2 focus:ring_navy-200 outline-none transition-all"
@@ -569,6 +574,7 @@ const ContactSection = () => {
                   name="email"
                   id="contact-email"
                   required
+                  autoComplete="email"
                   aria-invalid={!!fieldErrors.email}
                   aria-describedby={fieldErrors.email ? 'contact-email-error' : undefined}
                   className="w-full px-4 py-3 rounded-lg border focus:border_navy-500 focus:ring-2 focus:ring_navy-200 outline-none transition-all"

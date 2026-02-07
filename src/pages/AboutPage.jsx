@@ -26,10 +26,15 @@ const AboutPage = () => {
   
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const isCarouselPaused = useRef(false);
 
   useEffect(() => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
     const interval = setInterval(() => {
-      setCurrentImageIndex((prev) => (prev + 1) % heroImages.length);
+      if (!isCarouselPaused.current) {
+        setCurrentImageIndex((prev) => (prev + 1) % heroImages.length);
+      }
     }, 5000);
     return () => clearInterval(interval);
   }, [heroImages.length]);
@@ -180,7 +185,13 @@ const AboutPage = () => {
           </div>
 
           {/* Image Carousel */}
-          <div className="relative h-96 rounded-3xl overflow-hidden shadow-2xl">
+          <div
+            className="relative h-96 rounded-3xl overflow-hidden shadow-2xl"
+            onMouseEnter={() => { isCarouselPaused.current = true; }}
+            onMouseLeave={() => { isCarouselPaused.current = false; }}
+            onFocus={() => { isCarouselPaused.current = true; }}
+            onBlur={() => { isCarouselPaused.current = false; }}
+          >
             {/* Left/Right Scroll Buttons for Carousel */}
             {heroImages.length > 1 && currentImageIndex > 0 && (
               <button

@@ -177,7 +177,7 @@ const RoCafePage = () => {
 
               {/* Category Items (Expandable) */}
               {expandedCategory === category.id && (
-                <div className="px-6 pb-6 pt-6 border-t" style={{ borderColor: 'var(--color-border)' }}>
+                <div id={`category-panel-${category.id}`} className="px-6 pb-6 pt-6 border-t" style={{ borderColor: 'var(--color-border)' }}>
                   {category.items.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                       {category.items.map((item) => (
