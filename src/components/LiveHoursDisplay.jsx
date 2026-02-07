@@ -262,11 +262,13 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
     );
   }, [error, isLoading, displayHours, showStatus, isOpenNow, fallbackGrouped, renderExceptions, renderGroupedLines]);
 
+  const handleRefresh = useCallback(() => refetch({ force: true }), [refetch]);
+
   const refreshButton = showRefreshOnError && error ? (
     <button
       type="button"
-      onClick={() => refetch({ force: true })}
-      className="mt-2 text-xs hover:underline flex items-center gap-1"
+      onClick={handleRefresh}
+      className="mt-2 px-3 py-2 min-h-[44px] text-xs hover:underline flex items-center gap-1 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 rounded"
       style={{ color: 'var(--color-accent)' }}
       aria-label="Refresh hours"
     >

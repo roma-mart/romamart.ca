@@ -2,7 +2,7 @@
  * FooterLocation.jsx
  * Location selector, nearest store detection, and local time display for the Footer.
  */
-import { useState, useMemo } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { MapPin } from 'lucide-react';
 import COMPANY_DATA from '../config/company_data';
 import LocationButton from './LocationButton';
@@ -55,6 +55,10 @@ export default function FooterLocation({ locations, nearestLocationId }) {
 
   const currentLocation = getCurrentLocation();
   const isAutoMode = selectedLocationId === 'auto';
+
+  const handleDetectNearest = useCallback(() => {
+    setSelectedLocationId('auto');
+  }, []);
 
   return (
     <div className="mb-8 max-w-md mx-auto">
@@ -156,9 +160,7 @@ export default function FooterLocation({ locations, nearestLocationId }) {
           <div className="mt-8 flex justify-center">
             <LocationButton
               ariaLabel="Detect Nearest Store"
-              onClick={() => {
-                setSelectedLocationId('auto');
-              }}
+              onClick={handleDetectNearest}
             >
               Detect Nearest Store
             </LocationButton>

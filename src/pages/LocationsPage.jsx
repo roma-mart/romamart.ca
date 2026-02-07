@@ -83,9 +83,13 @@ const LocationsPage = () => {
     distanceText: Number.isFinite(loc.distance) ? formatDistance(loc.distance) : null
   }));
 
-  const handleLoadMap = (locationId) => {
+  const handleLoadMap = useCallback((locationId) => {
     setUserLoadedMaps(prev => (prev.includes(locationId) ? prev : [...prev, locationId]));
-  };
+  }, []);
+
+  const handleLoadMapClick = useCallback((e) => {
+    handleLoadMap(e.currentTarget.dataset.locationId);
+  }, [handleLoadMap]);
 
   return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>
@@ -330,8 +334,9 @@ const LocationsPage = () => {
                         {location.mapUrl ? (
                           <button
                             type="button"
-                            onClick={() => handleLoadMap(location.id)}
-                            className="px-4 py-2 rounded-full text-sm font-semibold"
+                            data-location-id={location.id}
+                            onClick={handleLoadMapClick}
+                            className="px-4 py-2 min-h-[44px] rounded-full text-sm font-semibold focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
                             style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)' }}
                             aria-label={`Load interactive map for ${location.name}`}
                           >

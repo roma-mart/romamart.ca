@@ -132,7 +132,7 @@ const ImageCarousel = ({
               key={idx}
               type="button"
               onClick={selectHandlers[idx]}
-              className="min-w-[44px] min-h-[44px] flex items-center justify-center"
+              className="min-w-[44px] min-h-[44px] flex items-center justify-center focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 rounded-full"
               aria-label={`View image ${idx + 1}`}
             >
               <span

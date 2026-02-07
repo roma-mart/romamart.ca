@@ -94,6 +94,16 @@ const AboutPage = () => {
     setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 8);
   }, []);
 
+  const handleScrollLeft = useCallback(() => {
+    const el = teamScrollRef.current;
+    if (el) el.scrollBy({ left: -window.innerWidth * 0.7, behavior: 'smooth' });
+  }, []);
+
+  const handleScrollRight = useCallback(() => {
+    const el = teamScrollRef.current;
+    if (el) el.scrollBy({ left: window.innerWidth * 0.7, behavior: 'smooth' });
+  }, []);
+
   useEffect(() => {
     const el = teamScrollRef.current;
     if (!el) return;
@@ -221,10 +231,7 @@ const AboutPage = () => {
               type="button"
               aria-label="Scroll left"
               className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-full shadow p-2 flex items-center justify-center focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 md:hidden"
-              onClick={() => {
-                const el = teamScrollRef.current;
-                if (el) el.scrollBy({ left: -window.innerWidth * 0.7, behavior: 'smooth' });
-              }}
+              onClick={handleScrollLeft}
             >
               <ChevronLeft size={28} style={{ color: 'var(--color-accent)' }} />
             </button>
@@ -234,10 +241,7 @@ const AboutPage = () => {
               type="button"
               aria-label="Scroll right"
               className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-full shadow p-2 flex items-center justify-center focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 md:hidden"
-              onClick={() => {
-                const el = teamScrollRef.current;
-                if (el) el.scrollBy({ left: window.innerWidth * 0.7, behavior: 'smooth' });
-              }}
+              onClick={handleScrollRight}
             >
               <ChevronRight size={28} style={{ color: 'var(--color-accent)' }} />
             </button>

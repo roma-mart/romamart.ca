@@ -104,7 +104,7 @@ const VARIANT_STYLES = {
     fontWeight: 700,
     fontFamily: 'var(--font-heading)',
     border: 'none',
-    borderRadius: '9999px', // fully rounded
+    borderRadius: 'var(--radius-full)',
     boxShadow: '0 4px 16px var(--color-accent-shadow, rgba(228,179,64,0.15))',
     transition: 'all 0.2s',
     padding: '12px 28px',
@@ -117,7 +117,7 @@ const VARIANT_STYLES = {
     fontWeight: 700,
     fontFamily: 'var(--font-heading)',
     border: 'none',
-    borderRadius: '9999px', // fully rounded
+    borderRadius: 'var(--radius-full)',
     boxShadow: '0 4px 16px var(--color-accent-shadow, rgba(228,179,64,0.15))',
     transition: 'all 0.2s',
     padding: '12px 28px',
@@ -161,7 +161,7 @@ const Button = React.forwardRef(({
     minHeight: 44,
     minWidth: 44,
     transition: 'background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s',
-    borderRadius: 12,
+    borderRadius: 'var(--radius-xl)',
     padding: variant === 'icon' ? 8 : '12px 28px',
     cursor: disabled ? 'not-allowed' : 'pointer',
     opacity: disabled ? 0.6 : 1,
@@ -199,7 +199,7 @@ const Button = React.forwardRef(({
         {icon && iconPosition === 'left' && isNavlink && <span style={{ marginRight: children ? 10 : 0, display: 'inline-flex', alignItems: 'center', position: "relative", top: "2px" }}>{icon}</span>}
         {children && <span>{children}</span>}
         {icon && iconPosition === 'right' && <span style={{ marginLeft: 10, display: 'inline-flex', alignItems: 'center' }}>{icon}</span>}
-        {loadingProp && <span className="inline-block ml-2 animate-spin" style={{ width: 18, height: 18, border: '2px solid var(--color-accent)', borderTop: '2px solid transparent', borderRadius: '50%' }} aria-hidden="true"></span>}
+        {loadingProp && <span className="inline-block ml-2 animate-spin" style={{ width: 18, height: 18, border: '2px solid var(--color-accent)', borderTop: '2px solid transparent', borderRadius: 'var(--radius-full)' }} aria-hidden="true"></span>}
       </>
     );
   }

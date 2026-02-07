@@ -11,6 +11,7 @@ class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
     this.state = { hasError: false, error: null, errorInfo: null };
+    this.handleReload = () => window.location.reload();
   }
 
   static getDerivedStateFromError(error) {
@@ -72,7 +73,7 @@ class ErrorBoundary extends React.Component {
             <div className="flex gap-3 justify-center">
               <Button
                 variant="action"
-                onClick={() => window.location.reload()}
+                onClick={this.handleReload}
                 style={{
                   backgroundColor: 'var(--color-primary)',
                   color: 'var(--color-accent)',

@@ -2,7 +2,7 @@
  * Footer.jsx
  * Main footer component — orchestrates sub-components and renders brand/social/copyright sections.
  */
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFacebook, faInstagram, faTiktok, faXTwitter, faSnapchat } from '@fortawesome/free-brands-svg-icons';
 import COMPANY_DATA from '../config/company_data';
@@ -73,6 +73,10 @@ export default function Footer() {
         window.dataLayer?.push({ event: 'social_click', platform: link.label.toLowerCase() });
     });
     return handlers;
+  }, []);
+
+  const handleBackToTop = useCallback(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
   return (
@@ -170,7 +174,7 @@ export default function Footer() {
         <div className="mt-12 flex justify-center mb-10">
           <Button
             variant="action"
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            onClick={handleBackToTop}
             aria-label="Back to top of page"
             className="px-8 py-4 rounded-full font-bold font-inter"
             style={{

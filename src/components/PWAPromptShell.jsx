@@ -79,7 +79,7 @@ const PWAPromptShell = ({
           <button
             type="button"
             onClick={onDismiss}
-            className="transition-colors p-1 rounded-full hover:bg-white/10 focus-visible:bg-white/20"
+            className="transition-colors p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-white"
             style={{ color: 'white' }}
             aria-label="Dismiss"
           >

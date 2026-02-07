@@ -211,6 +211,7 @@ export default function Navbar({ currentPage = 'home' }) {
 
           {/* Mobile Menu Button */}
           <button
+            type="button"
             ref={hamburgerRef}
             onClick={toggleMenu}
             onKeyDown={e => {
@@ -219,7 +220,7 @@ export default function Navbar({ currentPage = 'home' }) {
                 toggleMenu();
               }
             }}
-            className="md:hidden p-2 rounded-md no-drag"
+            className="md:hidden p-2 min-w-[44px] min-h-[44px] rounded-md no-drag focus-visible:ring-2 focus-visible:ring-accent"
             style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-heading)' }}
             aria-label={isOpen ? "Close menu" : "Open menu"}
             aria-expanded={isOpen}
@@ -245,8 +246,9 @@ export default function Navbar({ currentPage = 'home' }) {
           >
             {/* Close button inside focus trap (hamburger X is inerted when overlay opens) */}
             <button
+              type="button"
               onClick={handleMenuClose}
-              className="absolute p-2 rounded-md md:hidden"
+              className="absolute p-2 rounded-md md:hidden focus-visible:ring-2 focus-visible:ring-accent"
               style={{ top: 16, right: 16, zIndex: 10, color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-heading)' }}
               aria-label="Close menu"
             >

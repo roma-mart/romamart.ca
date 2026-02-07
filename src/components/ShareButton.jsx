@@ -54,7 +54,7 @@ const ShareButton = ({ title, text, url, className = '', style: customStyle = {}
     <button
       type="button"
       onClick={handleShare}
-      className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-inter font-semibold transform transition-all hover:scale-105 ${className}`}
+      className={`inline-flex items-center gap-2 px-4 py-2 min-h-[44px] rounded-lg font-inter font-semibold transform transition-all hover:scale-105 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 ${className}`}
       style={{ WebkitTapHighlightColor: 'transparent', ...customStyle }}
       aria-label={`Share ${title || 'this page'}`}
     >
