@@ -56,18 +56,20 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// Activate event - clean up old caches
+// Activate event - clean up old caches, enable navigation preload
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys()
-      .then((cacheNames) => {
-        return Promise.all(
+    Promise.all([
+      caches.keys()
+        .then((cacheNames) => Promise.all(
           cacheNames
             .filter((cacheName) => cacheName !== CACHE_VERSION)
             .map((cacheName) => caches.delete(cacheName))
-        );
-      })
-      .then(() => self.clients.claim())
+        )),
+      self.registration.navigationPreload
+        ? self.registration.navigationPreload.enable()
+        : Promise.resolve()
+    ]).then(() => self.clients.claim())
   );
 });
 
@@ -83,8 +85,8 @@ self.addEventListener('fetch', (event) => {
 
   // Determine caching strategy based on request type
   if (request.destination === 'document') {
-    // HTML pages: Network-first with cache fallback
-    event.respondWith(networkFirstStrategy(request));
+    // HTML pages: Network-first with cache fallback (use navigation preload if available)
+    event.respondWith(networkFirstStrategy(request, event.preloadResponse));
   } else if (request.destination === 'image') {
     // Images: Cache-first with network fallback
     event.respondWith(cacheFirstStrategy(request));
@@ -99,10 +101,11 @@ self.addEventListener('fetch', (event) => {
 
 /**
  * Network-first strategy: Try network, fallback to cache, then offline page
+ * Uses navigation preload response when available for faster document loads
  */
-async function networkFirstStrategy(request) {
+async function networkFirstStrategy(request, preloadResponse) {
   try {
-    const networkResponse = await fetch(request);
+    const networkResponse = (preloadResponse && await preloadResponse) || await fetch(request);
 
     // Cache successful responses
     if (networkResponse.ok) {

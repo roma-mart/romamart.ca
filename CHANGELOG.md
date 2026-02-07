@@ -10,48 +10,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.5.0] - 2026-02-07
 
 ### Added
-- `PWAUpdatePrompt` component (`src/components/PWAUpdatePrompt.jsx`) — persistent update notification card with focus trap, ARIA dialog role, and Refresh/Later actions
-- `PWAPromptShell` shared component (`src/components/PWAPromptShell.jsx`) — extracts ~40 lines of identical dialog shell from `PWAInstallPrompt` and `PWAUpdatePrompt` (SOSF)
-- Build-time precache injection in `scripts/prerender.js` — scans `dist/assets/` for hashed Vite bundles and injects them into `dist/sw.js` PRECACHE_ASSETS array
-- Build-time offline page injection in `scripts/prerender.js` — replaces `__OFFLINE_LOCATIONS__` placeholder and id-anchored HTML in `dist/offline.html` with SSOT data from `locations.js`
-- `/* __VITE_BUNDLE_ASSETS__ */` placeholder in `public/sw.js` for build-time replacement
-- `/* __OFFLINE_LOCATIONS__ */` placeholder in `public/offline.html` for build-time location data injection
-- `trimCache()` function in service worker with `MAX_CACHE_ENTRIES = 100` to prevent unbounded cache growth
-- `controllerchange` listener in `useServiceWorker` hook for reliable SW update reload
-- PropTypes validation for `PWAUpdatePrompt` component
+- PWA update notification (`PWAUpdatePrompt`) with focus trap, ARIA dialog, and Refresh/Later actions
+- Shared `PWAPromptShell` component for consistent PWA dialog UI
+- Build-time injection pipeline: Vite bundle precaching, SSOT location data, and auto-versioned SW cache
+- Apple PWA meta tags (`apple-mobile-web-app-capable`, status bar style, app title)
+- Modern manifest fields (`display_override` with WCO, `launch_handler`, `handle_links`, `screenshots`)
+- Navigation preload in service worker for faster document loads
+- `display-mode` CSS media queries for standalone and WCO layout adjustments
+- Standalone mode detection in `PWAInstallPrompt` — hides prompt when already installed
+- `trimCache()` with `MAX_CACHE_ENTRIES = 100` to prevent unbounded cache growth
+- Offline page dark mode, `color-mix()` theming, and build-time SSOT data injection
 
 ### Changed
-- Service worker CACHE_VERSION bumped from `roma-mart-v1` to `roma-mart-v2` (forces old cache cleanup)
-- Service worker cache version now auto-generated from build asset hash (L7) — eliminates manual `CACHE_VERSION` maintenance
-- `skipWaiting()` removed from install event — kept only in message handler for user-controlled updates via PWAUpdatePrompt
-- `useServiceWorker` hook `skipWaiting()` no longer calls `window.location.reload()` directly — reload triggered by `controllerchange` event (standard pattern)
-- `PWAInstallPrompt` now persists install state (`setIsInstalled(true)`) after user accepts — prompt never shows again after installation
-- `PWAInstallPrompt` and `PWAUpdatePrompt` refactored to use shared `PWAPromptShell` — eliminates duplicated dialog shell markup
-- Removed dead `onKeyDown` handlers from `PWAInstallPrompt` buttons — native `<button>` elements handle Enter/Space automatically
-- Removed all `console.log`/`console.error` calls from `public/sw.js` — service workers have no dev-mode guard
-- Offline page location data (name, address, phone, hours, coordinates, ID) now matches `locations.js` SSOT exactly
-- Removed dead `--color-bg` CSS variable from offline page
+- SW cache version auto-generated from build asset hash (replaces manual `CACHE_VERSION`)
+- `skipWaiting()` now user-controlled via update prompt (removed from install event)
+- `controllerchange` event drives reload (replaces direct `location.reload()`)
+- PWA prompts refactored to shared shell; dead `onKeyDown` handlers removed
+- Removed all `console.log`/`console.error` from `sw.js`
+- Completed WCO implementation — `no-drag` on all interactive Navbar elements
 
 ### Fixed
-- Removed broken `<link rel="stylesheet" href="/src/index.css">` from `public/offline.html` — dev-only path that 404d in production
-- Fixed offline page dark mode — added `@media (prefers-color-scheme: dark)` with matching design tokens
-- Replaced hardcoded RGBA colors in offline page with `color-mix()` using CSS custom properties
-- Fixed duplicate `.button:hover` rule in offline page CSS
-- Fixed wrong address in offline page — `189-3` corrected to `3-189 Wellington Street`
-- Fixed stale hours in offline page — now shows exact `hours.display` from `locations.js` (fixed format drift: hyphens, `:00` minutes)
-- Fixed location ID in offline page script — `wellington` corrected to `loc-wellington-001` (SSOT match)
-- Fixed location name in offline page script — `Roma Mart - Wellington` corrected to `Roma Mart Convenience` (SSOT match)
-- Removed ~140 lines dead background sync code from `public/sw.js` (sync listener, IndexedDB helpers, analytics sync) — no code ever registered sync tags
-- Removed `useBackgroundSync` hook from `useServiceWorker.js` — wrong feature detection (`'sync' in navigator.serviceWorker` tests wrong object)
-- Cleaned up `ContactPage.jsx` — removed dead imports (`useBackgroundSync`, `getHCaptchaTheme`, `eslint-disable`, commented indexedDB import, unused `isOnline` and `showInfo`)
-- Fixed dual `self.skipWaiting()` race condition — was called in both install event and message handler
+- Broken `icon-192.svg` favicon reference — file didn't exist (now uses existing PNG)
+- Broken `/src/index.css` link in `offline.html` — dev-only path that 404d in production
+- Offline page wrong address, stale hours, drifted location ID/name (now matches SSOT)
+- Dual `skipWaiting()` race condition between install and message handler
 
 ### Removed
-- `useBackgroundSync` hook export from `src/hooks/useServiceWorker.js`
-- Background sync event listener and all IndexedDB helper functions from `public/sw.js`
+- ~140 lines dead background sync code from `sw.js` (IndexedDB helpers, sync listener)
+- `useBackgroundSync` hook — wrong feature detection, never functional
 
 ### Documentation
-- Updated `.github/copilot-instructions.md` — PWA section documents new components, build-time injection, and cache management
+- Updated `copilot-instructions.md` — PWA components, build-time injection, cache management
 
 ## [2.4.1] - 2026-02-07
 

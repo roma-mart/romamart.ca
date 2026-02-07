@@ -27,6 +27,12 @@ const PWAInstallPrompt = () => {
     if (dismissedThisSession) return;
     if (lastDismissed && Date.now() - lastDismissed < 7 * 24 * 60 * 60 * 1000) return; // 7 days
 
+    // Don't show if already running as installed PWA (standalone or WCO mode)
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+      || window.matchMedia('(display-mode: window-controls-overlay)').matches
+      || window.navigator.standalone === true; // iOS Safari
+    if (isStandalone) return;
+
     // Listen for beforeinstallprompt event
     const handleBeforeInstallPrompt = (e) => {
       e.preventDefault();

@@ -172,7 +172,7 @@ export default function Navbar({ currentPage = 'home' }) {
               <a
                 key="home"
                 href={BASE_URL}
-                className="font-inter font-medium transition-opacity flex items-center gap-2 hover:opacity-80 focus-visible:opacity-80"
+                className="font-inter font-medium transition-opacity flex items-center gap-2 no-drag hover:opacity-80 focus-visible:opacity-80"
                 style={{ color: 'var(--color-text)', WebkitTapHighlightColor: 'transparent' }}
                 aria-label="Go to homepage"
                 title="Home"
@@ -185,7 +185,7 @@ export default function Navbar({ currentPage = 'home' }) {
                 key={link.href}
                 href={isHomePage && link.href.startsWith('/') ? `${BASE_URL}#${link.href.replace('/', '')}` : `${BASE_URL}${link.href.replace('/', '')}`}
                 onClick={e => handleNavClick(e, link.href !== '/' ? link.href.replace('/', '') : null, `${BASE_URL}${link.href.replace('/', '')}`)}
-                className="font-inter font-medium transition-opacity hover:opacity-80 focus-visible:opacity-80"
+                className="font-inter font-medium transition-opacity no-drag hover:opacity-80 focus-visible:opacity-80"
                 style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-text)', WebkitTapHighlightColor: 'transparent' }}
                 aria-label={link.ariaLabel || link.label}
                 title={link.label}
@@ -202,7 +202,7 @@ export default function Navbar({ currentPage = 'home' }) {
               iconPosition="right"
               analyticsEvent={{ event: 'order_cta_click', cta_location: 'header_desktop', cta_text: 'Order Online' }}
               ariaLabel="Order Online"
-              className="font-bold font-inter text-sm shadow-lg"
+              className="font-bold font-inter text-sm shadow-lg no-drag"
               style={{ minWidth: 120 }}
             >
               ORDER NOW
@@ -219,7 +219,7 @@ export default function Navbar({ currentPage = 'home' }) {
                 toggleMenu();
               }
             }}
-            className="md:hidden p-2 rounded-md"
+            className="md:hidden p-2 rounded-md no-drag"
             style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-heading)' }}
             aria-label={isOpen ? "Close menu" : "Open menu"}
             aria-expanded={isOpen}
