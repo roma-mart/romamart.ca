@@ -1,1 +1,3 @@
-npm run check:all
+npx lint-staged
+npm run check:quality
+npm run check:integrity

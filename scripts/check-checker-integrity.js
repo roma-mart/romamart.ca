@@ -243,7 +243,7 @@ function checkDevEthosAlignment() {
       fix: 'Add pre-commit/pre-push hooks or Husky to run checkers automatically',
     });
   } else {
-    const hasAutomation = preCommitHook.includes('npm run') || preCommitHook.includes('node scripts');
+    const hasAutomation = preCommitHook.includes('npm run') || preCommitHook.includes('node scripts') || preCommitHook.includes('npx lint-staged');
     if (!hasAutomation) {
       issues.push({
         severity: 'HIGH',
