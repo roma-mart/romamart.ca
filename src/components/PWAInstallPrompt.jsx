@@ -4,7 +4,7 @@
  * Batch 3: Includes haptic feedback
  */
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { X, Download } from 'lucide-react';
 import { useLocalStorage, useVibration } from '../hooks/useBrowserFeatures';
 import Button from './Button';
@@ -162,7 +162,7 @@ const PWAInstallPrompt = () => {
     setShowPrompt(false);
   };
 
-  const handleDismiss = () => {
+  const handleDismiss = useCallback(() => {
     setShowPrompt(false);
     setDismissedThisSession(true);
     sessionStorage.setItem('pwa-dismissed-session', 'true');
@@ -175,7 +175,7 @@ const PWAInstallPrompt = () => {
         engagement_score: engagementScore
       });
     }
-  };
+  }, [engagementScore, setLastDismissed]);
 
   useFocusTrap(dialogRef, showPrompt && !!deferredPrompt, {
     onEscape: handleDismiss,

@@ -2,7 +2,6 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ExternalLink, Mail, Phone, MapPin, CheckCircle, ChevronRight } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
-import { tokens } from '../design/tokens';
 import COMPANY_DATA from '../config/company_data';
 import StructuredData from '../components/StructuredData';
 import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
@@ -111,15 +110,7 @@ const AccessibilityPage = () => {
 
       {/* Report issue */}
       <section className="max-w-4xl mx-auto px-4 mb-20">
-        <h2 
-          className="text-3xl uppercase mb-8"
-          style={{ 
-            color: 'var(--color-heading)',
-            fontFamily: tokens?.fonts?.heading || 'inherit',
-            fontSize: tokens?.fontSize?.['3xl'] || '1.875rem',
-            fontWeight: tokens?.fontWeight?.bold || 'bold',
-          }}
-        >
+        <h2 className="text-3xl uppercase mb-8" style={{ color: 'var(--color-heading)' }}>
           Report an Accessibility Issue
         </h2>
         <p className="mb-8 leading-relaxed" style={textColor}>If you encounter any accessibility barriers or have suggestions for improvement, we'd like to hear from you. Please contact us using any of the methods below:</p>
@@ -147,8 +138,8 @@ const AccessibilityPage = () => {
       <section className="max-w-4xl mx-auto px-4">
         <h2 className="text-3xl uppercase mb-8" style={{ color: 'var(--color-heading)' }}>Our Commitment to Accessibility</h2>
         <div className="rounded-lg p-8" style={{ backgroundColor: 'var(--color-primary)' }}>
-          <p className="text-lg leading-relaxed mb-6" style={{ color: 'white' }}>Accessibility is not a feature—it's a fundamental right. We are committed to:</p>
-          <ul className="space-y-3" style={{ color: 'white' }}>
+          <p className="text-lg leading-relaxed mb-6" style={{ color: 'var(--color-text-on-primary)' }}>Accessibility is not a feature—it's a fundamental right. We are committed to:</p>
+          <ul className="space-y-3" style={{ color: 'var(--color-text-on-primary)' }}>
             {['Maintaining WCAG 2.2 Level AA conformance','Regular accessibility audits and remediation','Rapid response to accessibility issues (5 business days)','Training our team on accessibility best practices','Monitoring evolving standards including WCAG 3.0'].map((item, idx) => (
               <li className="flex items-start gap-3" key={idx}>
                 <span className="font-bold mt-1" style={{ color: 'var(--color-accent)' }}>✓</span>
