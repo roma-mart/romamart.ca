@@ -94,7 +94,7 @@ const ImageCarousel = ({
           <button
             type="button"
             aria-label="Previous image"
-            className="absolute left-2 top-1/2 -translate-y-1/2 z-20 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full shadow transition-opacity focus-visible:ring-2 focus-visible:ring-offset-2"
+            className="absolute left-2 top-1/2 -translate-y-1/2 z-20 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full shadow transition-opacity focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
             style={{
               backgroundColor: 'var(--color-surface)',
               border: '1px solid var(--color-border)',
@@ -109,7 +109,7 @@ const ImageCarousel = ({
           <button
             type="button"
             aria-label="Next image"
-            className="absolute right-2 top-1/2 -translate-y-1/2 z-20 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full shadow transition-opacity focus-visible:ring-2 focus-visible:ring-offset-2"
+            className="absolute right-2 top-1/2 -translate-y-1/2 z-20 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full shadow transition-opacity focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
             style={{
               backgroundColor: 'var(--color-surface)',
               border: '1px solid var(--color-border)',

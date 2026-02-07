@@ -79,7 +79,7 @@ class ErrorBoundary extends React.Component {
               </Button>
               <Button
                 variant="secondary"
-                href="/"
+                href={import.meta.env.BASE_URL || "/"}
               >
                 Go Home
               </Button>

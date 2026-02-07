@@ -76,7 +76,7 @@ export default function FooterReviews({ currentLocation, locations }) {
             href={mapLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-8 py-4 rounded-xl font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 hover:scale-105"
+            className="inline-flex items-center gap-2 px-8 py-4 rounded-xl font-semibold transition-all hover:scale-105 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
             style={{
               backgroundColor: 'var(--color-accent)',
               color: 'var(--color-primary)',

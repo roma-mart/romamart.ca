@@ -17,8 +17,8 @@ if (GTM_ID) {
   // Google Consent Mode v2 defaults — must fire BEFORE gtm.js loads.
   // Clickio CMP (loaded as a GTM tag) will call gtag('consent','update',{...})
   // when the user accepts, upgrading storage from 'denied' → 'granted'.
-  function gtag() { window.dataLayer.push(arguments); }
-  gtag('consent', 'default', {
+  window.gtag = function gtag() { window.dataLayer.push(arguments); };
+  window.gtag('consent', 'default', {
     ad_storage: 'denied',
     analytics_storage: 'denied',
     ad_user_data: 'denied',

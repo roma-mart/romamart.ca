@@ -48,42 +48,47 @@ const VARIANT_ANALYTICS = {
   custom: 'custom_cta',
 };
 
+// Shared spring config — consistent snappy feel across all variants
+const SPRING = { type: 'spring', stiffness: 400, damping: 30 };
+
 // Per-variant Framer Motion animation props
+// Scale tiers: primary CTAs 1.04, standard 1.03, icon 1.1
+// Only scale + boxShadow (GPU-accelerated); no backgroundColor animation
 const VARIANT_ANIMATION = {
   order: {
-    whileHover: { scale: 1.07, boxShadow: '0 10px 32px var(--color-accent-shadow, rgba(228,179,64,0.22))' },
-    whileTap: { scale: 0.96, boxShadow: '0 2px 8px var(--color-accent-shadow, rgba(228,179,64,0.10))' },
-    transition: { type: 'spring', stiffness: 400, damping: 30, duration: 0.18 },
+    whileHover: { scale: 1.04, boxShadow: '0 10px 32px var(--color-accent-shadow, rgba(228,179,64,0.22))' },
+    whileTap: { scale: 0.97 },
+    transition: SPRING,
   },
   nav: {
     whileHover: { scale: 1.03 },
-    whileTap: { scale: 0.98 },
-    transition: { duration: 0.15 },
+    whileTap: { scale: 0.97 },
+    transition: SPRING,
   },
   action: {
-    whileHover: { backgroundColor: 'var(--color-accent-hover, #f7d774)', boxShadow: '0 8px 28px var(--color-accent-shadow, rgba(228,179,64,0.22))' },
-    whileTap: { backgroundColor: 'var(--color-accent)', boxShadow: '0 2px 8px var(--color-accent-shadow, rgba(228,179,64,0.10))' },
-    transition: { duration: 0.18 },
+    whileHover: { scale: 1.03, boxShadow: '0 8px 28px var(--color-accent-shadow, rgba(228,179,64,0.22))' },
+    whileTap: { scale: 0.97 },
+    transition: SPRING,
   },
   navlink: {
-    whileHover: { scale: 1.015 },
-    whileTap: { scale: 0.99 },
-    transition: { duration: 0.15 },
+    whileHover: { scale: 1.03 },
+    whileTap: { scale: 0.97 },
+    transition: SPRING,
   },
   icon: {
-    whileHover: { scale: 1.15 },
-    whileTap: { scale: 0.9 },
-    transition: { duration: 0.12 },
+    whileHover: { scale: 1.1 },
+    whileTap: { scale: 0.93 },
+    transition: SPRING,
   },
   secondary: {
-    whileHover: { scale: 1.02 },
-    whileTap: { scale: 0.98 },
-    transition: { duration: 0.13 },
+    whileHover: { scale: 1.03 },
+    whileTap: { scale: 0.97 },
+    transition: SPRING,
   },
   inverted: {
-    whileHover: { scale: 1.05, boxShadow: '0 8px 28px rgba(2,1,120,0.22)' },
-    whileTap: { scale: 0.96 },
-    transition: { type: 'spring', stiffness: 400, damping: 30 },
+    whileHover: { scale: 1.04, boxShadow: '0 8px 28px rgba(2,1,120,0.22)' },
+    whileTap: { scale: 0.97 },
+    transition: SPRING,
   },
   custom: {},
 };
@@ -200,6 +205,10 @@ const Button = React.forwardRef(({
 
   const sizeStyle = (size && variant !== 'icon') ? (SIZE_STYLES[size] || {}) : {};
   const mergedStyle = {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
     minHeight: 44,
     minWidth: 44,
     transition: 'background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s',
@@ -238,10 +247,10 @@ const Button = React.forwardRef(({
     }
     return (
       <>
-        {icon && iconPosition === 'left' && !isNavlink && <span style={{ marginRight: children ? 10 : 0, display: 'inline-flex', alignItems: 'center' }}>{icon}</span>}
-        {icon && iconPosition === 'left' && isNavlink && <span style={{ marginRight: children ? 10 : 0, display: 'inline-flex', alignItems: 'center', position: "relative", top: "2px" }}>{icon}</span>}
+        {icon && iconPosition === 'left' && !isNavlink && <span style={{ display: 'inline-flex', alignItems: 'center' }}>{icon}</span>}
+        {icon && iconPosition === 'left' && isNavlink && <span style={{ display: 'inline-flex', alignItems: 'center' }}>{icon}</span>}
         {children && <span>{children}</span>}
-        {icon && iconPosition === 'right' && <span style={{ marginLeft: 10, display: 'inline-flex', alignItems: 'center' }}>{icon}</span>}
+        {icon && iconPosition === 'right' && <span style={{ display: 'inline-flex', alignItems: 'center' }}>{icon}</span>}
         {loadingProp && <span className="inline-block ml-2 animate-spin" style={{ width: 18, height: 18, border: '2px solid var(--color-accent)', borderTop: '2px solid transparent', borderRadius: 'var(--radius-full)' }} aria-hidden="true"></span>}
       </>
     );
