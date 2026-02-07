@@ -11,7 +11,7 @@ const PRECACHE_ASSETS = [
   `${BASE_URL}`,
   `${BASE_URL}index.html`,
   `${BASE_URL}offline.html`,
-  `${BASE_URL}manifest.json`,
+  `${BASE_URL}manifest.webmanifest`,
   `${BASE_URL}favicon-32x32.png`,
   `${BASE_URL}favicon-16x16.png`,
   `${BASE_URL}maskable-icon.png`,
