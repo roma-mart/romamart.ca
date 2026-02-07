@@ -4,20 +4,26 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Offline - Roma Mart</title>
-  <link rel="stylesheet" href="/src/index.css">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    /* Brand colors match src/index.css design tokens.
+       Update both files if brand colors change. */
     :root {
-      /* fallback colors if CSS vars unavailable */
       --color-primary: #020178;
       --color-accent: #E4B340;
-      --color-text: #ffffff;
-      --color-bg: #151515;
       --color-text-on-primary: #fff;
     }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --color-primary: #001540;
+        --color-accent: #E4B340;
+        --color-text-on-primary: #fff;
+      }
+    }
     body {
-      font-family: 'Outfit', 'Inter', sans-serif;
-      background: linear-gradient(135deg, var(--color-primary) 0%, rgba(2,1,120,0.85) 100%);
+      font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+      background: var(--color-primary);
+      background: linear-gradient(135deg, var(--color-primary) 0%, color-mix(in srgb, var(--color-primary) 85%, black) 100%);
       color: var(--color-text-on-primary);
       min-height: 100vh;
       display: flex;
@@ -32,7 +38,7 @@
       width: 120px; height: 120px; margin: 0 auto 30px; background: var(--color-accent);
       border-radius: 50%; display: flex; align-items: center; justify-content: center;
       font-size: 48px; font-weight: bold; color: var(--color-primary);
-      box-shadow: 0 10px 30px rgba(228, 179, 64, 0.3);
+      box-shadow: 0 10px 30px color-mix(in srgb, var(--color-accent) 30%, transparent);
     }
     h1 { font-size: 2.5rem; margin-bottom: 20px; font-weight: 700; }
     p { font-size: 1.2rem; line-height: 1.6; margin-bottom: 30px; opacity: 0.9; }
@@ -44,13 +50,14 @@
     }
     .contact-item { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 15px 0; font-size: 1.1rem; }
     .contact-item svg { width: 24px; height: 24px; color: var(--color-accent); }
+    .contact-link { color: var(--color-text-on-primary); text-decoration: none; }
+    .contact-link:hover { text-decoration: underline; }
     .button {
       display: inline-block; background: var(--color-accent); color: var(--color-primary);
       padding: 15px 40px; border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 1.1rem;
-      transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 5px 15px var(--color-accent);
+      transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 5px 15px color-mix(in srgb, var(--color-accent) 40%, transparent);
     }
-    .button:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(228, 179, 64, 0.4); }
-      .button:hover { transform: translateY(-2px); box-shadow: 0 8px 20px var(--color-accent); }
+    .button:hover { transform: translateY(-2px); box-shadow: 0 8px 20px color-mix(in srgb, var(--color-accent) 50%, transparent); }
     .offline-icon { font-size: 4rem; margin-bottom: 20px; opacity: 0.7; }
     @media (max-width: 768px) {
       h1 { font-size: 2rem; }
@@ -60,9 +67,9 @@
   </style>
 </head>
 <body>
-  <main class="container" role="main" tabindex="-1">
+  <main class="container" tabindex="-1">
     <div class="logo" aria-label="Roma Mart Logo">RM</div>
-    <div class="offline-icon" aria-hidden="true">📡</div>
+    <div class="offline-icon" aria-hidden="true">&#x1F4E1;</div>
     <h1>You're Offline</h1>
     <p>It looks like you've lost your internet connection.</p>
     <div class="info-box">
@@ -72,7 +79,7 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
         </svg>
-        <span id="location-address">189-3 Wellington Street, Sarnia, ON</span>
+        <span id="location-address">3-189 Wellington Street, Sarnia, ON  N7T 1G6</span>
       </div>
       <div class="contact-item">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -84,17 +91,19 @@
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
-        <span>Mon-Fri: 7 AM - 11 PM</span>
+        <span id="location-hours">Mon-Thu, Sat-Sun: 8:30 AM - 9:00 PM | Fri: 3:00 PM - 9:00 PM</span>
       </div>
     </div>
-    <a href="javascript:window.location.reload()" class="button" aria-label="Try reloading the page">Try Again</a>
+    <a href="/" onclick="location.reload();return false" class="button" aria-label="Try reloading the page">Try Again</a>
     <p id="location-distance">This page works offline. Once you're back online, you'll have full access to our website.</p>
   </main>
   <script>
     (function() {
-      const LOCATIONS = [
-        { id: 'wellington', name: 'Roma Mart - Wellington', address: '189-3 Wellington Street, Sarnia, ON N7T 1G6', phone: '+1 (382) 342-2000', coordinates: { lat: 42.970389, lng: -82.404589 }, isPrimary: true }
-      ];
+      // Location data injected at build time from src/data/locations.js (SSOT).
+      // Dev-mode fallback values below; production uses build-injected data.
+      const LOCATIONS = [{"id":"loc-wellington-001","name":"Roma Mart Convenience","address":"3-189 Wellington Street, Sarnia, ON  N7T 1G6","phone":"+1 (382) 342-2000","coordinates":{"lat":42.970389,"lng":-82.404589},"isPrimary":true}];
+      // Haversine distance — duplicated from src/data/locations.js because
+      // this page must be fully self-contained for offline use.
       function calculateDistance(lat1, lon1, lat2, lon2) {
         const R = 6371;
         const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -113,13 +122,13 @@
           document.getElementById('location-name').textContent = nearest.name;
           document.getElementById('location-address').textContent = nearest.address;
           const distanceText = minDistance < 1 ? Math.round(minDistance * 1000) + 'm away' : minDistance.toFixed(1) + 'km away';
-          document.getElementById('location-distance').textContent = 'Nearest store: ' + distanceText + ' • This page works offline';
+          document.getElementById('location-distance').textContent = 'Nearest store: ' + distanceText + ' \u2022 This page works offline';
         } else {
           const hq = LOCATIONS.find(loc => loc.isPrimary) || LOCATIONS[0];
           document.getElementById('location-name').textContent = hq.name + ' (Headquarters)';
           document.getElementById('location-address').textContent = hq.address;
         }
-      } catch (e) { console.error('Error loading stored location:', e); }
+      } catch (e) { /* offline fallback — errors are non-critical */ }
     })();
   </script>
 </body>
