@@ -1,10 +1,10 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ExternalLink, Mail, Phone, MapPin, CheckCircle, ChevronRight } from 'lucide-react';
-import ShareButton from './ShareButton';
+import ShareButton from '../components/ShareButton';
 import { tokens } from '../design/tokens';
 import COMPANY_DATA from '../config/company_data';
-import StructuredData from './StructuredData';
+import StructuredData from '../components/StructuredData';
 import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 
 const AccessibilityPage = () => {

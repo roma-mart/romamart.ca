@@ -47,7 +47,7 @@ import { getAssetUrl } from './utils/getAssetUrl';
 
 
 // Code splitting: Lazy load page components
-const AccessibilityPage = lazy(() => import('./components/AccessibilityPage'));
+const AccessibilityPage = lazy(() => import('./pages/AccessibilityPage'));
 const PrivacyPage = lazy(() => import('./pages/PrivacyPage'));
 const TermsPage = lazy(() => import('./pages/TermsPage'));
 const CookiesPage = lazy(() => import('./pages/CookiesPage'));
