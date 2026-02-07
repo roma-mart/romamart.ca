@@ -108,7 +108,7 @@ export default function BasicView({
           <div className="flex items-start justify-between gap-2 mb-2">
             <div className="flex-1">
               <h3 
-                 className="var(--font-heading) text-lg font-bold flex items-center gap-2 flex-wrap"
+                 className="text-lg font-bold flex items-center gap-2 flex-wrap"
                  style={headingStyle}
                >
                  {icon && <span className="flex-shrink-0">{icon}</span>}
@@ -169,7 +169,7 @@ export default function BasicView({
           {/* Price Display - Only show for menu items (not services) with non-zero pricing */}
           {!item.features && (currentPrice > 0 || (item.price && item.price > 0)) && (
             <div className="flex items-center mb-3">
-              <div className="text-2xl var(--font-heading) font-bold" style={{ color: 'var(--color-accent)' }}>
+              <div className="text-2xl text-heading font-bold" style={{ color: 'var(--color-accent)' }}>
                 {formatPrice(currentPrice || item.price)}
               </div>
             </div>

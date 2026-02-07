@@ -50,7 +50,7 @@ const ReturnPolicyPage = () => {
 
       <div className="max-w-4xl mx-auto px-4">
         <div className="flex flex-wrap items-start justify-between gap-4 mb-8">
-          <h1 className="text-4xl var(--font-heading) uppercase" style={{ color: 'var(--color-heading)' }}>
+          <h1 className="text-4xl uppercase" style={{ color: 'var(--color-heading)' }}>
             Return Policy
           </h1>
           <ShareButton
@@ -66,7 +66,7 @@ const ReturnPolicyPage = () => {
           </p>
 
           <section className="mb-8">
-            <h2 className="text-2xl var(--font-heading) uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
+            <h2 className="text-2xl uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
               1. All Sales Final
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
@@ -75,7 +75,7 @@ const ReturnPolicyPage = () => {
           </section>
 
           <section className="mb-8">
-            <h2 className="text-2xl var(--font-heading) uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
+            <h2 className="text-2xl uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
               2. Faulty Products Only
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
@@ -84,7 +84,7 @@ const ReturnPolicyPage = () => {
           </section>
 
           <section className="mb-8">
-            <h2 className="text-2xl var(--font-heading) uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
+            <h2 className="text-2xl uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
               3. 24-Hour Reporting Window
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
@@ -93,7 +93,7 @@ const ReturnPolicyPage = () => {
           </section>
 
           <section className="mb-8">
-            <h2 className="text-2xl var(--font-heading) uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
+            <h2 className="text-2xl uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
               4. Receipt & Packaging Required
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
@@ -102,7 +102,7 @@ const ReturnPolicyPage = () => {
           </section>
 
           <section className="mb-8">
-            <h2 className="text-2xl var(--font-heading) uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
+            <h2 className="text-2xl uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
               5. Non-Returnable Items
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
@@ -120,7 +120,7 @@ const ReturnPolicyPage = () => {
           </section>
 
           <section className="mb-8">
-            <h2 className="text-2xl var(--font-heading) uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
+            <h2 className="text-2xl uppercase mb-4" style={{ color: 'var(--color-heading)' }}>
               6. Contact Us
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>

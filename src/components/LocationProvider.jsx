@@ -85,6 +85,13 @@ export const LocationProvider = ({ children }) => {
     }
   };
 
+  // Manual re-request (for user-initiated actions like LocationButton)
+  // Bypasses session deduplication — every call triggers a fresh geolocation request
+  const forceRequestLocation = () => {
+    if (!canUseGeolocation) return;
+    getCurrentLocation();
+  };
+
   // Auto-request when first location-aware component mounts
   const registerLocationAwareComponent = () => {
     if (!locationRequested && canUseGeolocation) {
@@ -110,6 +117,7 @@ export const LocationProvider = ({ children }) => {
     error,
     canUseGeolocation,
     requestLocation,
+    forceRequestLocation,
     registerLocationAwareComponent
   };
 

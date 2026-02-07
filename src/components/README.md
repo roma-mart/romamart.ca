@@ -33,12 +33,15 @@ import Button from './Button';
   Order Now
 </Button>
 
-// Location button (triggers geolocation, custom vibration/animation)
-<Button
-  variant="location"
-  onLocationFound={handleLocationFound}
-  aria-label="Find Nearest Store"
-/>
+// Location button (separate component, uses LocationContext)
+import LocationButton from './LocationButton';
+
+<LocationButton
+  ariaLabel="Detect Nearest Store"
+  onClick={handleClick}
+>
+  Detect Nearest Store
+</LocationButton>
 
 // Icon button (light vibration, pulse animation)
 <Button
@@ -55,8 +58,7 @@ import Button from './Button';
 | `variant`        | string              | Button style/behavior: `order`, `nav`, `action`, `icon`, etc.    |
 | `icon`           | node                | Icon element (optional)                                          |
 | `iconPosition`   | 'left' \| 'right'   | Icon placement (default: left)                                   |
-| `onClick`        | function            | Click handler (non-location variants)                            |
-| `onLocationFound`| function            | Callback for location found (location variant only)              |
+| `onClick`        | function            | Click handler                                                    |
 | `analyticsEvent` | string \| object    | Custom analytics event (overrides default per variant)           |
 | `vibrationPattern`| number \| array    | Custom vibration strength (overrides default per variant)        |
 | `aria-label`     | string              | Accessibility label (required for icon-only buttons)             |
@@ -64,12 +66,13 @@ import Button from './Button';
 
 ## Features
 - Per-variant vibration, animation, analytics, color, and shape
-- Location variant triggers geolocation and callback
 - Accessible: keyboard activation, focus-visible, aria-labels
 - Consistent design tokens and responsive styles
+- LocationButton is a separate component for geolocation (uses LocationContext)
 
 ## Migration Notes
-- Replace all legacy `NearestStoreButton` usages with `<Button variant="location" ... />`
+- `NearestStoreButton` has been removed — use `LocationButton` for geolocation
+- Location variant has been removed from Button — use `LocationButton` instead
 - All interactive actions should use the unified Button for consistency
 
 ---

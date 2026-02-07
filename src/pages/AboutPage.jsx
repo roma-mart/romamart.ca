@@ -157,7 +157,7 @@ const AboutPage = () => {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div>
             <h1 
-              className="text-4xl md:text-5xl var(--font-heading) uppercase mb-6"
+              className="text-4xl md:text-5xl uppercase mb-6"
               style={{ color: 'var(--color-heading)' }}
             >
               About <span style={{ color: 'var(--color-accent)' }}>Roma Mart</span>
@@ -243,7 +243,7 @@ const AboutPage = () => {
       {/* Our Values */}
       <section className="max-w-7xl mx-auto px-4 mb-20">
         <h2 
-          className="text-3xl md:text-4xl var(--font-heading) uppercase text-center mb-12"
+          className="text-3xl md:text-4xl uppercase text-center mb-12"
           style={{ color: 'var(--color-heading)' }}
         >
           Our <span style={{ color: 'var(--color-accent)' }}>Values</span>
@@ -262,7 +262,7 @@ const AboutPage = () => {
               >
                 {value.icon}
               </div>
-              <h3 className="var(--font-heading) text-xl mb-3" style={{ color: 'var(--color-heading)' }}>
+              <h3 className="text-heading text-xl mb-3" style={{ color: 'var(--color-heading)' }}>
                 {value.title}
               </h3>
               <p className="font-inter text-sm leading-relaxed" style={mutedTextColor}>
@@ -276,7 +276,7 @@ const AboutPage = () => {
       {/* Team Section */}
       <section className="max-w-7xl mx-auto px-4 mb-20">
         <h2 
-          className="text-3xl md:text-4xl var(--font-heading) uppercase text-center mb-12"
+          className="text-3xl md:text-4xl uppercase text-center mb-12"
           style={{ color: 'var(--color-heading)' }}
         >
           Meet Our <span style={{ color: 'var(--color-accent)' }}>Team</span>
@@ -332,7 +332,7 @@ const AboutPage = () => {
                     style={{ backgroundColor: 'var(--color-primary)' }}
                   />
                 </div>
-                <h3 className="var(--font-heading) text-2xl mb-2" style={{ color: 'var(--color-heading)' }}>
+                <h3 className="text-heading text-2xl mb-2" style={{ color: 'var(--color-heading)' }}>
                   {member.name}
                 </h3>
                 <p className="text-sm font-inter font-bold uppercase tracking-wider mb-4" style={{ color: 'var(--color-accent)' }}>
@@ -350,7 +350,7 @@ const AboutPage = () => {
       {/* CTA Section */}
       <section className="max-w-7xl mx-auto px-4">
         <div className="p-12 rounded-3xl text-center" style={{ backgroundColor: 'var(--color-primary)' }}>
-          <h2 className="text-3xl md:text-4xl var(--font-heading) uppercase mb-4" style={{ color: 'var(--color-text-on-primary)' }}>
+          <h2 className="text-3xl md:text-4xl uppercase mb-4" style={{ color: 'var(--color-text-on-primary)' }}>
             Visit Us Today
           </h2>
           <p className="font-inter text-lg mb-8 max-w-2xl mx-auto" style={{ color: 'var(--color-text-on-primary)', opacity: 0.9 }}>

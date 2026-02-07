@@ -113,7 +113,7 @@ const RoCafePage = () => {
       <section className="max-w-7xl mx-auto px-4 mb-16">
         <div className="text-center">
           <h1 
-            className="text-4xl md:text-5xl var(--font-heading) uppercase mb-6"
+            className="text-4xl md:text-5xl uppercase mb-6"
             style={{ color: 'var(--color-heading)' }}
           >
             RoCafé <span style={{ color: 'var(--color-accent)' }}>Menu</span>
@@ -134,17 +134,17 @@ const RoCafePage = () => {
           {/* Quick stats */}
           <div className="flex flex-wrap justify-center gap-8 mt-12">
             <div className="text-center">
-              <div className="text-4xl var(--font-heading) mb-2" style={{ color: 'var(--color-accent)' }}>
+              <div className="text-4xl text-heading mb-2" style={{ color: 'var(--color-accent)' }}>
                 {menuItems.length || ROCAFE_FULL_MENU.length}+
               </div>
               <div className="text-sm font-inter uppercase tracking-wider" style={mutedTextColor}>Menu Items</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl var(--font-heading) mb-2" style={{ color: 'var(--color-accent)' }}>100%</div>
+              <div className="text-4xl text-heading mb-2" style={{ color: 'var(--color-accent)' }}>100%</div>
               <div className="text-sm font-inter uppercase tracking-wider" style={mutedTextColor}>Fresh Daily</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl var(--font-heading) mb-2" style={{ color: 'var(--color-accent)' }}>{menuCategories.length}</div>
+              <div className="text-4xl text-heading mb-2" style={{ color: 'var(--color-accent)' }}>{menuCategories.length}</div>
               <div className="text-sm font-inter uppercase tracking-wider" style={mutedTextColor}>Categories</div>
             </div>
           </div>
@@ -213,7 +213,7 @@ const RoCafePage = () => {
           <div className="flex items-start gap-4">
             <AlertTriangle size={32} style={{ color: 'var(--color-warning)', flexShrink: 0 }} />
             <div>
-              <h2 className="text-2xl var(--font-heading) font-bold mb-2" style={{ color: 'var(--color-warning)' }}>
+              <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--color-warning)' }}>
                 {ALLERGEN_WARNING.title}
               </h2>
               <p className="font-inter text-sm mb-4" style={{ color: 'var(--color-warning)' }}>
@@ -247,7 +247,7 @@ const RoCafePage = () => {
       {/* CTA Section */}
       <section className="max-w-7xl mx-auto px-4 mt-20">
         <div className="p-12 rounded-3xl text-center" style={{ backgroundColor: 'var(--color-primary)' }}>
-          <h2 className="text-3xl md:text-4xl var(--font-heading) uppercase mb-4" style={{ color: 'var(--color-text-on-primary)' }}>
+          <h2 className="text-3xl md:text-4xl uppercase mb-4" style={{ color: 'var(--color-text-on-primary)' }}>
             Visit RoCafé Today
           </h2>
           <p className="font-inter text-lg mb-8 max-w-2xl mx-auto" style={{ color: 'var(--color-text-on-primary)', opacity: 0.9 }}>

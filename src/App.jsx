@@ -1,6 +1,6 @@
 import React, { useState, useEffect, Suspense, lazy, useCallback, useMemo } from 'react';
 import ErrorBoundary from './components/ErrorBoundary';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import {
   ShoppingBasket,
   Star,
@@ -39,7 +39,7 @@ import { useAutoLocation } from './hooks/useAutoLocation';
 
 // PWA Hooks
 import { useServiceWorker } from './hooks/useServiceWorker';
-import { usePageVisibility, useBatteryStatus } from './hooks/useBrowserFeatures';
+import { usePageVisibility } from './hooks/useBrowserFeatures';
 import PWAInstallPrompt from './components/PWAInstallPrompt';
 
 // dynamically resolve domain for assets
@@ -68,6 +68,7 @@ const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import
 // --- CUSTOM COMPONENTS ---
 
 function Hero({ onTrackOrder }) {
+  const shouldReduceMotion = useReducedMotion();
   const handleOrderClick = useCallback(() => {
     if (onTrackOrder) onTrackOrder('hero_section');
   }, [onTrackOrder]);
@@ -78,11 +79,11 @@ function Hero({ onTrackOrder }) {
       <div className="absolute inset-0 bg-gradient-to-r from-blue-950 via-blue-900 to-transparent opacity-90 z-0" />
       <div className="relative z-10 max-w-7xl mx-auto px-4 w-full pt-20">
         <div className="grid md:grid-cols-2 gap-12 items-center">
-          <motion.div initial={{ x: -50 }} animate={{ x: 0 }} transition={{ duration: 0.8 }}>
+          <motion.div initial={shouldReduceMotion ? false : { x: -50 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: shouldReduceMotion ? 0 : 0.8 }}>
             <div className="inline-block px-4 py-1 mb-6 rounded-full border" style={{ borderColor: 'var(--color-accent-bg)', backgroundColor: 'var(--color-accent-bg)', backdropFilter: 'blur(4px)' }}>
               <span className="text-sm font-inter font-semibold tracking-widest uppercase" style={{ color: 'var(--color-accent)' }}>New In Town</span>
             </div>
-            <h1 className="text-5xl md:text-7xl var(--font-heading) uppercase leading-none" style={{ color: 'var(--color-text-on-primary)', marginBottom: '1.5rem' }}>Your Daily <br/><span style={{ color: 'var(--color-accent)' }}>Stop & Go</span></h1>
+            <h1 className="text-5xl md:text-7xl uppercase leading-none" style={{ color: 'var(--color-text-on-primary)', marginBottom: '1.5rem' }}>Your Daily <br/><span style={{ color: 'var(--color-accent)' }}>Stop & Go</span></h1>
             <p className="text-lg md:text-xl font-inter mb-6 max-w-lg leading-relaxed" style={{ color: 'var(--color-text-on-primary)' }}>
               Experience Sarnia's newest convenience destination. From daily essentials to premium coffee, we have what you need.
             </p>
@@ -113,7 +114,7 @@ function Hero({ onTrackOrder }) {
               </Button>
             </div>
           </motion.div>
-          <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} transition={{ duration: 1, delay: 0.2 }} className="relative hidden md:block">
+          <motion.div initial={shouldReduceMotion ? false : { scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={shouldReduceMotion ? { duration: 0 } : { duration: 1, delay: 0.2 }} className="relative hidden md:block">
             <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl border-4 border-white/10 rotate-3 hover:rotate-0 transition-transform duration-500">
               <img src={getAssetUrl('/images/comeinwereopensign.png')} alt="Come in! We're Open Sign" className="w-full h-[500px] object-cover" fetchpriority="high" />
             </div>
@@ -129,7 +130,7 @@ const ServicesSection = ({ featuredServices = [] }) => {
   return (
     <section id="services" className="py-20" style={{ backgroundColor: 'var(--color-surface)' }}>
       <div className="max-w-7xl mx-auto px-4">
-        <h2 className="text-3xl md:text-4xl var(--font-heading) uppercase text-center mb-12" style={{ color: 'var(--color-heading)' }}>Our <span style={{ color: 'var(--color-accent)' }}>Services</span></h2>
+        <h2 className="text-3xl md:text-4xl uppercase text-center mb-12" style={{ color: 'var(--color-heading)' }}>Our <span style={{ color: 'var(--color-accent)' }}>Services</span></h2>
 
         {/* Featured Services with StandardizedItem */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
@@ -194,7 +195,7 @@ const RoCafeSection = ({ menuItems, loading }) => {
                 />
               </div>
               <div>
-                 <h2 className="text-4xl var(--font-heading)" style={{ color: 'var(--color-text-on-primary)' }}>RoCafé</h2>
+                 <h2 className="text-4xl" style={{ color: 'var(--color-text-on-primary)' }}>RoCafé</h2>
                  <p className="font-inter tracking-wider uppercase text-sm" style={{ color: 'var(--color-accent)' }}>Sip. Savor. Repeat.</p>
               </div>
             </div>
@@ -295,7 +296,7 @@ const Locations = () => {
       <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
           <span className="font-bold uppercase tracking-widest text-sm" style={{ color: 'var(--color-accent)' }}>Find Us</span>
-          <h2 className="text-4xl var(--font-heading) mt-2" style={{ color: 'var(--color-heading)' }}>Our Locations{locationCount > 1 ? 's' : ''}</h2>
+          <h2 className="text-4xl mt-2" style={{ color: 'var(--color-heading)' }}>Our Locations{locationCount > 1 ? 's' : ''}</h2>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
@@ -318,7 +319,7 @@ const Locations = () => {
                   />
                 )}
                 <div className="flex-1">
-                  <h3 className="var(--font-heading) text-lg mb-1" style={{ color: 'var(--color-heading)' }}>{loc.name}</h3>
+                  <h3 className="text-lg mb-1" style={{ color: 'var(--color-heading)' }}>{loc.name}</h3>
                   <p className="text-sm font-inter mb-4" style={{ color: 'var(--color-text)', opacity: 0.7 }}>{loc.address}</p>
                   <div className="flex items-center gap-2 text-sm font-semibold" style={{ color: 'var(--color-accent)' }}>
                     <div className="w-2 h-2 rounded-full" style={{ backgroundColor: loc.isOpen ? 'var(--color-success)' : 'var(--color-error)' }}></div>
@@ -443,7 +444,7 @@ const ContactSection = () => {
           {/* Contact Info Side */}
           <div>
             <span className="font-bold uppercase tracking-widest text-sm" style={{ color: 'var(--color-accent)' }}>Get in Touch</span>
-            <h2 className="text-4xl var(--font-heading) mt-2 mb-6" style={{ color: 'var(--color-heading)' }}>Contact Us</h2>
+            <h2 className="text-4xl mt-2 mb-6" style={{ color: 'var(--color-heading)' }}>Contact Us</h2>
             <p className="mb-10 font-inter leading-relaxed" style={mutedTextColor}>
               Have a question about our products, want to suggest a new snack, or interested in a partnership? We'd love to hear from you.
             </p>
@@ -508,7 +509,7 @@ const ContactSection = () => {
 
           {/* Web3Forms Contact Form */}
           <div className="p-8 rounded-2xl shadow-lg border" style={{ backgroundColor: 'var(--color-bg)', borderColor: 'var(--color-border)' }}>
-            <h3 className="var(--font-heading) text-2xl mb-6" style={{ color: 'var(--color-heading)' }}>Send a Message</h3>
+            <h3 className="text-2xl mb-6" style={{ color: 'var(--color-heading)' }}>Send a Message</h3>
             
             {formStatus === 'success' && (
               <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'var(--color-success-bg)', borderColor: 'var(--color-success)' }}>
@@ -613,9 +614,8 @@ const LoadingFallback = () => (
 function App() {
   const pathname = typeof window !== 'undefined' ? window.location.pathname.replace(BASE_URL, '/') : '/';
   useServiceWorker();
-  const { isVisible } = usePageVisibility();
-  const { batteryLevel, isCharging } = useBatteryStatus();
-  
+  const isVisible = usePageVisibility();
+
   // Fetch menu data from API for homepage featured schemas + RoCafe section
   // Menu is now provided via MenuProvider context to avoid duplicate API calls
   const { menuItems, loading } = useMenu();
@@ -645,10 +645,6 @@ function App() {
   
   // Prices in API are always in cents
   const schemaPriceInCents = true;
-  batteryLevel; // avoid unused variable warning
-  isCharging; // avoid unused variable warning
-  // comment out unused variable
-  // const shouldReduceMotion = useMemo(() => { const lowBattery = batteryLevel !== null && batteryLevel < 0.2 && !isCharging; const prefersReduced = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; return lowBattery || prefersReduced; }, [batteryLevel, isCharging]);
   useEffect(() => { if (!isVisible && import.meta.env.DEV) { console.warn('[Performance] Tab hidden - pausing heavy operations'); } }, [isVisible]);
   const getPage = useCallback(() => { if (pathname.includes('/services')) return 'services'; if (pathname.includes('/rocafe')) return 'rocafe'; if (pathname.includes('/locations')) return 'locations'; if (pathname.includes('/contact')) return 'contact'; if (pathname.includes('/about')) return 'about'; if (pathname.includes('/accessibility')) return 'accessibility'; if (pathname.includes('/privacy')) return 'privacy'; if (pathname.includes('/terms')) return 'terms'; if (pathname.includes('/cookies')) return 'cookies'; if (pathname.includes('/return-policy')) return 'return-policy'; return 'home'; }, [pathname]);
   const currentPage = getPage();

@@ -20,13 +20,9 @@
  * </Button>
  */
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import PropTypes from 'prop-types';
-import { useGeolocation } from '../hooks/useBrowserFeatures';
-import { useToast } from './ToastContainer';
-import { MapPin, Loader } from 'lucide-react';
-import { CSS_VARS } from '../utils/theme';
 
 // Per-variant vibration strength (ms or array)
 const VARIANT_VIBRATION = {
@@ -35,7 +31,6 @@ const VARIANT_VIBRATION = {
   action: 40,
   navlink: 30,
   icon: 20,
-  location: 60,
   secondary: 20,
   custom: 35,
 };
@@ -47,7 +42,6 @@ const VARIANT_ANALYTICS = {
   action: 'action_cta',
   navlink: 'navlink_click',
   icon: 'icon_click',
-  location: 'location_cta',
   secondary: 'secondary_cta',
   custom: 'custom_cta',
 };
@@ -79,11 +73,6 @@ const VARIANT_ANIMATION = {
     whileTap: { scale: 0.9 },
     transition: { duration: 0.12 },
   },
-  location: {
-    whileHover: { scale: 1.05, boxShadow: '0 8px 24px var(--color-location-shadow, rgba(64,179,228,0.18))' },
-    whileTap: { scale: 0.97, boxShadow: '0 2px 8px var(--color-location-shadow, rgba(64,179,228,0.10))' },
-    transition: { duration: 0.18 },
-  },
   secondary: {
     whileHover: { scale: 1.02 },
     whileTap: { scale: 0.98 },
@@ -97,7 +86,7 @@ const VARIANT_STYLES = {
     backgroundColor: 'var(--color-accent)',
     color: 'var(--color-primary)',
     fontWeight: 700,
-    fontFamily: CSS_VARS.heading,
+    fontFamily: 'var(--font-heading)',
     border: 'none',
     boxShadow: '0 4px 16px var(--color-accent-shadow, rgba(228,179,64,0.15))',
   },
@@ -105,7 +94,7 @@ const VARIANT_STYLES = {
     backgroundColor: 'var(--color-primary)',
     color: 'var(--color-accent)',
     fontWeight: 600,
-    fontFamily: CSS_VARS.heading,
+    fontFamily: 'var(--font-heading)',
     border: '2px solid var(--color-accent)',
     boxShadow: 'none',
   },
@@ -113,7 +102,7 @@ const VARIANT_STYLES = {
     backgroundColor: 'var(--color-accent)',
     color: 'var(--color-primary)',
     fontWeight: 700,
-    fontFamily: CSS_VARS.heading,
+    fontFamily: 'var(--font-heading)',
     border: 'none',
     borderRadius: '9999px', // fully rounded
     boxShadow: '0 4px 16px var(--color-accent-shadow, rgba(228,179,64,0.15))',
@@ -126,7 +115,7 @@ const VARIANT_STYLES = {
     backgroundColor: 'var(--color-accent)',
     color: 'var(--color-primary)',
     fontWeight: 700,
-    fontFamily: CSS_VARS.heading,
+    fontFamily: 'var(--font-heading)',
     border: 'none',
     borderRadius: '9999px', // fully rounded
     boxShadow: '0 4px 16px var(--color-accent-shadow, rgba(228,179,64,0.15))',
@@ -142,14 +131,6 @@ const VARIANT_STYLES = {
     border: 'none',
     padding: 0,
     fontSize: '1.25rem',
-  },
-  location: {
-    backgroundColor: 'var(--color-location-bg, var(--color-accent))',
-    color: 'var(--color-location-text, var(--color-primary))',
-    fontWeight: 700,
-    fontFamily: CSS_VARS.heading,
-    border: '2px solid var(--color-primary)',
-    boxShadow: '0 2px 8px var(--color-accent-shadow, rgba(228,179,64,0.10))',
   },
 };
 
@@ -167,44 +148,18 @@ const Button = React.forwardRef(({
   disabled = false,
   loading: loadingProp = false,
   analyticsEvent,
-  vibrationPattern = 10,
+  vibrationPattern,
   className = '',
   style = {},
   tabIndex,
-  onLocationFound,
   ...props
 }, ref) => {
   // useVibration removed (unused)
   const isNavlink = variant === 'navlink';
-  // Location variant logic
-  const isLocation = variant === 'location';
-  const { getCurrentLocation, location, loading, error, canUseGeolocation } = useGeolocation();
-  const { showSuccess, showError } = useToast();
-
-  useEffect(() => {
-    if (isLocation && location) {
-      if (onLocationFound) {
-        onLocationFound({
-          coords: {
-            latitude: location.latitude,
-            longitude: location.longitude
-          }
-        });
-      }
-      showSuccess('Location found! Sorting stores by distance...');
-    }
-  }, [isLocation, location, onLocationFound, showSuccess]);
-
-  useEffect(() => {
-    if (isLocation && error) {
-      showError(`Location error: ${error}`);
-    }
-  }, [isLocation, error, showError]);
 
   const mergedStyle = {
     minHeight: 44,
     minWidth: 44,
-    outline: 'none',
     transition: 'background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s',
     borderRadius: 12,
     padding: variant === 'icon' ? 8 : '12px 28px',
@@ -232,20 +187,6 @@ const Button = React.forwardRef(({
 
   // Helper to render button content
   function renderContent() {
-    if (isLocation) {
-      if (!canUseGeolocation) return null;
-      return loading ? (
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-          <Loader size={20} className="animate-spin" />
-          Looking for you...
-        </span>
-      ) : (
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-          <MapPin size={20} />
-          Update location
-        </span>
-      );
-    }
     // If icon only (no children), center icon with no margin
     if (icon && !children) {
       return (
@@ -275,46 +216,43 @@ const Button = React.forwardRef(({
 
   // Framer Motion animation props per variant
   const motionProps = VARIANT_ANIMATION[variant] || {};
+  const hasAnimation = motionProps && Object.keys(motionProps).length > 0;
 
-  // Accessibility: If rendering as <a>, ensure role and keyboard support for non-standard cases
+  // Accessibility: If rendering as <a>, keep native link semantics
   if (href) {
-    return (
-      <motion.a
-        ref={ref}
-        href={href}
-        tabIndex={tabIndex}
-        className={allClasses}
-        style={mergedStyle}
-        onClick={handleClick}
-        onKeyDown={e => {
-          if ((e.key === 'Enter' || e.key === ' ') && !disabled && !(isLocation ? loading : loadingProp)) {
-            e.preventDefault();
-            handleClick(e);
-          }
-        }}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        onMouseDown={handleMouseDown}
-        onMouseUp={handleMouseUp}
-        role="button"
-        {...ariaProps}
-        {...props}
-        {...motionProps}
-      >
-        {renderContent()}
-      </motion.a>
-    );
+    const handleLinkClick = (e) => {
+      if (disabled || loadingProp) {
+        e.preventDefault();
+        return;
+      }
+      handleClick(e);
+    };
+    const linkProps = {
+      ref,
+      href: disabled ? undefined : href,
+      tabIndex: disabled ? -1 : tabIndex,
+      className: allClasses,
+      style: mergedStyle,
+      onClick: handleLinkClick,
+      onMouseEnter: handleMouseEnter,
+      onMouseLeave: handleMouseLeave,
+      onMouseDown: handleMouseDown,
+      onMouseUp: handleMouseUp,
+      'aria-disabled': disabled || loadingProp || undefined,
+      ...ariaProps,
+      ...props,
+    };
+    if (hasAnimation) {
+      return (<motion.a {...linkProps} {...motionProps}>{renderContent()}</motion.a>);
+    }
+    return (<a {...linkProps}>{renderContent()}</a>);
   }
 
   // Unified click handler for all variants
   function handleClick(e) {
     if (disabled) return;
-    if (isLocation) {
-      getCurrentLocation(e);
-      return;
-    }
     // Vibration per variant
-    const vibrateStrength = typeof vibrationPattern !== 'undefined' ? vibrationPattern : VARIANT_VIBRATION[variant];
+    const vibrateStrength = vibrationPattern ?? VARIANT_VIBRATION[variant];
     if (typeof window !== 'undefined' && window.navigator && window.navigator.vibrate && vibrateStrength) {
       window.navigator.vibrate(vibrateStrength);
     }
@@ -326,8 +264,37 @@ const Button = React.forwardRef(({
     if (onClick) onClick(e);
   }
 
+  if (hasAnimation) {
+    return (
+      <motion.button
+        ref={ref}
+        type={type}
+        tabIndex={tabIndex}
+        className={allClasses}
+        style={mergedStyle}
+        onClick={handleClick}
+        onKeyDown={e => {
+          if ((e.key === 'Enter' || e.key === ' ') && !disabled && !loadingProp) {
+            e.preventDefault();
+            handleClick(e);
+          }
+        }}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        disabled={disabled || loadingProp}
+        {...ariaProps}
+        {...props}
+        {...motionProps}
+      >
+        {renderContent()}
+      </motion.button>
+    );
+  }
+
   return (
-    <motion.button
+    <button
       ref={ref}
       type={type}
       tabIndex={tabIndex}
@@ -335,7 +302,7 @@ const Button = React.forwardRef(({
       style={mergedStyle}
       onClick={handleClick}
       onKeyDown={e => {
-        if ((e.key === 'Enter' || e.key === ' ') && !disabled && !(isLocation ? loading : loadingProp)) {
+        if ((e.key === 'Enter' || e.key === ' ') && !disabled && !loadingProp) {
           e.preventDefault();
           handleClick(e);
         }
@@ -344,18 +311,17 @@ const Button = React.forwardRef(({
       onMouseLeave={handleMouseLeave}
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
-      disabled={disabled || (isLocation ? loading : loadingProp)}
+      disabled={disabled || loadingProp}
       {...ariaProps}
       {...props}
-      {...motionProps}
     >
       {renderContent()}
-    </motion.button>
+    </button>
   );
 });
 
 Button.propTypes = {
-  variant: PropTypes.oneOf(['order', 'nav', 'navlink', 'action', 'secondary', 'icon', 'location', 'custom']),
+  variant: PropTypes.oneOf(['order', 'nav', 'navlink', 'action', 'secondary', 'icon', 'custom']),
   children: PropTypes.node,
   icon: PropTypes.node,
   iconPosition: PropTypes.oneOf(['left', 'right']),
@@ -370,7 +336,6 @@ Button.propTypes = {
   className: PropTypes.string,
   style: PropTypes.object,
   tabIndex: PropTypes.number,
-  onLocationFound: PropTypes.func,
 };
 
 export default Button;

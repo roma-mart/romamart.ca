@@ -742,9 +742,9 @@ function checkBrandConsistency() {
       greyBorder: '#D1D6D8'
     },
     fonts: {
-      heading: ['Poppins', 'var(--font-heading)'],
+      heading: ['Outfit', 'var(--font-heading)'],
       body: ['Inter', 'font-inter'],
-      logo: ['var(--font-heading)', 'Poppins']
+      logo: ['var(--font-heading)', 'Outfit']
     },
   };
   
@@ -801,18 +801,18 @@ function checkBrandConsistency() {
       }
       
       // Check for incorrect font usage
-      // Headings (h1-h6) should use Poppins/var(--font-heading)
+      // Headings (h1-h6) should use Outfit/var(--font-heading)
       if (/<h[1-6][^>]*>/.test(line)) {
-        if (!line.includes('var(--font-heading)') && !line.includes('Poppins')) {
+        if (!line.includes('var(--font-heading)') && !line.includes('Outfit')) {
           // Only flag if explicitly using wrong font
           if (line.includes('font-inter') || line.includes('Inter')) {
             issues[SEVERITY.MEDIUM].push({
               category: CHECKS.BRAND_CONSISTENCY,
               file: relativePath,
               line: lineNum,
-              message: 'Headings should use Poppins (var(--font-heading)), not Inter',
+              message: 'Headings should use Outfit (var(--font-heading)), not Inter',
               code: line.trim().substring(0, 80),
-              fix: 'Add className="var(--font-heading)" to heading elements',
+              fix: 'Remove the Inter font class/style — headings inherit Outfit from CSS element selectors (index.css h1-h3 rule)',
             });
           }
         }
@@ -823,7 +823,7 @@ function checkBrandConsistency() {
         const fontMatch = line.match(/fontFamily\s*:\s*['"]([^'"]*)['"]/);
         if (fontMatch) {
           const font = fontMatch[1];
-          const isBrandFont = font.includes('Poppins') || font.includes('Inter') || font.includes('system') || font.includes('var(--font-heading)') || font.includes('var(--font-body)');
+          const isBrandFont = font.includes('Outfit') || font.includes('Inter') || font.includes('system') || font.includes('var(--font-heading)') || font.includes('var(--font-body)');
           if (!isBrandFont) {
             issues[SEVERITY.MEDIUM].push({
               category: CHECKS.BRAND_CONSISTENCY,
@@ -831,7 +831,7 @@ function checkBrandConsistency() {
               line: lineNum,
               message: `Non-brand font family: ${font}`,
               code: line.trim().substring(0, 80),
-              fix: 'Use Poppins for headings or Inter for body text via var(--font-heading)/var(--font-body)'
+              fix: 'Use Outfit for headings or Inter for body text via var(--font-heading)/var(--font-body)'
             });
           }
         }

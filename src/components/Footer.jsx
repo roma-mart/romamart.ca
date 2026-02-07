@@ -15,7 +15,7 @@ import useGooglePlaceHours from '../hooks/useGooglePlaceHours';
 import { useLocations } from '../contexts/LocationsContext';
 import { NAVIGATION_LINKS } from '../config/navigation';
 import OrderCTA from './OrderCTA';
-import Button from './Button';
+import LocationButton from './LocationButton';
 import CurrentLocalTime from './CurrentLocalTime';
 
 
@@ -423,23 +423,14 @@ export default function Footer() {
                 <span>✓ Selected: <strong>{currentLocation.name}</strong></span>
               )}
               <div className="mt-8 flex justify-center">
-                <Button
-                  variant="location"
-                  aria-label="Detect Nearest Store"
-                  onClick={e => {
-                    if (e.type === 'click' || (e.type === 'keydown' && (e.key === 'Enter' || e.key === ' '))) {
-                      setSelectedLocationId('auto');
-                    }
+                <LocationButton
+                  ariaLabel="Detect Nearest Store"
+                  onClick={() => {
+                    setSelectedLocationId('auto');
                   }}
-                  onKeyDown={e => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      setSelectedLocationId('auto');
-                    }
-                  }}
-                  tabIndex={0}
                 >
                   Detect Nearest Store
-                </Button>
+                </LocationButton>
               </div>
             </div>
 

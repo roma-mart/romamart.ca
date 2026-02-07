@@ -60,12 +60,16 @@ npm run preview                # Preview production build
 - All colors adapt to `prefers-color-scheme` automatically via `src/index.css`
 - Import theme utilities: `import { useThemeColors, CSS_VARS } from '../utils/theme'`
 - Example: Use `var(--color-primary)` not `#020178`
+- **Fonts:** Outfit for headings, Inter for body text (`--font-heading`, `--font-body`)
+- **Typography class:** Use `text-heading` utility class to apply heading font on non-heading elements. **NEVER** put `var(--font-heading)` in a `className` attribute -- it does nothing. For inline styles use `style={{ fontFamily: 'var(--font-heading)' }}`
 
 ### Component Architecture
 - **Functional components only** with hooks (React 18.3.1)
 - Lazy load pages: `const Page = lazy(() => import('./pages/Page'))`
 - Use `react-helmet-async` for SEO on all pages
 - Follow structure: `src/components/` (reusable), `src/pages/` (routed)
+- **LocationButton** (`src/components/LocationButton.jsx`) is a standalone geolocation button -- do NOT use `Button variant="location"` (that variant was removed)
+- **Button** (`src/components/Button.jsx`) renders plain `<button>`/`<a>` for non-animated variants and `<motion.button>`/`<motion.a>` for animated ones
 - See component READMEs in each directory for specific conventions
 
 ### Data Management
@@ -111,6 +115,7 @@ npm run preview                # Preview production build
 - Forms need proper `<label>` associations
 - Skip links required for main navigation
 - Test with keyboard-only navigation
+- Hero animations respect `prefers-reduced-motion` via Framer Motion's `useReducedMotion()` hook
 
 ### Dark Mode
 - Uses CSS custom properties that respond to `@media (prefers-color-scheme: dark)`
@@ -491,6 +496,7 @@ import { SERVICES } from '../data/services';
 
 ### Image Optimization
 - Use `loading="lazy"` on all non-critical images
+- **NEVER** use `loading="lazy"` on hero/LCP images -- they need `fetchpriority="high"` instead
 - Prefer WebP format with fallbacks
 - Serve responsive images via `srcset` when applicable
 - Placeholder images for development (replace with real assets)
