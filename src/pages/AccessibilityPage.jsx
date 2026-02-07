@@ -57,20 +57,18 @@ const AccessibilityPage = () => {
         <h2 className="text-3xl uppercase mb-12" style={{ color: 'var(--color-heading)' }}>Standards & Certifications</h2>
         <div className="grid md:grid-cols-2 gap-8">
           {[
-            { title: 'WCAG 2.2 Level AA', link: 'https://www.w3.org/WAI/WCAG22/quickref/' },
-            { title: 'AODA Compliant', link: 'https://www.ontario.ca/laws/regulation/070191' },
-            { title: 'ISO/IEC 40500', link: 'https://www.w3.org/WAI/standards-guidelines/wcag/faq/#iso' },
-            { title: 'EN 301 549 (EAA)', link: 'https://www.etsi.org/deliver/etsi_en/301500_301599/301549/' }
+            { title: 'WCAG 2.2 Level AA', subtitle: 'W3C web accessibility standard', description: 'Our website is built to conform to the Web Content Accessibility Guidelines (WCAG) 2.2 at Level AA, the current international standard for web accessibility.', link: 'https://www.w3.org/WAI/WCAG22/quickref/' },
+            { title: 'AODA Compliant', subtitle: 'Ontario accessibility regulation', description: 'We comply with Ontario\'s Accessibility for Ontarians with Disabilities Act (AODA) and its Integrated Accessibility Standards Regulation (IASR) for web content.', link: 'https://www.ontario.ca/laws/regulation/070191' }
           ].map((item, idx) => (
             <div key={idx} className="rounded-lg p-8 transition-colors" style={{ border: '2px solid var(--color-border)' }} onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--color-accent)'} onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--color-border)'}>
               <div className="flex items-start gap-4 mb-4">
                 <CheckCircle size={32} aria-hidden="true" style={{ color: 'var(--color-accent)' }} className="flex-shrink-0 mt-1" />
                 <div>
                   <h3 className="text-xl font-bold" style={{ color: 'var(--color-heading)' }}>{item.title}</h3>
-                  <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>Web accessibility standard</p>
+                  <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>{item.subtitle}</p>
                 </div>
               </div>
-              <p className="mb-4 leading-relaxed" style={textColor}>Our website conforms to internationally recognized accessibility standards and practices.</p>
+              <p className="mb-4 leading-relaxed" style={textColor}>{item.description}</p>
               <a href={item.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 hover:underline font-medium" style={{ color: 'var(--color-accent)' }} aria-label={`Learn more about ${item.title}`}>
                 Learn more <ExternalLink size={16} aria-hidden="true" />
               </a>
