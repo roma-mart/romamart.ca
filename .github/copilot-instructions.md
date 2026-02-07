@@ -318,6 +318,7 @@ Before going live on custom domain:
 | `scripts/check-quality.js` | Universal quality checker (1000+ rules) |
 | `scripts/check-checker-integrity.js` | Meta-checker for quality system |
 | `vite.config.js` | Build configuration and base path |
+| `.github/dependabot.yml` | Automated dependency updates (npm weekly, GitHub Actions weekly) |
 
 ## Additional Resources
 
@@ -408,11 +409,13 @@ import { SERVICES } from '../data/services';
 
 ### Code Formatting
 - **No Prettier configured** - Manual formatting following ESLint rules
-- **EditorConfig:** Not configured (consider adding for consistency)
+- **EditorConfig:** `.editorconfig` configured (2-space indent, LF line endings, UTF-8, trailing whitespace trimming)
 - **ESLint:** Strict rules enforced via `npm run lint`
   - React Hooks compliance required
   - JSX accessibility (a11y) required
   - No unused variables, no console.log in production code
+- **lint-staged:** Runs ESLint on `*.{js,jsx}` and Stylelint on `*.css` for staged files only (faster pre-commit)
+- **commitlint:** Enforces [Conventional Commits](https://www.conventionalcommits.org/) format via `.husky/commit-msg` hook
 
 ### Git Workflow
 - **Branching strategy:** See [BRANCHING_STRATEGY.md](BRANCHING_STRATEGY.md) for complete guide
@@ -426,7 +429,7 @@ import { SERVICES } from '../data/services';
   - Format: `<type>(<scope>): <description>`
   - Types: feat, fix, docs, style, refactor, perf, test, build, ci, chore
 - **Manual quality checks required** before commit: `npm run check:all`
-- **Git hooks:** Husky v9 configured but currently broken (fix tracked in Sprint 4 / #101)
+- **Git hooks:** Husky v9 with pre-commit hook (lint-staged + check:quality + check:integrity) and commit-msg hook (commitlint)
 - **Pull requests:** Required for all changes to `main` (see [PULL_REQUEST_TEMPLATE.md](PULL_REQUEST_TEMPLATE.md))
   - Comprehensive checklist: automated tests, manual testing, accessibility, security
   - Browser testing requirements: Chrome/Edge, Firefox, Safari
@@ -439,7 +442,7 @@ import { SERVICES } from '../data/services';
 - **Maintenance** (`.github/ISSUE_TEMPLATE/maintenance.yml`) - Chore tasks, dependency updates, tooling improvements
 
 ### Testing Strategy
-- **Vitest test suite:** 11 test files, ~122 tests (schema validation, utilities)
+- **Vitest test suite:** 12 test files, 154 tests (schema validation, utilities, hooks)
 - Quality also enforced via:
   1. ESLint + Stylelint (syntax & patterns)
   2. Universal quality checker (`check-quality.js` - 1000+ rules)
@@ -509,7 +512,7 @@ import { SERVICES } from '../data/services';
 
 ---
 
-**Last Updated:** February 6, 2026
+**Last Updated:** February 7, 2026
 **Maintained by:** GitHub Copilot & Claude Code
 **Codebase Version:** React 18.3.1 + Vite 7 (ESM)
 **API Status:** Menu API live (200 OK); Services & Locations APIs pending (#107) -- frontend uses static fallback

@@ -7,6 +7,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.4.1] - 2026-02-07
+
+### Added
+- `.editorconfig` for consistent editor settings (2-space indent, LF line endings, UTF-8)
+- `.github/dependabot.yml` for automated weekly dependency updates (npm + GitHub Actions)
+- `commitlint.config.js` with `@commitlint/config-conventional` for commit message enforcement
+- `.husky/commit-msg` hook for commitlint validation
+- `lint-staged` configuration in `package.json` for scoped pre-commit linting (`*.{js,jsx}` → ESLint, `*.css` → Stylelint)
+
+### Changed
+- CI consolidated from 2 workflow files (`accessibility-ci.yml` + `seo-check.yml`) into single `ci.yml` — 7 jobs reduced to 4, 7x `npm ci` reduced to 2x, 3 full builds reduced to 1
+- Build artifacts shared via `actions/upload-artifact` — deploy job reuses build instead of rebuilding
+- SEO validation folded into CI `validate` job (was a separate workflow with only 1/3 build secrets)
+- `check:all` npm script now includes `check:integrity` in addition to lint, lint:css, and check:quality
+- Pre-commit hook updated from `npm run check:all` to `lint-staged` + `check:quality` + `check:integrity` (faster: only lints staged files)
+
+### Fixed
+- Husky v9 installed and configured with `pre-commit` hook (was completely non-functional — package missing, shim missing, v8 format)
+- `check:integrity` (meta-checker) added to CI pipeline — previously ran locally only
+- All CI jobs now use `actions/checkout@v4` (was v3 in `html-validation` job)
+- Meta-checker now recognizes `npx lint-staged` as valid automation in pre-commit hook
+
+### Removed
+- Dead `precommit` and `prepush` npm scripts — npm does not auto-run these as lifecycle hooks, they created false confidence
+- Redundant `report` CI job that re-ran lint and tests just for summary generation
+- Redundant `publish` CI job rebuild — deploy now uses shared build artifact
+- Broken `.husky/pre-push` hook (v8 format with missing shim file)
+
+### Documentation
+- Updated `.github/copilot-instructions.md` — EditorConfig, lint-staged, commitlint, Dependabot documented; Husky status corrected; test count updated to 12 files / 154 tests
+
 ## [2.4.0] - 2026-02-07
 
 ### Added
@@ -324,6 +355,7 @@ Initial Create React App implementation. Deprecated and replaced by v2.0.0.
 
 | Version | Date         | Description                           |
 |---------|--------------|---------------------------------------|
+| 2.4.1   | Feb 7, 2026  | DevOps cleanup: consolidated CI, Husky v9, lint-staged, commitlint, Dependabot |
 | 2.4.0   | Feb 7, 2026  | WCAG 2.2 AA: focus traps, form ARIA, heading hierarchy |
 | 2.3.3   | Feb 6, 2026  | Performance & LCP optimization |
 | 2.3.1   | Feb 6, 2026  | Prerendered schemas and API consolidation |

@@ -243,6 +243,15 @@ export default function Navbar({ currentPage = 'home' }) {
             aria-modal="true"
             aria-label="Mobile navigation menu"
           >
+            {/* Close button inside focus trap (hamburger X is inerted when overlay opens) */}
+            <button
+              onClick={handleMenuClose}
+              className="absolute p-2 rounded-md md:hidden"
+              style={{ top: 16, right: 16, zIndex: 10, color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-heading)' }}
+              aria-label="Close menu"
+            >
+              <X size={24} />
+            </button>
             {/* Overlay logo, absolutely positioned top-left for perfect alignment */}
             <div style={{ position: 'absolute', top: 16, left: 16, zIndex: 10 }}>
               <Logo
