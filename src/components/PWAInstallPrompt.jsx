@@ -187,7 +187,7 @@ const PWAInstallPrompt = () => {
 
   return (
     <PWAPromptShell
-      visible={showPrompt && !!deferredPrompt}
+      visible={true}
       onDismiss={handleDismiss}
       icon={
         <div

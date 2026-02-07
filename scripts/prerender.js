@@ -474,7 +474,7 @@ const buildSitemapXml = (routeList, lastModDate) => {
 
 /**
  * Inject hashed Vite bundle filenames into dist/sw.js precache list.
- * Replaces the /* __VITE_BUNDLE_ASSETS__ *​/ placeholder with actual asset paths.
+ * Replaces the `__VITE_BUNDLE_ASSETS__` placeholder with actual asset paths.
  * Gracefully degrades: logs a warning if placeholder or assets are missing.
  */
 function injectServiceWorkerPrecache(distPath) {
@@ -512,16 +512,19 @@ function injectServiceWorkerPrecache(distPath) {
   swContent = swContent.replace(PLACEHOLDER, assetFiles);
 
   // L7: Auto-generate cache version from asset hash
-  const CACHE_PLACEHOLDER = "/* __CACHE_VERSION__ */ 'roma-mart-v2'";
-  if (swContent.includes(CACHE_PLACEHOLDER)) {
+  const CACHE_VERSION_REGEX = /\/\*\s*__CACHE_VERSION__\s*\*\/\s*(['"])[^'"]*\1/;
+  const cacheMatch = swContent.match(CACHE_VERSION_REGEX);
+  if (cacheMatch) {
     const sortedAssets = fs.readdirSync(assetsDir)
       .filter(file => /\.(js|css)$/.test(file))
       .sort()
       .join('\n');
     const hash = createHash('sha256').update(sortedAssets).digest('hex').slice(0, 8);
-    const cacheVersion = `'roma-mart-${hash}'`;
-    swContent = swContent.replace(CACHE_PLACEHOLDER, cacheVersion);
+    const quote = cacheMatch[1];
+    swContent = swContent.replace(CACHE_VERSION_REGEX, `/* __CACHE_VERSION__ */ ${quote}roma-mart-${hash}${quote}`);
     console.log(`\u2713 Cache version set to roma-mart-${hash}`);
+  } else {
+    console.warn('⚠️  Cache version placeholder not found in sw.js — skipping cache version injection');
   }
 
   fs.writeFileSync(swPath, swContent);

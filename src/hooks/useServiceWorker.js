@@ -58,18 +58,22 @@ export const useServiceWorker = () => {
       registerServiceWorker();
 
       // Reload when a new SW takes control after user-initiated skipWaiting.
-      // Guard: only reload if there was already a controller (prevents reload on first visit
-      // when clients.claim() fires controllerchange from null → new SW).
+      // Attach unconditionally so updates work even on first-visit sessions.
+      const hadController = Boolean(navigator.serviceWorker.controller);
+      let seenFirstControllerChange = false;
       let refreshing = false;
       const handleControllerChange = () => {
+        // On first visit, the initial controllerchange is from null → new SW
+        // due to clients.claim(). Skip that one.
+        if (!hadController && !seenFirstControllerChange) {
+          seenFirstControllerChange = true;
+          return;
+        }
         if (refreshing) return;
         refreshing = true;
         window.location.reload();
       };
-      // Only listen if a controller already exists (i.e., not the very first SW install)
-      if (navigator.serviceWorker.controller) {
-        navigator.serviceWorker.addEventListener('controllerchange', handleControllerChange);
-      }
+      navigator.serviceWorker.addEventListener('controllerchange', handleControllerChange);
 
       // Clean up controllerchange listener
       cleanupControllerChange = () => {
