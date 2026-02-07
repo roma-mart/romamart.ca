@@ -10,7 +10,7 @@ import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 const TermsPage = () => {
 
   const textColor = { color: 'var(--color-text)' };
-  const mutedTextColor = { color: 'var(--color-text)', opacity: 0.7 };
+  const mutedTextColor = { color: 'var(--color-text-muted)' };
 
   const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
 

@@ -10,7 +10,7 @@ import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 const AboutPage = () => {
 
   const textColor = { color: 'var(--color-text)' };
-  const mutedTextColor = { color: 'var(--color-text)', opacity: 0.7 };
+  const mutedTextColor = { color: 'var(--color-text-muted)' };
 
   const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
 
@@ -145,9 +145,10 @@ const AboutPage = () => {
       <nav aria-label="Breadcrumb" className="max-w-7xl mx-auto px-4 mb-8">
         <ol className="flex items-center gap-2 text-sm font-inter">
           <li>
-            <a 
-              href={`${BASE_URL}`} 
-              style={{ ...mutedTextColor, transition: 'color 0.2s', cursor: 'pointer' }}
+            <a
+              href={`${BASE_URL}`}
+              className="hover:text-accent transition-colors"
+              style={mutedTextColor}
             >
               Home
             </a>

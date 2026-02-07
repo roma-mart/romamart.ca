@@ -10,7 +10,7 @@ import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 const AccessibilityPage = () => {
   const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
   const textColor = { color: 'var(--color-text)' };
-  const mutedTextColor = { color: 'var(--color-text)', opacity: 0.7 };
+  const mutedTextColor = { color: 'var(--color-text-muted)' };
 
   return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>
@@ -27,7 +27,7 @@ const AccessibilityPage = () => {
       <nav aria-label="Breadcrumb" className="max-w-4xl mx-auto px-4 mb-8">
         <ol className="flex items-center gap-2 text-sm font-inter">
           <li>
-            <a href={`${BASE_URL}`} className="transition-colors" style={mutedTextColor}>Home</a>
+            <a href={`${BASE_URL}`} className="hover:text-accent transition-colors" style={mutedTextColor}>Home</a>
           </li>
           <li aria-hidden="true"><ChevronRight size={16} style={mutedTextColor} /></li>
           <li aria-current="page" className="font-semibold" style={textColor}>Accessibility</li>

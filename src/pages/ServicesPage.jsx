@@ -18,7 +18,7 @@ const ServicesPage = () => {
   };
 
   const textColor = { color: 'var(--color-text)' };
-  const mutedTextColor = { color: 'var(--color-text)', opacity: 0.7 };
+  const mutedTextColor = { color: 'var(--color-text-muted)' };
 
   const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
 
@@ -67,16 +67,13 @@ const ServicesPage = () => {
           <li>
             <a
               href={`${BASE_URL}`}
-              style={{ color: 'var(--color-text-muted)' }}
-              onMouseOver={e => e.currentTarget.style.color = 'var(--color-accent)'}
-              onFocus={e => e.currentTarget.style.color = 'var(--color-accent)'}
-              onMouseOut={e => e.currentTarget.style.color = 'var(--color-text-muted)'}
-              onBlur={e => e.currentTarget.style.color = 'var(--color-text-muted)'}
+              className="hover:text-accent transition-colors"
+              style={mutedTextColor}
             >
               Home
             </a>
           </li>
-          <li aria-hidden="true"><ChevronRight size={16} style={{ color: 'var(--color-text-muted)' }} /></li>
+          <li aria-hidden="true"><ChevronRight size={16} style={mutedTextColor} /></li>
           <li aria-current="page" className="font-semibold" style={textColor}>Services</li>
         </ol>
       </nav>

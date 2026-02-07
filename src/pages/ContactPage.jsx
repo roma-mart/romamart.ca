@@ -19,7 +19,7 @@ import { normalizePhoneForTel } from '../utils/phone';
 
 const ContactPage = () => {
   const textColor = { color: 'var(--color-text)' };
-  const mutedTextColor = { color: 'var(--color-text)', opacity: 0.7 };
+  const mutedTextColor = { color: 'var(--color-text-muted)' };
   const BASE_URL = import.meta.env.BASE_URL || '/';
 
   const [formStatus, setFormStatus] = useState('');
