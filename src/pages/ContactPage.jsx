@@ -45,8 +45,6 @@ const ContactPage = () => {
     if (!message) errors.message = 'Message is required.';
     if (Object.keys(errors).length > 0) {
       setFieldErrors(errors);
-      setFormStatus('error');
-      showError('Please fill in all required fields.');
       return;
     }
     setFieldErrors({});

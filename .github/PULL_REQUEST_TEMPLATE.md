@@ -1,9 +1,9 @@
 <!--
-Pull Request Title Format: <type>(<scope>): Brief description
+Pull Request Title Format: <version semver: major.minor.patch><type>(<scope>): Brief description
 Examples:
-  - feat(rocafe): add nutritional information display
-  - fix(locations): correct timezone handling
-  - docs(readme): enhance installation instructions
+  - 1.2.1 feat(rocafe): add nutritional information display
+  - 2.2.2 fix(locations): correct timezone handling
+  - 1.5.1 docs(readme): enhance installation instructions
 -->
 #
 ## 📋 Description
@@ -59,6 +59,8 @@ Examples:
 ### Automated Tests
 - [ ] `npm run lint` passes
 - [ ] `npm run test` passes
+- [ ] `npm run check:quality` passes
+- [ ] `npm run check:integrity` passes
 - [ ] `npm run build` succeeds without errors
 - [ ] Bundle size within limits
 

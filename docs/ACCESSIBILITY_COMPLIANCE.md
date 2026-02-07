@@ -3,8 +3,6 @@
 **Target Standards:**
 - ✅ **WCAG 2.2 AA** (Web Content Accessibility Guidelines — Latest Stable)
 - ✅ **AODA** (Accessibility for Ontarians with Disabilities Act — Requires WCAG 2.0 AA minimum)
-- ✅ **ISO/IEC 40500** (International alignment with WCAG)
-- ✅ **EN 301 549 (EAA)** (European Accessibility Act — Harmonizes with WCAG 2.1 AA)
 - 🎯 **WCAG 3.0** (Monitoring draft standard for future adoption)
 
 ---
@@ -407,16 +405,6 @@
 
 ## 5. Additional Compliance Standards
 
-### EN 301 549 (EAA) — European Accessibility Act
-- Aligns with WCAG 2.1 AA (currently; moving to WCAG 2.2 alignment)
-- Roma Mart targets WCAG 2.2 AA, which exceeds EN 301 549 minimum
-
-### ISO/IEC 40500
-- ISO/IEC 40500 is the ISO formalization of WCAG 2.0
-- Alignment maintained through WCAG 2.2 AA conformance
-- **Conformance levels:** A, AA, AAA
-- **Target for Roma Mart:** AA
-
 ### AODA (Accessibility for Ontarians with Disabilities Act)
 - **Requirement:** WCAG 2.0 AA compliance (we exceed with 2.2 AA target)
 - **Scope:** Websites, web applications, digital materials
@@ -603,8 +591,6 @@ to the Web Content Accessibility Guidelines (WCAG) 2.2 AA level.
 This website has been evaluated for conformance with:
 - WCAG 2.2 Level AA
 - Accessibility for Ontarians with Disabilities Act (AODA)
-- ISO/IEC 40500 (International standardization of WCAG)
-- EU Accessibility Act (EN 301 549)
 
 All Level A and AA criteria pass automated code-level audit. Remaining items
 require manual testing (contrast measurement, zoom/reflow, screen reader walkthrough).
@@ -622,7 +608,6 @@ accessibility@romamart.ca
 - W3C WCAG 2.2: https://www.w3.org/WAI/WCAG22/quickref/
 - WCAG 2.2 Understanding Docs: https://www.w3.org/WAI/WCAG22/Understanding/
 - AODA Standards: https://www.ontario.ca/laws/regulation/070191
-- EN 301 549: https://www.etsi.org/deliver/etsi_en/301500_301599/301549/
 
 ### Tools
 - Deque axe: https://www.deque.com/axe/
@@ -640,7 +625,7 @@ accessibility@romamart.ca
 - ✅ **Screen Reader:** Form errors announced via aria-live, social icons labeled, dialog roles set, loading states announced
 - 🎯 **Zoom:** Content reflows at 200%+ — needs manual testing
 - 🎯 **Automation:** ESLint jsx-a11y in CI — not yet set up
-- ✅ **Conformance Statement:** WCAG 2.2 AA + ISO/IEC 40500 + AODA + EN 301 549 documented
+- ✅ **Conformance Statement:** WCAG 2.2 AA + AODA documented
 
 ---
 

@@ -58,7 +58,11 @@ const LocationImageCarousel = ({ photos, locationName }) => {
       onMouseEnter={() => { isPaused.current = true; }}
       onMouseLeave={() => { isPaused.current = false; }}
       onFocus={() => { isPaused.current = true; }}
-      onBlur={() => { isPaused.current = false; }}
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget)) {
+          isPaused.current = false;
+        }
+      }}
     >
       {/* Left/Right Scroll Buttons for Carousel */}
       {images.length > 1 && current > 0 && (

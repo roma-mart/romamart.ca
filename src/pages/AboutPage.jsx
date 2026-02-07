@@ -191,7 +191,11 @@ const AboutPage = () => {
             onMouseEnter={() => { isCarouselPaused.current = true; }}
             onMouseLeave={() => { isCarouselPaused.current = false; }}
             onFocus={() => { isCarouselPaused.current = true; }}
-            onBlur={() => { isCarouselPaused.current = false; }}
+            onBlur={(e) => {
+              if (!e.currentTarget.contains(e.relatedTarget)) {
+                isCarouselPaused.current = false;
+              }
+            }}
           >
             {/* Left/Right Scroll Buttons for Carousel */}
             {heroImages.length > 1 && currentImageIndex > 0 && (

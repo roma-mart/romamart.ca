@@ -2,12 +2,41 @@
  * Custom React Hook: Focus Trap for Modal Dialogs
  * Traps Tab/Shift+Tab focus within a container and handles Escape to close.
  * Follows WCAG 2.2 AA dialog pattern requirements (2.1.2 Keyboard).
+ * When active, marks all non-ancestor siblings as inert to prevent
+ * screen readers from accessing background content (aria-modal support).
  */
 
 import { useEffect, useRef } from 'react';
 
 const FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), textarea, input:not([type="hidden"]), select, [tabindex]:not([tabindex="-1"])';
+
+/**
+ * Walk from the container up to document.body and set inert on all
+ * sibling elements at each level that are not ancestors of the container.
+ * Returns a cleanup function that removes the inert attributes.
+ */
+function setInertOnSiblings(container) {
+  const inertedElements = [];
+  let node = container;
+
+  while (node && node !== document.body) {
+    const parent = node.parentElement;
+    if (parent) {
+      Array.from(parent.children).forEach(sibling => {
+        if (sibling !== node && !sibling.hasAttribute('inert')) {
+          sibling.setAttribute('inert', '');
+          inertedElements.push(sibling);
+        }
+      });
+    }
+    node = parent;
+  }
+
+  return () => {
+    inertedElements.forEach(el => el.removeAttribute('inert'));
+  };
+}
 
 /**
  * @param {React.RefObject} containerRef - Ref to the dialog container element
@@ -22,10 +51,13 @@ export function useFocusTrap(containerRef, isActive, options = {}) {
   const previousActiveElement = useRef(null);
 
   useEffect(() => {
-    if (!isActive) return;
+    if (!isActive || !containerRef.current) return;
 
     // Store the currently focused element to restore later
     previousActiveElement.current = document.activeElement;
+
+    // Mark all non-ancestor siblings as inert
+    const removeInert = setInertOnSiblings(containerRef.current);
 
     const getFocusableElements = () => {
       if (!containerRef.current) return [];
@@ -77,6 +109,7 @@ export function useFocusTrap(containerRef, isActive, options = {}) {
     return () => {
       clearTimeout(focusTimer);
       document.removeEventListener('keydown', handleKeyDown);
+      removeInert();
 
       // Restore focus on deactivation
       const restoreTarget = returnFocusElement || previousActiveElement.current;
@@ -86,3 +119,4 @@ export function useFocusTrap(containerRef, isActive, options = {}) {
     };
   }, [isActive, containerRef, onEscape, returnFocusRef, initialFocusDelay]);
 }
+
