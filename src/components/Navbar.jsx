@@ -221,7 +221,7 @@ export default function Navbar({ currentPage = 'home' }) {
                 toggleMenu();
               }
             }}
-            className="md:hidden p-2 min-w-[44px] min-h-[44px] rounded-md no-drag focus-visible:ring-2 focus-visible:ring-accent"
+            className={`md:hidden p-2 min-w-[44px] min-h-[44px] rounded-md no-drag focus-visible:ring-2 focus-visible:ring-accent${isOpen ? ' invisible' : ''}`}
             style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-heading)' }}
             aria-label={isOpen ? "Close menu" : "Open menu"}
             aria-expanded={isOpen}

@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [2.6.0] - 2026-02-07
+## [2.6.0] - 2026-02-08
 
 ### Added
 - Unified `ImageCarousel` component with proper ARIA carousel pattern, 44px touch targets, and auto-advance with reduced motion support
@@ -15,6 +15,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `FooterReviews`, `FooterLinks`, `FooterLocation` sub-components extracted from monolithic Footer
 - `LoadingFallback` component for branded Suspense fallback (replaces bare "Loading..." text)
 - Google Consent Mode v2 defaults (`ad_storage`, `analytics_storage`, `ad_user_data`, `ad_personalization` all denied) before GTM loads — Clickio CMP upgrades on accept
+- Button `size` prop (`sm` / `md` / `lg`) replaces per-callsite `px-8 py-4 text-lg` overrides
+- Button `inverted` variant (navy bg, gold text) for dark-context primary actions (ErrorBoundary, PWA prompts)
+- Button `secondary` variant styles (surface bg, muted text) for dismiss/cancel actions
+- Golden halo glow effect on all button hover states (zero-offset `boxShadow` with accent color)
+- Border-radius design token scale (`--radius-sm`, `--radius-md`, `--radius-lg`, `--radius-xl`, `--radius-full`)
+- CSS fallback hover rules for `inverted` and `secondary` button variants
 
 ### Changed
 - `ErrorBoundary` rewritten with branded UI, "Refresh Page" / "Go Home" actions, and GA error tracking (replaces raw stack trace)
@@ -23,15 +29,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - AboutPage CTA links converted to `Button` components; carousel dot indicators now 44px touch targets
 - Team scroll left arrow uses `ChevronLeft` (was `ChevronRight` rotated wrong direction)
 - All 9 debug `console.log` statements gated behind `import.meta.env.DEV` for tree-shaking
+- Button component: `display: inline-flex` with `align-items: center` and `gap: 8` as base styles for proper text/icon centering
+- Button animations unified to shared spring config (`stiffness: 400, damping: 35`) with consistent scale tiers (primary CTAs 1.05, standard 1.03, icon 1.1)
+- 14 Button callsites cleaned of redundant `className`/`style` overrides (replaced by `size` prop and new variants)
+- Inline event handlers memoized with `useCallback` across 7 components
+- All Button `type` attributes explicit; `focus-visible` ring styles standardized
+- FAB bottom spacing changed from `env(safe-area-inset-bottom, 1rem)` to `calc(env(safe-area-inset-bottom, 0px) + 1.5rem)` for proper mobile clearance
+- OrderCTA: removed `transition-all duration-500` and `shadow-lg` that conflicted with Framer Motion
+- FAB entrance animation fill-mode changed from `both` to `backwards` so hover transforms work
+- `window.gtag` assignment for Clickio CMP compatibility
+- ErrorBoundary "Go Home" href uses `import.meta.env.BASE_URL`
+- ImageCarousel arrow buttons: `focus-visible:ring-accent`
+- FooterReviews: replaced `focus:outline-none` with `focus-visible:ring-accent`
 
 ### Fixed
 - LocationsPage carousel left arrow pointed right (SVG rotated 180deg incorrectly)
 - LocationsPage carousel showed same image regardless of selection (`LazyImage` opacity class conflicted with carousel opacity)
 - JSX-embedded `console.log` in RoCafePage and App.jsx removed (was executing in production render)
+- Pluralization bug in review count display
+- Button `action` variant: removed laggy `backgroundColor` animation (not GPU-accelerated)
+- Double X close button regression in mobile navbar overlay
+- Quality checker false positives for `aria-hidden` and scrollbar-hide patterns
 
 ### Removed
 - `LocationImageCarousel` component (replaced by unified `ImageCarousel`)
 - Duplicate contact form code from `App.jsx` ContactSection (~150 lines) and `ContactPage.jsx` (~110 lines)
+- Dead code: unused `sectionName` prop in Footer, stale comment in RoCafePage
 
 ## [2.5.0] - 2026-02-07
 
