@@ -1,468 +1,187 @@
-          /**
-           * info @ Location Selector (in Footer)
-           * Accessible, standards-based location selector using native <select> and design tokens.
-           * @returns {JSX.Element}
-           */
-import React, { useState, useMemo } from 'react';
-import { MapPin } from 'lucide-react';
+/**
+ * Footer.jsx
+ * Main footer component — orchestrates sub-components and renders brand/social/copyright sections.
+ */
+import React, { useMemo } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFacebook, faInstagram, faTiktok, faXTwitter, faSnapchat } from '@fortawesome/free-brands-svg-icons';
 import COMPANY_DATA from '../config/company_data';
 import { Logo } from './Logo';
 import TrustpilotWidget from './TrustpilotWidget';
 import { useLocationContext } from '../hooks/useLocationContext';
-import useGooglePlaceHours from '../hooks/useGooglePlaceHours';
 import { useLocations } from '../contexts/LocationsContext';
-import { NAVIGATION_LINKS } from '../config/navigation';
 import OrderCTA from './OrderCTA';
-import LocationButton from './LocationButton';
-import CurrentLocalTime from './CurrentLocalTime';
+import Button from './Button';
+import FooterReviews from './FooterReviews';
+import FooterLinks from './FooterLinks';
+import FooterLocation from './FooterLocation';
 
-
-// Social platforms to control display in Footer (label, icon)
 const SOCIAL_LINKS = [
-  { label: 'Facebook', icon: 'Facebook' },
-  { label: 'Instagram', icon: 'Instagram' },
-  { label: 'TikTok', icon: 'TikTok' },
-  { label: 'X', icon: 'X' },
-  { label: 'Snapchat', icon: 'Snapchat' }
+  { label: 'Facebook', icon: faFacebook },
+  { label: 'Instagram', icon: faInstagram },
+  { label: 'TikTok', icon: faTiktok },
+  { label: 'X', icon: faXTwitter },
+  { label: 'Snapchat', icon: faSnapchat },
 ];
 
 export default function Footer() {
-
-  const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
+  const BASE_URL =
+    typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL
+      ? import.meta.env.BASE_URL
+      : '/';
   const { userLocation } = useLocationContext();
   const { locations } = useLocations();
-  const [selectedLocationId, setSelectedLocationId] = useState(() => {
-    return localStorage.getItem('roma_mart_selected_location') || 'auto';
-  });
 
-
-  // Calculate nearest location
+  // Nearest location (Haversine)
   const nearestLocationId = useMemo(() => {
-    if (!userLocation || !userLocation.latitude || !userLocation.longitude) {
-      return null;
-    }
-
-    const calculateDistance = (lat1, lon1, lat2, lon2) => {
-      const R = 6371;
-      const dLat = (lat2 - lat1) * Math.PI / 180;
-      const dLon = (lon2 - lon1) * Math.PI / 180;
-      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                Math.sin(dLon/2) * Math.sin(dLon/2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-      return R * c;
-    };
-
-    const activeLocations = locations.filter(loc => loc.status === 'open');
+    if (!userLocation || !userLocation.latitude || !userLocation.longitude) return null;
+    const toRad = (deg) => (deg * Math.PI) / 180;
     let nearest = null;
-    let minDistance = Infinity;
-
-    activeLocations.forEach(loc => {
-      if (loc.google?.coordinates) {
-        const distance = calculateDistance(
-          userLocation.latitude,
-          userLocation.longitude,
-          loc.google.coordinates.lat,
-          loc.google.coordinates.lng
-        );
-        if (distance < minDistance) {
-          minDistance = distance;
+    let minDist = Infinity;
+    locations
+      .filter((loc) => loc.status === 'open')
+      .forEach((loc) => {
+        if (!loc.google?.coordinates) return;
+        const dLat = toRad(loc.google.coordinates.lat - userLocation.latitude);
+        const dLon = toRad(loc.google.coordinates.lng - userLocation.longitude);
+        const a =
+          Math.sin(dLat / 2) ** 2 +
+          Math.cos(toRad(userLocation.latitude)) *
+            Math.cos(toRad(loc.google.coordinates.lat)) *
+            Math.sin(dLon / 2) ** 2;
+        const d = 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        if (d < minDist) {
+          minDist = d;
           nearest = loc.id;
         }
-      }
-    });
-
+      });
     return nearest;
   }, [userLocation, locations]);
 
-
-  const handleLocationChange = (e) => {
-    const newLocationId = e.target.value;
-    setSelectedLocationId(newLocationId);
-    
-    if (newLocationId === 'auto') {
-      localStorage.removeItem('roma_mart_selected_location');
-    } else {
-      localStorage.setItem('roma_mart_selected_location', newLocationId);
-    }
-  };
-
-
-
-
-
-  // Compute currentLocation before rendering (use only one getCurrentLocation definition in this component)
-  const getCurrentLocation = () => {
-    let location = null;
-    if (selectedLocationId === 'auto') {
-      if (nearestLocationId) {
-        location = locations.find(loc => loc.id === nearestLocationId);
-      } else {
-        location = COMPANY_DATA.location;
-      }
-    } else {
-      location = locations.find(loc => loc.id === selectedLocationId);
-      if (!location) {
-        location = COMPANY_DATA.location;
-      }
-    }
-    if (location) {
-      return {
-        ...location,
-        address: location.address || COMPANY_DATA.hq?.address,
-        contact: location.contact || COMPANY_DATA.hq?.contact,
-        hours: location.hours || COMPANY_DATA.hq?.hours,
-      };
-    }
-    return COMPANY_DATA.hq;
-  };
-  const currentLocation = getCurrentLocation();
-
-  const isAutoMode = selectedLocationId === 'auto';
-  const activeLocations = useMemo(() =>
-    locations.filter(loc => loc.status === 'open'),
-    [locations]
-  );
-
-  // Fetch live rating data from Google Places API
-  const { rating, userRatingCount } = useGooglePlaceHours(
-    currentLocation?.google?.placeId || null
-  );
-
-  // Format rating display
-  const ratingDisplay = rating ? Number(rating).toFixed(1) : null;
-  const reviewCountDisplay = userRatingCount ? userRatingCount.toLocaleString() : null;
-
-  // Generate star display based on rating
-  const renderStars = (ratingValue) => {
-    if (!ratingValue) return '⭐⭐⭐⭐⭐';
-
-    const clampedRating = Math.min(5, Math.max(0, ratingValue));
-    const roundedRating = Math.round(clampedRating * 2) / 2;
-    const fullStars = Math.floor(roundedRating);
-    const hasHalfStar = roundedRating - fullStars === 0.5;
-    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-
-    return (
-      '⭐'.repeat(fullStars) +
-      (hasHalfStar ? '⯨' : '') +
-      '☆'.repeat(Math.max(0, emptyStars))
-    );
-  };
+  // Current location for reviews
+  const currentLocation = useMemo(() => {
+    const loc = nearestLocationId
+      ? locations.find((l) => l.id === nearestLocationId)
+      : COMPANY_DATA.location;
+    return loc || COMPANY_DATA.location;
+  }, [nearestLocationId, locations]);
 
   const socialHandlers = useMemo(() => {
     const handlers = {};
-    SOCIAL_LINKS.forEach(link => {
-      handlers[link.label.toLowerCase()] = () => window.dataLayer?.push({ event: 'social_click', platform: link.label.toLowerCase() });
+    SOCIAL_LINKS.forEach((link) => {
+      handlers[link.label.toLowerCase()] = () =>
+        window.dataLayer?.push({ event: 'social_click', platform: link.label.toLowerCase() });
     });
     return handlers;
   }, []);
 
   return (
-      <React.Fragment>
-      {/* Persistent floating OrderCTA button for site-wide visibility */}
+    <React.Fragment>
       <OrderCTA />
-      <footer className="pt-16 pb-8" style={{ backgroundColor: 'var(--color-footer)', color: 'var(--color-on-footer)' }}>
-        {/* Google Places Reviews Carousel */}
+      <footer
+        className="pt-16 pb-20"
+        style={{ backgroundColor: 'var(--color-footer)', color: 'var(--color-on-footer)' }}
+      >
         {/* Google Reviews */}
-        <div className="mb-16 flex justify-center">
-          <div className="w-full max-w-3xl mx-4 px-8 py-8 rounded-2xl shadow-lg" style={{ 
-            backgroundColor: 'var(--color-surface)',
-            borderColor: 'var(--color-border)',
-            borderWidth: '1px',
-            borderStyle: 'solid'
-          }}>
-            <div className="text-center">
-              {rating ? (
-                <div className="mb-3">
-                  <div className="text-5xl font-bold mb-1" style={{ color: 'var(--color-accent)' }}>
-                    {ratingDisplay}
-                  </div>
-                  <div className="text-2xl mb-1">{renderStars(rating)}</div>
-                  {reviewCountDisplay && (
-                    <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
-                      Based on {reviewCountDisplay} reviews
-                    </p>
-                  )}
-                </div>
-              ) : (
-                <div className="text-4xl mb-3">⭐⭐⭐⭐⭐</div>
-              )}
-              <p className="text-2xl font-bold mb-3" style={{ 
-                color: 'var(--color-heading)',
-                fontFamily: 'var(--font-heading)'
-              }}>
-                See What Our Customers Say
-              </p>
-              <p className="text-base mb-6 max-w-xl mx-auto leading-relaxed" style={{ 
-                color: 'var(--color-text-muted)'
-              }}>
-                Read authentic reviews from our community on Google and discover why Roma Mart is Sarnia's favorite convenience destination.
-              </p>
-              <a
-                href={
-                  currentLocation?.google?.mapLink ||
-                  COMPANY_DATA.location?.google?.mapLink ||
-                  locations[0]?.google?.mapLink
-                }
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-xl font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 hover:scale-105"
-                style={{
-                  backgroundColor: 'var(--color-accent)',
-                  color: 'var(--color-primary)',
-                  fontFamily: 'var(--font-heading)',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
-                  boxShadow: '0 4px 14px 0 rgba(228, 179, 64, 0.3)'
-                }}
-              >
-                View All Reviews on Google
-              </a>
-            </div>
-          </div>
-        </div>
-      <div className="max-w-7xl mx-auto p-4 grid md:grid-cols-4 gap-12 mb-12">
-        <div className="p-1 col-span-1 md:col-span-2">
-           <a 
-             href={`${BASE_URL}`}
-             className="flex items-center gap-3 mb-6 transition-opacity cursor-pointer w-fit hover:opacity-80 focus-visible:opacity-80"
-             style={{ WebkitTapHighlightColor: 'transparent' }}
-             aria-label="Roma Mart - Go to homepage"
-           >
-              <Logo layout="horizontal" variant="white" size={40} />
-           </a>
-           <p className="p-1 font-inter max-w-sm mb-6" style={{ color: 'var(--color-on-footer-muted)' }}>
-             Your local one-stop shop for everything from daily groceries to premium café drinks. Proudly serving the Sarnia community.
-           </p>
-           <div className="flex gap-4 p-1">
-             {SOCIAL_LINKS.map(link => {
-               const url = COMPANY_DATA.socialLinks[link.label.toLowerCase()];
-               if (!url) return null;
-               let icon;
-               switch (link.icon) {
-                 case 'Facebook':
-                   icon = faFacebook;
-                   break;
-                 case 'Instagram':
-                   icon = faInstagram;
-                   break;
-                 case 'TikTok':
-                   icon = faTiktok;
-                   break;
-                 case 'X':
-                   icon = faXTwitter;
-                   break;
-                 case 'Snapchat':
-                   icon = faSnapchat;
-                   break;
-                 default:
-                   icon = faFacebook;
-               }
-               return (
-                 <a
-                   key={link.label}
-                   href={url}
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   className="w-10 h-10 rounded-full flex items-center justify-center transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
-                   style={{ backgroundColor: 'var(--color-surface-muted)' }}
-                   aria-label={`Visit Roma Mart on ${link.label}`}
-                   title={link.label}
-                   onClick={socialHandlers[link.label.toLowerCase()]}
-                   onMouseEnter={e => e.currentTarget.firstChild.style.color = 'var(--color-accent)'}
-                   onMouseLeave={e => e.currentTarget.firstChild.style.color = 'var(--color-on-footer)'}
-                 >
-                   <FontAwesomeIcon icon={icon} size="lg" style={{ color: 'var(--color-on-footer)' }} aria-hidden="true" />
-                 </a>
-               );
-             })}
-           </div>
-        </div>
+        <FooterReviews currentLocation={currentLocation} locations={locations} />
 
-        <div className="col-span-1 md:col-span-2 grid grid-cols-2 gap-8">
-          {/* <div className="grid grid-cols-2 md:grid-cols-2 gap-12"> */}
-            <div className="p-1">
-              <p className="font-heading text-lg mb-6" style={{ color: 'var(--color-on-footer)' }}>Pages</p>
-              <ul className="space-y-3 font-inter" style={{ color: 'var(--color-on-footer-muted)' }}>
-                {NAVIGATION_LINKS.filter(link => {
-                  if (!link.showIn.footer) return false;
-                  const normalizedHref = (link.href || '').replace(/^\//, '').replace(/\/$/, '').toLowerCase();
-                  return !['privacy', 'terms', 'cookies', 'accessibility', 'return-policy'].includes(normalizedHref);
-                }).map(link => (
-                  <li key={link.href}>
-                    <a
-                      href={`${BASE_URL}${link.href.replace('/', '')}`}
-                      className="transition-colors"
-                      style={{ color: 'var(--color-on-footer-muted)' }}
-                      onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'}
-                      onMouseLeave={e => e.currentTarget.style.color = 'var(--color-on-footer-muted)'}
-                    >
-                      {link.label}
-                    </a>
-                  </li>
-                ))}
-                <li>
+        {/* Logo + Social + Links */}
+        <div className="max-w-7xl mx-auto p-4 grid md:grid-cols-4 gap-12 mb-12">
+          <div className="p-1 col-span-1 md:col-span-2">
+            <a
+              href={`${BASE_URL}`}
+              className="flex items-center gap-3 mb-6 transition-opacity cursor-pointer w-fit hover:opacity-80 focus-visible:opacity-80"
+              style={{ WebkitTapHighlightColor: 'transparent' }}
+              aria-label="Roma Mart - Go to homepage"
+            >
+              <Logo layout="horizontal" variant="white" size={40} />
+            </a>
+            <p
+              className="p-1 font-inter max-w-sm mb-6"
+              style={{ color: 'var(--color-on-footer-muted)' }}
+            >
+              Your local one-stop shop for everything from daily groceries to premium café drinks.
+              Proudly serving the Sarnia community.
+            </p>
+            <div className="flex gap-4 p-1">
+              {SOCIAL_LINKS.map((link) => {
+                const url = COMPANY_DATA.socialLinks[link.label.toLowerCase()];
+                if (!url) return null;
+                return (
                   <a
-                    href={COMPANY_DATA.onlineStoreUrl}
+                    key={link.label}
+                    href={url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-bold transition-colors"
-                    style={{ color: 'var(--color-accent)' }}
-                    onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'}
-                    onMouseLeave={e => e.currentTarget.style.color = 'var(--color-accent)'}
+                    className="w-10 h-10 rounded-full flex items-center justify-center transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
+                    style={{ backgroundColor: 'var(--color-surface-muted)' }}
+                    aria-label={`Visit Roma Mart on ${link.label}`}
+                    title={link.label}
+                    onClick={socialHandlers[link.label.toLowerCase()]}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.firstChild.style.color = 'var(--color-accent)')
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.firstChild.style.color = 'var(--color-on-footer)')
+                    }
                   >
-                    Order Online
+                    <FontAwesomeIcon
+                      icon={link.icon}
+                      size="lg"
+                      style={{ color: 'var(--color-on-footer)' }}
+                      aria-hidden="true"
+                    />
                   </a>
-                </li>
-              </ul>
+                );
+              })}
             </div>
-            <div className="p-1">
-              <p className="font-heading text-lg mb-6" style={{ color: 'var(--color-on-footer)' }}>Legal & Accessibility</p>
-              <ul className="space-y-2 font-inter" style={{ color: 'var(--color-on-footer-muted)' }}>
-                {NAVIGATION_LINKS.filter(link => {
-                  if (!link.showIn.footer) return false;
-                  const normalizedHref = (link.href || '').replace(/^\//, '').replace(/\/$/, '').toLowerCase();
-                  return ['privacy', 'terms', 'cookies', 'accessibility', 'return-policy'].includes(normalizedHref);
-                }).map(link => (
-                  <li key={link.href}>
-                    <a
-                      href={`${BASE_URL}${link.href.replace('/', '')}`}
-                      className="transition-colors"
-                      style={{ color: 'var(--color-on-footer-muted)' }}
-                      onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'}
-                      onMouseLeave={e => e.currentTarget.style.color = 'var(--color-on-footer-muted)'}
-                    >
-                      {link.label}
-                    </a>
-                  </li>
-                ))}
-                <li>
-                  <a
-                    href={`${BASE_URL}ai.txt`}
-                    className="transition-colors text-xs"
-                    style={{ color: 'var(--color-on-footer-muted)' }}
-                    onMouseEnter={e => e.currentTarget.style.color = 'var(--color-accent)'}
-                    onMouseLeave={e => e.currentTarget.style.color = 'var(--color-on-footer-muted)'}
-                    title="AI Crawler Guidelines"
-                  >
-                    AI Guidelines
-                  </a>
-                </li>
-              </ul>
-            </div>
-        </div>
-      </div>
+          </div>
 
-      <div className="max-w-7xl mx-auto px-4 pt-8" style={{ borderTop: '1px solid var(--color-border-muted)' }}>
-        <div className="mb-8 flex justify-center items-center">
-          <TrustpilotWidget />
+          <FooterLinks />
         </div>
 
-        <div className="mb-8 max-w-md mx-auto">
-            <div className="rounded-lg p-4 flex flex-col items-center" style={{ backgroundColor: 'var(--color-footer)', border: '.5px solid var(--color-border)', position: 'relative' }}>
-              <label 
-                htmlFor="location-selector" 
-                className="font-heading text-base mb-2 flex items-center gap-2 justify-center text-center"
-                style={{ color: 'var(--color-accent)', fontWeight: 600, width: '100%' }}
-              >
-                <MapPin className="inline-block" size={18} aria-hidden="true" />
-                <span>Your Store Location</span>
-              </label>
-              <div style={{ position: 'relative', width: '100%' }}>
-                <select
-                  id="location-selector"
-                  value={selectedLocationId}
-                  onChange={handleLocationChange}
-                  className="w-full px-4 py-3 rounded-xl font-inter shadow-lg transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:border-accent hover:border-accent focus-visible:z-10 border border-[var(--color-border)] pr-10 text-center"
-                  style={{
-                    backgroundColor: 'var(--color-surface)',
-                    color: 'var(--color-text)',
-                    cursor: 'pointer',
-                    boxShadow: '0 2px 8px 0 var(--color-footer-shadow, rgba(21,21,21,0.06))',
-                    appearance: 'none',
-                    WebkitAppearance: 'none',
-                    MozAppearance: 'none',
-                    fontSize: '1.08rem',
-                    fontWeight: 600,
-                    minHeight: '48px',
-                    letterSpacing: '0.01em',
-                    transition: 'border-color 0.2s, box-shadow 0.2s',
-                  }}
-                  aria-describedby="footer-location-helper"
-                >
-                  <option value="auto">
-                    {isAutoMode && nearestLocationId
-                      ? `🎯 Auto-Detected: ${currentLocation.name}`
-                      : '🏢 Auto (HQ - Wellington St.)'}
-                  </option>
-                  {activeLocations.map(loc => (
-                    <option 
-                      key={loc.id}
-                      value={loc.id}
-                    >
-                      {loc.name} {loc.isPrimary ? '(HQ)' : ''}
-                    </option>
-                  ))}
-                </select>
-                {/* Dropdown indicator (chevron) */}
-                <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 20 20" fill="none" style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: 'var(--color-on-surface-muted)' }}>
-                  <path d="M6 8l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </div>
-              <p id="footer-location-helper" className="sr-only">Select your preferred Roma Mart location to see relevant contact information</p>
+        {/* Trustpilot + Location + Copyright */}
+        <div
+          className="max-w-7xl mx-auto px-4 pt-8"
+          style={{ borderTop: '1px solid var(--color-border-muted)' }}
+        >
+          <div className="mb-8 flex justify-center items-center">
+            <TrustpilotWidget />
+          </div>
 
-            <div className="mt-2 text-xs font-inter text-center" style={{ color: 'var(--color-on-footer-subtle)', width: '100%' }}>
-              {isAutoMode ? (
-                nearestLocationId ? (
-                  <span>✓ Nearest store: <strong>{currentLocation.name}</strong></span>
-                ) : (
-                  <span>Defaulting to headquarters. Enable location for nearest store.</span>
-                )
-              ) : (
-                <span>✓ Selected: <strong>{currentLocation.name}</strong></span>
-              )}
-              <div className="mt-8 flex justify-center">
-                <LocationButton
-                  ariaLabel="Detect Nearest Store"
-                  onClick={() => {
-                    setSelectedLocationId('auto');
-                  }}
-                >
-                  Detect Nearest Store
-                </LocationButton>
-              </div>
-            </div>
+          <FooterLocation
+            locations={locations}
+            nearestLocationId={nearestLocationId}
+          />
 
-            {/* Current Local Time */}
-            <div className="mt-6">
-              <CurrentLocalTime location={getCurrentLocation()} />
-            </div>
+          <div
+            className="text-center font-inter text-sm"
+            style={{ color: 'var(--color-on-footer-subtle)' }}
+          >
+            <p>
+              &copy; {new Date().getFullYear()} {COMPANY_DATA.legalName} All rights reserved.
+            </p>
+            <p>GST#: {COMPANY_DATA.gstNumber}</p>
+            <p>{'\uD83C\uDF41'}</p>
           </div>
         </div>
 
-        
-        <div className="text-center font-inter text-sm" style={{ color: 'var(--color-on-footer-subtle)' }}>
-          <p>&copy; {new Date().getFullYear()} {COMPANY_DATA.legalName} All rights reserved.</p>
-          <p>GST#: {COMPANY_DATA.gstNumber}</p>
-          <p>🍁</p>
+        {/* Back to Top */}
+        <div className="mt-12 flex justify-center mb-10">
+          <Button
+            variant="action"
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            aria-label="Back to top of page"
+            className="px-8 py-4 rounded-full font-bold font-inter"
+            style={{
+              backgroundColor: 'var(--color-accent)',
+              color: 'var(--color-primary)',
+            }}
+          >
+            {'\u2191'} Back to Top
+          </Button>
         </div>
-      </div>
-      {/* Back to Top Button (Best Practice) */}
-      <div className="mt-12 flex justify-center mb-10">
-        <button
-          type="button"
-          aria-label="Back to top of page"
-          className="px-8 py-4 min-w-[44px] min-h-[44px] rounded-full font-bold font-inter bg-[var(--color-accent)] text-[var(--color-primary)] shadow-lg transition-all transform hover:scale-105 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
-          style={{ WebkitTapHighlightColor: 'transparent', outline: '2px solid var(--color-focus)', outlineOffset: '2px', fontSize: '1rem' }}
-          onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-        >
-          ↑ Back to Top
-        </button>
-      </div>
-    </footer>
+      </footer>
     </React.Fragment>
   );
 }

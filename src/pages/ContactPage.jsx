@@ -1,77 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Helmet } from 'react-helmet-async';
-import { ChevronRight, MapPin, Phone, Clock, Mail, Send } from 'lucide-react';
+import { ChevronRight, MapPin, Phone, Clock, Mail } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
 import CopyButton from '../components/CopyButton';
-import { useToast } from '../components/ToastContainer';
-import Button from '../components/Button';
 import StructuredData from '../components/StructuredData';
 import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 import LiveHoursDisplay from '../components/LiveHoursDisplay';
+import ContactForm from '../components/ContactForm';
 import COMPANY_DATA from '../config/company_data';
-import HCaptchaWidget from '../components/HCaptchaWidget';
-import { useColorScheme } from '../hooks/useColorScheme';
 import { normalizePhoneForTel } from '../utils/phone';
 
 const ContactPage = () => {
   const textColor = { color: 'var(--color-text)' };
   const mutedTextColor = { color: 'var(--color-text-muted)' };
   const BASE_URL = import.meta.env.BASE_URL || '/';
-
-  const [formStatus, setFormStatus] = useState('');
-  const [captchaToken, setCaptchaToken] = useState('');
-  const [fieldErrors, setFieldErrors] = useState({});
-  const { showSuccess, showError } = useToast();
-  const colorScheme = useColorScheme();
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const form = e.target;
-    const name = form.elements.name?.value?.trim();
-    const email = form.elements.email?.value?.trim();
-    const message = form.elements.message?.value?.trim();
-    const errors = {};
-    if (!name) errors.name = 'Name is required.';
-    if (!email) {
-      errors.email = 'Email is required.';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      errors.email = 'Please enter a valid email address (e.g., name@example.com).';
-    }
-    if (!message) errors.message = 'Message is required.';
-    if (Object.keys(errors).length > 0) {
-      setFieldErrors(errors);
-      return;
-    }
-    setFieldErrors({});
-    const formData = new FormData(form);
-    if (!captchaToken) {
-      setFormStatus('error');
-      showError('Please complete the captcha.');
-      return;
-    }
-    formData.append('h-captcha-response', captchaToken);
-    try {
-      const response = await fetch('https://api.web3forms.com/submit', {
-        method: 'POST',
-        body: formData
-      });
-      if (response.ok) {
-        setFormStatus('success');
-        showSuccess('Message sent successfully!');
-        setFieldErrors({});
-        form.reset();
-        setCaptchaToken('');
-      } else {
-        setFormStatus('error');
-        showError('Failed to send message. Please try again.');
-      }
-    } catch {
-      setFormStatus('error');
-      showError('Failed to send message. Please try again.');
-    }
-  };
-
-  const formAccessKey = COMPANY_DATA.contact.web3FormsAccessKey || '';
 
   return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>
@@ -104,7 +46,7 @@ const ContactPage = () => {
               Have a question or feedback? We'd love to hear from you! Reach out through any of the methods below.
             </p>
           </div>
-          <ShareButton 
+          <ShareButton
             title="Contact Roma Mart"
             text="Get in touch with Roma Mart - Sarnia's premier convenience store!"
             style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-on-accent)' }}
@@ -128,7 +70,7 @@ const ContactPage = () => {
                 <div>
                   <h3 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Visit Us</h3>
                   <p style={textColor}>{COMPANY_DATA.location.address.formatted}</p>
-                  <a 
+                  <a
                     href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(COMPANY_DATA.location.address.formatted)}`}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -151,7 +93,7 @@ const ContactPage = () => {
                     <a href={`tel:${normalizePhoneForTel(COMPANY_DATA.location.contact.phone)}`} className="hover:underline" style={{ color: 'var(--color-accent)' }}>
                       {COMPANY_DATA.location.contact.phone}
                     </a>
-                    <CopyButton 
+                    <CopyButton
                       text={COMPANY_DATA.location.contact.phone}
                       label="Phone number"
                       style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)' }}
@@ -170,7 +112,7 @@ const ContactPage = () => {
                     <a href={`mailto:${COMPANY_DATA.location.contact.email}`} className="hover:underline" style={{ color: 'var(--color-accent)' }}>
                       {COMPANY_DATA.location.contact.email}
                     </a>
-                    <CopyButton 
+                    <CopyButton
                       text={COMPANY_DATA.location.contact.email}
                       label="Email address"
                       style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)' }}
@@ -185,7 +127,7 @@ const ContactPage = () => {
                 </div>
                 <div className="flex-1">
                   <h3 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Hours</h3>
-                  <LiveHoursDisplay 
+                  <LiveHoursDisplay
                     placeId={COMPANY_DATA.location.google.placeId}
                     fallbackHours={{
                       daily: COMPANY_DATA.location.hours.daily,
@@ -206,111 +148,7 @@ const ContactPage = () => {
             <h3 className="text-heading text-2xl mb-6" style={{ color: 'var(--color-heading)' }}>
               Send a Message
             </h3>
-
-            {formStatus === 'success' && (
-              <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'var(--color-success-bg)', borderColor: 'var(--color-success)' }} role="status" aria-live="polite" aria-atomic="true">
-                <p className="font-inter" style={{ color: 'var(--color-success)' }}>✓ Message sent successfully! We'll get back to you soon.</p>
-              </div>
-            )}
-
-            {formStatus === 'error' && (
-              <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'var(--color-error-bg)', borderColor: 'var(--color-error)' }} role="alert" aria-live="assertive" aria-atomic="true">
-                <p className="font-inter" style={{ color: 'var(--color-error)' }}>✗ Something went wrong. Please try again.</p>
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <input type="hidden" name="access_key" value={formAccessKey} />
-              <input type="hidden" name="subject" value="New Contact Form Submission from romamart.ca" />
-              <input type="hidden" name="h-captcha-response" value={captchaToken} />
-
-              <div>
-                <label htmlFor="name" className="block font-inter font-semibold mb-2" style={textColor}>Name *</label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  required
-                  autoComplete="name"
-                  aria-invalid={!!fieldErrors.name}
-                  aria-describedby={fieldErrors.name ? 'name-error' : undefined}
-                  className="w-full px-4 py-3 rounded-lg border font-inter"
-                  style={{ backgroundColor: 'var(--color-surface)', borderColor: fieldErrors.name ? 'var(--color-error)' : 'var(--color-border)', color: 'var(--color-text)' }}
-                  placeholder="Your name"
-                />
-                {fieldErrors.name && <p id="name-error" className="text-sm mt-1" style={{ color: 'var(--color-error)' }}>{fieldErrors.name}</p>}
-              </div>
-
-              <div>
-                <label htmlFor="email" className="block font-inter font-semibold mb-2" style={textColor}>Email *</label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  required
-                  autoComplete="email"
-                  aria-invalid={!!fieldErrors.email}
-                  aria-describedby={fieldErrors.email ? 'email-error' : undefined}
-                  className="w-full px-4 py-3 rounded-lg border font-inter"
-                  style={{ backgroundColor: 'var(--color-surface)', borderColor: fieldErrors.email ? 'var(--color-error)' : 'var(--color-border)', color: 'var(--color-text)' }}
-                  placeholder="your@email.com"
-                />
-                {fieldErrors.email && <p id="email-error" className="text-sm mt-1" style={{ color: 'var(--color-error)' }}>{fieldErrors.email}</p>}
-              </div>
-
-              <div>
-                <label htmlFor="phone" className="block font-inter font-semibold mb-2" style={textColor}>Phone</label>
-                <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  autoComplete="tel"
-                  className="w-full px-4 py-3 rounded-lg border font-inter"
-                  style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)', color: 'var(--color-text)' }}
-                  placeholder="(555) 123-4567"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="message" className="block font-inter font-semibold mb-2" style={textColor}>Message *</label>
-                <textarea
-                  id="message"
-                  name="message"
-                  required
-                  rows={5}
-                  aria-invalid={!!fieldErrors.message}
-                  aria-describedby={fieldErrors.message ? 'message-error' : undefined}
-                  className="w-full px-4 py-3 rounded-lg border font-inter resize-none"
-                  style={{ backgroundColor: 'var(--color-surface)', borderColor: fieldErrors.message ? 'var(--color-error)' : 'var(--color-border)', color: 'var(--color-text)' }}
-                  placeholder="How can we help you?"
-                />
-                {fieldErrors.message && <p id="message-error" className="text-sm mt-1" style={{ color: 'var(--color-error)' }}>{fieldErrors.message}</p>}
-              </div>
-
-              {/* hCaptcha Widget */}
-              <React.Suspense fallback={<div>Loading captcha...</div>}>
-                {typeof window !== 'undefined' && (
-                  <HCaptchaWidget 
-                    onVerify={setCaptchaToken}
-                    // On free tier, only string 'dark' or 'light' is supported. For custom themes, see hcaptchaTheme.js
-                    theme={colorScheme}
-                    scriptHost="https://js.hcaptcha.com/1/api.js?custom=true"
-                  />
-                )}
-              </React.Suspense>
-
-              <Button
-                type="submit"
-                variant="action"
-                icon={<Send size={20} />}
-                className="w-full py-4 rounded-lg font-bold font-inter flex items-center justify-center gap-2"
-                style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-on-accent)' }}
-                aria-label="Send Message"
-                disabled={!captchaToken}
-              >
-                Send Message
-              </Button>
-            </form>
+            <ContactForm idPrefix="page-contact" />
           </div>
         </div>
       </section>
