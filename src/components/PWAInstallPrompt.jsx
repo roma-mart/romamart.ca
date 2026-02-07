@@ -15,7 +15,7 @@ const PWAInstallPrompt = () => {
   const [showPrompt, setShowPrompt] = useState(false);
   const [engagementScore, setEngagementScore] = useState(0);
   const [lastDismissed, setLastDismissed] = useLocalStorage('pwa-install-dismissed', null);
-  const [isInstalled] = useLocalStorage('pwa-installed', false);
+  const [isInstalled, setIsInstalled] = useLocalStorage('pwa-installed', false);
   const [dismissedThisSession, setDismissedThisSession] = useState(
     sessionStorage.getItem('pwa-dismissed-session') === 'true'
   );
@@ -144,6 +144,7 @@ const PWAInstallPrompt = () => {
     }
 
     if (outcome === 'accepted') {
+      setIsInstalled(true);
       if (import.meta.env.DEV) {
         console.warn('[PWA] User accepted install');
       }

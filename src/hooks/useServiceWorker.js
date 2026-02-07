@@ -55,6 +55,11 @@ export const useServiceWorker = () => {
     // Check if service workers are supported
     if ('serviceWorker' in navigator) {
       registerServiceWorker();
+
+      // Reload when the new SW takes control (standard pattern)
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        window.location.reload();
+      });
     }
 
     // Online/offline status
@@ -74,7 +79,6 @@ export const useServiceWorker = () => {
   const skipWaiting = () => {
     if (registration && registration.waiting) {
       registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-      window.location.reload();
     }
   };
 
