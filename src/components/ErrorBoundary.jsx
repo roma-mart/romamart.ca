@@ -72,27 +72,17 @@ class ErrorBoundary extends React.Component {
             </p>
             <div className="flex gap-3 justify-center">
               <Button
-                variant="action"
+                variant="inverted"
                 onClick={this.handleReload}
-                style={{
-                  backgroundColor: 'var(--color-primary)',
-                  color: 'var(--color-accent)',
-                }}
               >
                 Refresh Page
               </Button>
-              <a
+              <Button
+                variant="secondary"
                 href="/"
-                className="inline-flex items-center justify-center px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-80"
-                style={{
-                  color: 'var(--color-text)',
-                  backgroundColor: 'var(--color-surface)',
-                  border: '1px solid var(--color-border)',
-                  fontFamily: 'var(--font-body)',
-                }}
               >
                 Go Home
-              </a>
+              </Button>
             </div>
           </div>
         </div>

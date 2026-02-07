@@ -32,6 +32,7 @@ const VARIANT_VIBRATION = {
   navlink: 30,
   icon: 20,
   secondary: 20,
+  inverted: 40,
   custom: 35,
 };
 
@@ -43,6 +44,7 @@ const VARIANT_ANALYTICS = {
   navlink: 'navlink_click',
   icon: 'icon_click',
   secondary: 'secondary_cta',
+  inverted: 'inverted_cta',
   custom: 'custom_cta',
 };
 
@@ -77,6 +79,11 @@ const VARIANT_ANIMATION = {
     whileHover: { scale: 1.02 },
     whileTap: { scale: 0.98 },
     transition: { duration: 0.13 },
+  },
+  inverted: {
+    whileHover: { scale: 1.05, boxShadow: '0 8px 28px rgba(2,1,120,0.22)' },
+    whileTap: { scale: 0.96 },
+    transition: { type: 'spring', stiffness: 400, damping: 30 },
   },
   custom: {},
 };
@@ -132,12 +139,46 @@ const VARIANT_STYLES = {
     padding: 0,
     fontSize: '1.25rem',
   },
+  secondary: {
+    backgroundColor: 'var(--color-surface)',
+    color: 'var(--color-text)',
+    fontWeight: 600,
+    fontFamily: 'var(--font-heading)',
+    border: 'none',
+    borderRadius: 'var(--radius-full)',
+    boxShadow: 'none',
+    transition: 'all 0.2s',
+    padding: '12px 28px',
+    minHeight: 44,
+    minWidth: 44,
+  },
+  inverted: {
+    backgroundColor: 'var(--color-primary)',
+    color: 'var(--color-accent)',
+    fontWeight: 700,
+    fontFamily: 'var(--font-heading)',
+    border: 'none',
+    borderRadius: 'var(--radius-full)',
+    boxShadow: '0 4px 16px rgba(2,1,120,0.15)',
+    transition: 'all 0.2s',
+    padding: '12px 28px',
+    minHeight: 44,
+    minWidth: 44,
+  },
+};
+
+// Size presets — applied after variant styles, before user style prop
+const SIZE_STYLES = {
+  sm: { padding: '8px 16px', fontSize: '0.875rem' },
+  md: {},
+  lg: { padding: '16px 32px', fontSize: '1.125rem' },
 };
 
 // fireAnalytics removed (unused)
 
 const Button = React.forwardRef(({
   variant = 'order',
+  size = 'md',
   children,
   icon,
   iconPosition = 'left',
@@ -157,6 +198,7 @@ const Button = React.forwardRef(({
   // useVibration removed (unused)
   const isNavlink = variant === 'navlink';
 
+  const sizeStyle = (size && variant !== 'icon') ? (SIZE_STYLES[size] || {}) : {};
   const mergedStyle = {
     minHeight: 44,
     minWidth: 44,
@@ -167,6 +209,7 @@ const Button = React.forwardRef(({
     opacity: disabled ? 0.6 : 1,
     WebkitTapHighlightColor: 'transparent',
     ...VARIANT_STYLES[variant],
+    ...sizeStyle,
     ...style,
   };
 
@@ -321,7 +364,8 @@ const Button = React.forwardRef(({
 });
 
 Button.propTypes = {
-  variant: PropTypes.oneOf(['order', 'nav', 'navlink', 'action', 'secondary', 'icon', 'custom']),
+  variant: PropTypes.oneOf(['order', 'nav', 'navlink', 'action', 'secondary', 'inverted', 'icon', 'custom']),
+  size: PropTypes.oneOf(['sm', 'md', 'lg']),
   children: PropTypes.node,
   icon: PropTypes.node,
   iconPosition: PropTypes.oneOf(['left', 'right']),

@@ -195,6 +195,7 @@ export default function Navbar({ currentPage = 'home' }) {
             ))}
             <Button
               variant="order"
+              size="sm"
               href={COMPANY_DATA.onlineStoreUrl}
               target="_blank"
               rel="noopener noreferrer"
@@ -202,7 +203,7 @@ export default function Navbar({ currentPage = 'home' }) {
               iconPosition="right"
               analyticsEvent={{ event: 'order_cta_click', cta_location: 'header_desktop', cta_text: 'Order Online' }}
               ariaLabel="Order Online"
-              className="font-bold font-inter text-sm shadow-lg no-drag"
+              className="shadow-lg no-drag"
               style={{ minWidth: 120 }}
             >
               ORDER NOW

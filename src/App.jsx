@@ -89,25 +89,24 @@ function Hero({ onTrackOrder }) {
             <div className="mb-6"><ShareButton title="Roma Mart" text="Check out Roma Mart - Sarnia's newest convenience store!" className="bg-white/10 text-white hover:bg-white/20 border border-white/30" /></div>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button
-                as="a"
                 href={COMPANY_DATA.onlineStoreUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 variant="order"
+                size="lg"
                 icon={<ExternalLink size={20} />}
                 analyticsEvent="order_cta_hero"
                 aria-label="Order online from Roma Mart"
                 onClick={handleOrderClick}
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-bold text-lg"
               >
                 ORDER ONLINE
               </Button>
               <Button
-                href={`${BASE_URL}locations`} // Uses base path for internal link
+                href={`${BASE_URL}locations`}
                 variant="navlink"
+                size="lg"
                 icon={<ArrowRight size={20} />}
                 aria-label="Visit In Store Location"
-                className="px-8 py-4 text-lg"
               >
                 Visit In Store
               </Button>
@@ -147,9 +146,9 @@ const ServicesSection = ({ featuredServices = [] }) => {
           <Button
             href={`${BASE_URL}services`}
             variant="navlink"
+            size="lg"
             icon={<ArrowRight size={20} />}
             aria-label="View all services"
-            className="px-8 py-4 text-lg"
           >
             View All Services
           </Button>
@@ -225,9 +224,9 @@ const RoCafeSection = ({ menuItems, loading }) => {
               <Button
                 href={`${BASE_URL}rocafe`}
                 variant="navlink"
+                size="lg"
                 icon={<ArrowRight size={20} />}
                 aria-label="View full RoCafe menu"
-                className="px-8 py-4 text-lg"
               >
                 View Full Menu
               </Button>
@@ -375,9 +374,9 @@ const Locations = () => {
               <Button
                 href={`${BASE_URL}locations`}
                 variant="navlink"
+                size="lg"
                 icon={<ArrowRight size={20} />}
                 aria-label="View all locations"
-                className="px-8 py-4 text-lg"
               >
                 View All Locations
               </Button>

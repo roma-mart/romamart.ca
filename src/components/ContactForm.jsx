@@ -184,9 +184,9 @@ const ContactForm = ({
       <Button
         type="submit"
         variant="action"
+        size="lg"
         icon={<Send size={20} />}
-        className="w-full py-4 rounded-lg font-bold font-inter flex items-center justify-center gap-2"
-        style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-on-accent)' }}
+        className="w-full"
         aria-label="Send Message"
         disabled={!captchaToken}
       >

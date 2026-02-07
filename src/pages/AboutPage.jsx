@@ -296,8 +296,8 @@ const AboutPage = () => {
             <Button
               href={`${BASE_URL}locations`}
               variant="navlink"
+              size="lg"
               icon={<ArrowRight size={20} />}
-              className="px-8 py-4 text-lg"
               aria-label="Get directions to Roma Mart"
             >
               Get Directions
@@ -305,9 +305,8 @@ const AboutPage = () => {
             <Button
               href={`${BASE_URL}contact`}
               variant="navlink"
+              size="lg"
               icon={<ArrowRight size={20} />}
-              className="px-8 py-4 text-lg"
-              style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-on-primary)' }}
               aria-label="Contact Roma Mart"
             >
               Contact Us

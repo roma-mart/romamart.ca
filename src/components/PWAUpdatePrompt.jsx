@@ -49,10 +49,9 @@ const PWAUpdatePrompt = ({ updateAvailable, onUpdate, onDismiss }) => {
       <div className="flex gap-3">
         <Button
           type="button"
-          variant="action"
+          variant="inverted"
           icon={<RefreshCw size={20} />}
-          className="flex-1 font-bold"
-          style={{ backgroundColor: 'var(--color-primary)', color: 'var(--color-accent)' }}
+          className="flex-1"
           onClick={onUpdate}
           aria-label="Refresh to update"
         >
@@ -60,9 +59,7 @@ const PWAUpdatePrompt = ({ updateAvailable, onUpdate, onDismiss }) => {
         </Button>
         <Button
           type="button"
-          variant="action"
-          className="px-4 py-3 font-semibold"
-          style={{ color: 'var(--color-text)', backgroundColor: 'var(--color-surface)' }}
+          variant="secondary"
           onClick={handleDismiss}
           aria-label="Update later"
         >

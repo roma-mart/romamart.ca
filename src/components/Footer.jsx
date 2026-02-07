@@ -174,13 +174,9 @@ export default function Footer() {
         <div className="mt-12 flex justify-center mb-10">
           <Button
             variant="action"
+            size="lg"
             onClick={handleBackToTop}
             aria-label="Back to top of page"
-            className="px-8 py-4 rounded-full font-bold font-inter"
-            style={{
-              backgroundColor: 'var(--color-accent)',
-              color: 'var(--color-primary)',
-            }}
           >
             {'\u2191'} Back to Top
           </Button>
