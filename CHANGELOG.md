@@ -15,15 +15,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `/* __VITE_BUNDLE_ASSETS__ */` placeholder in `public/sw.js` for build-time replacement
 - `trimCache()` function in service worker with `MAX_CACHE_ENTRIES = 100` to prevent unbounded cache growth
 - `controllerchange` listener in `useServiceWorker` hook for reliable SW update reload
+- PropTypes validation for `PWAUpdatePrompt` component
 
 ### Changed
 - Service worker CACHE_VERSION bumped from `roma-mart-v1` to `roma-mart-v2` (forces old cache cleanup)
+- Service worker cache version now auto-generated from build asset hash (L7) — eliminates manual `CACHE_VERSION` maintenance
 - `skipWaiting()` removed from install event — kept only in message handler for user-controlled updates via PWAUpdatePrompt
 - `useServiceWorker` hook `skipWaiting()` no longer calls `window.location.reload()` directly — reload triggered by `controllerchange` event (standard pattern)
 - `PWAInstallPrompt` now persists install state (`setIsInstalled(true)`) after user accepts — prompt never shows again after installation
 
 ### Fixed
 - Removed broken `<link rel="stylesheet" href="/src/index.css">` from `public/offline.html` — dev-only path that 404d in production
+- Fixed offline page dark mode — added `@media (prefers-color-scheme: dark)` with matching design tokens
+- Replaced hardcoded RGBA colors in offline page with `color-mix()` using CSS custom properties
+- Fixed duplicate `.button:hover` rule in offline page CSS
+- Fixed wrong address in offline page — `189-3` corrected to `3-189 Wellington Street`
+- Fixed stale hours in offline page — now shows actual grouped hours matching `locations.js` source data
 - Removed ~140 lines dead background sync code from `public/sw.js` (sync listener, IndexedDB helpers, analytics sync) — no code ever registered sync tags
 - Removed `useBackgroundSync` hook from `useServiceWorker.js` — wrong feature detection (`'sync' in navigator.serviceWorker` tests wrong object)
 - Cleaned up `ContactPage.jsx` — removed dead imports (`useBackgroundSync`, `getHCaptchaTheme`, `eslint-disable`, commented indexedDB import, unused `isOnline` and `showInfo`)

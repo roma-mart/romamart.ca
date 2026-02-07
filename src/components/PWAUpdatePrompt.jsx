@@ -5,6 +5,7 @@
  */
 
 import React, { useRef, useCallback } from 'react';
+import PropTypes from 'prop-types';
 import { RefreshCw, X } from 'lucide-react';
 import Button from './Button';
 import { useFocusTrap } from '../hooks/useFocusTrap';
@@ -26,9 +27,10 @@ const PWAUpdatePrompt = ({ updateAvailable, onUpdate, onDismiss }) => {
     <div
       ref={dialogRef}
       className="fixed bottom-[calc(56px+env(safe-area-inset-bottom,1rem))] md:bottom-[calc(56px+1.5rem)] left-4 right-4 md:left-auto md:right-4 md:max-w-md z-[10001]"
-      role="alert"
-      aria-live="assertive"
-      aria-atomic="true"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="pwa-update-title"
+      aria-describedby="pwa-update-description"
     >
       <div
         className="rounded-2xl shadow-2xl border-2 overflow-hidden"
@@ -47,6 +49,7 @@ const PWAUpdatePrompt = ({ updateAvailable, onUpdate, onDismiss }) => {
               <RefreshCw size={20} style={{ color: 'var(--color-primary)' }} aria-hidden="true" />
             </div>
             <h3
+              id="pwa-update-title"
               className="font-bold text-lg"
               style={{
                 color: 'var(--color-text-on-primary)',
@@ -71,6 +74,7 @@ const PWAUpdatePrompt = ({ updateAvailable, onUpdate, onDismiss }) => {
         {/* Content */}
         <div className="p-6">
           <p
+            id="pwa-update-description"
             className="mb-6 leading-relaxed"
             style={{
               color: 'var(--color-text)',
@@ -109,6 +113,12 @@ const PWAUpdatePrompt = ({ updateAvailable, onUpdate, onDismiss }) => {
       </div>
     </div>
   );
+};
+
+PWAUpdatePrompt.propTypes = {
+  updateAvailable: PropTypes.bool,
+  onUpdate: PropTypes.func,
+  onDismiss: PropTypes.func,
 };
 
 export default PWAUpdatePrompt;

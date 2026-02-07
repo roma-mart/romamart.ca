@@ -646,7 +646,9 @@ const LoadingFallback = () => (
 function App() {
   const pathname = typeof window !== 'undefined' ? window.location.pathname.replace(BASE_URL, '/') : '/';
   const { updateAvailable, skipWaiting } = useServiceWorker();
-  const [updateDismissed, setUpdateDismissed] = useState(false);
+  const [updateDismissed, setUpdateDismissed] = useState(
+    sessionStorage.getItem('pwa-update-dismissed') === 'true'
+  );
   const isVisible = usePageVisibility();
 
   // Fetch menu data from API for homepage featured schemas + RoCafe section
@@ -803,7 +805,7 @@ function App() {
       <PWAUpdatePrompt
         updateAvailable={updateAvailable && !updateDismissed}
         onUpdate={skipWaiting}
-        onDismiss={() => setUpdateDismissed(true)}
+        onDismiss={() => { sessionStorage.setItem('pwa-update-dismissed', 'true'); setUpdateDismissed(true); }}
       />
       <NetworkStatus />
     </LocationProvider>

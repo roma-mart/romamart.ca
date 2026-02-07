@@ -2,6 +2,7 @@
 /* global process */
 import fs from 'fs';
 import path from 'path';
+import { createHash } from 'crypto';
 import { fileURLToPath } from 'url';
 import COMPANY_DATA from '../src/config/company_data.js';
 import { buildMenuItemSchema } from '../src/schemas/menuItemSchema.js';
@@ -509,6 +510,20 @@ function injectServiceWorkerPrecache(distPath) {
   }
 
   swContent = swContent.replace(PLACEHOLDER, assetFiles);
+
+  // L7: Auto-generate cache version from asset hash
+  const CACHE_PLACEHOLDER = "/* __CACHE_VERSION__ */ 'roma-mart-v2'";
+  if (swContent.includes(CACHE_PLACEHOLDER)) {
+    const sortedAssets = fs.readdirSync(assetsDir)
+      .filter(file => /\.(js|css)$/.test(file))
+      .sort()
+      .join('\n');
+    const hash = createHash('sha256').update(sortedAssets).digest('hex').slice(0, 8);
+    const cacheVersion = `'roma-mart-${hash}'`;
+    swContent = swContent.replace(CACHE_PLACEHOLDER, cacheVersion);
+    console.log(`\u2713 Cache version set to roma-mart-${hash}`);
+  }
+
   fs.writeFileSync(swPath, swContent);
 
   const count = assetFiles.split('\n').length;

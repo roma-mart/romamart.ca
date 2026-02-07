@@ -3,7 +3,7 @@
  * PWA implementation with smart caching strategies
  */
 
-const CACHE_VERSION = 'roma-mart-v2';
+const CACHE_VERSION = /* __CACHE_VERSION__ */ 'roma-mart-v2';
 const BASE_URL = '/';
 
 // Assets to cache immediately on install
@@ -40,10 +40,11 @@ const MAX_CACHE_ENTRIES = 100;
 async function trimCache(cacheName, maxEntries) {
   const cache = await caches.open(cacheName);
   const keys = await cache.keys();
-  if (keys.length > maxEntries) {
-    await cache.delete(keys[0]);
-    // Recurse until within limit
-    return trimCache(cacheName, maxEntries);
+  if (keys.length <= maxEntries) return;
+  // Delete oldest entries until within limit
+  const toDelete = keys.slice(0, keys.length - maxEntries);
+  for (const key of toDelete) {
+    await cache.delete(key);
   }
 }
 
@@ -117,7 +118,7 @@ async function networkFirstStrategy(request) {
     if (networkResponse.ok) {
       const cache = await caches.open(CACHE_VERSION);
       cache.put(request, networkResponse.clone());
-      trimCache(CACHE_VERSION, MAX_CACHE_ENTRIES);
+      trimCache(CACHE_VERSION, MAX_CACHE_ENTRIES).catch(() => {});
     }
 
     return networkResponse;
@@ -162,7 +163,7 @@ async function cacheFirstStrategy(request) {
     if (networkResponse.ok) {
       const cache = await caches.open(CACHE_VERSION);
       cache.put(request, networkResponse.clone());
-      trimCache(CACHE_VERSION, MAX_CACHE_ENTRIES);
+      trimCache(CACHE_VERSION, MAX_CACHE_ENTRIES).catch(() => {});
     }
 
     return networkResponse;
