@@ -178,8 +178,8 @@ function LiveHoursDisplay({ placeId, fallbackHours, showStatus = true, compact =
     if (isLoading) {
       return (
         <div className="space-y-2">
-          <div className="flex items-center gap-2" style={{ color: 'var(--color-text-muted)' }}>
-            <RefreshCw size={16} className="animate-spin" />
+          <div className="flex items-center gap-2" role="status" aria-live="polite" style={{ color: 'var(--color-text-muted)' }}>
+            <RefreshCw size={16} className="animate-spin" aria-hidden="true" />
             <span className="text-sm">Loading hours...</span>
           </div>
           {fallbackGrouped.length > 0

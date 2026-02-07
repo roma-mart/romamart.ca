@@ -4,10 +4,11 @@
  * Batch 3: Includes haptic feedback
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { X, Download } from 'lucide-react';
 import { useLocalStorage, useVibration } from '../hooks/useBrowserFeatures';
 import Button from './Button';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 
 const PWAInstallPrompt = () => {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
@@ -19,6 +20,7 @@ const PWAInstallPrompt = () => {
     sessionStorage.getItem('pwa-dismissed-session') === 'true'
   );
   const { vibrate, canVibrate } = useVibration();
+  const dialogRef = useRef(null);
 
   useEffect(() => {
     // Don't show if already installed, dismissed this session, or dismissed recently
@@ -160,12 +162,12 @@ const PWAInstallPrompt = () => {
     setShowPrompt(false);
   };
 
-  const handleDismiss = () => {
+  const handleDismiss = useCallback(() => {
     setShowPrompt(false);
     setDismissedThisSession(true);
     sessionStorage.setItem('pwa-dismissed-session', 'true');
     setLastDismissed(Date.now());
-    
+
     // Track dismissal
     if (window.dataLayer) {
       window.dataLayer.push({
@@ -173,14 +175,20 @@ const PWAInstallPrompt = () => {
         engagement_score: engagementScore
       });
     }
-  };
+  }, [engagementScore, setLastDismissed]);
+
+  useFocusTrap(dialogRef, showPrompt && !!deferredPrompt, {
+    onEscape: handleDismiss,
+  });
 
   if (!showPrompt || !deferredPrompt) return null;
 
   return (
     <div
+      ref={dialogRef}
       className="fixed bottom-[calc(56px+env(safe-area-inset-bottom,1rem))] md:bottom-[calc(56px+1.5rem)] left-4 right-4 md:left-auto md:right-4 md:max-w-md z-[10000] animate-slide-up"
       role="dialog"
+      aria-modal="true"
       aria-labelledby="pwa-install-title"
       aria-describedby="pwa-install-description"
     >

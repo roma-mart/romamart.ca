@@ -47,7 +47,7 @@ import { getAssetUrl } from './utils/getAssetUrl';
 
 
 // Code splitting: Lazy load page components
-const AccessibilityPage = lazy(() => import('./components/AccessibilityPage'));
+const AccessibilityPage = lazy(() => import('./pages/AccessibilityPage'));
 const PrivacyPage = lazy(() => import('./pages/PrivacyPage'));
 const TermsPage = lazy(() => import('./pages/TermsPage'));
 const CookiesPage = lazy(() => import('./pages/CookiesPage'));
@@ -206,8 +206,8 @@ const RoCafeSection = ({ menuItems, loading }) => {
             {/* Featured Menu Items with StandardizedItem */}
             <div className="space-y-3 mb-8">
               {loading ? (
-                <div className="text-center py-4" style={{ color: 'var(--color-text-on-primary)' }}>
-                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2" style={{ borderColor: 'var(--color-accent)' }}></div>
+                <div className="text-center py-4" role="status" aria-live="polite" style={{ color: 'var(--color-text-on-primary)' }}>
+                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2" aria-hidden="true" style={{ borderColor: 'var(--color-accent)' }}></div>
                   <p className="mt-2 text-sm font-inter">Loading menu...</p>
                 </div>
               ) : (
@@ -238,7 +238,7 @@ const RoCafeSection = ({ menuItems, loading }) => {
             <div className="relative aspect-square rounded-full overflow-hidden border-8 border-white/5 shadow-2xl">
                <img 
                  src={getAssetUrl('/stickers-rocafe-lightblue.png')}
-                 alt="RoCafe"
+                 alt="RoCafé sticker logo in light blue"
                  className="w-full h-full object-cover hover:scale-110 transition-transform duration-700"
                  loading="lazy"
                />
@@ -401,12 +401,31 @@ const ContactSection = () => {
   const [captchaToken, setCaptchaToken] = React.useState('');
   const [formStatus, setFormStatus] = React.useState('');
   const [formMessage, setFormMessage] = React.useState('');
+  const [fieldErrors, setFieldErrors] = React.useState({});
   const handleContactSubmit = useCallback(async (e) => {
     e.preventDefault();
     if (window.dataLayer) {
       window.dataLayer.push({ event: 'contact_form_submit', form_location: 'contact_section' });
     }
     const form = e.target;
+    const name = form.elements.name?.value?.trim();
+    const email = form.elements.email?.value?.trim();
+    const message = form.elements.message?.value?.trim();
+    const errors = {};
+    if (!name) errors.name = 'Name is required.';
+    if (!email) {
+      errors.email = 'Email is required.';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errors.email = 'Please enter a valid email address (e.g., name@example.com).';
+    }
+    if (!message) errors.message = 'Message is required.';
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      setFormStatus('error');
+      setFormMessage('Please fill in all required fields.');
+      return;
+    }
+    setFieldErrors({});
     const formData = new FormData(form);
     if (!captchaToken) {
       setFormStatus('error');
@@ -422,6 +441,7 @@ const ContactSection = () => {
       if (response.ok) {
         setFormStatus('success');
         setFormMessage('Message sent successfully!');
+        setFieldErrors({});
         form.reset();
         setCaptchaToken('');
       } else {
@@ -452,10 +472,10 @@ const ContactSection = () => {
             <div className="space-y-8">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'var(--color-surface)' }}>
-                  <MapPin style={{ color: 'var(--color-icon)' }} />
+                  <MapPin aria-hidden="true" style={{ color: 'var(--color-icon)' }} />
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Visit Us</h4>
+                  <h3 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Visit Us</h3>
                   <p className="mb-2" style={textColor}>{primaryLocation.address.formatted}</p>
                   <CopyButton 
                     text={primaryLocation.address.formatted}
@@ -468,10 +488,10 @@ const ContactSection = () => {
 
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'var(--color-surface)' }}>
-                  <Phone style={{ color: 'var(--color-icon)' }} />
+                  <Phone aria-hidden="true" style={{ color: 'var(--color-icon)' }} />
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Call Us</h4>
+                  <h3 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Call Us</h3>
                   <div className="flex items-center gap-2 flex-wrap">
                     <a href={`tel:${COMPANY_DATA.location.contact.phone}`} className="hover:underline" style={{ color: 'var(--color-accent)' }}>
                       {COMPANY_DATA.location.contact.phone}
@@ -487,10 +507,10 @@ const ContactSection = () => {
 
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'var(--color-surface)' }}>
-                  <Clock style={{ color: 'var(--color-icon)' }} />
+                  <Clock aria-hidden="true" style={{ color: 'var(--color-icon)' }} />
                 </div>
                 <div>
-                  <h4 className="font-bold text-lg" style={{ color: 'var(--color-accent)' }}>Hours</h4>
+                  <h3 className="font-bold text-lg" style={{ color: 'var(--color-accent)' }}>Hours</h3>
                   <LiveHoursDisplay
                     placeId={primaryLocation.google.placeId}
                     fallbackHours={{
@@ -512,12 +532,12 @@ const ContactSection = () => {
             <h3 className="text-2xl mb-6" style={{ color: 'var(--color-heading)' }}>Send a Message</h3>
             
             {formStatus === 'success' && (
-              <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'var(--color-success-bg)', borderColor: 'var(--color-success)' }}>
+              <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'var(--color-success-bg)', borderColor: 'var(--color-success)' }} role="status" aria-live="polite" aria-atomic="true">
                 <p className="font-inter" style={{ color: 'var(--color-success)' }}>{formMessage}</p>
               </div>
             )}
             {formStatus === 'error' && (
-              <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'var(--color-error-bg)', borderColor: 'var(--color-error)' }}>
+              <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'var(--color-error-bg)', borderColor: 'var(--color-error)' }} role="alert" aria-live="assertive" aria-atomic="true">
                 <p className="font-inter" style={{ color: 'var(--color-error)' }}>{formMessage}</p>
               </div>
             )}
@@ -531,42 +551,53 @@ const ContactSection = () => {
               <input type="hidden" name="h-captcha-response" value={captchaToken} />
 
               <div>
-                <label htmlFor="name" className="block text_sm font-bold mb-2" style={textColor}>Full Name</label>
-                <input 
-                  type="text" 
-                  name="name" 
-                  id="name"
-                  required 
+                <label htmlFor="contact-name" className="block text_sm font-bold mb-2" style={textColor}>Full Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  id="contact-name"
+                  required
+                  autoComplete="name"
+                  aria-invalid={!!fieldErrors.name}
+                  aria-describedby={fieldErrors.name ? 'contact-name-error' : undefined}
                   className="w-full px-4 py-3 rounded-lg border focus:border_navy-500 focus:ring-2 focus:ring_navy-200 outline-none transition-all"
-                  style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-surface)', color: 'var(--color-text)' }}
+                  style={{ backgroundColor: 'var(--color-surface)', borderColor: fieldErrors.name ? 'var(--color-error)' : 'var(--color-surface)', color: 'var(--color-text)' }}
                   placeholder="John Doe"
                 />
+                {fieldErrors.name && <p id="contact-name-error" className="text-sm mt-1" style={{ color: 'var(--color-error)' }}>{fieldErrors.name}</p>}
               </div>
 
               <div>
-                <label htmlFor="email" className="block text_sm font-bold mb-2" style={textColor}>Email Address</label>
-                <input 
-                  type="email" 
-                  name="email" 
-                  id="email"
-                  required 
+                <label htmlFor="contact-email" className="block text_sm font-bold mb-2" style={textColor}>Email Address</label>
+                <input
+                  type="email"
+                  name="email"
+                  id="contact-email"
+                  required
+                  autoComplete="email"
+                  aria-invalid={!!fieldErrors.email}
+                  aria-describedby={fieldErrors.email ? 'contact-email-error' : undefined}
                   className="w-full px-4 py-3 rounded-lg border focus:border_navy-500 focus:ring-2 focus:ring_navy-200 outline-none transition-all"
-                  style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-surface)', color: 'var(--color-text)' }}
+                  style={{ backgroundColor: 'var(--color-surface)', borderColor: fieldErrors.email ? 'var(--color-error)' : 'var(--color-surface)', color: 'var(--color-text)' }}
                   placeholder="john@example.com"
                 />
+                {fieldErrors.email && <p id="contact-email-error" className="text-sm mt-1" style={{ color: 'var(--color-error)' }}>{fieldErrors.email}</p>}
               </div>
 
               <div>
-                <label htmlFor="message" className="block text_sm font-bold mb-2" style={textColor}>Message</label>
-                <textarea 
-                  name="message" 
-                  id="message"
-                  required 
+                <label htmlFor="contact-message" className="block text_sm font-bold mb-2" style={textColor}>Message</label>
+                <textarea
+                  name="message"
+                  id="contact-message"
+                  required
                   rows="4"
+                  aria-invalid={!!fieldErrors.message}
+                  aria-describedby={fieldErrors.message ? 'contact-message-error' : undefined}
                   className="w-full px-4 py-3 rounded-lg border focus:border_navy-500 focus:ring-2 focus:ring_navy-200 outline-none transition-all"
-                  style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-surface)', color: 'var(--color-text)' }}
+                  style={{ backgroundColor: 'var(--color-surface)', borderColor: fieldErrors.message ? 'var(--color-error)' : 'var(--color-surface)', color: 'var(--color-text)' }}
                   placeholder="How can we help you?"
                 ></textarea>
+                {fieldErrors.message && <p id="contact-message-error" className="text-sm mt-1" style={{ color: 'var(--color-error)' }}>{fieldErrors.message}</p>}
               </div>
 
               {/* hCaptcha Widget */}

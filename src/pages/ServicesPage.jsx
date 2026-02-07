@@ -18,7 +18,7 @@ const ServicesPage = () => {
   };
 
   const textColor = { color: 'var(--color-text)' };
-  const mutedTextColor = { color: 'var(--color-text)', opacity: 0.7 };
+  const mutedTextColor = { color: 'var(--color-text-muted)' };
 
   const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
 
@@ -67,16 +67,13 @@ const ServicesPage = () => {
           <li>
             <a
               href={`${BASE_URL}`}
-              style={{ color: 'var(--color-accent)', opacity: 0.7 }}
-              onMouseOver={e => e.currentTarget.style.color = 'var(--color-accent-hover)'}
-              onFocus={e => e.currentTarget.style.color = 'var(--color-accent-hover)'}
-              onMouseOut={e => e.currentTarget.style.color = 'var(--color-accent)'}
-              onBlur={e => e.currentTarget.style.color = 'var(--color-accent)'}
+              className="hover:text-accent transition-colors"
+              style={mutedTextColor}
             >
               Home
             </a>
           </li>
-          <li aria-hidden="true"><ChevronRight size={16} style={{ color: 'var(--color-accent)', opacity: 0.7 }} /></li>
+          <li aria-hidden="true"><ChevronRight size={16} style={mutedTextColor} /></li>
           <li aria-current="page" className="font-semibold" style={textColor}>Services</li>
         </ol>
       </nav>
@@ -141,7 +138,7 @@ const ServicesPage = () => {
       {/* Compliance Notice with SFOA Signage - Keep existing */}
       <section className="max-w-7xl mx-auto px-4 mt-16">
         <div className="p-8 rounded-xl border" style={{ backgroundColor: 'var(--color-bg)', borderColor: 'var(--color-border)' }}>
-          <h3 className="text-2xl mb-6" style={{ color: 'var(--color-heading)' }}>Age-Restricted Products Compliance</h3>
+          <h2 className="text-2xl mb-6" style={{ color: 'var(--color-heading)' }}>Age-Restricted Products Compliance</h2>
           
           <div className="grid md:grid-cols-2 gap-8 mb-6">
             {/* Tobacco/Vape Section */}

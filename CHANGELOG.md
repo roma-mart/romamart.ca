@@ -7,6 +7,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.4.0] - 2026-02-07
+
+### Added
+- `useFocusTrap` hook (`src/hooks/useFocusTrap.js`) for WCAG-compliant keyboard focus management in modal dialogs
+- Focus trap on mobile navigation menu (`role="dialog"`, `aria-modal`, Tab cycling, Escape to close, focus restore)
+- Focus trap on PWA install prompt with Escape handling
+- Client-side form validation with `aria-invalid`, `aria-describedby` error messages, and `aria-live` error regions on both contact forms
+- `autoComplete` attributes on contact form fields
+- `aria-label` on all social media links in Footer
+- `role="status"` and `aria-live="polite"` on loading spinners and success messages
+- `role="alert"` and `aria-live="assertive"` on error messages
+- `aria-describedby` helper text for Footer location selector
+- Pause-on-hover/focus for LocationImageCarousel and AboutPage hero carousel auto-advance
+- `prefers-reduced-motion` media query check to disable carousel auto-advance
+- Accessibility page (`/accessibility`) with WCAG 2.2 AA and AODA compliance statement
+
+### Changed
+- Heading hierarchy corrected across Footer, ContactPage, and ServicesPage (h4 -> h3 where appropriate, non-semantic headings -> p)
+- Breadcrumb styling standardized across all pages using `var(--color-text-muted)` and consistent hover classes
+- Muted text pattern changed from inline `opacity: 0.7` to `var(--color-text-muted)` across 7 pages
+- RoCafe sticker alt text improved from generic to descriptive
+- `handleDismiss` in PWAInstallPrompt wrapped in `useCallback` to prevent focus trap effect churn
+- `AccessibilityPage.jsx` moved from `src/components/` to `src/pages/` (correct directory)
+- Hardcoded `color: 'white'` replaced with `var(--color-text-on-primary)` in AccessibilityPage
+- Removed hallucinated ISO/IEC 40500 and EN 301 549 standards from Accessibility page (not applicable to Ontario business)
+- Added decorative `aria-hidden="true"` to all Lucide and FontAwesome icons used decoratively
+
+### Removed
+- Unused `tokens` import from AccessibilityPage
+- Redundant inline token styles on AccessibilityPage heading
+
+### Documentation
+- `docs/ACCESSIBILITY_COMPLIANCE.md` rewritten with correct WCAG 2.2 success criteria structure and self-audit results
+- PR template updated with version/changelog section, improved accessibility checklist, and workflow improvements
+
 ## [2.3.3] - 2026-02-06
 
 ### Performance
@@ -289,6 +324,7 @@ Initial Create React App implementation. Deprecated and replaced by v2.0.0.
 
 | Version | Date         | Description                           |
 |---------|--------------|---------------------------------------|
+| 2.4.0   | Feb 7, 2026  | WCAG 2.2 AA: focus traps, form ARIA, heading hierarchy |
 | 2.3.3   | Feb 6, 2026  | Performance & LCP optimization |
 | 2.3.1   | Feb 6, 2026  | Prerendered schemas and API consolidation |
 | 2.3.0   | Feb 6, 2026  | Schema validation and SEO improvements |

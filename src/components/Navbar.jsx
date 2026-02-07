@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Home, ExternalLink } from 'lucide-react';
 import Button from './Button';
 import COMPANY_DATA from '../config/company_data';
 import { Logo } from './Logo';
 import { NAVIGATION_LINKS } from '../config/navigation';
-// Removed duplicate imports of useEffect and useState
+import { useFocusTrap } from '../hooks/useFocusTrap';
 
 export default function Navbar({ currentPage = 'home' }) {
   const [wcoActive, setWcoActive] = useState(false);
@@ -111,6 +111,14 @@ export default function Navbar({ currentPage = 'home' }) {
   const toggleMenu = useCallback(() => setIsOpen(prev => !prev), []);
   const handleMenuClose = useCallback(() => setIsOpen(false), []);
   const handleOrderClick = useCallback(() => trackOrderClick('header_mobile'), [trackOrderClick]);
+  const mobileMenuRef = useRef(null);
+  const hamburgerRef = useRef(null);
+
+  useFocusTrap(mobileMenuRef, isOpen, {
+    onEscape: handleMenuClose,
+    returnFocusRef: hamburgerRef,
+    initialFocusDelay: 150,
+  });
 
   return (
     <nav
@@ -203,6 +211,7 @@ export default function Navbar({ currentPage = 'home' }) {
 
           {/* Mobile Menu Button */}
           <button
+            ref={hamburgerRef}
             onClick={toggleMenu}
             onKeyDown={e => {
               if (e.key === 'Enter' || e.key === ' ') {
@@ -224,11 +233,15 @@ export default function Navbar({ currentPage = 'home' }) {
       <AnimatePresence>
         {isOpen && (
           <motion.div
+            ref={mobileMenuRef}
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             className="md:hidden border-t absolute w-full shadow-2xl"
             style={{ backgroundColor: isHomePage && !scrolled ? 'var(--color-primary)' : 'var(--color-bg)', borderColor: 'var(--color-surface)', paddingTop: 0 }}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Mobile navigation menu"
           >
             {/* Overlay logo, absolutely positioned top-left for perfect alignment */}
             <div style={{ position: 'absolute', top: 16, left: 16, zIndex: 10 }}>

@@ -19,18 +19,36 @@ import { normalizePhoneForTel } from '../utils/phone';
 
 const ContactPage = () => {
   const textColor = { color: 'var(--color-text)' };
-  const mutedTextColor = { color: 'var(--color-text)', opacity: 0.7 };
+  const mutedTextColor = { color: 'var(--color-text-muted)' };
   const BASE_URL = import.meta.env.BASE_URL || '/';
 
   const [formStatus, setFormStatus] = useState('');
   const [captchaToken, setCaptchaToken] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({});
   const { syncSupported } = useBackgroundSync();
   const { showInfo, showSuccess, showError } = useToast();
   const colorScheme = useColorScheme();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
+    const form = e.target;
+    const name = form.elements.name?.value?.trim();
+    const email = form.elements.email?.value?.trim();
+    const message = form.elements.message?.value?.trim();
+    const errors = {};
+    if (!name) errors.name = 'Name is required.';
+    if (!email) {
+      errors.email = 'Email is required.';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errors.email = 'Please enter a valid email address (e.g., name@example.com).';
+    }
+    if (!message) errors.message = 'Message is required.';
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      return;
+    }
+    setFieldErrors({});
+    const formData = new FormData(form);
     if (!captchaToken) {
       setFormStatus('error');
       showError('Please complete the captcha.');
@@ -48,7 +66,8 @@ const ContactPage = () => {
       if (response.ok) {
         setFormStatus('success');
         showSuccess('Message sent successfully!');
-        e.target.reset();
+        setFieldErrors({});
+        form.reset();
         setCaptchaToken('');
       } else {
         setFormStatus('error');
@@ -112,10 +131,10 @@ const ContactPage = () => {
             <div className="space-y-8">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'var(--color-surface)' }}>
-                  <MapPin style={{ color: 'var(--color-icon)' }} />
+                  <MapPin aria-hidden="true" style={{ color: 'var(--color-icon)' }} />
                 </div>
                 <div>
-                  <h4 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Visit Us</h4>
+                  <h3 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Visit Us</h3>
                   <p style={textColor}>{COMPANY_DATA.location.address.formatted}</p>
                   <a 
                     href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(COMPANY_DATA.location.address.formatted)}`}
@@ -132,10 +151,10 @@ const ContactPage = () => {
 
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'var(--color-surface)' }}>
-                  <Phone style={{ color: 'var(--color-icon)' }} />
+                  <Phone aria-hidden="true" style={{ color: 'var(--color-icon)' }} />
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Call Us</h4>
+                  <h3 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Call Us</h3>
                   <div className="flex items-center gap-2 flex-wrap">
                     <a href={`tel:${normalizePhoneForTel(COMPANY_DATA.location.contact.phone)}`} className="hover:underline" style={{ color: 'var(--color-accent)' }}>
                       {COMPANY_DATA.location.contact.phone}
@@ -151,10 +170,10 @@ const ContactPage = () => {
 
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'var(--color-surface)' }}>
-                  <Mail style={{ color: 'var(--color-icon)' }} />
+                  <Mail aria-hidden="true" style={{ color: 'var(--color-icon)' }} />
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Email Us</h4>
+                  <h3 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Email Us</h3>
                   <div className="flex items-center gap-2 flex-wrap">
                     <a href={`mailto:${COMPANY_DATA.location.contact.email}`} className="hover:underline" style={{ color: 'var(--color-accent)' }}>
                       {COMPANY_DATA.location.contact.email}
@@ -170,10 +189,10 @@ const ContactPage = () => {
 
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'var(--color-surface)' }}>
-                  <Clock style={{ color: 'var(--color-icon)' }} />
+                  <Clock aria-hidden="true" style={{ color: 'var(--color-icon)' }} />
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Hours</h4>
+                  <h3 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Hours</h3>
                   <LiveHoursDisplay 
                     placeId={COMPANY_DATA.location.google.placeId}
                     fallbackHours={{
@@ -197,19 +216,19 @@ const ContactPage = () => {
             </h3>
 
             {formStatus === 'success' && (
-              <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'var(--color-success-bg)', borderColor: 'var(--color-success)' }}>
+              <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'var(--color-success-bg)', borderColor: 'var(--color-success)' }} role="status" aria-live="polite" aria-atomic="true">
                 <p className="font-inter" style={{ color: 'var(--color-success)' }}>✓ Message sent successfully! We'll get back to you soon.</p>
               </div>
             )}
 
             {formStatus === 'queued' && (
-              <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'var(--color-accent-bg, rgba(228, 179, 64, 0.1))', borderColor: 'var(--color-accent)' }}>
+              <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'var(--color-accent-bg, rgba(228, 179, 64, 0.1))', borderColor: 'var(--color-accent)' }} role="status" aria-live="polite" aria-atomic="true">
                 <p className="font-inter" style={{ color: 'var(--color-accent)' }}>📥 Message saved! Will be sent automatically when connection is restored.</p>
               </div>
             )}
 
             {formStatus === 'error' && (
-              <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'var(--color-error-bg)', borderColor: 'var(--color-error)' }}>
+              <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'var(--color-error-bg)', borderColor: 'var(--color-error)' }} role="alert" aria-live="assertive" aria-atomic="true">
                 <p className="font-inter" style={{ color: 'var(--color-error)' }}>✗ Something went wrong. Please try again.</p>
               </div>
             )}
@@ -226,10 +245,14 @@ const ContactPage = () => {
                   id="name"
                   name="name"
                   required
+                  autoComplete="name"
+                  aria-invalid={!!fieldErrors.name}
+                  aria-describedby={fieldErrors.name ? 'name-error' : undefined}
                   className="w-full px-4 py-3 rounded-lg border font-inter"
-                  style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)', color: 'var(--color-text)' }}
+                  style={{ backgroundColor: 'var(--color-surface)', borderColor: fieldErrors.name ? 'var(--color-error)' : 'var(--color-border)', color: 'var(--color-text)' }}
                   placeholder="Your name"
                 />
+                {fieldErrors.name && <p id="name-error" className="text-sm mt-1" style={{ color: 'var(--color-error)' }}>{fieldErrors.name}</p>}
               </div>
 
               <div>
@@ -239,10 +262,14 @@ const ContactPage = () => {
                   id="email"
                   name="email"
                   required
+                  autoComplete="email"
+                  aria-invalid={!!fieldErrors.email}
+                  aria-describedby={fieldErrors.email ? 'email-error' : undefined}
                   className="w-full px-4 py-3 rounded-lg border font-inter"
-                  style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)', color: 'var(--color-text)' }}
+                  style={{ backgroundColor: 'var(--color-surface)', borderColor: fieldErrors.email ? 'var(--color-error)' : 'var(--color-border)', color: 'var(--color-text)' }}
                   placeholder="your@email.com"
                 />
+                {fieldErrors.email && <p id="email-error" className="text-sm mt-1" style={{ color: 'var(--color-error)' }}>{fieldErrors.email}</p>}
               </div>
 
               <div>
@@ -251,6 +278,7 @@ const ContactPage = () => {
                   type="tel"
                   id="phone"
                   name="phone"
+                  autoComplete="tel"
                   className="w-full px-4 py-3 rounded-lg border font-inter"
                   style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)', color: 'var(--color-text)' }}
                   placeholder="(555) 123-4567"
@@ -264,10 +292,13 @@ const ContactPage = () => {
                   name="message"
                   required
                   rows={5}
+                  aria-invalid={!!fieldErrors.message}
+                  aria-describedby={fieldErrors.message ? 'message-error' : undefined}
                   className="w-full px-4 py-3 rounded-lg border font-inter resize-none"
-                  style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)', color: 'var(--color-text)' }}
+                  style={{ backgroundColor: 'var(--color-surface)', borderColor: fieldErrors.message ? 'var(--color-error)' : 'var(--color-border)', color: 'var(--color-text)' }}
                   placeholder="How can we help you?"
                 />
+                {fieldErrors.message && <p id="message-error" className="text-sm mt-1" style={{ color: 'var(--color-error)' }}>{fieldErrors.message}</p>}
               </div>
 
               {/* hCaptcha Widget */}
