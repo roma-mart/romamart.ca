@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { ChevronRight, Heart, Users, Award, MapPin } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Heart, Users, Award, MapPin, ArrowRight } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
+import Button from '../components/Button';
+import ImageCarousel from '../components/ImageCarousel';
 import StructuredData from '../components/StructuredData';
 import COMPANY_DATA from '../config/company_data';
 import { getAssetUrl } from "../utils/getAssetUrl";
@@ -14,38 +16,14 @@ const AboutPage = () => {
 
   const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
 
-  // Hero images carousel
-  
+  // Hero images for carousel
   const heroImages = useMemo(() => [
-    getAssetUrl('/images/romamart-opening1.png'),
-    getAssetUrl('/images/romamart-interior1.png'),
-    getAssetUrl('/images/romamart-interior3.jpg'),
-    getAssetUrl('/images/romamart-opening2.png'),
-    getAssetUrl('/images/romamart-opening3.png'),
+    { src: getAssetUrl('/images/romamart-opening1.png'), alt: 'Roma Mart store front, opening day' },
+    { src: getAssetUrl('/images/romamart-interior1.png'), alt: 'Roma Mart store interior, counter' },
+    { src: getAssetUrl('/images/romamart-interior3.jpg'), alt: 'RoCafe area inside Roma Mart' },
+    { src: getAssetUrl('/images/romamart-opening2.png'), alt: 'Roma Mart opening day celebration' },
+    { src: getAssetUrl('/images/romamart-opening3.png'), alt: 'Roma Mart team on opening day' },
   ], []);
-  
-
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const isCarouselPaused = useRef(false);
-
-  useEffect(() => {
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReducedMotion) return;
-    const interval = setInterval(() => {
-      if (!isCarouselPaused.current) {
-        setCurrentImageIndex((prev) => (prev + 1) % heroImages.length);
-      }
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [heroImages.length]);
-
-  const handleSelectImage = useCallback((index) => {
-    setCurrentImageIndex(index);
-  }, []);
-
-  const heroImageHandlers = useMemo(() => {
-    return heroImages.map((_, idx) => () => handleSelectImage(idx));
-  }, [heroImages, handleSelectImage]);
 
   const team = [
     {
@@ -186,73 +164,11 @@ const AboutPage = () => {
           </div>
 
           {/* Image Carousel */}
-          <div
-            className="relative h-96 rounded-3xl overflow-hidden shadow-2xl"
-            onMouseEnter={() => { isCarouselPaused.current = true; }}
-            onMouseLeave={() => { isCarouselPaused.current = false; }}
-            onFocus={() => { isCarouselPaused.current = true; }}
-            onBlur={(e) => {
-              if (!e.currentTarget.contains(e.relatedTarget)) {
-                isCarouselPaused.current = false;
-              }
-            }}
-          >
-            {/* Left/Right Scroll Buttons for Carousel */}
-            {heroImages.length > 1 && currentImageIndex > 0 && (
-              <button
-                type="button"
-                aria-label="Previous image"
-                className="absolute left-2 top-1/2 -translate-y-1/2 z-20 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-full shadow p-2 flex items-center justify-center focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
-                onClick={() => setCurrentImageIndex((prev) => (prev - 1 + heroImages.length) % heroImages.length)}
-              >
-                <ChevronRight size={28} style={{ transform: 'rotate(180deg)', color: 'var(--color-accent)' }} />
-              </button>
-            )}
-            {heroImages.length > 1 && currentImageIndex < heroImages.length - 1 && (
-              <button
-                type="button"
-                aria-label="Next image"
-                className="absolute right-2 top-1/2 -translate-y-1/2 z-20 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-full shadow p-2 flex items-center justify-center focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
-                onClick={() => setCurrentImageIndex((prev) => (prev + 1) % heroImages.length)}
-              >
-                <ChevronRight size={28} style={{ color: 'var(--color-accent)' }} />
-              </button>
-            )}
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-950 via-transparent to-transparent opacity-40 z-10" />
-            {heroImages.map((image, index) => (
-              <img
-                key={index}
-                src={image}
-                alt={(() => {
-                  if (image.includes('opening1')) return 'Roma Mart store front, opening day';
-                  if (image.includes('interior1')) return 'Roma Mart store interior, counter';
-                  if (image.includes('interior3')) return 'RoCafe area inside Roma Mart';
-                  return 'Roma Mart image';
-                })()}
-                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
-                  index === currentImageIndex ? 'opacity-100' : 'opacity-0'
-                }`}
-                style={{ backgroundColor: 'var(--color-primary)' }}
-              />
-            ))}
-            {/* Image indicators */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-              {heroImages.map((_, index) => (
-                <button
-                  type="button"
-                  key={index}
-                  onClick={heroImageHandlers[index]}
-                  className={`w-2 h-2 rounded-full transition-all focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 ${
-                    index === currentImageIndex ? 'w-8' : 'w-2'
-                  }`}
-                  style={{ backgroundColor: index === currentImageIndex ? 'var(--color-accent)' : 'var(--color-surface)', outline: '2px solid var(--color-focus)', outlineOffset: '2px' }}
-                  aria-label={`View image ${index + 1}`}
-                  tabIndex={0}
-                  onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { heroImageHandlers[index](); } }}
-                />
-              ))}
-            </div>
-          </div>
+          <ImageCarousel
+            images={heroImages}
+            className="h-96 rounded-3xl shadow-2xl"
+            overlay={<div className="absolute inset-0 bg-gradient-to-r from-blue-950 via-transparent to-transparent opacity-40 z-10 pointer-events-none" />}
+          />
         </div>
       </section>
 
@@ -310,7 +226,7 @@ const AboutPage = () => {
                 if (el) el.scrollBy({ left: -window.innerWidth * 0.7, behavior: 'smooth' });
               }}
             >
-              <ChevronRight size={28} style={{ transform: 'rotate(180deg)', color: 'var(--color-accent)' }} />
+              <ChevronLeft size={28} style={{ color: 'var(--color-accent)' }} />
             </button>
           )}
           {canScrollRight && (
@@ -373,22 +289,25 @@ const AboutPage = () => {
             Come experience the Roma Mart difference. We're here to serve you with a smile!
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <a
+            <Button
               href={`${BASE_URL}locations`}
-              className="px-8 py-4 rounded-full font-bold font-inter transition-transform hover:scale-105 shadow-lg focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
-              style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)', outline: '2px solid var(--color-focus)', outlineOffset: '2px' }}
-              tabIndex={0}
+              variant="navlink"
+              icon={<ArrowRight size={20} />}
+              className="px-8 py-4 text-lg"
+              aria-label="Get directions to Roma Mart"
             >
               Get Directions
-            </a>
-            <a
+            </Button>
+            <Button
               href={`${BASE_URL}contact`}
-              className="px-8 py-4 rounded-full font-bold font-inter transition-transform hover:scale-105 border-2 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-              style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-on-primary)', outline: '2px solid var(--color-focus)', outlineOffset: '2px' }}
-              tabIndex={0}
+              variant="navlink"
+              icon={<ArrowRight size={20} />}
+              className="px-8 py-4 text-lg"
+              style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-on-primary)' }}
+              aria-label="Contact Roma Mart"
             >
               Contact Us
-            </a>
+            </Button>
           </div>
         </div>
       </section>

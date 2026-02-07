@@ -24,8 +24,10 @@ export function MenuProvider({ children }) {
     const fetchMenuData = async () => {
       try {
         if (!cancelled) setLoading(true);
-        // eslint-disable-next-line no-console
-        console.log('[MenuContext] Fetching menu data from API:', API_URL);
+        if (import.meta.env.DEV) {
+          // eslint-disable-next-line no-console
+          console.log('[MenuContext] Fetching menu data from API:', API_URL);
+        }
 
         const res = await fetch(API_URL);
         if (!res.ok) throw new Error('Failed to fetch menu data');
@@ -34,12 +36,14 @@ export function MenuProvider({ children }) {
         const menu = data.menu || [];
         const featuredCount = menu.filter(item => item.featured).length;
 
-        // eslint-disable-next-line no-console
-        console.log('[MenuContext] Menu data received:', {
-          totalItems: menu.length,
-          featuredItems: featuredCount,
-          sampleItem: menu[0]?.name || 'N/A'
-        });
+        if (import.meta.env.DEV) {
+          // eslint-disable-next-line no-console
+          console.log('[MenuContext] Menu data received:', {
+            totalItems: menu.length,
+            featuredItems: featuredCount,
+            sampleItem: menu[0]?.name || 'N/A'
+          });
+        }
 
         if (!cancelled) setMenuItems(menu);
       } catch (err) {

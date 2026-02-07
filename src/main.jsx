@@ -13,6 +13,21 @@ const GTM_ID = import.meta.env.VITE_GTM_ID;
 if (GTM_ID) {
   // Initialize dataLayer and push gtm.start event
   window.dataLayer = window.dataLayer || [];
+
+  // Google Consent Mode v2 defaults — must fire BEFORE gtm.js loads.
+  // Clickio CMP (loaded as a GTM tag) will call gtag('consent','update',{...})
+  // when the user accepts, upgrading storage from 'denied' → 'granted'.
+  function gtag() { window.dataLayer.push(arguments); }
+  gtag('consent', 'default', {
+    ad_storage: 'denied',
+    analytics_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    functionality_storage: 'granted',
+    security_storage: 'granted',
+    wait_for_update: 500,
+  });
+
   window.dataLayer.push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
 
   // Create GTM script element

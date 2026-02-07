@@ -505,12 +505,14 @@ function App() {
   // Only include featured items for homepage schemas (limited selection)
   const featuredSchemaItems = useMemo(() => {
     const featured = menuItems.filter(item => item.featured);
-    // eslint-disable-next-line no-console
-    console.log('[App.jsx] Featured menu items for homepage:', {
-      totalMenuItems: menuItems.length,
-      featuredCount: featured.length,
-      featuredItems: featured.map(item => ({ id: item.id, name: item.name }))
-    });
+    if (import.meta.env.DEV) {
+      // eslint-disable-next-line no-console
+      console.log('[App.jsx] Featured menu items for homepage:', {
+        totalMenuItems: menuItems.length,
+        featuredCount: featured.length,
+        featuredItems: featured.map(item => ({ id: item.id, name: item.name }))
+      });
+    }
     return featured;
   }, [menuItems]);
 
@@ -548,9 +550,6 @@ function App() {
                 )}
         {/* Homepage Product Schemas (Featured Items Only - Primary Source for Google) */}
         {currentPage === 'home' && featuredSchemaItems.length > 0 && (
-          <>
-            {/* eslint-disable-next-line no-console */}
-            {console.log('[App.jsx] Rendering ProductList schema on homepage with', featuredSchemaItems.length, 'items')}
             <StructuredData
               type="ProductList"
               data={{
@@ -561,7 +560,6 @@ function App() {
                 }))
               }}
             />
-          </>
         )}
         {/* Homepage Service Schemas (Featured Services Only) */}
         {currentPage === 'home' && featuredServices.length > 0 && (
