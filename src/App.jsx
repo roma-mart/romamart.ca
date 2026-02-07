@@ -1,5 +1,6 @@
 import React, { useState, useEffect, Suspense, lazy, useCallback, useMemo } from 'react';
 import ErrorBoundary from './components/ErrorBoundary';
+import LoadingFallback from './components/LoadingFallback';
 import { motion, useReducedMotion } from 'framer-motion';
 import {
   ShoppingBasket,
@@ -632,16 +633,6 @@ const ContactSection = () => {
   );
 };
 
-// Loading fallback component (defined outside App to prevent recreation)
-const LoadingFallback = () => (
-  <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--color-bg)' }}>
-    <div className="text-center">
-      <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: 'var(--color-accent)' }}></div>
-      <p className="mt-4 font-inter" style={{ color: 'var(--color-text)' }}>Loading...</p>
-    </div>
-  </div>
-);
-
 // --- MAIN APP ---
 function App() {
   const pathname = typeof window !== 'undefined' ? window.location.pathname.replace(BASE_URL, '/') : '/';
@@ -750,7 +741,7 @@ function App() {
         </ErrorBoundary>
         <main className="flex-1">
           {currentPage !== 'home' ? (
-            <Suspense fallback={<div>Loading...</div>}>
+            <Suspense fallback={<LoadingFallback />}>
               <div id="main-content">
                 {currentPage === 'services' && (
                   <ErrorBoundary><ServicesPage /></ErrorBoundary>
