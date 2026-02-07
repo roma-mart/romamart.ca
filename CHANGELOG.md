@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.6.0] - 2026-02-07
+
+### Added
+- Unified `ImageCarousel` component with proper ARIA carousel pattern, 44px touch targets, and auto-advance with reduced motion support
+- `ContactForm` component unifying homepage and /contact page forms — adds phone field everywhere, uses `useToast` for feedback
+- `FooterReviews`, `FooterLinks`, `FooterLocation` sub-components extracted from monolithic Footer
+- `LoadingFallback` component for branded Suspense fallback (replaces bare "Loading..." text)
+- Google Consent Mode v2 defaults (`ad_storage`, `analytics_storage`, `ad_user_data`, `ad_personalization` all denied) before GTM loads — Clickio CMP upgrades on accept
+
+### Changed
+- `ErrorBoundary` rewritten with branded UI, "Refresh Page" / "Go Home" actions, and GA error tracking (replaces raw stack trace)
+- Footer decomposed from 468 to 189 lines; back-to-top converted to `Button` component
+- Footer bottom padding increased (`pb-8` → `pb-20`) so content clears the floating OrderCTA button
+- AboutPage CTA links converted to `Button` components; carousel dot indicators now 44px touch targets
+- Team scroll left arrow uses `ChevronLeft` (was `ChevronRight` rotated wrong direction)
+- All 9 debug `console.log` statements gated behind `import.meta.env.DEV` for tree-shaking
+
+### Fixed
+- LocationsPage carousel left arrow pointed right (SVG rotated 180deg incorrectly)
+- LocationsPage carousel showed same image regardless of selection (`LazyImage` opacity class conflicted with carousel opacity)
+- JSX-embedded `console.log` in RoCafePage and App.jsx removed (was executing in production render)
+
+### Removed
+- `LocationImageCarousel` component (replaced by unified `ImageCarousel`)
+- Duplicate contact form code from `App.jsx` ContactSection (~150 lines) and `ContactPage.jsx` (~110 lines)
+
 ## [2.5.0] - 2026-02-07
 
 ### Added
