@@ -79,8 +79,7 @@ function Hero({ onTrackOrder }) {
       <div className="absolute inset-0 bg-gradient-to-r from-blue-950 via-blue-900 to-transparent opacity-90 z-0" />
       <div className="relative z-10 max-w-7xl mx-auto px-4 w-full pt-20">
         <div className="grid md:grid-cols-2 gap-12 items-center">
-          <motion.div initial={shouldReduceMotion ? false : { opacity: 0, x: -50 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: shouldReduceMotion ? 0 : 0.8 }}>
-          <motion.div initial={{ x: -50 }} animate={{ x: 0 }} transition={{ duration: 0.8 }}>
+          <motion.div initial={shouldReduceMotion ? false : { x: -50 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: shouldReduceMotion ? 0 : 0.8 }}>
             <div className="inline-block px-4 py-1 mb-6 rounded-full border" style={{ borderColor: 'var(--color-accent-bg)', backgroundColor: 'var(--color-accent-bg)', backdropFilter: 'blur(4px)' }}>
               <span className="text-sm font-inter font-semibold tracking-widest uppercase" style={{ color: 'var(--color-accent)' }}>New In Town</span>
             </div>
@@ -115,8 +114,7 @@ function Hero({ onTrackOrder }) {
               </Button>
             </div>
           </motion.div>
-          <motion.div initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={shouldReduceMotion ? { duration: 0 } : { duration: 1, delay: 0.2 }} className="relative hidden md:block">
-          <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} transition={{ duration: 1, delay: 0.2 }} className="relative hidden md:block">
+          <motion.div initial={shouldReduceMotion ? false : { scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={shouldReduceMotion ? { duration: 0 } : { duration: 1, delay: 0.2 }} className="relative hidden md:block">
             <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl border-4 border-white/10 rotate-3 hover:rotate-0 transition-transform duration-500">
               <img src={getAssetUrl('/images/comeinwereopensign.png')} alt="Come in! We're Open Sign" className="w-full h-[500px] object-cover" fetchpriority="high" />
             </div>
