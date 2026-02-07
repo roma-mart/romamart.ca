@@ -471,6 +471,50 @@ const buildSitemapXml = (routeList, lastModDate) => {
     `</urlset>\n`;
 };
 
+/**
+ * Inject hashed Vite bundle filenames into dist/sw.js precache list.
+ * Replaces the /* __VITE_BUNDLE_ASSETS__ *​/ placeholder with actual asset paths.
+ * Gracefully degrades: logs a warning if placeholder or assets are missing.
+ */
+function injectServiceWorkerPrecache(distPath) {
+  const swPath = path.join(distPath, 'sw.js');
+  const assetsDir = path.join(distPath, 'assets');
+  const PLACEHOLDER = '/* __VITE_BUNDLE_ASSETS__ */';
+
+  if (!fs.existsSync(swPath)) {
+    console.warn('⚠️  sw.js not found in dist — skipping precache injection');
+    return;
+  }
+
+  let swContent = fs.readFileSync(swPath, 'utf-8');
+
+  if (!swContent.includes(PLACEHOLDER)) {
+    console.warn('⚠️  Precache placeholder not found in sw.js — skipping injection');
+    return;
+  }
+
+  if (!fs.existsSync(assetsDir)) {
+    console.warn('⚠️  dist/assets/ not found — skipping precache injection');
+    return;
+  }
+
+  const assetFiles = fs.readdirSync(assetsDir)
+    .filter(file => /\.(js|css)$/.test(file))
+    .map(file => `  \`\${BASE_URL}assets/${file}\``)
+    .join(',\n');
+
+  if (!assetFiles) {
+    console.warn('⚠️  No .js/.css assets found in dist/assets/ — skipping injection');
+    return;
+  }
+
+  swContent = swContent.replace(PLACEHOLDER, assetFiles);
+  fs.writeFileSync(swPath, swContent);
+
+  const count = assetFiles.split('\n').length;
+  console.log(`✓ Injected ${count} Vite bundle asset(s) into sw.js precache list`);
+}
+
 async function prerender() {
   const distPath = path.resolve(__dirname, '../dist');
   const indexPath = path.join(distPath, 'index.html');
@@ -479,6 +523,9 @@ async function prerender() {
     console.error('Build output not found. Run `npm run build` first.');
     process.exit(1);
   }
+
+  // Inject hashed Vite bundle filenames into service worker precache list
+  injectServiceWorkerPrecache(distPath);
 
   // Fetch all API data in parallel for maximum efficiency
   console.log('\n📡 Fetching API data for prerendering...\n');

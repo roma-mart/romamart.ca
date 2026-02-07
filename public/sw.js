@@ -3,7 +3,7 @@
  * PWA implementation with smart caching strategies
  */
 
-const CACHE_VERSION = 'roma-mart-v1';
+const CACHE_VERSION = 'roma-mart-v2';
 const BASE_URL = '/';
 
 // Assets to cache immediately on install
@@ -18,7 +18,8 @@ const PRECACHE_ASSETS = [
   `${BASE_URL}android/android-launchericon-192-192.png`,
   `${BASE_URL}android/android-launchericon-512-512.png`,
   `${BASE_URL}ios/180.png`,
-  `${BASE_URL}windows11/Square150x150Logo.scale-100.png`
+  `${BASE_URL}windows11/Square150x150Logo.scale-100.png`,
+  /* __VITE_BUNDLE_ASSETS__ */
 ];
 
 // Pages to cache on first visit (runtime caching)
