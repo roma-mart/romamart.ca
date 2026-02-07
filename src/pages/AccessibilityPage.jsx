@@ -2,7 +2,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ExternalLink, Mail, Phone, MapPin, CheckCircle, ChevronRight } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
-import COMPANY_DATA from '../config/company_data';
+import COMPANY_DATA, { getContextualEmail } from '../config/company_data';
 import StructuredData from '../components/StructuredData';
 import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 
@@ -116,7 +116,7 @@ const AccessibilityPage = () => {
           <div className="p-6 rounded-lg border" style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
             <Mail size={32} aria-hidden="true" className="mb-4" style={{ color: 'var(--color-icon)' }} />
             <h3 className="font-bold text-lg mb-2" style={textColor}>Email</h3>
-            <a href={`mailto:${COMPANY_DATA.location.contact.email}`} className="hover:underline break-all" style={{ color: 'var(--color-accent)' }}>{COMPANY_DATA.location.contact.email}</a>
+            <a href={`mailto:${getContextualEmail('accessibility')}`} className="hover:underline break-all" style={{ color: 'var(--color-accent)' }}>{getContextualEmail('accessibility')}</a>
           </div>
           <div className="p-6 rounded-lg border" style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
             <Phone size={32} aria-hidden="true" className="mb-4" style={{ color: 'var(--color-icon)' }} />
