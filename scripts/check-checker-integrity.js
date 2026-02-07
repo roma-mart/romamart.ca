@@ -211,8 +211,13 @@ function checkDevEthosAlignment() {
   console.log(`${colors.blue}🎯 Checking dev ethos alignment...${colors.reset}`);
   
   const checkQuality = fs.readFileSync(path.join(__dirname, 'check-quality.js'), 'utf8');
-  const hookPath = path.join(__dirname, '../.git/hooks/pre-commit');
-  const preCommitHook = fs.existsSync(hookPath) ? fs.readFileSync(hookPath, 'utf8') : '';
+  const gitHookPath = path.join(__dirname, '../.git/hooks/pre-commit');
+  const huskyHookPath = path.join(__dirname, '../.husky/pre-commit');
+  const preCommitHook = fs.existsSync(huskyHookPath)
+    ? fs.readFileSync(huskyHookPath, 'utf8')
+    : fs.existsSync(gitHookPath)
+      ? fs.readFileSync(gitHookPath, 'utf8')
+      : '';
   
   // Principle 1: "Systems over spot fixes"
   // Checkers should validate patterns, not individual instances

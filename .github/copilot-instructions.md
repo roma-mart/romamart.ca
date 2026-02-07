@@ -426,7 +426,7 @@ import { SERVICES } from '../data/services';
   - Format: `<type>(<scope>): <description>`
   - Types: feat, fix, docs, style, refactor, perf, test, build, ci, chore
 - **Manual quality checks required** before commit: `npm run check:all`
-- **Git hooks:** Husky v9 configured but currently broken (fix tracked in Sprint 4 / #101)
+- **Git hooks:** Husky v9 with pre-commit hook running `npm run check:all` (lint + lint:css + quality + integrity)
 - **Pull requests:** Required for all changes to `main` (see [PULL_REQUEST_TEMPLATE.md](PULL_REQUEST_TEMPLATE.md))
   - Comprehensive checklist: automated tests, manual testing, accessibility, security
   - Browser testing requirements: Chrome/Edge, Firefox, Safari
@@ -439,7 +439,7 @@ import { SERVICES } from '../data/services';
 - **Maintenance** (`.github/ISSUE_TEMPLATE/maintenance.yml`) - Chore tasks, dependency updates, tooling improvements
 
 ### Testing Strategy
-- **Vitest test suite:** 11 test files, ~122 tests (schema validation, utilities)
+- **Vitest test suite:** 12 test files, 154 tests (schema validation, utilities, hooks)
 - Quality also enforced via:
   1. ESLint + Stylelint (syntax & patterns)
   2. Universal quality checker (`check-quality.js` - 1000+ rules)

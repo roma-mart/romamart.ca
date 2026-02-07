@@ -1,7 +1,7 @@
 {
   "name": "roma-mart-site",
   "private": true,
-  "version": "2.4.0",
+  "version": "2.4.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -15,9 +15,8 @@
     "lint:css": "stylelint \"src/**/*.css\"",
     "check:quality": "node scripts/check-quality.js",
     "check:integrity": "node scripts/check-checker-integrity.js",
-    "check:all": "npm run lint && npm run lint:css && npm run check:quality",
-    "precommit": "npm run lint && npm run check:quality",
-    "prepush": "npm run check:all && npm run build",
+    "check:all": "npm run lint && npm run lint:css && npm run check:quality && npm run check:integrity",
+    "prepare": "husky",
     "preview": "vite preview",
     "deploy": "node scripts/ensure-main-branch.js && npm run build && gh-pages -d dist"
   },
@@ -58,7 +57,8 @@
     "stylelint-config-standard": "^36.0.1",
     "tailwindcss": "^3.4.18",
     "vite": "^7.2.6",
-    "vitest": "^4.0.15"
+    "vitest": "^4.0.15",
+    "husky": "^9.1.0"
   },
   "overrides": {
     "react-helmet-async": {
