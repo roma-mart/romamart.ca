@@ -19,6 +19,20 @@
   app-region: no-drag;
 }
 
+/* Standalone PWA: adjust for absence of browser chrome */
+@media (display-mode: standalone), (display-mode: window-controls-overlay) {
+  .pwa-bottom-spacing {
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+}
+
+/* WCO mode: offset body so content doesn't render under the titlebar */
+@media (display-mode: window-controls-overlay) {
+  body {
+    padding-top: env(titlebar-area-height, 48px);
+  }
+}
+
 
 
 /* Universal Button Variant Fallback Animations (matches Framer Motion intent) */

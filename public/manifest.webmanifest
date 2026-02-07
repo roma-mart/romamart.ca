@@ -11,6 +11,28 @@
   "categories": ["shopping", "food", "business"],
   "lang": "en-CA",
   "dir": "ltr",
+  "id": "/",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
+  "handle_links": "preferred",
+  "screenshots": [
+    {
+      "src": "screenshots/mobile-home.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Roma Mart home screen on mobile"
+    },
+    {
+      "src": "screenshots/desktop-home.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Roma Mart home screen on desktop"
+    }
+  ],
   "icons": [
     { "src": "windows11/SmallTile.scale-100.png", "sizes": "71x71", "type": "image/png", "purpose": "any" },
     { "src": "windows11/SmallTile.scale-125.png", "sizes": "89x89", "type": "image/png", "purpose": "any" },

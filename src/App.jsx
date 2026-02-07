@@ -41,6 +41,7 @@ import { useAutoLocation } from './hooks/useAutoLocation';
 import { useServiceWorker } from './hooks/useServiceWorker';
 import { usePageVisibility } from './hooks/useBrowserFeatures';
 import PWAInstallPrompt from './components/PWAInstallPrompt';
+import PWAUpdatePrompt from './components/PWAUpdatePrompt';
 
 // dynamically resolve domain for assets
 import { getAssetUrl } from './utils/getAssetUrl';
@@ -644,7 +645,10 @@ const LoadingFallback = () => (
 // --- MAIN APP ---
 function App() {
   const pathname = typeof window !== 'undefined' ? window.location.pathname.replace(BASE_URL, '/') : '/';
-  useServiceWorker();
+  const { updateAvailable, skipWaiting } = useServiceWorker();
+  const [updateDismissed, setUpdateDismissed] = useState(
+    sessionStorage.getItem('pwa-update-dismissed') === 'true'
+  );
   const isVisible = usePageVisibility();
 
   // Fetch menu data from API for homepage featured schemas + RoCafe section
@@ -798,6 +802,11 @@ function App() {
         </main>
       </div>
       <PWAInstallPrompt />
+      <PWAUpdatePrompt
+        updateAvailable={updateAvailable && !updateDismissed}
+        onUpdate={skipWaiting}
+        onDismiss={() => { sessionStorage.setItem('pwa-update-dismissed', 'true'); setUpdateDismissed(true); }}
+      />
       <NetworkStatus />
     </LocationProvider>
   );

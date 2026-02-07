@@ -2,6 +2,7 @@
 /* global process */
 import fs from 'fs';
 import path from 'path';
+import { createHash } from 'crypto';
 import { fileURLToPath } from 'url';
 import COMPANY_DATA from '../src/config/company_data.js';
 import { buildMenuItemSchema } from '../src/schemas/menuItemSchema.js';
@@ -471,6 +472,130 @@ const buildSitemapXml = (routeList, lastModDate) => {
     `</urlset>\n`;
 };
 
+/**
+ * Inject hashed Vite bundle filenames into dist/sw.js precache list.
+ * Replaces the `__VITE_BUNDLE_ASSETS__` placeholder with actual asset paths.
+ * Gracefully degrades: logs a warning if placeholder or assets are missing.
+ */
+function injectServiceWorkerPrecache(distPath) {
+  const swPath = path.join(distPath, 'sw.js');
+  const assetsDir = path.join(distPath, 'assets');
+  const PLACEHOLDER = '/* __VITE_BUNDLE_ASSETS__ */';
+
+  if (!fs.existsSync(swPath)) {
+    console.warn('⚠️  sw.js not found in dist — skipping precache injection');
+    return;
+  }
+
+  let swContent = fs.readFileSync(swPath, 'utf-8');
+
+  if (!swContent.includes(PLACEHOLDER)) {
+    console.warn('⚠️  Precache placeholder not found in sw.js — skipping injection');
+    return;
+  }
+
+  if (!fs.existsSync(assetsDir)) {
+    console.warn('⚠️  dist/assets/ not found — skipping precache injection');
+    return;
+  }
+
+  const assetFiles = fs.readdirSync(assetsDir)
+    .filter(file => /\.(js|css)$/.test(file))
+    .map(file => `  \`\${BASE_URL}assets/${file}\``)
+    .join(',\n');
+
+  if (!assetFiles) {
+    console.warn('⚠️  No .js/.css assets found in dist/assets/ — skipping injection');
+    return;
+  }
+
+  swContent = swContent.replace(PLACEHOLDER, assetFiles);
+
+  // L7: Auto-generate cache version from asset hash
+  const CACHE_VERSION_REGEX = /\/\*\s*__CACHE_VERSION__\s*\*\/\s*(['"])[^'"]*\1/;
+  const cacheMatch = swContent.match(CACHE_VERSION_REGEX);
+  if (cacheMatch) {
+    const sortedAssets = fs.readdirSync(assetsDir)
+      .filter(file => /\.(js|css)$/.test(file))
+      .sort()
+      .join('\n');
+    const hash = createHash('sha256').update(sortedAssets).digest('hex').slice(0, 8);
+    const quote = cacheMatch[1];
+    swContent = swContent.replace(CACHE_VERSION_REGEX, `/* __CACHE_VERSION__ */ ${quote}roma-mart-${hash}${quote}`);
+    console.log(`\u2713 Cache version set to roma-mart-${hash}`);
+  } else {
+    console.warn('⚠️  Cache version placeholder not found in sw.js — skipping cache version injection');
+  }
+
+  fs.writeFileSync(swPath, swContent);
+
+  const count = assetFiles.split('\n').length;
+  console.log(`✓ Injected ${count} Vite bundle asset(s) into sw.js precache list`);
+}
+
+/**
+ * Inject SSOT location data into dist/offline.html.
+ * Replaces the __OFFLINE_LOCATIONS__ placeholder and id-anchored static content
+ * with real data from COMPANY_DATA (sourced from src/data/locations.js).
+ */
+function injectOfflineLocationData(distPath) {
+  const offlinePath = path.join(distPath, 'offline.html');
+
+  if (!fs.existsSync(offlinePath)) {
+    console.warn('⚠️  offline.html not found in dist — skipping location data injection');
+    return;
+  }
+
+  let content = fs.readFileSync(offlinePath, 'utf-8');
+  const loc = COMPANY_DATA.location;
+
+  if (!loc) {
+    console.warn('⚠️  No primary location in COMPANY_DATA — skipping offline injection');
+    return;
+  }
+
+  const LOCATIONS_PLACEHOLDER = /\/\* __OFFLINE_LOCATIONS__ \*\/ \[[\s\S]*?\]/;
+
+  if (!LOCATIONS_PLACEHOLDER.test(content)) {
+    console.warn('⚠️  __OFFLINE_LOCATIONS__ placeholder not found in offline.html — skipping injection');
+    return;
+  }
+
+  const phoneRaw = loc.contact.phone.replace(/[^+\d]/g, '');
+  const locationsJson = JSON.stringify([{
+    id: loc.id,
+    name: loc.name,
+    address: loc.address.formatted,
+    phone: loc.contact.phone,
+    coordinates: loc.google.coordinates,
+    isPrimary: loc.isPrimary,
+  }]);
+
+  // Replace JS LOCATIONS array
+  content = content.replace(LOCATIONS_PLACEHOLDER, locationsJson);
+
+  // Replace static HTML using id-anchored patterns
+  content = content.replace(
+    /(<h3 id="location-name">)[^<]*/,
+    `$1${loc.name}`
+  );
+  content = content.replace(
+    /(<span id="location-address">)[^<]*/,
+    `$1${loc.address.formatted}`
+  );
+  content = content.replace(
+    /<a href="tel:[^"]*" class="contact-link">[^<]*/,
+    `<a href="tel:${phoneRaw}" class="contact-link">${loc.contact.phone}`
+  );
+  content = content.replace(
+    /(<span id="location-hours">)[^<]*/,
+    `$1${loc.hours.display}`
+  );
+
+  fs.writeFileSync(offlinePath, content);
+  console.log('✓ Injected SSOT location data into offline.html');
+}
+
 async function prerender() {
   const distPath = path.resolve(__dirname, '../dist');
   const indexPath = path.join(distPath, 'index.html');
@@ -479,6 +604,12 @@ async function prerender() {
     console.error('Build output not found. Run `npm run build` first.');
     process.exit(1);
   }
+
+  // Inject hashed Vite bundle filenames into service worker precache list
+  injectServiceWorkerPrecache(distPath);
+
+  // Inject SSOT location data into offline page
+  injectOfflineLocationData(distPath);
 
   // Fetch all API data in parallel for maximum efficiency
   console.log('\n📡 Fetching API data for prerendering...\n');

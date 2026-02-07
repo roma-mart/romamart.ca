@@ -1,19 +1,15 @@
-/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ChevronRight, MapPin, Phone, Clock, Mail, Send } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
 import CopyButton from '../components/CopyButton';
-import { useBackgroundSync } from '../hooks/useServiceWorker';
 import { useToast } from '../components/ToastContainer';
-// import { queueFormSubmission, getPendingCount } from '../utils/indexedDB'; // Disabled offline queue
 import Button from '../components/Button';
 import StructuredData from '../components/StructuredData';
 import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 import LiveHoursDisplay from '../components/LiveHoursDisplay';
 import COMPANY_DATA from '../config/company_data';
 import HCaptchaWidget from '../components/HCaptchaWidget';
-import { getHCaptchaTheme } from '../design/hcaptchaTheme';
 import { useColorScheme } from '../hooks/useColorScheme';
 import { normalizePhoneForTel } from '../utils/phone';
 
@@ -25,8 +21,7 @@ const ContactPage = () => {
   const [formStatus, setFormStatus] = useState('');
   const [captchaToken, setCaptchaToken] = useState('');
   const [fieldErrors, setFieldErrors] = useState({});
-  const { syncSupported } = useBackgroundSync();
-  const { showInfo, showSuccess, showError } = useToast();
+  const { showSuccess, showError } = useToast();
   const colorScheme = useColorScheme();
 
   const handleSubmit = async (e) => {
@@ -55,9 +50,6 @@ const ContactPage = () => {
       return;
     }
     formData.append('h-captcha-response', captchaToken);
-    // Check if online
-    const isOnline = navigator.onLine;
-    // Online - submit immediately
     try {
       const response = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
@@ -218,12 +210,6 @@ const ContactPage = () => {
             {formStatus === 'success' && (
               <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'var(--color-success-bg)', borderColor: 'var(--color-success)' }} role="status" aria-live="polite" aria-atomic="true">
                 <p className="font-inter" style={{ color: 'var(--color-success)' }}>✓ Message sent successfully! We'll get back to you soon.</p>
-              </div>
-            )}
-
-            {formStatus === 'queued' && (
-              <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'var(--color-accent-bg, rgba(228, 179, 64, 0.1))', borderColor: 'var(--color-accent)' }} role="status" aria-live="polite" aria-atomic="true">
-                <p className="font-inter" style={{ color: 'var(--color-accent)' }}>📥 Message saved! Will be sent automatically when connection is restored.</p>
               </div>
             )}
 

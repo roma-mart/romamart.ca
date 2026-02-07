@@ -3,7 +3,7 @@
  * PWA implementation with smart caching strategies
  */
 
-const CACHE_VERSION = 'roma-mart-v1';
+const CACHE_VERSION = /* __CACHE_VERSION__ */ 'roma-mart-v2';
 const BASE_URL = '/';
 
 // Assets to cache immediately on install
@@ -18,7 +18,8 @@ const PRECACHE_ASSETS = [
   `${BASE_URL}android/android-launchericon-192-192.png`,
   `${BASE_URL}android/android-launchericon-512-512.png`,
   `${BASE_URL}ios/180.png`,
-  `${BASE_URL}windows11/Square150x150Logo.scale-100.png`
+  `${BASE_URL}windows11/Square150x150Logo.scale-100.png`,
+  /* __VITE_BUNDLE_ASSETS__ */
 ];
 
 // Pages to cache on first visit (runtime caching)
@@ -30,37 +31,45 @@ const CACHEABLE_ROUTES = [
   `${BASE_URL}about`
 ];
 
+// Cache size limit to prevent unbounded growth
+const MAX_CACHE_ENTRIES = 100;
+
+/**
+ * Trim cache to a maximum number of entries (oldest first)
+ */
+async function trimCache(cacheName, maxEntries) {
+  const cache = await caches.open(cacheName);
+  const keys = await cache.keys();
+  if (keys.length <= maxEntries) return;
+  // Delete oldest entries until within limit
+  const toDelete = keys.slice(0, keys.length - maxEntries);
+  for (const key of toDelete) {
+    await cache.delete(key);
+  }
+}
+
 // Install event - cache essential assets
 self.addEventListener('install', (event) => {
-  console.log('[Service Worker] Installing...');
-  
   event.waitUntil(
     caches.open(CACHE_VERSION)
-      .then((cache) => {
-        console.log('[Service Worker] Precaching assets');
-        return cache.addAll(PRECACHE_ASSETS);
-      })
-      .then(() => self.skipWaiting())
+      .then((cache) => cache.addAll(PRECACHE_ASSETS))
   );
 });
 
-// Activate event - clean up old caches
+// Activate event - clean up old caches, enable navigation preload
 self.addEventListener('activate', (event) => {
-  console.log('[Service Worker] Activating...');
-  
   event.waitUntil(
-    caches.keys()
-      .then((cacheNames) => {
-        return Promise.all(
+    Promise.all([
+      caches.keys()
+        .then((cacheNames) => Promise.all(
           cacheNames
             .filter((cacheName) => cacheName !== CACHE_VERSION)
-            .map((cacheName) => {
-              console.log('[Service Worker] Deleting old cache:', cacheName);
-              return caches.delete(cacheName);
-            })
-        );
-      })
-      .then(() => self.clients.claim())
+            .map((cacheName) => caches.delete(cacheName))
+        )),
+      self.registration.navigationPreload
+        ? self.registration.navigationPreload.enable()
+        : Promise.resolve()
+    ]).then(() => self.clients.claim())
   );
 });
 
@@ -76,8 +85,8 @@ self.addEventListener('fetch', (event) => {
 
   // Determine caching strategy based on request type
   if (request.destination === 'document') {
-    // HTML pages: Network-first with cache fallback
-    event.respondWith(networkFirstStrategy(request));
+    // HTML pages: Network-first with cache fallback (use navigation preload if available)
+    event.respondWith(networkFirstStrategy(request, event.preloadResponse));
   } else if (request.destination === 'image') {
     // Images: Cache-first with network fallback
     event.respondWith(cacheFirstStrategy(request));
@@ -92,33 +101,33 @@ self.addEventListener('fetch', (event) => {
 
 /**
  * Network-first strategy: Try network, fallback to cache, then offline page
+ * Uses navigation preload response when available for faster document loads
  */
-async function networkFirstStrategy(request) {
+async function networkFirstStrategy(request, preloadResponse) {
   try {
-    const networkResponse = await fetch(request);
-    
+    const networkResponse = (preloadResponse && await preloadResponse) || await fetch(request);
+
     // Cache successful responses
     if (networkResponse.ok) {
       const cache = await caches.open(CACHE_VERSION);
       cache.put(request, networkResponse.clone());
+      trimCache(CACHE_VERSION, MAX_CACHE_ENTRIES).catch(() => {});
     }
-    
+
     return networkResponse;
   } catch {
     // Network failed, try cache
     const cachedResponse = await caches.match(request);
-    
+
     if (cachedResponse) {
-      console.log('[Service Worker] Serving from cache:', request.url);
       return cachedResponse;
     }
-    
+
     // No cache available, serve offline page for HTML requests
     if (request.destination === 'document') {
-      console.log('[Service Worker] Serving offline page');
       return caches.match(`${BASE_URL}offline.html`);
     }
-    
+
     // For other resources, return error
     return new Response('Network error', {
       status: 408,
@@ -132,24 +141,23 @@ async function networkFirstStrategy(request) {
  */
 async function cacheFirstStrategy(request) {
   const cachedResponse = await caches.match(request);
-  
+
   if (cachedResponse) {
-    console.log('[Service Worker] Serving from cache:', request.url);
     return cachedResponse;
   }
-  
+
   try {
     const networkResponse = await fetch(request);
-    
+
     // Cache successful responses
     if (networkResponse.ok) {
       const cache = await caches.open(CACHE_VERSION);
       cache.put(request, networkResponse.clone());
+      trimCache(CACHE_VERSION, MAX_CACHE_ENTRIES).catch(() => {});
     }
-    
+
     return networkResponse;
-  } catch (error) {
-    console.error('[Service Worker] Fetch failed:', error);
+  } catch {
     return new Response('Network error', {
       status: 408,
       headers: { 'Content-Type': 'text/plain' }
@@ -157,153 +165,8 @@ async function cacheFirstStrategy(request) {
   }
 }
 
-// Background Sync - Queue failed requests
-self.addEventListener('sync', (event) => {
-  console.log('[Service Worker] Background sync:', event.tag);
-  
-  if (event.tag === 'contact-form-sync') {
-    event.waitUntil(syncContactForms());
-  } else if (event.tag === 'analytics-sync') {
-    event.waitUntil(syncAnalytics());
-  }
-});
-
-/**
- * Sync queued contact form submissions
- */
-async function syncContactForms() {
-  try {
-    console.log('[Service Worker] Syncing contact forms...');
-    
-    // Open IndexedDB
-    const db = await openDatabase();
-    const pendingForms = await getPendingForms(db);
-    
-    if (pendingForms.length === 0) {
-      console.log('[Service Worker] No pending forms to sync');
-      return;
-    }
-    
-    console.log(`[Service Worker] Found ${pendingForms.length} pending form(s)`);
-    
-    // Submit each form
-    const results = await Promise.allSettled(
-      pendingForms.map(async (form) => {
-        const formData = new FormData();
-        Object.entries(form).forEach(([key, value]) => {
-          if (key !== 'id' && key !== 'timestamp' && key !== 'synced' && key !== 'syncedAt') {
-            formData.append(key, value);
-          }
-        });
-        
-        const response = await fetch('https://api.web3forms.com/submit', {
-          method: 'POST',
-          body: formData
-        });
-        
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
-        }
-        
-        // Mark as synced
-        await markFormSynced(db, form.id);
-        return form.id;
-      })
-    );
-    
-    // Log results
-    const successful = results.filter(r => r.status === 'fulfilled').length;
-    const failed = results.filter(r => r.status === 'rejected').length;
-    
-    console.log(`[Service Worker] Sync complete: ${successful} successful, ${failed} failed`);
-    
-    // Send notification to client
-    const clients = await self.clients.matchAll();
-    clients.forEach(client => {
-      client.postMessage({
-        type: 'SYNC_COMPLETE',
-        successful,
-        failed
-      });
-    });
-    
-    // If any failed, throw error to retry later
-    if (failed > 0) {
-      throw new Error(`${failed} form(s) failed to sync`);
-    }
-  } catch (error) {
-    console.error('[Service Worker] Contact form sync failed:', error);
-    throw error; // Retry later
-  }
-}
-
-/**
- * Open IndexedDB connection
- */
-function openDatabase() {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open('RomaMartDB', 1);
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  });
-}
-
-/**
- * Get all pending forms from IndexedDB
- */
-function getPendingForms(db) {
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(['contactForms'], 'readonly');
-    const store = transaction.objectStore('contactForms');
-    const index = store.index('synced');
-    const request = index.getAll(false);
-    
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  });
-}
-
-/**
- * Mark form as synced in IndexedDB
- */
-function markFormSynced(db, formId) {
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(['contactForms'], 'readwrite');
-    const store = transaction.objectStore('contactForms');
-    const getRequest = store.get(formId);
-    
-    getRequest.onsuccess = () => {
-      const data = getRequest.result;
-      data.synced = true;
-      data.syncedAt = Date.now();
-      
-      const updateRequest = store.put(data);
-      updateRequest.onsuccess = () => resolve();
-      updateRequest.onerror = () => reject(updateRequest.error);
-    };
-    
-    getRequest.onerror = () => reject(getRequest.error);
-  });
-}
-
-/**
- * Sync queued analytics events
- */
-async function syncAnalytics() {
-  try {
-    console.log('[Service Worker] Syncing analytics...');
-    // Implementation would batch-send analytics events
-    return Promise.resolve();
-  } catch (error) {
-    console.error('[Service Worker] Analytics sync failed:', error);
-    throw error; // Retry later
-  }
-}
-
 // Message handler for communication with main app
 self.addEventListener('message', (event) => {
-  console.log('[Service Worker] Message received:', event.data);
-  
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }

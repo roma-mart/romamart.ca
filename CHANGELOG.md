@@ -7,6 +7,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.5.0] - 2026-02-07
+
+### Added
+- PWA update notification (`PWAUpdatePrompt`) with focus trap, ARIA dialog, and Refresh/Later actions
+- Shared `PWAPromptShell` component for consistent PWA dialog UI
+- Build-time injection pipeline: Vite bundle precaching, SSOT location data, and auto-versioned SW cache
+- Apple PWA meta tags (`apple-mobile-web-app-capable`, status bar style, app title)
+- Modern manifest fields (`display_override` with WCO, `launch_handler`, `handle_links`, `screenshots`)
+- Navigation preload in service worker for faster document loads
+- `display-mode` CSS media queries for standalone and WCO layout adjustments
+- Standalone mode detection in `PWAInstallPrompt` — hides prompt when already installed
+- `trimCache()` with `MAX_CACHE_ENTRIES = 100` to prevent unbounded cache growth
+- Offline page dark mode, `color-mix()` theming, and build-time SSOT data injection
+
+### Changed
+- SW cache version auto-generated from build asset hash (replaces manual `CACHE_VERSION`)
+- `skipWaiting()` now user-controlled via update prompt (removed from install event)
+- `controllerchange` event drives reload (replaces direct `location.reload()`)
+- PWA prompts refactored to shared shell; dead `onKeyDown` handlers removed
+- Removed all `console.log`/`console.error` from `sw.js`
+- Completed WCO implementation — `no-drag` on all interactive Navbar elements
+
+### Fixed
+- Broken `icon-192.svg` favicon reference — file didn't exist (now uses existing PNG)
+- Broken `/src/index.css` link in `offline.html` — dev-only path that 404d in production
+- Offline page wrong address, stale hours, drifted location ID/name (now matches SSOT)
+- Dual `skipWaiting()` race condition between install and message handler
+
+### Removed
+- ~140 lines dead background sync code from `sw.js` (IndexedDB helpers, sync listener)
+- `useBackgroundSync` hook — wrong feature detection, never functional
+
+### Documentation
+- Updated `copilot-instructions.md` — PWA components, build-time injection, cache management
+
 ## [2.4.1] - 2026-02-07
 
 ### Added
@@ -355,6 +390,7 @@ Initial Create React App implementation. Deprecated and replaced by v2.0.0.
 
 | Version | Date         | Description                           |
 |---------|--------------|---------------------------------------|
+| 2.5.0   | Feb 7, 2026  | PWA resurrection: offline support, precache injection, update UI |
 | 2.4.1   | Feb 7, 2026  | DevOps cleanup: consolidated CI, Husky v9, lint-staged, commitlint, Dependabot |
 | 2.4.0   | Feb 7, 2026  | WCAG 2.2 AA: focus traps, form ARIA, heading hierarchy |
 | 2.3.3   | Feb 6, 2026  | Performance & LCP optimization |

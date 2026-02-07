@@ -12,6 +12,7 @@ export const useServiceWorker = () => {
 
   useEffect(() => {
     let updateInterval;
+    let cleanupControllerChange;
 
     // Register Service Worker
     const registerServiceWorker = async () => {
@@ -55,6 +56,29 @@ export const useServiceWorker = () => {
     // Check if service workers are supported
     if ('serviceWorker' in navigator) {
       registerServiceWorker();
+
+      // Reload when a new SW takes control after user-initiated skipWaiting.
+      // Attach unconditionally so updates work even on first-visit sessions.
+      const hadController = Boolean(navigator.serviceWorker.controller);
+      let seenFirstControllerChange = false;
+      let refreshing = false;
+      const handleControllerChange = () => {
+        // On first visit, the initial controllerchange is from null → new SW
+        // due to clients.claim(). Skip that one.
+        if (!hadController && !seenFirstControllerChange) {
+          seenFirstControllerChange = true;
+          return;
+        }
+        if (refreshing) return;
+        refreshing = true;
+        window.location.reload();
+      };
+      navigator.serviceWorker.addEventListener('controllerchange', handleControllerChange);
+
+      // Clean up controllerchange listener
+      cleanupControllerChange = () => {
+        navigator.serviceWorker.removeEventListener('controllerchange', handleControllerChange);
+      };
     }
 
     // Online/offline status
@@ -66,6 +90,7 @@ export const useServiceWorker = () => {
 
     return () => {
       if (updateInterval) clearInterval(updateInterval);
+      if (cleanupControllerChange) cleanupControllerChange();
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
@@ -74,7 +99,6 @@ export const useServiceWorker = () => {
   const skipWaiting = () => {
     if (registration && registration.waiting) {
       registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-      window.location.reload();
     }
   };
 
@@ -83,41 +107,5 @@ export const useServiceWorker = () => {
     updateAvailable,
     skipWaiting,
     isOnline
-  };
-};
-
-/**
- * Background Sync Hook
- * Queue actions for background sync
- */
-export const useBackgroundSync = () => {
-  const [syncSupported] = useState(
-    'serviceWorker' in navigator && 'sync' in navigator.serviceWorker
-  );
-
-  const queueSync = async (tag) => {
-    if (!syncSupported) {
-      if (import.meta.env.DEV) {
-        console.warn('[Background Sync] Not supported');
-      }
-      return false;
-    }
-
-    try {
-      const registration = await navigator.serviceWorker.ready;
-      await registration.sync.register(tag);
-      if (import.meta.env.DEV) {
-        console.warn('[Background Sync] Queued:', tag);
-      }
-      return true;
-    } catch (error) {
-      console.error('[Background Sync] Failed:', error);
-      return false;
-    }
-  };
-
-  return {
-    syncSupported,
-    queueSync
   };
 };
