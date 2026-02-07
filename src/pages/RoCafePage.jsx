@@ -1,17 +1,14 @@
 import Button from '../components/Button';
-/* eslint-disable no-unused-vars */
 import React, { useState, useCallback, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { ChevronRight, ChevronDown, Coffee, Wine, UtensilsCrossed, IceCream, Sparkles, AlertTriangle } from 'lucide-react';
+import { ChevronRight, AlertTriangle } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
 import CategoryAccordionHeader from '../components/CategoryAccordionHeader';
 import StandardizedItem from '../components/StandardizedItem';
 import { useLocationAware } from '../hooks/useLocationContext';
-import { ROCAFE_FULL_MENU, MENU_CATEGORIES, ALLERGEN_WARNING } from '../data/rocafe-menu';
-import COMPANY_DATA from '../config/company_data';
-import MenuExcelLoader from '../components/MenuExcelHolder';
+import { ROCAFE_FULL_MENU, ALLERGEN_WARNING } from '../data/rocafe-menu';
 import { useMenu } from '../contexts/MenuContext';
-import { groupExcelItemsByCategory, mergeCategoriesWithFallback } from '../utils/excelMenuTransform';
+import { groupExcelItemsByCategory } from '../utils/excelMenuTransform';
 import StructuredData from '../components/StructuredData';
 import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 
@@ -55,15 +52,6 @@ const RoCafePage = () => {
   // API always returns prices in cents
   const schemaPriceInCents = true;
 
-
-  // create memoized handlers map for categories
-  const categoryHandlers = useMemo(() => {
-    const map = {};
-    for (const cat of menuCategories) {
-      map[cat.id] = () => toggleCategory(cat.id);
-    }
-    return map;
-  }, [toggleCategory, menuCategories]);
 
   return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>

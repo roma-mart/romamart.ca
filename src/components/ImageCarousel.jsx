@@ -1,8 +1,8 @@
 /**
  * ImageCarousel Component
- * Unified, accessible image carousel with auto-advance, keyboard navigation,
- * and proper WCAG touch targets. Replaces inline carousel code in AboutPage
- * and the old LocationImageCarousel component.
+ * Unified, accessible image carousel with auto-advance and proper WCAG
+ * touch targets. Replaces inline carousel code in AboutPage and the old
+ * LocationImageCarousel component.
  *
  * Fixes:
  * - Left arrow direction bug (was rotated wrong)

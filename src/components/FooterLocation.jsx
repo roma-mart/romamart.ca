@@ -166,7 +166,7 @@ export default function FooterLocation({ locations, nearestLocationId }) {
         </div>
 
         <div className="mt-6">
-          <CurrentLocalTime location={getCurrentLocation()} />
+          <CurrentLocalTime location={currentLocation} />
         </div>
       </div>
     </div>

@@ -295,7 +295,7 @@ const Locations = () => {
       <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
           <span className="font-bold uppercase tracking-widest text-sm" style={{ color: 'var(--color-accent)' }}>Find Us</span>
-          <h2 className="text-4xl mt-2" style={{ color: 'var(--color-heading)' }}>Our Locations{locationCount > 1 ? 's' : ''}</h2>
+          <h2 className="text-4xl mt-2" style={{ color: 'var(--color-heading)' }}>Our Location{locationCount > 1 ? 's' : ''}</h2>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
