@@ -85,39 +85,3 @@ export const useServiceWorker = () => {
     isOnline
   };
 };
-
-/**
- * Background Sync Hook
- * Queue actions for background sync
- */
-export const useBackgroundSync = () => {
-  const [syncSupported] = useState(
-    'serviceWorker' in navigator && 'sync' in navigator.serviceWorker
-  );
-
-  const queueSync = async (tag) => {
-    if (!syncSupported) {
-      if (import.meta.env.DEV) {
-        console.warn('[Background Sync] Not supported');
-      }
-      return false;
-    }
-
-    try {
-      const registration = await navigator.serviceWorker.ready;
-      await registration.sync.register(tag);
-      if (import.meta.env.DEV) {
-        console.warn('[Background Sync] Queued:', tag);
-      }
-      return true;
-    } catch (error) {
-      console.error('[Background Sync] Failed:', error);
-      return false;
-    }
-  };
-
-  return {
-    syncSupported,
-    queueSync
-  };
-};

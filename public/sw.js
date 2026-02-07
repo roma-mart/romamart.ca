@@ -30,6 +30,22 @@ const CACHEABLE_ROUTES = [
   `${BASE_URL}about`
 ];
 
+// Cache size limit to prevent unbounded growth
+const MAX_CACHE_ENTRIES = 100;
+
+/**
+ * Trim cache to a maximum number of entries (oldest first)
+ */
+async function trimCache(cacheName, maxEntries) {
+  const cache = await caches.open(cacheName);
+  const keys = await cache.keys();
+  if (keys.length > maxEntries) {
+    await cache.delete(keys[0]);
+    // Recurse until within limit
+    return trimCache(cacheName, maxEntries);
+  }
+}
+
 // Install event - cache essential assets
 self.addEventListener('install', (event) => {
   console.log('[Service Worker] Installing...');
@@ -40,7 +56,6 @@ self.addEventListener('install', (event) => {
         console.log('[Service Worker] Precaching assets');
         return cache.addAll(PRECACHE_ASSETS);
       })
-      .then(() => self.skipWaiting())
   );
 });
 
@@ -101,8 +116,9 @@ async function networkFirstStrategy(request) {
     if (networkResponse.ok) {
       const cache = await caches.open(CACHE_VERSION);
       cache.put(request, networkResponse.clone());
+      trimCache(CACHE_VERSION, MAX_CACHE_ENTRIES);
     }
-    
+
     return networkResponse;
   } catch {
     // Network failed, try cache
@@ -145,8 +161,9 @@ async function cacheFirstStrategy(request) {
     if (networkResponse.ok) {
       const cache = await caches.open(CACHE_VERSION);
       cache.put(request, networkResponse.clone());
+      trimCache(CACHE_VERSION, MAX_CACHE_ENTRIES);
     }
-    
+
     return networkResponse;
   } catch (error) {
     console.error('[Service Worker] Fetch failed:', error);
@@ -157,153 +174,10 @@ async function cacheFirstStrategy(request) {
   }
 }
 
-// Background Sync - Queue failed requests
-self.addEventListener('sync', (event) => {
-  console.log('[Service Worker] Background sync:', event.tag);
-  
-  if (event.tag === 'contact-form-sync') {
-    event.waitUntil(syncContactForms());
-  } else if (event.tag === 'analytics-sync') {
-    event.waitUntil(syncAnalytics());
-  }
-});
-
-/**
- * Sync queued contact form submissions
- */
-async function syncContactForms() {
-  try {
-    console.log('[Service Worker] Syncing contact forms...');
-    
-    // Open IndexedDB
-    const db = await openDatabase();
-    const pendingForms = await getPendingForms(db);
-    
-    if (pendingForms.length === 0) {
-      console.log('[Service Worker] No pending forms to sync');
-      return;
-    }
-    
-    console.log(`[Service Worker] Found ${pendingForms.length} pending form(s)`);
-    
-    // Submit each form
-    const results = await Promise.allSettled(
-      pendingForms.map(async (form) => {
-        const formData = new FormData();
-        Object.entries(form).forEach(([key, value]) => {
-          if (key !== 'id' && key !== 'timestamp' && key !== 'synced' && key !== 'syncedAt') {
-            formData.append(key, value);
-          }
-        });
-        
-        const response = await fetch('https://api.web3forms.com/submit', {
-          method: 'POST',
-          body: formData
-        });
-        
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
-        }
-        
-        // Mark as synced
-        await markFormSynced(db, form.id);
-        return form.id;
-      })
-    );
-    
-    // Log results
-    const successful = results.filter(r => r.status === 'fulfilled').length;
-    const failed = results.filter(r => r.status === 'rejected').length;
-    
-    console.log(`[Service Worker] Sync complete: ${successful} successful, ${failed} failed`);
-    
-    // Send notification to client
-    const clients = await self.clients.matchAll();
-    clients.forEach(client => {
-      client.postMessage({
-        type: 'SYNC_COMPLETE',
-        successful,
-        failed
-      });
-    });
-    
-    // If any failed, throw error to retry later
-    if (failed > 0) {
-      throw new Error(`${failed} form(s) failed to sync`);
-    }
-  } catch (error) {
-    console.error('[Service Worker] Contact form sync failed:', error);
-    throw error; // Retry later
-  }
-}
-
-/**
- * Open IndexedDB connection
- */
-function openDatabase() {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open('RomaMartDB', 1);
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  });
-}
-
-/**
- * Get all pending forms from IndexedDB
- */
-function getPendingForms(db) {
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(['contactForms'], 'readonly');
-    const store = transaction.objectStore('contactForms');
-    const index = store.index('synced');
-    const request = index.getAll(false);
-    
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  });
-}
-
-/**
- * Mark form as synced in IndexedDB
- */
-function markFormSynced(db, formId) {
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(['contactForms'], 'readwrite');
-    const store = transaction.objectStore('contactForms');
-    const getRequest = store.get(formId);
-    
-    getRequest.onsuccess = () => {
-      const data = getRequest.result;
-      data.synced = true;
-      data.syncedAt = Date.now();
-      
-      const updateRequest = store.put(data);
-      updateRequest.onsuccess = () => resolve();
-      updateRequest.onerror = () => reject(updateRequest.error);
-    };
-    
-    getRequest.onerror = () => reject(getRequest.error);
-  });
-}
-
-/**
- * Sync queued analytics events
- */
-async function syncAnalytics() {
-  try {
-    console.log('[Service Worker] Syncing analytics...');
-    // Implementation would batch-send analytics events
-    return Promise.resolve();
-  } catch (error) {
-    console.error('[Service Worker] Analytics sync failed:', error);
-    throw error; // Retry later
-  }
-}
-
 // Message handler for communication with main app
 self.addEventListener('message', (event) => {
   console.log('[Service Worker] Message received:', event.data);
-  
+
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
