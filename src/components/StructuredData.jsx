@@ -29,9 +29,7 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
         }
 
         if (!data.products || !Array.isArray(data.products)) {
-          if (import.meta.env.DEV) {
-            console.warn('[StructuredData] ProductList - No valid products array');
-          }
+          console.warn('[StructuredData] ProductList - No valid products array');
           return null;
         }
 
@@ -56,9 +54,7 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
         }
 
         if (productSchemas.length === 0) {
-          if (import.meta.env.DEV) {
-            console.warn('[StructuredData] ProductList - All schemas filtered out (returned null)');
-          }
+          console.warn('[StructuredData] ProductList - All schemas filtered out (returned null)');
           return null;
         }
 

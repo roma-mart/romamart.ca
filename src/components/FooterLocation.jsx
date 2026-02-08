@@ -1,64 +1,28 @@
 /**
  * FooterLocation.jsx
  * Location selector, nearest store detection, and local time display for the Footer.
+ * State lives in LocationsContext (SSOT) — this component is purely presentational.
  */
-import { useState, useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { MapPin } from 'lucide-react';
-import COMPANY_DATA from '../config/company_data';
 import LocationButton from './LocationButton';
 import CurrentLocalTime from './CurrentLocalTime';
 
-export default function FooterLocation({ locations, nearestLocationId }) {
-  const [selectedLocationId, setSelectedLocationId] = useState(() => {
-    return localStorage.getItem('roma_mart_selected_location') || 'auto';
-  });
-
+export default function FooterLocation({ locations, nearestLocationId, selectedLocationId, onLocationChange, currentLocation }) {
   const activeLocations = useMemo(
     () => locations.filter((loc) => loc.status === 'open'),
     [locations]
   );
 
-  const handleLocationChange = (e) => {
-    const newLocationId = e.target.value;
-    setSelectedLocationId(newLocationId);
-    if (newLocationId === 'auto') {
-      localStorage.removeItem('roma_mart_selected_location');
-    } else {
-      localStorage.setItem('roma_mart_selected_location', newLocationId);
-    }
-  };
-
-  const getCurrentLocation = () => {
-    let location = null;
-    if (selectedLocationId === 'auto') {
-      if (nearestLocationId) {
-        location = locations.find((loc) => loc.id === nearestLocationId);
-      } else {
-        location = COMPANY_DATA.location;
-      }
-    } else {
-      location = locations.find((loc) => loc.id === selectedLocationId);
-      if (!location) {
-        location = COMPANY_DATA.location;
-      }
-    }
-    if (location) {
-      return {
-        ...location,
-        address: location.address || COMPANY_DATA.hq?.address,
-        contact: location.contact || COMPANY_DATA.hq?.contact,
-        hours: location.hours || COMPANY_DATA.hq?.hours,
-      };
-    }
-    return COMPANY_DATA.hq;
-  };
-
-  const currentLocation = getCurrentLocation();
-  const isAutoMode = selectedLocationId === 'auto';
+  const handleChange = useCallback((e) => {
+    onLocationChange(e.target.value);
+  }, [onLocationChange]);
 
   const handleDetectNearest = useCallback(() => {
-    setSelectedLocationId('auto');
-  }, []);
+    onLocationChange('auto');
+  }, [onLocationChange]);
+
+  const isAutoMode = selectedLocationId === 'auto';
 
   return (
     <div className="mb-8 max-w-md mx-auto">
@@ -82,7 +46,7 @@ export default function FooterLocation({ locations, nearestLocationId }) {
           <select
             id="location-selector"
             value={selectedLocationId}
-            onChange={handleLocationChange}
+            onChange={handleChange}
             className="w-full px-4 py-3 rounded-xl font-inter shadow-lg transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:border-accent hover:border-accent focus-visible:z-10 border border-[var(--color-border)] pr-10 text-center"
             style={{
               backgroundColor: 'var(--color-surface)',

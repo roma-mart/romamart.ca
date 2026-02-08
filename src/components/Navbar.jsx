@@ -249,7 +249,7 @@ export default function Navbar({ currentPage = 'home' }) {
             <button
               type="button"
               onClick={handleMenuClose}
-              className="absolute p-2 rounded-md md:hidden focus-visible:ring-2 focus-visible:ring-accent"
+              className="absolute p-2 rounded-md md:hidden focus-visible:ring-2 focus-visible:ring-accent min-w-[44px] min-h-[44px] flex items-center justify-center"
               style={{ top: 16, right: 16, zIndex: 10, color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-heading)' }}
               aria-label="Close menu"
             >

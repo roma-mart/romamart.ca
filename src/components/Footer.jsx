@@ -30,7 +30,7 @@ export default function Footer() {
       ? import.meta.env.BASE_URL
       : '/';
   const { userLocation } = useLocationContext();
-  const { locations } = useLocations();
+  const { locations, selectedLocationId, selectLocation } = useLocations();
 
   // Nearest location (Haversine)
   const nearestLocationId = useMemo(() => {
@@ -58,13 +58,27 @@ export default function Footer() {
     return nearest;
   }, [userLocation, locations]);
 
-  // Current location for reviews
+  // Resolve selected/nearest/fallback into a single current location for both children
   const currentLocation = useMemo(() => {
-    const loc = nearestLocationId
-      ? locations.find((l) => l.id === nearestLocationId)
-      : COMPANY_DATA.location;
-    return loc || COMPANY_DATA.location;
-  }, [nearestLocationId, locations]);
+    let location = null;
+    if (selectedLocationId === 'auto') {
+      location = nearestLocationId
+        ? locations.find((l) => l.id === nearestLocationId)
+        : COMPANY_DATA.location;
+    } else {
+      location = locations.find((l) => l.id === selectedLocationId);
+    }
+    if (!location) location = COMPANY_DATA.location;
+    if (location) {
+      return {
+        ...location,
+        address: location.address || COMPANY_DATA.location?.address,
+        contact: location.contact || COMPANY_DATA.location?.contact,
+        hours: location.hours || COMPANY_DATA.location?.hours,
+      };
+    }
+    return COMPANY_DATA.location;
+  }, [selectedLocationId, nearestLocationId, locations]);
 
   const socialHandlers = useMemo(() => {
     const handlers = {};
@@ -156,6 +170,9 @@ export default function Footer() {
           <FooterLocation
             locations={locations}
             nearestLocationId={nearestLocationId}
+            selectedLocationId={selectedLocationId}
+            onLocationChange={selectLocation}
+            currentLocation={currentLocation}
           />
 
           <div
