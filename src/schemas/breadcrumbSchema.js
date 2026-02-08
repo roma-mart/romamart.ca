@@ -1,11 +1,13 @@
 /**
  * Breadcrumb Schema Builder
- * 
+ *
  * Generates Schema.org BreadcrumbList JSON-LD for SEO-enhanced navigation
- * 
+ *
  * @module schemas/breadcrumbSchema
  * @since February 4, 2026
  */
+
+import COMPANY_DATA from '../config/company_data';
 
 /**
  * Build BreadcrumbList schema for Google Rich Results
@@ -64,7 +66,7 @@ export function buildBreadcrumbArray(currentPageName, currentPageUrl, parentPage
   const breadcrumbs = [
     {
       name: 'Home',
-      url: 'https://romamart.ca/'
+      url: `${COMPANY_DATA.baseUrl}/`
     }
   ];
 
@@ -95,7 +97,7 @@ export function buildBreadcrumbArray(currentPageName, currentPageUrl, parentPage
 export function quickBreadcrumb(pageName, pageSlug) {
   const breadcrumbs = buildBreadcrumbArray(
     pageName,
-    `https://romamart.ca/${pageSlug}`
+    `${COMPANY_DATA.baseUrl}/${pageSlug}`
   );
   
   return buildBreadcrumbSchema(breadcrumbs);

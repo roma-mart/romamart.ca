@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.6.2] - 2026-02-08
+
+### Added
+- Custom 404 page with branded display, nav links from NAVIGATION_LINKS config, breadcrumb schema, and noindex meta (R34)
+- IndexNow protocol integration for Bing/Yandex instant indexing after deploy
+- IndexNow key file and `scripts/notify-indexnow.js` notification script
+- CI post-deploy step to notify IndexNow (non-blocking, continue-on-error)
+- `og:locale` (`en_CA`) and `og:site_name` meta tags in `index.html` (R46)
+- SSOT comment linking `theme-color` to `tokens.js` brandColors.navy
+- Trustpilot env vars documented in `.env.example`
+- Trustpilot env vars mapped in CI build step (`.github/workflows/ci.yml`)
+- Service helper tests: `getComingSoonServices`, `getActiveServices`, `getServiceAvailabilityText` (11 tests)
+- NotFoundPage tests: rendering, nav links, accessibility (5 tests)
+- 260 tests passing (was 244)
+
+### Fixed
+- Broken SearchAction removed from WebSite schema in 3 locations — pointed to nonexistent `/search` endpoint (R11)
+- 3 service helper functions referenced nonexistent `.comingSoon` property, now use `.status === 'coming_soon'` (R38)
+- Hardcoded URLs in `breadcrumbSchema.js` replaced with `COMPANY_DATA.baseUrl` (SSOT)
+- TrustpilotWidget rewritten with `useRef` + `loadFromElement()` SPA pattern — script.onload callback replaces fragile 3s setTimeout
+- Trustpilot locale fixed from `en-US` to `en-CA`
+- Route matching uses exact `switch` instead of `.includes()` to prevent false positive matches
+- Unknown routes now show 404 page instead of silently falling through to home
+
 ## [2.6.1] - 2026-02-08
 
 ### Added

@@ -395,14 +395,14 @@ export const getAgeRestrictedServices = () => {
  * Get coming soon services
  */
 export const getComingSoonServices = () => {
-  return SERVICES.filter(s => s.comingSoon);
+  return SERVICES.filter(s => s.status === 'coming_soon');
 };
 
 /**
  * Get active (available now) services
  */
 export const getActiveServices = () => {
-  return SERVICES.filter(s => !s.comingSoon && s.availableAt.length > 0);
+  return SERVICES.filter(s => s.status !== 'coming_soon' && s.availableAt.length > 0);
 };
 
 /**
@@ -417,7 +417,7 @@ export const isServiceAvailableAt = (serviceId, locationId) => {
  * Get service availability status text
  */
 export const getServiceAvailabilityText = (service, locationStatus) => {
-  if (service.comingSoon) return 'Coming Soon';
+  if (service.status === 'coming_soon') return 'Coming Soon';
   if (service.availability === '24_7') return 'Available 24/7';
   if (service.availability === 'store_hours') {
     return locationStatus === 'open' ? 'Available Now' : 'Available During Store Hours';

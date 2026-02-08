@@ -375,15 +375,7 @@ const buildStructuredData = (routePath = '/', apiData = {}) => {
       url: BASE_URL,
       name: COMPANY_DATA.dba || 'Roma Mart Convenience',
       description: 'Your daily stop & go convenience store in Sarnia, Ontario.',
-      publisher: { '@id': `${BASE_URL}/#business` },
-      potentialAction: {
-        '@type': 'SearchAction',
-        target: {
-          '@type': 'EntryPoint',
-          urlTemplate: `${BASE_URL}/search?q={search_term_string}`
-        },
-        'query-input': 'required name=search_term_string'
-      }
+      publisher: { '@id': `${BASE_URL}/#business` }
     }
   ];
 
@@ -693,8 +685,8 @@ async function prerender() {
         `<meta property="twitter:image:alt" content="${route.imageAlt || DEFAULT_IMAGE_ALT}" />`
       )
       .replace(
-        /<script type="application\/ld\+json">[\s\S]*?<\/script>/,
-        `<script type="application/ld+json">${buildStructuredData(route.path, { menuItems, services, locations })}</script>`
+        /<\/head>/,
+        `<script type="application/ld+json">${buildStructuredData(route.path, { menuItems, services, locations })}</script>\n  </head>`
       );
 
     fs.writeFileSync(outputPath, html);
