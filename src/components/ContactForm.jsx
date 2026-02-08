@@ -3,7 +3,7 @@
  * Unified contact form used by both homepage and /contact page.
  * Handles Web3Forms submission, hCaptcha, and field validation.
  */
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { Send } from 'lucide-react';
 import Button from './Button';
 import HCaptchaWidget from './HCaptchaWidget';
@@ -18,12 +18,25 @@ const ContactForm = ({
 }) => {
   const [captchaToken, setCaptchaToken] = useState('');
   const [fieldErrors, setFieldErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
+  const captchaRef = useRef(null);
   const { showSuccess, showError } = useToast();
   const colorScheme = useColorScheme();
   const formAccessKey = COMPANY_DATA.contact.web3FormsAccessKey || '';
 
+  const handleCaptchaExpire = useCallback(() => {
+    setCaptchaToken('');
+  }, []);
+
+  const handleCaptchaError = useCallback(() => {
+    setCaptchaToken('');
+    showError('Captcha failed to load. Please try again.');
+  }, [showError]);
+
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
+    if (submitting) return;
+
     const form = e.target;
     const name = form.elements.name?.value?.trim();
     const email = form.elements.email?.value?.trim();
@@ -49,6 +62,7 @@ const ContactForm = ({
       return;
     }
 
+    setSubmitting(true);
     const formData = new FormData(form);
     formData.set('h-captcha-response', captchaToken);
 
@@ -58,22 +72,27 @@ const ContactForm = ({
         body: formData,
       });
 
-      if (response.ok) {
+      const data = await response.json();
+
+      if (data.success) {
         showSuccess('Message sent successfully!');
         setFieldErrors({});
         form.reset();
-        setCaptchaToken('');
         window.dataLayer?.push({
           event: 'contact_form_submit',
           form_location: idPrefix,
         });
       } else {
-        showError('Failed to send message. Please try again.');
+        showError(data.message || 'Failed to send message. Please try again.');
       }
     } catch {
       showError('Failed to send message. Please try again.');
+    } finally {
+      setCaptchaToken('');
+      captchaRef.current?.resetCaptcha();
+      setSubmitting(false);
     }
-  }, [captchaToken, showSuccess, showError, idPrefix]);
+  }, [captchaToken, submitting, showSuccess, showError, idPrefix]);
 
   const inputStyle = (hasError) => ({
     backgroundColor: 'var(--color-surface)',
@@ -86,7 +105,6 @@ const ContactForm = ({
       <input type="hidden" name="access_key" value={formAccessKey} />
       <input type="hidden" name="subject" value={formSubject} />
       <input type="hidden" name="from_name" value="Roma Mart Website" />
-      <input type="hidden" name="h-captcha-response" value={captchaToken} />
 
       <div>
         <label htmlFor={`${idPrefix}-name`} className="block font-inter font-semibold mb-2" style={{ color: 'var(--color-text)' }}>
@@ -174,7 +192,10 @@ const ContactForm = ({
       <React.Suspense fallback={<div>Loading captcha...</div>}>
         {typeof window !== 'undefined' && (
           <HCaptchaWidget
+            ref={captchaRef}
             onVerify={setCaptchaToken}
+            onExpire={handleCaptchaExpire}
+            onError={handleCaptchaError}
             theme={colorScheme}
             scriptHost="https://js.hcaptcha.com/1/api.js?custom=true"
           />
@@ -188,9 +209,10 @@ const ContactForm = ({
         icon={<Send size={20} />}
         className="w-full"
         aria-label="Send Message"
-        disabled={!captchaToken}
+        disabled={!captchaToken || submitting}
+        loading={submitting}
       >
-        Send Message
+        {submitting ? 'Sending...' : 'Send Message'}
       </Button>
     </form>
   );

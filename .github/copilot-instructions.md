@@ -520,7 +520,17 @@ import { SERVICES } from '../data/services';
 
 ---
 
-**Last Updated:** February 7, 2026
-**Maintained by:** GitHub Copilot & Claude Code
+## AI Assistant Sync
+
+This file is the Copilot-specific project context. A parallel `CLAUDE.md` exists at the repo root for Claude Code. Both files should be kept in sync:
+- When updating project conventions, architecture, or workflows, update BOTH files
+- Each file is optimized for its respective AI's context format
+- If you notice drift between the files, flag it and propose corrections
+- Last synced: February 8, 2026
+
+---
+
+**Last Updated:** February 8, 2026
+**Maintained by:** GitHub Copilot & Claude Code (keep in sync with `CLAUDE.md`)
 **Codebase Version:** React 18.3.1 + Vite 7 (ESM)
 **API Status:** Menu API live (200 OK); Services & Locations APIs pending (#107) -- frontend uses static fallback

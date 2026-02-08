@@ -36,8 +36,7 @@ export default function FooterLinks() {
             <li key={link.href}>
               <a
                 href={`${BASE_URL}${link.href.replace('/', '')}`}
-                className="footer-link transition-colors hover:text-[var(--color-accent)] focus-visible:text-[var(--color-accent)]"
-                style={{ color: 'var(--color-on-footer-muted)' }}
+                className="footer-link transition-colors text-[var(--color-on-footer-muted)] hover:text-[var(--color-accent)] focus-visible:text-[var(--color-accent)]"
               >
                 {link.label}
               </a>
@@ -65,8 +64,7 @@ export default function FooterLinks() {
             <li key={link.href}>
               <a
                 href={`${BASE_URL}${link.href.replace('/', '')}`}
-                className="footer-link transition-colors hover:text-[var(--color-accent)] focus-visible:text-[var(--color-accent)]"
-                style={{ color: 'var(--color-on-footer-muted)' }}
+                className="footer-link transition-colors text-[var(--color-on-footer-muted)] hover:text-[var(--color-accent)] focus-visible:text-[var(--color-accent)]"
               >
                 {link.label}
               </a>
@@ -75,8 +73,7 @@ export default function FooterLinks() {
           <li>
             <a
               href={`${BASE_URL}ai.txt`}
-              className="footer-link transition-colors text-xs hover:text-[var(--color-accent)] focus-visible:text-[var(--color-accent)]"
-              style={{ color: 'var(--color-on-footer-muted)' }}
+              className="footer-link transition-colors text-xs text-[var(--color-on-footer-muted)] hover:text-[var(--color-accent)] focus-visible:text-[var(--color-accent)]"
               title="AI Crawler Guidelines"
             >
               AI Guidelines

@@ -17,6 +17,12 @@ export default defineConfig({
         '**/*.test.{js,jsx}',
         '**/__tests__/**',
       ],
+      thresholds: {
+        statements: 60,
+        branches: 50,
+        functions: 60,
+        lines: 60,
+      },
     },
   },
 });

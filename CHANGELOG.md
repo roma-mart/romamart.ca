@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.6.1] - 2026-02-08
+
+### Added
+- `calculateItemPrice` tests: base price, single/multiple/quantity customizations, edge cases (~14 tests)
+- `getDefaultSelections` tests: single, multiple, quantity types with and without defaults (~8 tests)
+- `getCaloriesForSize` tests: size-specific, item-level fallback, null, out-of-bounds (~7 tests)
+- `validateSelections` tests: required/optional single and multiple selections, error collection (~8 tests)
+- `ApiCircuitBreaker` tests: constructor, recordFailure, state transitions, shouldAttemptCall with fake timers, getStatus, recordSuccess, reset, factory, pre-created instances (~28 tests)
+- `MenuContext` tests: loading, success, error, network failure, unmount safety, outside-provider guard (~8 tests)
+- `ServicesContext` tests: static init, API success/failure, invalid response, network error, outside-provider guard (~6 tests)
+- `LocationsContext` tests: static init, localStorage persistence, selectLocation, auto reset, stale-ID validation, outside-provider guard (~11 tests)
+- Coverage thresholds in `vitest.config.js`: statements 60%, branches 50%, functions 60%, lines 60%
+
+### Fixed
+- FooterLinks hover color: replaced inline `style` with Tailwind `text-[var(--color-on-footer-muted)]` to fix CSS specificity preventing hover/focus color change
+- Contact form double toast: added `submitting` guard to prevent duplicate submissions when hCaptcha re-fires form submit
+- hCaptcha response check: use `data.success` instead of `response.ok` (Web3Forms can return HTTP 200 with `success: false`)
+- hCaptcha widget reset via ref after successful submission (tokens are single-use per hCaptcha docs)
+- hCaptcha `onExpire` handler: clears stale captcha token when solved challenge expires (~2 min)
+- hCaptcha `onError` handler: clears token and shows error toast when captcha challenge fails to load
+- `HCaptchaWidget` rewritten with `forwardRef` to expose `resetCaptcha()` to parent
+
 ## [2.6.0] - 2026-02-08
 
 ### Added
