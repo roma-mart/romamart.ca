@@ -8,6 +8,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useGeolocation } from '../hooks/useBrowserFeatures';
 import { getPrimaryLocation, getLocationById } from '../data/locations';
+import { useLocations } from '../contexts/LocationsContext';
 import { LocationContext } from '../contexts/LocationContext';
 import { findNearestLocation } from '../utils/locationMath';
 
@@ -36,7 +37,9 @@ const getCachedNearestLocation = () => {
 export const LocationProvider = ({ children }) => {
   // Initialize with cached nearest location (stores only ID, not coordinates)
   const cachedNearestLocation = useMemo(() => getCachedNearestLocation(), []);
-  
+
+  const { locations } = useLocations();
+
   const [locationRequested, setLocationRequested] = useState(() => {
     return !!sessionStorage.getItem(SESSION_REQUESTED_KEY);
   });
@@ -51,7 +54,7 @@ export const LocationProvider = ({ children }) => {
   // Compute nearest location: fresh geolocation > cached nearest > HQ fallback
   let nearestLocation = null;
   if (userLocation) {
-    nearestLocation = findNearestLocation(userLocation);
+    nearestLocation = findNearestLocation(userLocation, locations);
     if (!nearestLocation) {
       nearestLocation = cachedNearestLocation || getPrimaryLocation();
     }

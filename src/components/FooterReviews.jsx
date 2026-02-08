@@ -60,8 +60,8 @@ export default function FooterReviews({ currentLocation, locations }) {
             <div className="text-4xl mb-3">{'\u2B50\u2B50\u2B50\u2B50\u2B50'}</div>
           )}
           <p
-            className="text-2xl font-bold mb-3"
-            style={{ color: 'var(--color-heading)', fontFamily: 'var(--font-heading)' }}
+            className="text-2xl font-bold mb-3 text-heading"
+            style={{ color: 'var(--color-heading)' }}
           >
             See What Our Customers Say
           </p>
@@ -76,11 +76,10 @@ export default function FooterReviews({ currentLocation, locations }) {
             href={mapLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-8 py-4 rounded-xl font-semibold transition-all hover:scale-105 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+            className="inline-flex items-center gap-2 px-8 py-4 rounded-xl font-semibold transition-all hover:scale-105 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 text-heading"
             style={{
               backgroundColor: 'var(--color-accent)',
               color: 'var(--color-primary)',
-              fontFamily: 'var(--font-heading)',
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
               boxShadow: '0 4px 14px 0 rgba(228, 179, 64, 0.3)',

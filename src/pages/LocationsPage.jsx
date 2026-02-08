@@ -294,6 +294,7 @@ const LocationsPage = () => {
                   <ImageCarousel
                     images={getLocationImages(location.photos, location.name)}
                     className="h-full rounded-none"
+                    ariaLabel={`${location.name} photos`}
                   />
                 </div>
                 <div className="w-full aspect-[4/3] min-h-[18rem] max-h-[28rem] order-2 relative">

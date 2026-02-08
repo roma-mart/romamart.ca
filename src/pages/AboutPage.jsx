@@ -178,6 +178,7 @@ const AboutPage = () => {
             images={heroImages}
             className="h-96 rounded-3xl shadow-2xl"
             overlay={<div className="absolute inset-0 bg-gradient-to-r from-blue-950 via-transparent to-transparent opacity-40 z-10 pointer-events-none" />}
+            ariaLabel="About Roma Mart photos"
           />
         </div>
       </section>

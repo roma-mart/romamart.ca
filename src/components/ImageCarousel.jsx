@@ -17,6 +17,7 @@ const ImageCarousel = ({
   autoAdvanceMs = 5000,
   className = '',
   overlay = null,        // Optional overlay element (e.g., gradient div)
+  ariaLabel = 'Image carousel',
 }) => {
   const [current, setCurrent] = useState(0);
   const isPaused = useRef(false);
@@ -62,7 +63,7 @@ const ImageCarousel = ({
       }}
       role="region"
       aria-roledescription="carousel"
-      aria-label="Image carousel"
+      aria-label={ariaLabel}
     >
       {/* Slides — opacity on wrapper div avoids LazyImage conflict */}
       {images.map((img, idx) => (
@@ -98,11 +99,8 @@ const ImageCarousel = ({
             style={{
               backgroundColor: 'var(--color-surface)',
               border: '1px solid var(--color-border)',
-              opacity: current === 0 ? 0 : 1,
-              pointerEvents: current === 0 ? 'none' : 'auto',
             }}
             onClick={goPrev}
-            tabIndex={current === 0 ? -1 : 0}
           >
             <ChevronLeft size={24} style={{ color: 'var(--color-accent)' }} />
           </button>
@@ -113,11 +111,8 @@ const ImageCarousel = ({
             style={{
               backgroundColor: 'var(--color-surface)',
               border: '1px solid var(--color-border)',
-              opacity: current === images.length - 1 ? 0 : 1,
-              pointerEvents: current === images.length - 1 ? 'none' : 'auto',
             }}
             onClick={goNext}
-            tabIndex={current === images.length - 1 ? -1 : 0}
           >
             <ChevronRight size={24} style={{ color: 'var(--color-accent)' }} />
           </button>

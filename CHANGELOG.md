@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.6.0] - 2026-02-08
 
 ### Added
-- Unified `ImageCarousel` with ARIA carousel pattern, 44px targets, auto-advance
+- Unified `ImageCarousel` with ARIA carousel pattern, 44px targets, auto-advance, infinite wrapping
 - Unified `ContactForm` component (phone field, `useToast` feedback)
 - `FooterReviews`, `FooterLinks`, `FooterLocation` sub-components
 - `LoadingFallback` branded Suspense fallback
@@ -38,7 +38,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Dead `getStoredLocation` export and coordinate cache logic removed from `useAutoLocation`
 - FooterLocation auto option text dynamically derives HQ name from locations array
 - FooterLinks: replaced inline `onMouseEnter`/`onMouseLeave` with CSS `hover:`/`focus-visible:` utilities
-- `font-heading` class replaced with `text-heading` (correct utility) across Footer and accordion components
+- `font-heading` class replaced with `text-heading` (correct utility) across Footer, reviews, and accordion components
+- `ImageCarousel` accepts `ariaLabel` prop for unique accessible names per instance
+- `findNearestLocation` requires explicit locations list (no implicit static fallback)
+- `LocationProvider` uses live locations from `LocationsContext` for nearest-location computation
 
 ### Fixed
 - LocationsPage carousel arrow direction and image selection
