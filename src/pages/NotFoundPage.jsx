@@ -1,7 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { NAVIGATION_LINKS } from '../config/navigation';
-import { buildBreadcrumbSchema, buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
+import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 import COMPANY_DATA from '../config/company_data';
 import Button from '../components/Button';
 import StructuredData from '../components/StructuredData';
@@ -17,7 +17,6 @@ const NotFoundPage = () => {
     'Page Not Found',
     `${COMPANY_DATA.baseUrl}/404`
   );
-  const breadcrumbSchema = buildBreadcrumbSchema(breadcrumbs);
 
   // Show main nav links (navbar items, excluding Home)
   const navLinks = NAVIGATION_LINKS.filter(
@@ -35,8 +34,8 @@ const NotFoundPage = () => {
         />
       </Helmet>
 
-      {breadcrumbSchema && (
-        <StructuredData type="BreadcrumbList" data={breadcrumbSchema} />
+      {breadcrumbs && (
+        <StructuredData type="BreadcrumbList" data={{ breadcrumbs }} />
       )}
 
       <div
