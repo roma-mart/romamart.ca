@@ -685,8 +685,8 @@ async function prerender() {
         `<meta property="twitter:image:alt" content="${route.imageAlt || DEFAULT_IMAGE_ALT}" />`
       )
       .replace(
-        /<script type="application\/ld\+json">[\s\S]*?<\/script>/,
-        `<script type="application/ld+json">${buildStructuredData(route.path, { menuItems, services, locations })}</script>`
+        /<\/head>/,
+        `<script type="application/ld+json">${buildStructuredData(route.path, { menuItems, services, locations })}</script>\n  </head>`
       );
 
     fs.writeFileSync(outputPath, html);
