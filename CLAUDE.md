@@ -8,7 +8,7 @@
 **App:** Roma Mart 2.0 -- React PWA for a multi-location convenience store chain (Sarnia, ON)
 **Stack:** React 18.3.1, Vite 7, Tailwind CSS 3.4, Framer Motion, ESM modules
 **Deployment:** GitHub Pages (staging at `https://roma-mart.github.io/romamart.ca/`), custom domain (production)
-**Version:** 2.6.2 (see Versioning Convention below)
+**Version:** 2.6.3 (see Versioning Convention below)
 **Repo:** `roma-mart/romamart.ca`
 
 ### Current Status (Feb 2026)
