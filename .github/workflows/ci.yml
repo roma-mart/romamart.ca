@@ -63,7 +63,7 @@ jobs:
         env:
           VITE_WEB3FORMS_KEY: ${{ secrets.WEB3FORMS_KEY }}
           VITE_GTM_ID: ${{ secrets.GTM_ID }}
-          VITE_GOOGLE_PLACES_API_KEY: ${{ secrets.VITE_GOOGLE_PLACES_API_KEY }}
+          VITE_GOOGLE_PLACES_API_KEY: ${{ secrets.GOOGLE_PLACES_API_KEY }}
           VITE_TRUSTPILOT_BUSINESSUNIT_ID: ${{ secrets.TRUSTPILOT_BUSINESSUNIT_ID }}
           VITE_TRUSTPILOT_TEMPLATE_ID: ${{ secrets.TRUSTPILOT_TEMPLATE_ID }}
           VITE_TRUSTPILOT_TOKEN: ${{ secrets.TRUSTPILOT_TOKEN }}
@@ -115,6 +115,13 @@ jobs:
       id-token: write
 
     steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
@@ -127,6 +134,11 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
           cname: romamart.ca
+
+      - name: Notify IndexNow
+        if: success()
+        run: node scripts/notify-indexnow.js
+        continue-on-error: true
 
       - name: Generate summary
         if: always()
