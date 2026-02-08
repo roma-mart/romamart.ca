@@ -63,7 +63,7 @@ jobs:
         env:
           VITE_WEB3FORMS_KEY: ${{ secrets.WEB3FORMS_KEY }}
           VITE_GTM_ID: ${{ secrets.GTM_ID }}
-          VITE_GOOGLE_PLACES_API_KEY: ${{ secrets.GOOGLE_PLACES_API_KEY }}
+          VITE_GOOGLE_PLACES_API_KEY: ${{ secrets.VITE_GOOGLE_PLACES_API_KEY }}
           VITE_TRUSTPILOT_BUSINESSUNIT_ID: ${{ secrets.TRUSTPILOT_BUSINESSUNIT_ID }}
           VITE_TRUSTPILOT_TEMPLATE_ID: ${{ secrets.TRUSTPILOT_TEMPLATE_ID }}
           VITE_TRUSTPILOT_TOKEN: ${{ secrets.TRUSTPILOT_TOKEN }}
