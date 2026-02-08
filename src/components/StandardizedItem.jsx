@@ -128,23 +128,9 @@ const StandardizedItem = ({ item, itemType, defaultExpanded = false }) => {
   const fontSize = tokens?.TYPOGRAPHY?.fontSize?.base || '1rem';
   const lineHeight = tokens?.TYPOGRAPHY?.lineHeight?.relaxed || 1.5;
 
-  {
-    /* Apply typography tokens explicitly */
-    const bodyFont = tokens?.fonts?.body || 'var(--font-body)';
-    const headingFont = tokens?.fonts?.heading || 'var(--font-heading)';
-
-    {
-      /* Example usage in JSX */
-    }
-    <>
-      <div style={{ fontFamily: bodyFont }}>Body Text Example</div>
-      <h1 style={{ fontFamily: headingFont }}>Heading Example</h1>
-    </>;
-  }
-
   return (
     <div
-      className="rounded-xl border transition-all duration-300"
+      className="rounded-xl border transition-colors duration-200"
       style={{
         backgroundColor: 'var(--color-bg)',
         borderColor: isExpanded ? 'var(--color-accent)' : getAvailabilityColor(),
@@ -303,7 +289,7 @@ const StandardizedItem = ({ item, itemType, defaultExpanded = false }) => {
                 }
                 window.open(getOrderingUrl(), '_blank', 'noopener,noreferrer');
               }}
-              className="w-full py-3 px-4 rounded-lg font-bold font-inter text-center transition-all mb-2 flex items-center justify-center gap-2 transform hover:scale-105"
+              className="w-full py-3 px-4 rounded-lg font-bold font-inter text-center transition-transform duration-200 mb-2 flex items-center justify-center gap-2 transform hover:scale-105"
               style={{
                 WebkitTapHighlightColor: 'transparent',
                 backgroundColor: 'var(--color-accent)',
@@ -327,7 +313,7 @@ const StandardizedItem = ({ item, itemType, defaultExpanded = false }) => {
               target={action.url ? '_blank' : undefined}
               rel={action.url ? 'noopener noreferrer' : undefined}
               onClick={(e) => e.stopPropagation()}
-              className="block w-full py-3 px-4 rounded-lg font-bold font-inter text-center transition-all transform hover:scale-105"
+              className="block w-full py-3 px-4 rounded-lg font-bold font-inter text-center transition-transform duration-200 transform hover:scale-105"
               style={{
                 WebkitTapHighlightColor: 'transparent',
                 backgroundColor: 'var(--color-primary)',

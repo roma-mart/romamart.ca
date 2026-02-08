@@ -1,12 +1,12 @@
 /**
  * Custom hook to fetch live opening hours from Google Places API
- * 
+ *
  * Uses the Place ID to fetch current hours and status from Google Maps.
  * Results are cached to minimize API calls and respect rate limits.
- * 
+ *
  * Includes circuit breaker protection to stop API calls if quota is exceeded,
  * automatically falling back to static hours.
- * 
+ *
  * @module hooks/useGooglePlaceHours
  */
 
@@ -59,22 +59,23 @@ const formatTime = (time, hour12Preference) => {
   ) {
     return null;
   }
-  const resolvedPreference = typeof hour12Preference === 'boolean'
-    ? hour12Preference
-    : getUserHour12Preference();
+  const resolvedPreference = typeof hour12Preference === 'boolean' ? hour12Preference : getUserHour12Preference();
   return formatTimeFrom24h(rawHours, rawMinutes, resolvedPreference);
 };
 
 const formatPeriods = (periods = []) => {
   if (!Array.isArray(periods) || periods.length === 0) return null;
   const hour12Preference = getUserHour12Preference();
-  return periods.map(period => {
-    const openTime = formatTime(period?.open?.time || period?.open?.truncatedTime, hour12Preference);
-    const closeTime = formatTime(period?.close?.time || period?.close?.truncatedTime, hour12Preference);
-    if (openTime && closeTime) return `${openTime} – ${closeTime}`;
-    if (openTime && !closeTime) return `${openTime} – Close`;
-    return null;
-  }).filter(Boolean).join(', ');
+  return periods
+    .map((period) => {
+      const openTime = formatTime(period?.open?.time || period?.open?.truncatedTime, hour12Preference);
+      const closeTime = formatTime(period?.close?.time || period?.close?.truncatedTime, hour12Preference);
+      if (openTime && closeTime) return `${openTime} – ${closeTime}`;
+      if (openTime && !closeTime) return `${openTime} – Close`;
+      return null;
+    })
+    .filter(Boolean)
+    .join(', ');
 };
 
 const extractSpecialHours = (placeData) => {
@@ -82,23 +83,23 @@ const extractSpecialHours = (placeData) => {
     placeData?.currentOpeningHours?.specialDays,
     placeData?.regularOpeningHours?.specialDays,
     placeData?.opening_hours?.special_days,
-    placeData?.openingHours?.specialDays
+    placeData?.openingHours?.specialDays,
   ].filter(Boolean);
 
   const specialDays = sources.flat();
   if (!Array.isArray(specialDays) || specialDays.length === 0) return [];
 
-  return specialDays.map(entry => {
-    const date = toDateString(entry?.date || entry?.startDate || entry?.date?.date);
-    const closed = entry?.closed || entry?.isClosed || entry?.openClosed === 'CLOSED';
-    const periods = entry?.exceptionalHours?.periods || entry?.periods || entry?.openingHours?.periods;
-    const hoursText = closed ? 'Closed' : (entry?.hours || formatPeriods(periods) || 'Special hours');
-    const reason = entry?.reason || entry?.description || entry?.name || null;
+  return specialDays
+    .map((entry) => {
+      const date = toDateString(entry?.date || entry?.startDate || entry?.date?.date);
+      const closed = entry?.closed || entry?.isClosed || entry?.openClosed === 'CLOSED';
+      const periods = entry?.exceptionalHours?.periods || entry?.periods || entry?.openingHours?.periods;
+      const hoursText = closed ? 'Closed' : entry?.hours || formatPeriods(periods) || 'Special hours';
+      const reason = entry?.reason || entry?.description || entry?.name || null;
 
-    return date
-      ? { date, hours: hoursText, reason }
-      : null;
-  }).filter(Boolean);
+      return date ? { date, hours: hoursText, reason } : null;
+    })
+    .filter(Boolean);
 };
 
 // Extract API key from environment variable
@@ -108,7 +109,9 @@ const GOOGLE_API_KEY = import.meta.env.VITE_GOOGLE_PLACES_API_KEY;
 
 if (!GOOGLE_API_KEY || GOOGLE_API_KEY === 'YOUR_API_KEY_HERE') {
   if (import.meta.env.DEV) {
-    console.warn('Google Places API key not configured. Set VITE_GOOGLE_PLACES_API_KEY environment variable for live hours integration.');
+    console.warn(
+      'Google Places API key not configured. Set VITE_GOOGLE_PLACES_API_KEY environment variable for live hours integration.'
+    );
   }
 }
 
@@ -158,9 +161,10 @@ async function fetchPlaceDetails(placeId) {
     return null;
   }
 
-  // Using Places API (New) which supports client-side requests
+  // Field mask uses camelCase names per Places API (New) spec
   // https://developers.google.com/maps/documentation/places/web-service/place-details
-  const fields = 'opening_hours,current_opening_hours,business_status,displayName,formattedAddress,utcOffsetMinutes,rating,userRatingCount';
+  const fields =
+    'regularOpeningHours,currentOpeningHours,businessStatus,displayName,formattedAddress,utcOffsetMinutes,rating,userRatingCount';
 
   // NOTE: API key in URL is intentional. Google Places API (New) requires key in request.
   // SECURITY: Restrict key in Google Cloud Console to: Places API, Embed API, JavaScript API
@@ -173,9 +177,8 @@ async function fetchPlaceDetails(placeId) {
       const response = await fetch(url, {
         method: 'GET',
         headers: {
-          'Content-Type': 'application/json',
-          'X-Goog-FieldMask': fields
-        }
+          'X-Goog-FieldMask': fields,
+        },
       });
 
       if (!response.ok) {
@@ -215,7 +218,7 @@ async function fetchPlaceDetails(placeId) {
 
 /**
  * Parses Google opening hours into simplified format
- * 
+ *
  * @param {Object} placeData - Google place data with opening_hours
  * @returns {Object} Parsed hours data
  */
@@ -225,8 +228,9 @@ function parseOpeningHours(placeData) {
   }
 
   // Handle both new API and legacy API formats
-  const openingHours = placeData.regularOpeningHours || placeData.currentOpeningHours || placeData.opening_hours || placeData.openingHours;
-  
+  const openingHours =
+    placeData.regularOpeningHours || placeData.currentOpeningHours || placeData.opening_hours || placeData.openingHours;
+
   if (!openingHours) {
     return null;
   }
@@ -245,8 +249,8 @@ function parseOpeningHours(placeData) {
     userRatingCount: placeData.userRatingCount ?? null,
     display: {
       ...formatHoursDisplay(weekdayDescriptions),
-      exceptions: extractSpecialHours(placeData)
-    }
+      exceptions: extractSpecialHours(placeData),
+    },
   };
 
   return formatted;
@@ -254,7 +258,7 @@ function parseOpeningHours(placeData) {
 
 /**
  * Formats weekday hours into display-friendly strings
- * 
+ *
  * @param {Array<string>} weekdayText - Google's weekday_text array
  * @returns {Object} Formatted hours for weekdays and weekends
  */
@@ -263,7 +267,7 @@ function formatHoursDisplay(weekdayText) {
     return {
       weekdays: 'Hours not available',
       weekends: 'Hours not available',
-      full: 'Hours not available'
+      full: 'Hours not available',
     };
   }
 
@@ -271,8 +275,8 @@ function formatHoursDisplay(weekdayText) {
   // ["Monday: 8:00 AM – 9:00 PM", "Tuesday: 8:00 AM – 9:00 PM", ...]
   // Note: Google Places API typically returns days starting with Monday,
   // but we parse day names explicitly for resilience to format variations.
-  
-  const dayMap = weekdayText.map(text => {
+
+  const dayMap = weekdayText.map((text) => {
     // Validate split format to handle edge cases (colon may appear multiple times)
     const colonIndex = text.indexOf(': ');
     if (colonIndex === -1) {
@@ -294,30 +298,24 @@ function formatHoursDisplay(weekdayText) {
       weekdays: 'Hours not available',
       weekends: 'Hours not available',
       full: weekdayText,
-      allSame: false
+      allSame: false,
     };
   }
 
   // Extract Monday-Friday by day name (resilient to API format changes)
   const weekdayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-  const weekdayHours = dayMap
-    .filter(d => weekdayNames.includes(d.day))
-    .map(d => d.hours);
-  
+  const weekdayHours = dayMap.filter((d) => weekdayNames.includes(d.day)).map((d) => d.hours);
+
   // Extract Saturday-Sunday by day name
   const weekendNames = ['Saturday', 'Sunday'];
-  const weekendHours = dayMap
-    .filter(d => weekendNames.includes(d.day))
-    .map(d => d.hours);
+  const weekendHours = dayMap.filter((d) => weekendNames.includes(d.day)).map((d) => d.hours);
 
   // Check if all weekdays/weekends have same hours
-  const sameWeekdayHours =
-    weekdayHours.length > 0 && weekdayHours.every(h => h === weekdayHours[0]);
-  const sameWeekendHours =
-    weekendHours.length > 0 && weekendHours.every(h => h === weekendHours[0]);
+  const sameWeekdayHours = weekdayHours.length > 0 && weekdayHours.every((h) => h === weekdayHours[0]);
+  const sameWeekendHours = weekendHours.length > 0 && weekendHours.every((h) => h === weekendHours[0]);
 
   // Check if ALL days (Mon–Sun) have identical hours using validated dayMap
-  const allSame = dayMap.length > 0 && dayMap.every(entry => entry.hours === dayMap[0].hours);
+  const allSame = dayMap.length > 0 && dayMap.every((entry) => entry.hours === dayMap[0].hours);
   const grouped = groupDayMap(dayMap);
 
   return {
@@ -326,13 +324,13 @@ function formatHoursDisplay(weekdayText) {
     full: weekdayText,
     allSame,
     dayMap,
-    grouped
+    grouped,
   };
 }
 
 /**
  * Custom hook to fetch and cache Google Place hours
- * 
+ *
  * @param {string} placeId - Google Place ID
  * @param {Object} options - Configuration options
  * @param {boolean} options.enabled - Enable/disable fetching (default: true)
@@ -349,71 +347,74 @@ export function useGooglePlaceHours(placeId, options = {}) {
   const [rating, setRating] = useState(null);
   const [userRatingCount, setUserRatingCount] = useState(null);
 
-  const fetchHours = useCallback(async (fetchOptions = {}) => {
-    const force = typeof fetchOptions === 'boolean' ? fetchOptions : fetchOptions?.force;
-    if (!placeId || !enabled) {
-      setIsLoading(false);
-      return;
-    }
-
-    // Check cache first
-    if (!force) {
-      const cached = hoursCache.get(placeId);
-      if (cached && (Date.now() - cached.timestamp) < cacheDuration) {
-        setHours(cached.hours);
-        setIsOpenNow(cached.isOpenNow);
-        setRating(cached.rating ?? null);
-        setUserRatingCount(cached.userRatingCount ?? null);
+  const fetchHours = useCallback(
+    async (fetchOptions = {}) => {
+      const force = typeof fetchOptions === 'boolean' ? fetchOptions : fetchOptions?.force;
+      if (!placeId || !enabled) {
         setIsLoading(false);
         return;
       }
-    }
 
-    setIsLoading(true);
-    setError(null);
+      // Check cache first
+      if (!force) {
+        const cached = hoursCache.get(placeId);
+        if (cached && Date.now() - cached.timestamp < cacheDuration) {
+          setHours(cached.hours);
+          setIsOpenNow(cached.isOpenNow);
+          setRating(cached.rating ?? null);
+          setUserRatingCount(cached.userRatingCount ?? null);
+          setIsLoading(false);
+          return;
+        }
+      }
 
-    try {
-      const placeDetails = await fetchPlaceDetails(placeId);
-      
-      if (!placeDetails) {
-        // API failed, use fallback
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const placeDetails = await fetchPlaceDetails(placeId);
+
+        if (!placeDetails) {
+          // API failed, use fallback
+          setIsLoading(false);
+          return;
+        }
+
+        const parsedHours = parseOpeningHours(placeDetails);
+
+        if (!parsedHours) {
+          // No hours data available
+          setIsLoading(false);
+          return;
+        }
+
+        // Cache the result
+        hoursCache.set(placeId, {
+          hours: parsedHours,
+          isOpenNow: parsedHours?.isOpenNow,
+          rating: parsedHours?.rating ?? null,
+          userRatingCount: parsedHours?.userRatingCount ?? null,
+          timestamp: Date.now(),
+        });
+
+        // Record success with circuit breaker to clear accumulated failures
+        circuitBreakers.googlePlaces.recordSuccess();
+
+        setHours(parsedHours);
+        setIsOpenNow(parsedHours?.isOpenNow);
+        setRating(parsedHours?.rating ?? null);
+        setUserRatingCount(parsedHours?.userRatingCount ?? null);
+      } catch (err) {
+        setError(err.message);
+        if (import.meta.env.DEV) {
+          console.error('Failed to fetch place hours:', err);
+        }
+      } finally {
         setIsLoading(false);
-        return;
       }
-      
-      const parsedHours = parseOpeningHours(placeDetails);
-      
-      if (!parsedHours) {
-        // No hours data available
-        setIsLoading(false);
-        return;
-      }
-      
-      // Cache the result
-      hoursCache.set(placeId, {
-        hours: parsedHours,
-        isOpenNow: parsedHours?.isOpenNow,
-        rating: parsedHours?.rating ?? null,
-        userRatingCount: parsedHours?.userRatingCount ?? null,
-        timestamp: Date.now()
-      });
-
-      // Record success with circuit breaker to clear accumulated failures
-      circuitBreakers.googlePlaces.recordSuccess();
-
-      setHours(parsedHours);
-      setIsOpenNow(parsedHours?.isOpenNow);
-      setRating(parsedHours?.rating ?? null);
-      setUserRatingCount(parsedHours?.userRatingCount ?? null);
-    } catch (err) {
-      setError(err.message);
-      if (import.meta.env.DEV) {
-        console.error('Failed to fetch place hours:', err);
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  }, [placeId, enabled, cacheDuration]);
+    },
+    [placeId, enabled, cacheDuration]
+  );
 
   useEffect(() => {
     fetchHours();
@@ -426,7 +427,7 @@ export function useGooglePlaceHours(placeId, options = {}) {
     refetch: fetchHours,
     isOpenNow,
     rating,
-    userRatingCount
+    userRatingCount,
   };
 }
 
@@ -440,7 +441,7 @@ export function clearHoursCache() {
 /**
  * Get circuit breaker status (for monitoring API quota in dev console)
  * Returns: { isOpen, failureCount, quotaExceeded, timeUntilReset, apiName }
- * 
+ *
  * Usage in DevTools Console:
  *   import { getPlacesQuotaStatus } from '@/hooks/useGooglePlaceHours'
  *   getPlacesQuotaStatus()
