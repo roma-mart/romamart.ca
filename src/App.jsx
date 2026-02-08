@@ -523,7 +523,23 @@ function App() {
   // Prices in API are always in cents
   const schemaPriceInCents = true;
   useEffect(() => { if (!isVisible && import.meta.env.DEV) { console.warn('[Performance] Tab hidden - pausing heavy operations'); } }, [isVisible]);
-  const getPage = useCallback(() => { const normalized = pathname === '/' ? '/' : pathname.replace(/\/+$/, ''); switch (normalized) { case '/': return 'home'; case '/services': return 'services'; case '/rocafe': return 'rocafe'; case '/locations': return 'locations'; case '/contact': return 'contact'; case '/about': return 'about'; case '/accessibility': return 'accessibility'; case '/privacy': return 'privacy'; case '/terms': return 'terms'; case '/cookies': return 'cookies'; case '/return-policy': return 'return-policy'; default: return 'not-found'; } }, [pathname]);
+  const getPage = useCallback(() => {
+    const normalized = pathname === '/' ? '/' : pathname.replace(/\/+$/, '');
+    switch (normalized) {
+      case '/': return 'home';
+      case '/services': return 'services';
+      case '/rocafe': return 'rocafe';
+      case '/locations': return 'locations';
+      case '/contact': return 'contact';
+      case '/about': return 'about';
+      case '/accessibility': return 'accessibility';
+      case '/privacy': return 'privacy';
+      case '/terms': return 'terms';
+      case '/cookies': return 'cookies';
+      case '/return-policy': return 'return-policy';
+      default: return 'not-found';
+    }
+  }, [pathname]);
   const currentPage = getPage();
   const handleTrackOrderClick = useCallback((location = 'hero_section') => { try { if (typeof window.trackOrderClick === 'function') { window.trackOrderClick(location); } } catch (e) {
     console.warn('trackOrderClick failed:', e);

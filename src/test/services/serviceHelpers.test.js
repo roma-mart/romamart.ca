@@ -16,9 +16,10 @@ describe('services helper functions', () => {
       });
     });
 
-    it('should return 4 coming soon services', () => {
+    it('should return all coming_soon services from SERVICES', () => {
       const result = getComingSoonServices();
-      expect(result).toHaveLength(4);
+      const expectedCount = SERVICES.filter((s) => s.status === 'coming_soon').length;
+      expect(result).toHaveLength(expectedCount);
     });
   });
 

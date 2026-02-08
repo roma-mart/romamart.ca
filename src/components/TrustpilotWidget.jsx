@@ -56,14 +56,19 @@ const TrustpilotWidget = () => {
     }
 
     // Load bootstrap script, then initialize widget
-    if (!document.getElementById(TRUSTBOX_SCRIPT_ID)) {
-      const script = document.createElement('script');
-      script.src = TRUSTBOX_SCRIPT_SRC;
-      script.async = true;
-      script.id = TRUSTBOX_SCRIPT_ID;
-      script.onload = loadWidget;
-      document.body.appendChild(script);
+    const existing = document.getElementById(TRUSTBOX_SCRIPT_ID);
+    if (existing) {
+      // Script tag exists but hasn't finished loading (e.g., component remount)
+      existing.addEventListener('load', loadWidget);
+      return () => existing.removeEventListener('load', loadWidget);
     }
+
+    const script = document.createElement('script');
+    script.src = TRUSTBOX_SCRIPT_SRC;
+    script.async = true;
+    script.id = TRUSTBOX_SCRIPT_ID;
+    script.onload = loadWidget;
+    document.body.appendChild(script);
   }, [businessUnitId, templateId]);
 
   // Fallback when env vars are not configured
