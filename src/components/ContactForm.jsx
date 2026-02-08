@@ -3,7 +3,7 @@
  * Unified contact form used by both homepage and /contact page.
  * Handles Web3Forms submission, hCaptcha, and field validation.
  */
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { Send } from 'lucide-react';
 import Button from './Button';
 import HCaptchaWidget from './HCaptchaWidget';
@@ -19,9 +19,14 @@ const ContactForm = ({
   const [captchaToken, setCaptchaToken] = useState('');
   const [fieldErrors, setFieldErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
+  const captchaRef = useRef(null);
   const { showSuccess, showError } = useToast();
   const colorScheme = useColorScheme();
   const formAccessKey = COMPANY_DATA.contact.web3FormsAccessKey || '';
+
+  const handleCaptchaExpire = useCallback(() => {
+    setCaptchaToken('');
+  }, []);
 
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
@@ -62,17 +67,20 @@ const ContactForm = ({
         body: formData,
       });
 
-      if (response.ok) {
+      const data = await response.json();
+
+      if (data.success) {
         showSuccess('Message sent successfully!');
         setFieldErrors({});
         form.reset();
         setCaptchaToken('');
+        captchaRef.current?.resetCaptcha();
         window.dataLayer?.push({
           event: 'contact_form_submit',
           form_location: idPrefix,
         });
       } else {
-        showError('Failed to send message. Please try again.');
+        showError(data.message || 'Failed to send message. Please try again.');
       }
     } catch {
       showError('Failed to send message. Please try again.');
@@ -179,7 +187,9 @@ const ContactForm = ({
       <React.Suspense fallback={<div>Loading captcha...</div>}>
         {typeof window !== 'undefined' && (
           <HCaptchaWidget
+            ref={captchaRef}
             onVerify={setCaptchaToken}
+            onExpire={handleCaptchaExpire}
             theme={colorScheme}
             scriptHost="https://js.hcaptcha.com/1/api.js?custom=true"
           />
