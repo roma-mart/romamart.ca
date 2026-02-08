@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [2.7.0] - 2026-02-08
+## [2.6.1] - 2026-02-08
 
 ### Added
 - `calculateItemPrice` tests: base price, single/multiple/quantity customizations, edge cases (~14 tests)
@@ -22,6 +22,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - FooterLinks hover color: replaced inline `style` with Tailwind `text-[var(--color-on-footer-muted)]` to fix CSS specificity preventing hover/focus color change
+- Contact form double toast: added `submitting` guard to prevent duplicate submissions when hCaptcha re-fires form submit
+- hCaptcha response check: use `data.success` instead of `response.ok` (Web3Forms can return HTTP 200 with `success: false`)
+- hCaptcha widget reset via ref after successful submission (tokens are single-use per hCaptcha docs)
+- hCaptcha `onExpire` handler: clears stale captcha token when solved challenge expires (~2 min)
+- hCaptcha `onError` handler: clears token and shows error toast when captcha challenge fails to load
+- `HCaptchaWidget` rewritten with `forwardRef` to expose `resetCaptcha()` to parent
 
 ## [2.6.0] - 2026-02-08
 
