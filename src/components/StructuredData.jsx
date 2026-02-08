@@ -226,14 +226,6 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
           },
           publisher: {
             '@id': `${COMPANY_DATA.baseUrl}/#business`
-          },
-          potentialAction: {
-            '@type': 'SearchAction',
-            target: {
-              '@type': 'EntryPoint',
-              urlTemplate: `${COMPANY_DATA.baseUrl}/search?q={search_term_string}`
-            },
-            'query-input': 'required name=search_term_string'
           }
         };
 

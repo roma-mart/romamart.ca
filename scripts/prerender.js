@@ -375,15 +375,7 @@ const buildStructuredData = (routePath = '/', apiData = {}) => {
       url: BASE_URL,
       name: COMPANY_DATA.dba || 'Roma Mart Convenience',
       description: 'Your daily stop & go convenience store in Sarnia, Ontario.',
-      publisher: { '@id': `${BASE_URL}/#business` },
-      potentialAction: {
-        '@type': 'SearchAction',
-        target: {
-          '@type': 'EntryPoint',
-          urlTemplate: `${BASE_URL}/search?q={search_term_string}`
-        },
-        'query-input': 'required name=search_term_string'
-      }
+      publisher: { '@id': `${BASE_URL}/#business` }
     }
   ];
 
