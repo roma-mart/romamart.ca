@@ -55,7 +55,7 @@ export function LocationsProvider({ children }) {
 
         if (!res.ok) {
           // API failed, use static fallback
-          console.warn('Locations API unavailable, using static data');
+          if (import.meta.env.DEV) console.warn('Locations API unavailable, using static data');
           if (!cancelled) {
             setLocations(LOCATIONS);
             setSource('static');
@@ -68,7 +68,7 @@ export function LocationsProvider({ children }) {
 
         // Validate API response structure
         if (!data.success || !Array.isArray(data.locations)) {
-          console.warn('Invalid locations API response, using static data');
+          if (import.meta.env.DEV) console.warn('Invalid locations API response, using static data');
           if (!cancelled) {
             setLocations(LOCATIONS);
             setSource('static');
@@ -85,7 +85,7 @@ export function LocationsProvider({ children }) {
         }
       } catch (err) {
         // Network error or other exception - use static fallback
-        console.warn('Locations API error, using static data:', err.message);
+        if (import.meta.env.DEV) console.warn('Locations API error, using static data:', err.message);
         if (!cancelled) {
           setLocations(LOCATIONS);
           setSource('static');

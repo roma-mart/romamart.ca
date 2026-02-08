@@ -41,6 +41,17 @@ export const semanticColors = {
 // Spacing scale (4pt baseline)
 export const spacing = [0,4,8,12,16,20,24,32,40,48,64];
 
+// Border-radius scale (mirrors CSS variables --radius-* in index.css)
+export const borderRadius = {
+  sm: 'var(--radius-sm)',       // 4px  — badges, chips
+  md: 'var(--radius-md)',       // 6px  — inputs, small cards
+  lg: 'var(--radius-lg)',       // 8px  — cards, panels, dropdowns
+  xl: 'var(--radius-xl)',       // 12px — featured cards, modals
+  '2xl': 'var(--radius-2xl)',   // 16px — large cards, sections
+  '3xl': 'var(--radius-3xl)',   // 24px — hero panels, CTA blocks
+  full: 'var(--radius-full)',   // pill buttons, avatars, badges
+};
+
 // Font families
 export const fonts = {
   body: 'var(--font-body)', // Inter, defined in CSS.
@@ -144,6 +155,7 @@ export const tokens = {
   colorScales,
   semanticColors,
   spacing,
+  borderRadius,
   fonts,
   logoSizes,
   logoSchemes,

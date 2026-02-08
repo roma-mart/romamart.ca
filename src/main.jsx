@@ -1,13 +1,13 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { HelmetProvider } from 'react-helmet-async'
-import { ToastProvider } from './components/ToastContainer'
-import { MenuProvider } from './contexts/MenuContext.jsx'
-import { ServicesProvider } from './contexts/ServicesContext.jsx'
-import { LocationsProvider } from './contexts/LocationsContext.jsx'
-import { LocationProvider } from './components/LocationProvider.jsx'
-import './index.css'
-import App from './App.jsx'
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { HelmetProvider } from 'react-helmet-async';
+import { ToastProvider } from './components/ToastContainer';
+import { MenuProvider } from './contexts/MenuContext.jsx';
+import { ServicesProvider } from './contexts/ServicesContext.jsx';
+import { LocationsProvider } from './contexts/LocationsContext.jsx';
+import { LocationProvider } from './components/LocationProvider.jsx';
+import './index.css';
+import App from './App.jsx';
 
 // Initialize Google Tag Manager if VITE_GTM_ID is provided at build time
 const GTM_ID = import.meta.env.VITE_GTM_ID;
@@ -16,9 +16,12 @@ if (GTM_ID) {
   window.dataLayer = window.dataLayer || [];
 
   // Google Consent Mode v2 defaults — must fire BEFORE gtm.js loads.
-  // Clickio CMP (loaded as a GTM tag) will call gtag('consent','update',{...})
-  // when the user accepts, upgrading storage from 'denied' → 'granted'.
-  window.gtag = function gtag() { window.dataLayer.push(arguments); };
+  // Clickio CMP (configured as a GTM tag) renders the consent banner and
+  // calls gtag('consent','update',{...}) when the user accepts,
+  // upgrading storage from 'denied' → 'granted'.
+  window.gtag = function gtag() {
+    window.dataLayer.push(arguments);
+  };
   window.gtag('consent', 'default', {
     ad_storage: 'denied',
     analytics_storage: 'denied',
@@ -58,5 +61,5 @@ createRoot(document.getElementById('root')).render(
         </ServicesProvider>
       </MenuProvider>
     </HelmetProvider>
-  </StrictMode>,
-)
+  </StrictMode>
+);

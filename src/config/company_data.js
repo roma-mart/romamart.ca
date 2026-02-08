@@ -15,6 +15,7 @@ import { getEnvVar } from '../utils/getAssetUrl.js';
 const COMPANY_DATA = {
   legalName: 'Roma Mart Corp.',
   dba: 'Roma Mart Convenience',
+  heroBadge: 'New In Town',
   gstNumber: '780971768',
   naicsCode: '4541',  // Grocery stores (North American Industry Classification System)
   naicsDescription: 'Grocery Stores',

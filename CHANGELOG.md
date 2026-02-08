@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.6.3] - 2026-02-08
+
+### Added
+- Prettier config (`.prettierrc.json`), `.prettierignore`, format-on-commit via lint-staged (R40)
+- `format` and `format:check` npm scripts for manual formatting
+- Border-radius design tokens (`borderRadius` export) in `src/design/tokens.js` (R45)
+- `heroBadge` field in `COMPANY_DATA` for data-driven hero badge text (R44)
+
+### Removed
+- Dead `xlsx` dependency (~230KB), unused `readExcelFile.js` and `MenuExcelHolder.jsx` (R50)
+- FontAwesome packages (`@fortawesome/fontawesome-svg-core`, `@fortawesome/free-brands-svg-icons`, `@fortawesome/react-fontawesome`) -- replaced with inline SVGs in footer (R23)
+- Redundant `title` attribute on footer social links (screen reader double-announce fix) (R25)
+
+### Fixed
+- 10 ungated `console.warn` calls wrapped with `import.meta.env.DEV` guard (R37)
+
+### Changed
+- Footer social icons now use inline SVGs instead of FontAwesome (R23)
+- Hero badge text sourced from `COMPANY_DATA.heroBadge` instead of hardcoded string (R44)
+- `.editorconfig` updated with `[*.{json,yml,yaml}]` indent override
+
 ## [2.6.2] - 2026-02-08
 
 ### Added

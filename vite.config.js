@@ -16,7 +16,7 @@ export default defineConfig({
       output: {
         manualChunks: {
           'react-vendor': ['react', 'react-dom'],
-          'icons': ['lucide-react', '@fortawesome/react-fontawesome'],
+          'icons': ['lucide-react'],
           'motion': ['framer-motion'],
         },
       },

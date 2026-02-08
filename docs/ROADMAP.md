@@ -103,7 +103,7 @@
 
 ## Sprint Plan
 
-Work is grouped into 8 logical sprints based on domain alignment, dependency relationships, and testability. Each sprint maps to one branch and one PR.
+Work is grouped into 9 logical sprints based on domain alignment, dependency relationships, and testability. Each sprint maps to one branch and one PR.
 
 ### Sprint 1: "Stop the Bleeding"
 - **Branch:** `fix/critical-bugs`
@@ -160,11 +160,23 @@ Work is grouped into 8 logical sprints based on domain alignment, dependency rel
 - **Template:** Maintenance
 - **Labels:** `seo`, `priority-medium`
 - **Effort:** 2-3 hours
+- **Status:** Complete (v2.6.2)
+
+### Sprint 9: "Quality Hardening"
+- **Branch:** `chore/quality-hardening`
+- **Scope:** R23, R25, R37, R40, R44, R45, R50
+- **Template:** Maintenance
+- **Labels:** `quality`, `priority-medium`
+- **Version:** 2.6.3
+- **Status:** Complete
+- **Summary:** Full re-audit of all 55 recommendations confirmed 40 already fixed in Sprints 1-8. Sprint 9 closed 7 remaining actionable gaps: removed dead xlsx dependency (~230KB) and FontAwesome packages (~30-40KB), gated production console.warn calls, added Prettier + format-on-commit, created border-radius design tokens, made hero badge data-driven, and removed redundant footer title attributes. R39 (CookieConsent) confirmed handled by Clickio CMP via GTM -- no custom component needed.
+- **Remaining unfixed:** R38 (Coming Soon services -- user deferred), R39 (consent -- handled by Clickio CMP via GTM, not in codebase), R49 (WebP/AVIF), R51 (React 19 doc correction), R52 (TypeScript), R53 (Playwright), R54 (Lighthouse CI), R55 (vite-plugin-pwa)
 
 ### Post-Sprint: Documentation Update
 - **Branch:** `docs/audit-alignment`
-- **Scope:** Fix 10 documentation-vs-reality discrepancies
+- **Scope:** Fix documentation-vs-reality discrepancies identified in audit Section 4
 - **Labels:** `documentation`
+- **Guidance:** Many of the original 10 discrepancies have been resolved through Sprints 1-9. Review remaining drift items, update test counts (260 passing as of v2.6.2), confirm Husky is operational, update API status, and ensure React version references are correct (18.3.1, not 19). Also update this roadmap and expert audit with final post-sprint scoring.
 
 ### Nice-to-Have (Low Priority)
 These are non-critical enhancements to consider after all sprints are complete:
@@ -192,17 +204,17 @@ These are operational actions, not code changes:
 
 ## Domain Scorecard
 
-| Domain | Current | Target (Post-Phase 2) |
-|--------|---------|----------------------|
-| Security | B+ | A- |
-| SEO | B+ | A |
-| Accessibility | B- (~78% WCAG 2.2 AA) | A- (~90%) |
-| UX/UI/Branding | B- | B+ |
-| Testing | C | B- |
-| Performance | D+ | B+ |
-| DevOps/CI | D | B |
-| PWA | F (3.5/10) | B (7/10) |
-| Business Alignment | 4/10 | 7/10 |
+| Domain | Pre-Audit (Feb 6) | Target (Post-Phase 2) | Post-Sprint 9 (Feb 8) |
+|--------|-------------------|----------------------|----------------------|
+| Security | B+ | A- | A- (XLSX CVEs removed, consent compliance added) |
+| SEO | B+ | A | A (SearchAction fixed, 404 page, og:locale, IndexNow) |
+| Accessibility | B- (~78% WCAG 2.2 AA) | A- (~90%) | A- (focus traps, ARIA, reduced motion, consent a11y) |
+| UX/UI/Branding | B- | B+ | B+ (ErrorBoundary, Footer decomp, unified forms, design tokens) |
+| Testing | C | B- | B (260 tests, 60% coverage thresholds, context/schema/utility coverage) |
+| Performance | D+ | B+ | B+ (font dedup, hero LCP, Button split, FontAwesome removed, scroll throttle) |
+| DevOps/CI | D | B | B+ (Husky v9, lint-staged, Prettier, CI consolidated, Dependabot, quality checks) |
+| PWA | F (3.5/10) | B (7/10) | B (7/10) (SW precache, offline.html, cache eviction, update prompts) |
+| Business Alignment | 4/10 | 7/10 | 5/10 (tech debt cleared, Coming Soon still displayed) |
 
 ---
 
@@ -214,4 +226,4 @@ These are operational actions, not code changes:
 
 ---
 
-*Last updated: February 6, 2026*
+*Last updated: February 8, 2026*

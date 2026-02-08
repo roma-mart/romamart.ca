@@ -1,7 +1,7 @@
 {
   "name": "roma-mart-site",
   "private": true,
-  "version": "2.6.2",
+  "version": "2.6.3",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -18,12 +18,11 @@
     "check:all": "npm run lint && npm run lint:css && npm run check:quality && npm run check:integrity",
     "prepare": "husky",
     "preview": "vite preview",
-    "deploy": "node scripts/ensure-main-branch.js && npm run build && gh-pages -d dist"
+    "deploy": "node scripts/ensure-main-branch.js && npm run build && gh-pages -d dist",
+    "format": "prettier --write \"src/**/*.{js,jsx,css,json}\"",
+    "format:check": "prettier --check \"src/**/*.{js,jsx,css,json}\""
   },
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^7.1.0",
-    "@fortawesome/free-brands-svg-icons": "^7.1.0",
-    "@fortawesome/react-fontawesome": "^3.1.1",
     "@hcaptcha/react-hcaptcha": "^1.17.1",
     "framer-motion": "^12.23.24",
     "lucide-react": "^0.554.0",
@@ -32,8 +31,7 @@
     "react-dom": "^18.3.1",
     "react-helmet-async": "^2.0.5",
     "vite-plugin-pages": "^0.33.1",
-    "vite-ssg": "^28.2.2",
-    "xlsx": "^0.18.5"
+    "vite-ssg": "^28.2.2"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.4.1",
@@ -57,6 +55,7 @@
     "jsdom": "^27.3.0",
     "lint-staged": "^16.2.7",
     "postcss": "^8.5.6",
+    "prettier": "^3.5.0",
     "stylelint": "^16.9.0",
     "stylelint-config-standard": "^36.0.1",
     "tailwindcss": "^3.4.18",
@@ -75,7 +74,14 @@
     "node": ">=22 <24"
   },
   "lint-staged": {
-    "*.{js,jsx}": "eslint",
-    "*.css": "stylelint"
+    "*.{js,jsx}": [
+      "prettier --write",
+      "eslint"
+    ],
+    "*.css": [
+      "prettier --write",
+      "stylelint"
+    ],
+    "*.json": "prettier --write"
   }
 }

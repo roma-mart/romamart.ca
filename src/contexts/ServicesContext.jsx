@@ -34,7 +34,7 @@ export function ServicesProvider({ children }) {
 
         if (!res.ok) {
           // API failed, use static fallback
-          console.warn('Services API unavailable, using static data');
+          if (import.meta.env.DEV) console.warn('Services API unavailable, using static data');
           if (!cancelled) {
             setServices(SERVICES);
             setSource('static');
@@ -47,7 +47,7 @@ export function ServicesProvider({ children }) {
 
         // Validate API response structure
         if (!data.success || !Array.isArray(data.services)) {
-          console.warn('Invalid services API response, using static data');
+          if (import.meta.env.DEV) console.warn('Invalid services API response, using static data');
           if (!cancelled) {
             setServices(SERVICES);
             setSource('static');
@@ -64,7 +64,7 @@ export function ServicesProvider({ children }) {
         }
       } catch (err) {
         // Network error or other exception - use static fallback
-        console.warn('Services API error, using static data:', err.message);
+        if (import.meta.env.DEV) console.warn('Services API error, using static data:', err.message);
         if (!cancelled) {
           setServices(SERVICES);
           setSource('static');
