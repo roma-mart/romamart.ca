@@ -116,7 +116,6 @@ export default function Footer() {
                     className="w-10 h-10 rounded-full flex items-center justify-center transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
                     style={{ backgroundColor: 'var(--color-surface-muted)' }}
                     aria-label={`Visit Roma Mart on ${link.label}`}
-                    title={link.label}
                     onClick={socialHandlers[link.label.toLowerCase()]}
                     onMouseEnter={(e) =>
                       (e.currentTarget.firstChild.style.color = 'var(--color-accent)')
