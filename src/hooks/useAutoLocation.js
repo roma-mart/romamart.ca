@@ -72,18 +72,16 @@ export const useAutoLocation = (onLocationFound, options = {}) => {
  */
 export const getStoredLocation = () => {
   try {
-    const lat = localStorage.getItem('roma_mart_user_lat');
-    const lng = localStorage.getItem('roma_mart_user_lng');
-    
-    if (lat && lng) {
-      return {
-        latitude: parseFloat(lat),
-        longitude: parseFloat(lng)
-      };
+    const cached = localStorage.getItem(LOCATION_STORAGE_KEY);
+    if (cached) {
+      const { latitude, longitude } = JSON.parse(cached);
+      if (latitude !== null && latitude !== undefined && longitude !== null && longitude !== undefined) {
+        return { latitude, longitude };
+      }
     }
-  } catch (error) {
-    console.error('Error reading stored location:', error);
+  } catch {
+    // Invalid cache
   }
-  
+
   return null;
 };

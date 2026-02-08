@@ -65,8 +65,6 @@ export const LocationProvider = ({ children }) => {
 
     try {
       localStorage.setItem(LOCATION_STORAGE_KEY, JSON.stringify(locationData));
-      localStorage.setItem('roma_mart_user_lat', location.latitude.toString());
-      localStorage.setItem('roma_mart_user_lng', location.longitude.toString());
     } catch { /* Safari private mode */ }
     sessionStorage.setItem(SESSION_REQUESTED_KEY, 'true');
   }, [location]);

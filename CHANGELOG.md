@@ -32,8 +32,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `LocationsContext` is now SSOT for `selectedLocationId` + `selectLocation`; validates selection on location updates
 - `LocationProvider` moved to root (`main.jsx`), no longer re-created inside App
 - Footer delegates distance calculation to shared `findNearestLocation` utility
-- Coordinate checks use `!= null` instead of falsy guards (0 is a valid coordinate)
+- Coordinate checks use strict `=== null || === undefined` instead of falsy guards (0 is a valid coordinate)
 - `useAutoLocation` no longer writes to localStorage (LocationProvider is sole writer)
+- Redundant `roma_mart_user_lat`/`roma_mart_user_lng` localStorage keys removed; all consumers read from structured `roma_mart_user_location` blob
 - FooterLocation auto option text dynamically derives HQ name from locations array
 - FooterLinks: replaced inline `onMouseEnter`/`onMouseLeave` with CSS `hover:`/`focus-visible:` utilities
 - `font-heading` class replaced with `text-heading` (correct utility) across Footer and accordion components

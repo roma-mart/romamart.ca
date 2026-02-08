@@ -115,10 +115,10 @@
         return R * c;
       }
       try {
-        const userLat = localStorage.getItem('roma_mart_user_lat');
-        const userLng = localStorage.getItem('roma_mart_user_lng');
-        if (userLat && userLng) {
-          const lat = parseFloat(userLat); const lng = parseFloat(userLng);
+        const cached = localStorage.getItem('roma_mart_user_location');
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          const lat = parsed.latitude; const lng = parsed.longitude;
           let nearest = LOCATIONS[0]; let minDistance = Infinity;
           LOCATIONS.forEach(loc => { const dist = calculateDistance(lat, lng, loc.coordinates.lat, loc.coordinates.lng); if (dist < minDistance) { minDistance = dist; nearest = loc; } });
           document.getElementById('location-name').textContent = nearest.name;
