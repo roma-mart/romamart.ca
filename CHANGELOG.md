@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.6.4] - 2026-02-08
+
+### Changed
+- **vite:** 7.2.6 → 7.3.1 (minor)
+- **framer-motion:** 12.23.24 → 12.33.0 (minor)
+- **lucide-react:** 0.554.0 → 0.563.0 (minor)
+- **globals:** 16.5.0 → 17.3.0 (major, safe)
+- **eslint:** 9.39.1 → 10.0.0 (major)
+- **@eslint/js:** 9.39.1 → 10.0.0 (major)
+- **eslint-plugin-react-refresh:** 0.4.24 → 0.5.0 (major, config API change)
+- **stylelint:** 16.26.1 → 17.1.1 (major, ESM-only)
+- **stylelint-config-standard:** 36.0.1 → 40.0.0 (major)
+- **jsdom:** 27.3.0 → 28.0.0 (major)
+- **GitHub Actions:** checkout v4→v6, setup-node v4→v6, upload-artifact v4→v6, download-artifact v4→v7, html5validator-action v7.2.0→v8.0.0
+
+### Added
+- ESM Stylelint config (`stylelint.config.js`) replacing CommonJS `.stylelintrc.cjs`
+
+### Removed
+- `.stylelintrc.cjs` (replaced by ESM `stylelint.config.js`)
+- Legacy `/* eslint-env node */` comments from scripts (flat config provides globals)
+
+### Fixed
+- 2 `no-useless-assignment` violations (new ESLint 10 rule) in Footer and StandardizedItem
+- Stylelint 17 false positives for valid `window-controls-overlay` and `prefers-contrast: high` CSS
+
 ## [2.6.3] - 2026-02-08
 
 ### Added
