@@ -141,8 +141,9 @@ describe('MenuContext', () => {
       json: () => Promise.resolve({ menu: [{ name: 'Late' }] }),
     });
 
-    // Give it a tick to process
-    await new Promise((r) => setTimeout(r, 50));
+    // Flush microtasks from the resolved fetch promise
+    await Promise.resolve();
+    await Promise.resolve();
 
     // Verify no React state-update-after-unmount warnings were logged
     const stateUpdateWarnings = spy.mock.calls.filter((call) =>
