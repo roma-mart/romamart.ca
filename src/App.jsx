@@ -80,7 +80,7 @@ function Hero({ onTrackOrder }) {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <motion.div initial={shouldReduceMotion ? false : { x: -50 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: shouldReduceMotion ? 0 : 0.8 }}>
             <div className="inline-block px-4 py-1 mb-6 rounded-full border" style={{ borderColor: 'var(--color-accent-bg)', backgroundColor: 'var(--color-accent-bg)', backdropFilter: 'blur(4px)' }}>
-              <span className="text-sm font-inter font-semibold tracking-widest uppercase" style={{ color: 'var(--color-accent)' }}>New In Town</span>
+              <span className="text-sm font-inter font-semibold tracking-widest uppercase" style={{ color: 'var(--color-accent)' }}>{COMPANY_DATA.heroBadge}</span>
             </div>
             <h1 className="text-5xl md:text-7xl uppercase leading-none" style={{ color: 'var(--color-text-on-primary)', marginBottom: '1.5rem' }}>Your Daily <br/><span style={{ color: 'var(--color-accent)' }}>Stop & Go</span></h1>
             <p className="text-lg md:text-xl font-inter mb-6 max-w-lg leading-relaxed" style={{ color: 'var(--color-text-on-primary)' }}>
