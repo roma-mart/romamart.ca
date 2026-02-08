@@ -8,7 +8,7 @@ import HCaptcha from '@hcaptcha/react-hcaptcha';
  * Accepts a ref so the parent can call ref.current.resetCaptcha() after submission.
  * Usage: <HCaptchaWidget ref={captchaRef} onVerify={setCaptchaToken} onExpire={handleExpire} />
  */
-const HCaptchaWidget = forwardRef(function HCaptchaWidget({ onVerify, onExpire, theme, scriptHost }, ref) {
+const HCaptchaWidget = forwardRef(function HCaptchaWidget({ onVerify, onExpire, onError, theme, scriptHost }, ref) {
   return (
     <div className="mb-4 flex justify-center">
       <HCaptcha
@@ -17,6 +17,7 @@ const HCaptchaWidget = forwardRef(function HCaptchaWidget({ onVerify, onExpire, 
         reCaptchaCompat={false}
         onVerify={onVerify}
         onExpire={onExpire}
+        onError={onError}
         theme={theme}
         scriptHost={scriptHost}
       />

@@ -28,6 +28,11 @@ const ContactForm = ({
     setCaptchaToken('');
   }, []);
 
+  const handleCaptchaError = useCallback(() => {
+    setCaptchaToken('');
+    showError('Captcha failed to load. Please try again.');
+  }, [showError]);
+
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     if (submitting) return;
@@ -190,6 +195,7 @@ const ContactForm = ({
             ref={captchaRef}
             onVerify={setCaptchaToken}
             onExpire={handleCaptchaExpire}
+            onError={handleCaptchaError}
             theme={colorScheme}
             scriptHost="https://js.hcaptcha.com/1/api.js?custom=true"
           />
