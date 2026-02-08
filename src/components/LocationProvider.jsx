@@ -7,26 +7,25 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { useGeolocation } from '../hooks/useBrowserFeatures';
-import { getPrimaryLocation } from '../data/locations';
+import { getPrimaryLocation, getLocationById } from '../data/locations';
 import { LocationContext } from '../contexts/LocationContext';
 import { findNearestLocation } from '../utils/locationMath';
 
-const LOCATION_STORAGE_KEY = 'roma_mart_user_location';
+const NEAREST_LOCATION_KEY = 'roma_mart_nearest_location';
 const SESSION_REQUESTED_KEY = 'roma_mart_location_requested';
 const CACHE_DURATION = 3600000; // 1 hour
 
-// Helper to get cached location (pure function)
-const getCachedLocation = () => {
-  const cached = localStorage.getItem(LOCATION_STORAGE_KEY);
-  if (!cached) return null;
-  
+// Helper to get cached nearest location (pure function, no sensitive data)
+const getCachedNearestLocation = () => {
   try {
-    const { latitude, longitude, timestamp } = JSON.parse(cached);
+    const cached = localStorage.getItem(NEAREST_LOCATION_KEY);
+    if (!cached) return null;
+
+    const { locationId, timestamp } = JSON.parse(cached);
     const age = Date.now() - timestamp;
-    
-    // If cached location is less than 1 hour old, use it
-    if (age < CACHE_DURATION) {
-      return { latitude, longitude };
+
+    if (age < CACHE_DURATION && locationId) {
+      return getLocationById(locationId) || null;
     }
   } catch {
     // Invalid cache
@@ -35,8 +34,8 @@ const getCachedLocation = () => {
 };
 
 export const LocationProvider = ({ children }) => {
-  // Initialize with cached location using useMemo to avoid recalculation
-  const cachedLocation = useMemo(() => getCachedLocation(), []);
+  // Initialize with cached nearest location (stores only ID, not coordinates)
+  const cachedNearestLocation = useMemo(() => getCachedNearestLocation(), []);
   
   const [locationRequested, setLocationRequested] = useState(() => {
     return !!sessionStorage.getItem(SESSION_REQUESTED_KEY);
@@ -44,30 +43,36 @@ export const LocationProvider = ({ children }) => {
   
   const { getCurrentLocation, location, loading, error, canUseGeolocation } = useGeolocation();
 
-  // Derive current location from hook location or cached location
+  // Derive current location from geolocation hook (in-memory only, never persisted)
   const userLocation = location && location.latitude !== null && location.latitude !== undefined && location.longitude !== null && location.longitude !== undefined
     ? { latitude: location.latitude, longitude: location.longitude }
-    : cachedLocation;
+    : null;
 
-  // Compute nearest location: user/cached, else fallback to HQ
-  // ...existing code...
+  // Compute nearest location: fresh geolocation > cached nearest > HQ fallback
+  let nearestLocation = null;
+  if (userLocation) {
+    nearestLocation = findNearestLocation(userLocation);
+    if (!nearestLocation) {
+      nearestLocation = cachedNearestLocation || getPrimaryLocation();
+    }
+  } else if (cachedNearestLocation) {
+    nearestLocation = cachedNearestLocation;
+  } else {
+    nearestLocation = getPrimaryLocation();
+  }
 
-  // Store location when received (only updates external systems, no setState)
+  // Cache nearest location ID when it changes (no sensitive coordinates stored)
   useEffect(() => {
-    if (!location || location.latitude === null || location.latitude === undefined || location.longitude === null || location.longitude === undefined) return;
-
-    // Store for offline use (external system sync only)
-    const locationData = {
-      latitude: location.latitude,
-      longitude: location.longitude,
-      timestamp: Date.now()
-    };
+    if (!nearestLocation?.id) return;
 
     try {
-      localStorage.setItem(LOCATION_STORAGE_KEY, JSON.stringify(locationData));
+      localStorage.setItem(NEAREST_LOCATION_KEY, JSON.stringify({
+        locationId: nearestLocation.id,
+        timestamp: Date.now()
+      }));
     } catch { /* Safari private mode */ }
     sessionStorage.setItem(SESSION_REQUESTED_KEY, 'true');
-  }, [location]);
+  }, [nearestLocation]);
 
   // Request location (can be called by any component)
   const requestLocation = () => {
@@ -94,17 +99,6 @@ export const LocationProvider = ({ children }) => {
       requestLocation();
     }
   };
-
-  // Compute nearest location: user/cached, else fallback to HQ
-  let nearestLocation = null;
-  if (userLocation && userLocation.latitude !== null && userLocation.latitude !== undefined && userLocation.longitude !== null && userLocation.longitude !== undefined) {
-    nearestLocation = findNearestLocation(userLocation);
-    if (!nearestLocation) {
-      nearestLocation = getPrimaryLocation();
-    }
-  } else {
-    nearestLocation = getPrimaryLocation();
-  }
 
   const value = {
     userLocation,

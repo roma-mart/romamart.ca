@@ -1,13 +1,12 @@
 /**
  * Auto Location Hook
  * Automatically requests user location on mount (once per session)
- * LocationProvider is the sole writer to localStorage for location coords
+ * LocationProvider is the sole writer to localStorage (stores only nearest location ID, not coordinates)
  */
 
 import { useEffect } from 'react';
 import { useGeolocation } from './useBrowserFeatures';
 
-const LOCATION_STORAGE_KEY = 'roma_mart_user_location';
 const SESSION_REQUESTED_KEY = 'roma_mart_location_requested';
 
 export const useAutoLocation = (onLocationFound, options = {}) => {
@@ -25,34 +24,12 @@ export const useAutoLocation = (onLocationFound, options = {}) => {
     const alreadyRequested = sessionStorage.getItem(SESSION_REQUESTED_KEY);
     if (alreadyRequested) return;
 
-    // Check if we have recent cached location (within 1 hour)
-    try {
-      const cached = localStorage.getItem(LOCATION_STORAGE_KEY);
-      if (cached) {
-        const { latitude, longitude, timestamp } = JSON.parse(cached);
-        const age = Date.now() - timestamp;
-
-        // If cached location is less than 1 hour old, use it
-        if (age < 3600000 && latitude !== null && latitude !== undefined && longitude !== null && longitude !== undefined) {
-          if (onLocationFound) {
-            onLocationFound({
-              coords: { latitude, longitude }
-            });
-          }
-          sessionStorage.setItem(SESSION_REQUESTED_KEY, 'true');
-          return;
-        }
-      }
-    } catch {
-      // Invalid cache, request fresh location
-    }
-
-    // Request fresh location
+    // Request fresh location (browser caches the permission)
     getCurrentLocation();
     sessionStorage.setItem(SESSION_REQUESTED_KEY, 'true');
-  }, [autoRequest, canUseGeolocation, getCurrentLocation, onLocationFound]);
+  }, [autoRequest, canUseGeolocation, getCurrentLocation]);
 
-  // Notify parent when location is received (no localStorage writes — LocationProvider owns that)
+  // Notify parent when location is received (in-memory only)
   useEffect(() => {
     if (location && onLocationFound) {
       onLocationFound({
@@ -65,23 +42,4 @@ export const useAutoLocation = (onLocationFound, options = {}) => {
   }, [location, onLocationFound]);
 
   return { location, loading, error };
-};
-
-/**
- * Get stored location from localStorage (for use in offline.html)
- */
-export const getStoredLocation = () => {
-  try {
-    const cached = localStorage.getItem(LOCATION_STORAGE_KEY);
-    if (cached) {
-      const { latitude, longitude } = JSON.parse(cached);
-      if (latitude !== null && latitude !== undefined && longitude !== null && longitude !== undefined) {
-        return { latitude, longitude };
-      }
-    }
-  } catch {
-    // Invalid cache
-  }
-
-  return null;
 };

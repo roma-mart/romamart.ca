@@ -104,27 +104,20 @@
       const LOCATIONS = /* __OFFLINE_LOCATIONS__ */ [
         { id: 'loc-wellington-001', name: 'Roma Mart Convenience', address: '3-189 Wellington Street, Sarnia, ON  N7T 1G6', phone: '+1 (382) 342-2000', coordinates: { lat: 42.970389, lng: -82.404589 }, isPrimary: true }
       ];
-      // Haversine distance — duplicated from src/data/locations.js because
-      // this page must be fully self-contained for offline use.
-      function calculateDistance(lat1, lon1, lat2, lon2) {
-        const R = 6371;
-        const dLat = (lat2 - lat1) * Math.PI / 180;
-        const dLon = (lon2 - lon1) * Math.PI / 180;
-        const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2) * Math.sin(dLon/2);
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        return R * c;
-      }
       try {
-        const cached = localStorage.getItem('roma_mart_user_location');
+        const cached = localStorage.getItem('roma_mart_nearest_location');
         if (cached) {
           const parsed = JSON.parse(cached);
-          const lat = parsed.latitude; const lng = parsed.longitude;
-          let nearest = LOCATIONS[0]; let minDistance = Infinity;
-          LOCATIONS.forEach(loc => { const dist = calculateDistance(lat, lng, loc.coordinates.lat, loc.coordinates.lng); if (dist < minDistance) { minDistance = dist; nearest = loc; } });
-          document.getElementById('location-name').textContent = nearest.name;
-          document.getElementById('location-address').textContent = nearest.address;
-          const distanceText = minDistance < 1 ? Math.round(minDistance * 1000) + 'm away' : minDistance.toFixed(1) + 'km away';
-          document.getElementById('location-distance').textContent = 'Nearest store: ' + distanceText + ' \u2022 This page works offline';
+          const match = LOCATIONS.find(loc => loc.id === parsed.locationId);
+          if (match) {
+            document.getElementById('location-name').textContent = match.name;
+            document.getElementById('location-address').textContent = match.address;
+            document.getElementById('location-distance').textContent = 'Your nearest store \u2022 This page works offline';
+          } else {
+            const hq = LOCATIONS.find(loc => loc.isPrimary) || LOCATIONS[0];
+            document.getElementById('location-name').textContent = hq.name + ' (Headquarters)';
+            document.getElementById('location-address').textContent = hq.address;
+          }
         } else {
           const hq = LOCATIONS.find(loc => loc.isPrimary) || LOCATIONS[0];
           document.getElementById('location-name').textContent = hq.name + ' (Headquarters)';
