@@ -6,26 +6,21 @@
  * Called as a post-deploy CI step. Non-blocking: deploy succeeds even if
  * IndexNow API is unavailable.
  *
+ * Routes derived from NAVIGATION_LINKS (SSOT) and base URL from COMPANY_DATA.
  * Protocol: https://www.indexnow.org/documentation
  */
 
+import COMPANY_DATA from '../src/config/company_data.js';
+import { NAVIGATION_LINKS } from '../src/config/navigation.js';
+
 const INDEXNOW_KEY = '9d57194ca7f27ee205e1cf0f37f821f9';
-const HOST = 'romamart.ca';
+const BASE_URL = COMPANY_DATA.baseUrl;
+const HOST = new URL(BASE_URL).hostname;
 const ENDPOINT = 'https://api.indexnow.org/indexnow';
 
-const urls = [
-  'https://romamart.ca/',
-  'https://romamart.ca/services',
-  'https://romamart.ca/rocafe',
-  'https://romamart.ca/locations',
-  'https://romamart.ca/contact',
-  'https://romamart.ca/about',
-  'https://romamart.ca/accessibility',
-  'https://romamart.ca/privacy',
-  'https://romamart.ca/terms',
-  'https://romamart.ca/cookies',
-  'https://romamart.ca/return-policy',
-];
+const urls = NAVIGATION_LINKS.map((link) =>
+  link.href === '/' ? `${BASE_URL}/` : `${BASE_URL}${link.href}`
+);
 
 async function notifyIndexNow() {
   const body = {
