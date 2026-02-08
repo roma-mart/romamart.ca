@@ -41,7 +41,7 @@ const TrustpilotWidget = () => {
   const reviewUrl = COMPANY_DATA.trustpilotReviewUrl;
 
   React.useEffect(() => {
-    if (!businessUnitId || !templateId) return;
+    if (!businessUnitId || !templateId || !token) return;
 
     const loadWidget = () => {
       if (window.Trustpilot && widgetRef.current) {
@@ -69,10 +69,10 @@ const TrustpilotWidget = () => {
     script.id = TRUSTBOX_SCRIPT_ID;
     script.onload = loadWidget;
     document.body.appendChild(script);
-  }, [businessUnitId, templateId]);
+  }, [businessUnitId, templateId, token]);
 
   // Fallback when env vars are not configured
-  if (!businessUnitId || !templateId) {
+  if (!businessUnitId || !templateId || !token) {
     return <FallbackLink reviewUrl={reviewUrl} />;
   }
 

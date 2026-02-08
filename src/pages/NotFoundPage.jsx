@@ -13,9 +13,14 @@ const NotFoundPage = () => {
       ? import.meta.env.BASE_URL
       : '/';
 
+  const currentPath =
+    typeof window !== 'undefined' && window.location
+      ? window.location.pathname
+      : '/404';
+
   const breadcrumbs = buildBreadcrumbArray(
     'Page Not Found',
-    `${COMPANY_DATA.baseUrl}/404`
+    `${COMPANY_DATA.baseUrl}${currentPath}`
   );
 
   // Show main nav links (navbar items, excluding Home)
