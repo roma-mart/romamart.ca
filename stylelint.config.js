@@ -16,5 +16,6 @@ export default {
         ignore: ['stylelint-commands', 'after-comment'],
       },
     ],
+    'media-feature-name-value-no-unknown': null,
   },
 };
