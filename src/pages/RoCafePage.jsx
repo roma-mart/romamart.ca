@@ -107,7 +107,6 @@ const RoCafePage = () => {
             Welcome to RoCafé, where quality meets convenience. Enjoy our premium selection of beverages and food, 
             crafted fresh daily with the finest ingredients.
           </p>
-          {/* <MenuExcelLoader /> */}
           <div className="flex justify-center">
             <ShareButton 
               title="RoCafé Menu"
