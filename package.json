@@ -24,8 +24,8 @@
   },
   "dependencies": {
     "@hcaptcha/react-hcaptcha": "^1.17.1",
-    "framer-motion": "^12.23.24",
-    "lucide-react": "^0.554.0",
+    "framer-motion": "^12.33.0",
+    "lucide-react": "^0.563.0",
     "prop-types": "^15.8.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -50,7 +50,7 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
     "gh-pages": "^6.3.0",
-    "globals": "^16.5.0",
+    "globals": "^17.3.0",
     "husky": "^9.1.0",
     "jsdom": "^27.3.0",
     "lint-staged": "^16.2.7",
@@ -59,7 +59,7 @@
     "stylelint": "^16.9.0",
     "stylelint-config-standard": "^36.0.1",
     "tailwindcss": "^3.4.18",
-    "vite": "^7.2.6",
+    "vite": "^7.3.1",
     "vitest": "^4.0.15"
   },
   "overrides": {
