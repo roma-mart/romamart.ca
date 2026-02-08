@@ -10,7 +10,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.6.3] - 2026-02-08
 
 ### Added
-- CookieConsent banner for PIPEDA/CASL compliance -- Accept All upgrades Google Consent Mode v2, Necessary Only keeps defaults (R39)
 - Prettier config (`.prettierrc.json`), `.prettierignore`, format-on-commit via lint-staged (R40)
 - `format` and `format:check` npm scripts for manual formatting
 - Border-radius design tokens (`borderRadius` export) in `src/design/tokens.js` (R45)

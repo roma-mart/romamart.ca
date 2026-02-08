@@ -49,7 +49,6 @@ const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 
 // component imports
 import NetworkStatus from './components/NetworkStatus';
-import CookieConsent from './components/CookieConsent';
 import CopyButton from './components/CopyButton';
 import COMPANY_DATA from './config/company_data';
 
@@ -819,7 +818,6 @@ function App() {
         }}
       />
       <NetworkStatus />
-      <CookieConsent />
     </>
   );
 }
