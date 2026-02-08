@@ -103,6 +103,15 @@ export function LocationsProvider({ children }) {
     };
   }, []);
 
+  // Reset selection if saved ID no longer exists in locations (e.g. API returned different set)
+  useEffect(() => {
+    if (loading || selectedLocationId === 'auto') return;
+    const exists = locations.some((loc) => loc.id === selectedLocationId);
+    if (!exists) {
+      selectLocation('auto');
+    }
+  }, [locations, loading, selectedLocationId, selectLocation]);
+
   const value = { locations, loading, error, source, selectedLocationId, selectLocation };
 
   return (

@@ -28,7 +28,7 @@ export default function FooterLinks() {
   return (
     <div className="col-span-1 md:col-span-2 grid grid-cols-2 gap-8">
       <div className="p-1">
-        <p className="font-heading text-lg mb-6" style={{ color: 'var(--color-on-footer)' }}>
+        <p className="text-heading text-lg mb-6" style={{ color: 'var(--color-on-footer)' }}>
           Pages
         </p>
         <ul className="space-y-3 font-inter" style={{ color: 'var(--color-on-footer-muted)' }}>
@@ -36,10 +36,8 @@ export default function FooterLinks() {
             <li key={link.href}>
               <a
                 href={`${BASE_URL}${link.href.replace('/', '')}`}
-                className="transition-colors"
+                className="footer-link transition-colors hover:text-[var(--color-accent)] focus-visible:text-[var(--color-accent)]"
                 style={{ color: 'var(--color-on-footer-muted)' }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-accent)')}
-                onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-on-footer-muted)')}
               >
                 {link.label}
               </a>
@@ -52,8 +50,6 @@ export default function FooterLinks() {
               rel="noopener noreferrer"
               className="font-bold transition-colors"
               style={{ color: 'var(--color-accent)' }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-accent)')}
-              onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-accent)')}
             >
               Order Online
             </a>
@@ -61,7 +57,7 @@ export default function FooterLinks() {
         </ul>
       </div>
       <div className="p-1">
-        <p className="font-heading text-lg mb-6" style={{ color: 'var(--color-on-footer)' }}>
+        <p className="text-heading text-lg mb-6" style={{ color: 'var(--color-on-footer)' }}>
           Legal & Accessibility
         </p>
         <ul className="space-y-2 font-inter" style={{ color: 'var(--color-on-footer-muted)' }}>
@@ -69,10 +65,8 @@ export default function FooterLinks() {
             <li key={link.href}>
               <a
                 href={`${BASE_URL}${link.href.replace('/', '')}`}
-                className="transition-colors"
+                className="footer-link transition-colors hover:text-[var(--color-accent)] focus-visible:text-[var(--color-accent)]"
                 style={{ color: 'var(--color-on-footer-muted)' }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-accent)')}
-                onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-on-footer-muted)')}
               >
                 {link.label}
               </a>
@@ -81,10 +75,8 @@ export default function FooterLinks() {
           <li>
             <a
               href={`${BASE_URL}ai.txt`}
-              className="transition-colors text-xs"
+              className="footer-link transition-colors text-xs hover:text-[var(--color-accent)] focus-visible:text-[var(--color-accent)]"
               style={{ color: 'var(--color-on-footer-muted)' }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-accent)')}
-              onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-on-footer-muted)')}
               title="AI Crawler Guidelines"
             >
               AI Guidelines

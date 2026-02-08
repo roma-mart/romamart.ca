@@ -23,12 +23,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `ErrorBoundary` rewritten with branded UI, Refresh/Go Home actions, GA tracking
 - Footer decomposed (468 → 189 lines); bottom padding clears FAB
 - Button base styles: `inline-flex` centering, unified spring animation (`stiffness: 400, damping: 35`)
+- Button `order` variant uses pill radius (`--radius-full`) for consistent CTA shape
 - 14 Button callsites cleaned of redundant overrides
 - Inline handlers memoized with `useCallback` across 7 components
 - FAB: safe-area bottom spacing, `animation-fill-mode: backwards`, removed conflicting CSS
 - `focus-visible:ring-accent` on carousel arrows and review controls
 - `console.warn` kept in production for SEO-impacting StructuredData issues
-- FooterLocation: safe localStorage access, correct `COMPANY_DATA.location` fallback
+- `LocationsContext` is now SSOT for `selectedLocationId` + `selectLocation`; validates selection on location updates
+- `LocationProvider` moved to root (`main.jsx`), no longer re-created inside App
+- Footer delegates distance calculation to shared `findNearestLocation` utility
+- Coordinate checks use `!= null` instead of falsy guards (0 is a valid coordinate)
+- `useAutoLocation` no longer writes to localStorage (LocationProvider is sole writer)
+- FooterLocation auto option text dynamically derives HQ name from locations array
+- FooterLinks: replaced inline `onMouseEnter`/`onMouseLeave` with CSS `hover:`/`focus-visible:` utilities
+- `font-heading` class replaced with `text-heading` (correct utility) across Footer and accordion components
 
 ### Fixed
 - LocationsPage carousel arrow direction and image selection

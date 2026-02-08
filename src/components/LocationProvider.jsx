@@ -45,7 +45,7 @@ export const LocationProvider = ({ children }) => {
   const { getCurrentLocation, location, loading, error, canUseGeolocation } = useGeolocation();
 
   // Derive current location from hook location or cached location
-  const userLocation = location && location.latitude && location.longitude
+  const userLocation = location && location.latitude !== null && location.latitude !== undefined && location.longitude !== null && location.longitude !== undefined
     ? { latitude: location.latitude, longitude: location.longitude }
     : cachedLocation;
 
@@ -54,22 +54,20 @@ export const LocationProvider = ({ children }) => {
 
   // Store location when received (only updates external systems, no setState)
   useEffect(() => {
-    if (!location || !location.latitude || !location.longitude) return;
-    
-    const coords = {
-      latitude: location.latitude,
-      longitude: location.longitude
-    };
-    
+    if (!location || location.latitude === null || location.latitude === undefined || location.longitude === null || location.longitude === undefined) return;
+
     // Store for offline use (external system sync only)
     const locationData = {
-      ...coords,
+      latitude: location.latitude,
+      longitude: location.longitude,
       timestamp: Date.now()
     };
-    
-    localStorage.setItem(LOCATION_STORAGE_KEY, JSON.stringify(locationData));
-    localStorage.setItem('roma_mart_user_lat', location.latitude.toString());
-    localStorage.setItem('roma_mart_user_lng', location.longitude.toString());
+
+    try {
+      localStorage.setItem(LOCATION_STORAGE_KEY, JSON.stringify(locationData));
+      localStorage.setItem('roma_mart_user_lat', location.latitude.toString());
+      localStorage.setItem('roma_mart_user_lng', location.longitude.toString());
+    } catch { /* Safari private mode */ }
     sessionStorage.setItem(SESSION_REQUESTED_KEY, 'true');
   }, [location]);
 
@@ -101,7 +99,7 @@ export const LocationProvider = ({ children }) => {
 
   // Compute nearest location: user/cached, else fallback to HQ
   let nearestLocation = null;
-  if (userLocation && userLocation.latitude && userLocation.longitude) {
+  if (userLocation && userLocation.latitude !== null && userLocation.latitude !== undefined && userLocation.longitude !== null && userLocation.longitude !== undefined) {
     nearestLocation = findNearestLocation(userLocation);
     if (!nearestLocation) {
       nearestLocation = getPrimaryLocation();

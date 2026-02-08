@@ -14,6 +14,11 @@ export default function FooterLocation({ locations, nearestLocationId, selectedL
     [locations]
   );
 
+  const hqName = useMemo(() => {
+    const primary = locations.find((loc) => loc.isPrimary);
+    return primary?.name || locations[0]?.name || 'Headquarters';
+  }, [locations]);
+
   const handleChange = useCallback((e) => {
     onLocationChange(e.target.value);
   }, [onLocationChange]);
@@ -36,7 +41,7 @@ export default function FooterLocation({ locations, nearestLocationId, selectedL
       >
         <label
           htmlFor="location-selector"
-          className="font-heading text-base mb-2 flex items-center gap-2 justify-center text-center"
+          className="text-heading text-base mb-2 flex items-center gap-2 justify-center text-center"
           style={{ color: 'var(--color-accent)', fontWeight: 600, width: '100%' }}
         >
           <MapPin className="inline-block" size={18} aria-hidden="true" />
@@ -67,7 +72,7 @@ export default function FooterLocation({ locations, nearestLocationId, selectedL
             <option value="auto">
               {isAutoMode && nearestLocationId
                 ? `\uD83C\uDFAF Auto-Detected: ${currentLocation.name}`
-                : '\uD83C\uDFE2 Auto (HQ - Wellington St.)'}
+                : `\uD83C\uDFE2 Auto (HQ - ${hqName})`}
             </option>
             {activeLocations.map((loc) => (
               <option key={loc.id} value={loc.id}>

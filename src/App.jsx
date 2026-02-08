@@ -13,7 +13,6 @@ import {
   Coffee,
 } from 'lucide-react';
 // ...existing code...
-import { LocationProvider } from './components/LocationProvider';
 import { getPreferredLocation, isLocationOpenNow } from './data/locations';
 import { Logo } from './components/Logo';
 import Navbar from './components/Navbar';
@@ -530,7 +529,7 @@ function App() {
   } if (window.dataLayer) { window.dataLayer.push({ event: 'order_cta_click', cta_location: location, cta_text: 'Order Online' }); } }, []);
 
   return (
-    <LocationProvider>
+    <>
       <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--color-bg)' }}>
                 {/* PWA WebApplication Schema (Homepage Only) */}
                 {currentPage === 'home' && (
@@ -646,7 +645,7 @@ function App() {
         onDismiss={() => { sessionStorage.setItem('pwa-update-dismissed', 'true'); setUpdateDismissed(true); }}
       />
       <NetworkStatus />
-    </LocationProvider>
+    </>
   );
 }
 

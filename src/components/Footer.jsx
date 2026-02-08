@@ -10,6 +10,7 @@ import { Logo } from './Logo';
 import TrustpilotWidget from './TrustpilotWidget';
 import { useLocationContext } from '../hooks/useLocationContext';
 import { useLocations } from '../contexts/LocationsContext';
+import { findNearestLocation } from '../utils/locationMath';
 import OrderCTA from './OrderCTA';
 import Button from './Button';
 import FooterReviews from './FooterReviews';
@@ -32,30 +33,11 @@ export default function Footer() {
   const { userLocation } = useLocationContext();
   const { locations, selectedLocationId, selectLocation } = useLocations();
 
-  // Nearest location (Haversine)
+  // Nearest open location (delegates to shared utility)
   const nearestLocationId = useMemo(() => {
-    if (!userLocation || !userLocation.latitude || !userLocation.longitude) return null;
-    const toRad = (deg) => (deg * Math.PI) / 180;
-    let nearest = null;
-    let minDist = Infinity;
-    locations
-      .filter((loc) => loc.status === 'open')
-      .forEach((loc) => {
-        if (!loc.google?.coordinates) return;
-        const dLat = toRad(loc.google.coordinates.lat - userLocation.latitude);
-        const dLon = toRad(loc.google.coordinates.lng - userLocation.longitude);
-        const a =
-          Math.sin(dLat / 2) ** 2 +
-          Math.cos(toRad(userLocation.latitude)) *
-            Math.cos(toRad(loc.google.coordinates.lat)) *
-            Math.sin(dLon / 2) ** 2;
-        const d = 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        if (d < minDist) {
-          minDist = d;
-          nearest = loc.id;
-        }
-      });
-    return nearest;
+    const openLocations = locations.filter((loc) => loc.status === 'open');
+    const nearest = findNearestLocation(userLocation, openLocations);
+    return nearest?.id ?? null;
   }, [userLocation, locations]);
 
   // Resolve selected/nearest/fallback into a single current location for both children

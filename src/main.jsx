@@ -5,6 +5,7 @@ import { ToastProvider } from './components/ToastContainer'
 import { MenuProvider } from './contexts/MenuContext.jsx'
 import { ServicesProvider } from './contexts/ServicesContext.jsx'
 import { LocationsProvider } from './contexts/LocationsContext.jsx'
+import { LocationProvider } from './components/LocationProvider.jsx'
 import './index.css'
 import App from './App.jsx'
 
@@ -48,9 +49,11 @@ createRoot(document.getElementById('root')).render(
       <MenuProvider>
         <ServicesProvider>
           <LocationsProvider>
-            <ToastProvider>
-              <App />
-            </ToastProvider>
+            <LocationProvider>
+              <ToastProvider>
+                <App />
+              </ToastProvider>
+            </LocationProvider>
           </LocationsProvider>
         </ServicesProvider>
       </MenuProvider>

@@ -100,6 +100,7 @@ const VARIANT_STYLES = {
     fontWeight: 700,
     fontFamily: 'var(--font-heading)',
     border: 'none',
+    borderRadius: 'var(--radius-full)',
     boxShadow: '0 4px 16px var(--color-accent-shadow, rgba(228,179,64,0.15))',
   },
   nav: {
