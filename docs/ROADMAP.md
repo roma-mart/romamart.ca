@@ -169,7 +169,7 @@ Work is grouped into 9 logical sprints based on domain alignment, dependency rel
 - **Labels:** `quality`, `priority-medium`
 - **Version:** 2.6.3
 - **Status:** Complete
-- **Summary:** Full re-audit of all 55 recommendations confirmed 42 already fixed in Sprints 1-8. Sprint 9 closed 7 remaining actionable gaps: removed dead xlsx dependency (~230KB) and FontAwesome packages (~30-40KB), gated production console.warn calls, added Prettier + format-on-commit, created border-radius design tokens, made hero badge data-driven, and removed redundant footer title attributes. R39 (CookieConsent) confirmed handled by Clickio CMP via GTM -- no custom component needed.
+- **Summary:** Full re-audit of all 55 recommendations confirmed 40 already fixed in Sprints 1-8. Sprint 9 closed 7 remaining actionable gaps: removed dead xlsx dependency (~230KB) and FontAwesome packages (~30-40KB), gated production console.warn calls, added Prettier + format-on-commit, created border-radius design tokens, made hero badge data-driven, and removed redundant footer title attributes. R39 (CookieConsent) confirmed handled by Clickio CMP via GTM -- no custom component needed.
 - **Remaining unfixed:** R38 (Coming Soon services -- user deferred), R39 (consent -- handled by Clickio CMP via GTM, not in codebase), R49 (WebP/AVIF), R51 (React 19 doc correction), R52 (TypeScript), R53 (Playwright), R54 (Lighthouse CI), R55 (vite-plugin-pwa)
 
 ### Post-Sprint: Documentation Update

@@ -2,7 +2,7 @@ import React, { useState, useEffect, Suspense, lazy, useCallback, useMemo } from
 import ErrorBoundary from './components/ErrorBoundary';
 import LoadingFallback from './components/LoadingFallback';
 import { motion, useReducedMotion } from 'framer-motion';
-import { ShoppingBasket, Star, Bitcoin, Utensils, ArrowRight, ExternalLink, MapPin, Coffee } from 'lucide-react';
+import { ArrowRight, ExternalLink, MapPin } from 'lucide-react';
 // ...existing code...
 import { getPreferredLocation, isLocationOpenNow } from './data/locations';
 import { Logo } from './components/Logo';

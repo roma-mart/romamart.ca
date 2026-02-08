@@ -283,7 +283,7 @@ const preferred = getPreferredLocation({ userCoords, locations });
 ### Production Cutover
 Before going live on custom domain:
 1. Change `base: '/'` in `vite.config.js` (remove repo name)
-2. Update CookieConsent policy links if needed (currently links to `/cookies`)
+2. Confirm Clickio CMP policy links are correct in GTM (privacy at `/privacy`, cookies at `/cookies`)
 3. Update GTM container settings
 4. Verify with Tag Assistant Preview
 5. Test all routes and analytics
@@ -478,7 +478,7 @@ import { SERVICES } from '../data/services';
 
 ### Production (Custom Domain)
 1. Update `vite.config.js`: Change `base: '/'` (remove repo name)
-2. Update CookieConsent policy links if needed (currently links to `/cookies`)
+2. Confirm Clickio CMP policy links are correct in GTM (privacy at `/privacy`, cookies at `/cookies`)
 3. Update GTM container for production environment
 4. Build: `npm run build`
 5. Deploy `dist/` folder to hosting (manual or CI/CD)

@@ -371,11 +371,12 @@ All 55 recommendations were re-audited after 9 sprints of implementation work. S
 
 | Status | Count | IDs |
 |--------|-------|-----|
-| **Fixed** | 49 | R1-R22, R24, R26-R36, R40-R48, R50 |
+| **Fixed (Sprints 1-8)** | 40 | R1-R22, R24, R26-R36, R41-R43, R46-R48 |
 | **Fixed (Sprint 9)** | 7 | R23, R25, R37, R40, R44, R45, R50 |
 | **Deferred (user decision)** | 1 | R38 (Coming Soon services left as-is) |
 | **Handled externally** | 1 | R39 (Clickio CMP via GTM handles consent banner) |
-| **Future / large scope** | 6 | R49, R51, R52, R53, R54, R55 |
+| **Future / large scope** | 4 | R49, R51-R53 |
+| **Future (CI/infra)** | 2 | R54, R55 |
 
 ### Problem Resolution
 
@@ -415,4 +416,4 @@ All 55 recommendations were re-audited after 9 sprints of implementation work. S
 
 ---
 
-*Post-sprint update: February 8, 2026. 49 of 55 recommendations implemented across 9 sprints (v2.3.0 through v2.6.3). 1 deferred by user decision. 1 handled externally (Clickio CMP). 4 deferred as future large-scope work.*
+*Post-sprint update: February 8, 2026. 47 of 55 recommendations implemented across 9 sprints (v2.3.0 through v2.6.3). 1 deferred by user decision. 1 handled externally (Clickio CMP). 6 deferred as future large-scope work.*
