@@ -542,7 +542,7 @@ function App() {
   }, [pathname]);
   const currentPage = getPage();
   const handleTrackOrderClick = useCallback((location = 'hero_section') => { try { if (typeof window.trackOrderClick === 'function') { window.trackOrderClick(location); } } catch (e) {
-    console.warn('trackOrderClick failed:', e);
+    if (import.meta.env.DEV) console.warn('trackOrderClick failed:', e);
   } if (window.dataLayer) { window.dataLayer.push({ event: 'order_cta_click', cta_location: location, cta_text: 'Order Online' }); } }, []);
 
   return (
