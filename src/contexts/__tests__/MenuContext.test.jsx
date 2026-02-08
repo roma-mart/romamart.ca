@@ -143,6 +143,12 @@ describe('MenuContext', () => {
 
     // Give it a tick to process
     await new Promise((r) => setTimeout(r, 50));
+
+    // Verify no React state-update-after-unmount warnings were logged
+    const stateUpdateWarnings = spy.mock.calls.filter((call) =>
+      call.some((arg) => typeof arg === 'string' && arg.includes('unmounted'))
+    );
+    expect(stateUpdateWarnings).toHaveLength(0);
     spy.mockRestore();
   });
 });

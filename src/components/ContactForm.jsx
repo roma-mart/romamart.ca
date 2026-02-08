@@ -78,8 +78,6 @@ const ContactForm = ({
         showSuccess('Message sent successfully!');
         setFieldErrors({});
         form.reset();
-        setCaptchaToken('');
-        captchaRef.current?.resetCaptcha();
         window.dataLayer?.push({
           event: 'contact_form_submit',
           form_location: idPrefix,
@@ -90,6 +88,8 @@ const ContactForm = ({
     } catch {
       showError('Failed to send message. Please try again.');
     } finally {
+      setCaptchaToken('');
+      captchaRef.current?.resetCaptcha();
       setSubmitting(false);
     }
   }, [captchaToken, submitting, showSuccess, showError, idPrefix]);

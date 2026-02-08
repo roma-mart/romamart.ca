@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import {
   ApiCircuitBreaker,
   createApiCircuitBreaker,
@@ -6,12 +6,9 @@ import {
 } from '../apiCircuitBreaker';
 
 describe('ApiCircuitBreaker', () => {
-  beforeEach(() => {
-    vi.stubGlobal('import', { meta: { env: { DEV: true } } });
-  });
-
   afterEach(() => {
     vi.restoreAllMocks();
+    vi.unstubAllGlobals();
   });
 
   describe('constructor', () => {
@@ -219,7 +216,7 @@ describe('ApiCircuitBreaker', () => {
   });
 
   describe('reset', () => {
-    it('should reset all state in DEV mode', () => {
+    it('should reset all state (import.meta.env.DEV is true in Vitest)', () => {
       const breaker = new ApiCircuitBreaker({ failureThreshold: 2 });
       breaker.recordFailure(429);
       breaker.recordFailure(429);
