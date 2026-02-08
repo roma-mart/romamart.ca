@@ -1,4 +1,3 @@
-/* eslint-env node */
 /**
  * IndexNow Notification Script
  *
@@ -18,9 +17,7 @@ const BASE_URL = COMPANY_DATA.baseUrl;
 const HOST = new URL(BASE_URL).hostname;
 const ENDPOINT = 'https://api.indexnow.org/indexnow';
 
-const urls = NAVIGATION_LINKS.map((link) =>
-  link.href === '/' ? `${BASE_URL}/` : `${BASE_URL}${link.href}`
-);
+const urls = NAVIGATION_LINKS.map((link) => (link.href === '/' ? `${BASE_URL}/` : `${BASE_URL}${link.href}`));
 
 async function notifyIndexNow() {
   const body = {

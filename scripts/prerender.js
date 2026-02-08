@@ -1,5 +1,3 @@
-/* eslint-env node */
-/* global process */
 import fs from 'fs';
 import path from 'path';
 import { createHash } from 'crypto';
@@ -27,18 +25,20 @@ const routes = [
   {
     path: '/',
     title: 'Home',
-    description: 'Roma Mart Convenience - Groceries, Global Snacks, Halal Meat, Coffee & More in Sarnia, ON. ATM, Bitcoin, Lottery, and Tobacco services available.',
+    description:
+      'Roma Mart Convenience - Groceries, Global Snacks, Halal Meat, Coffee & More in Sarnia, ON. ATM, Bitcoin, Lottery, and Tobacco services available.',
     ogImage: DEFAULT_OG_IMAGE,
     twitterImage: DEFAULT_TW_IMAGE,
-    imageAlt: DEFAULT_IMAGE_ALT
+    imageAlt: DEFAULT_IMAGE_ALT,
   },
   {
     path: '/services',
     title: 'Services',
-    description: 'Explore Roma Mart services: ATM, Bitcoin ATM, printing, money transfer, lottery, and more in Sarnia, ON.',
+    description:
+      'Explore Roma Mart services: ATM, Bitcoin ATM, printing, money transfer, lottery, and more in Sarnia, ON.',
     ogImage: `${BASE_URL}/images/romamart-interior1.png`,
     twitterImage: `${BASE_URL}/images/romamart-interior1.png`,
-    imageAlt: 'Roma Mart interior showcasing products and services'
+    imageAlt: 'Roma Mart interior showcasing products and services',
   },
   {
     path: '/rocafe',
@@ -46,7 +46,7 @@ const routes = [
     description: 'Discover RoCafé coffee, bubble tea, matcha lattes, and signature drinks at Roma Mart in Sarnia, ON.',
     ogImage: `${BASE_URL}/rocafe-logo.png`,
     twitterImage: `${BASE_URL}/rocafe-logo.png`,
-    imageAlt: 'RoCafé logo and beverage branding'
+    imageAlt: 'RoCafé logo and beverage branding',
   },
   {
     path: '/return-policy',
@@ -54,7 +54,7 @@ const routes = [
     description: 'Roma Mart Return Policy - All sales final except for faulty products reported within 24 hours.',
     ogImage: DEFAULT_OG_IMAGE,
     twitterImage: DEFAULT_TW_IMAGE,
-    imageAlt: DEFAULT_IMAGE_ALT
+    imageAlt: DEFAULT_IMAGE_ALT,
   },
   {
     path: '/locations',
@@ -62,7 +62,7 @@ const routes = [
     description: 'Find Roma Mart locations, hours, and directions in Sarnia, Ontario.',
     ogImage: `${BASE_URL}/images/romamart-opening1.png`,
     twitterImage: `${BASE_URL}/images/romamart-opening1.png`,
-    imageAlt: 'Roma Mart storefront exterior'
+    imageAlt: 'Roma Mart storefront exterior',
   },
   {
     path: '/contact',
@@ -70,7 +70,7 @@ const routes = [
     description: 'Get in touch with Roma Mart Convenience in Sarnia, ON. Phone, email, and directions.',
     ogImage: `${BASE_URL}/images/romamart-interior2.png`,
     twitterImage: `${BASE_URL}/images/romamart-interior2.png`,
-    imageAlt: 'Roma Mart interior with shelves and signage'
+    imageAlt: 'Roma Mart interior with shelves and signage',
   },
   {
     path: '/about',
@@ -78,7 +78,7 @@ const routes = [
     description: 'Learn about Roma Mart Convenience, our community focus, and services in Sarnia, ON.',
     ogImage: `${BASE_URL}/images/romamart-opening2.png`,
     twitterImage: `${BASE_URL}/images/romamart-opening2.png`,
-    imageAlt: 'Roma Mart grand opening event'
+    imageAlt: 'Roma Mart grand opening event',
   },
   {
     path: '/accessibility',
@@ -86,7 +86,7 @@ const routes = [
     description: 'Roma Mart Accessibility Statement - WCAG 2.2 Level AA compliance and accessibility commitments.',
     ogImage: DEFAULT_OG_IMAGE,
     twitterImage: DEFAULT_TW_IMAGE,
-    imageAlt: DEFAULT_IMAGE_ALT
+    imageAlt: DEFAULT_IMAGE_ALT,
   },
   {
     path: '/privacy',
@@ -94,7 +94,7 @@ const routes = [
     description: 'Roma Mart Privacy Policy - How we collect, use, and protect your information.',
     ogImage: DEFAULT_OG_IMAGE,
     twitterImage: DEFAULT_TW_IMAGE,
-    imageAlt: DEFAULT_IMAGE_ALT
+    imageAlt: DEFAULT_IMAGE_ALT,
   },
   {
     path: '/terms',
@@ -102,7 +102,7 @@ const routes = [
     description: 'Roma Mart Terms of Service and usage policies.',
     ogImage: DEFAULT_OG_IMAGE,
     twitterImage: DEFAULT_TW_IMAGE,
-    imageAlt: DEFAULT_IMAGE_ALT
+    imageAlt: DEFAULT_IMAGE_ALT,
   },
   {
     path: '/cookies',
@@ -110,8 +110,8 @@ const routes = [
     description: 'Roma Mart Cookie Policy and preferences.',
     ogImage: DEFAULT_OG_IMAGE,
     twitterImage: DEFAULT_TW_IMAGE,
-    imageAlt: DEFAULT_IMAGE_ALT
-  }
+    imageAlt: DEFAULT_IMAGE_ALT,
+  },
 ];
 
 const to24h = (timeStr) => {
@@ -128,29 +128,262 @@ const to24h = (timeStr) => {
 
 const parseHoursRange = (range) => {
   if (!range || typeof range !== 'string') return { opens: null, closes: null };
-  const parts = range.split('-').map(part => part.trim());
+  const parts = range.split('-').map((part) => part.trim());
   if (parts.length < 2) return { opens: null, closes: null };
   return { opens: to24h(parts[0]), closes: to24h(parts[1]) };
 };
 
 // ISO 3166-1 alpha-2 country codes
 const VALID_COUNTRY_CODES = new Set([
-  'AD', 'AE', 'AF', 'AG', 'AI', 'AL', 'AM', 'AO', 'AQ', 'AR', 'AS', 'AT', 'AU', 'AW', 'AX', 'AZ',
-  'BA', 'BB', 'BD', 'BE', 'BF', 'BG', 'BH', 'BI', 'BJ', 'BL', 'BM', 'BN', 'BO', 'BQ', 'BR', 'BS',
-  'BT', 'BV', 'BW', 'BY', 'BZ', 'CA', 'CC', 'CD', 'CF', 'CG', 'CH', 'CI', 'CK', 'CL', 'CM', 'CN',
-  'CO', 'CR', 'CU', 'CV', 'CW', 'CX', 'CY', 'CZ', 'DE', 'DJ', 'DK', 'DM', 'DO', 'DZ', 'EC', 'EE',
-  'EG', 'EH', 'ER', 'ES', 'ET', 'FI', 'FJ', 'FK', 'FM', 'FO', 'FR', 'GA', 'GB', 'GD', 'GE', 'GF',
-  'GG', 'GH', 'GI', 'GL', 'GM', 'GN', 'GP', 'GQ', 'GR', 'GS', 'GT', 'GU', 'GW', 'GY', 'HK', 'HM',
-  'HN', 'HR', 'HT', 'HU', 'ID', 'IE', 'IL', 'IM', 'IN', 'IO', 'IQ', 'IR', 'IS', 'IT', 'JE', 'JM',
-  'JO', 'JP', 'KE', 'KG', 'KH', 'KI', 'KM', 'KN', 'KP', 'KR', 'KW', 'KY', 'KZ', 'LA', 'LB', 'LC',
-  'LI', 'LK', 'LR', 'LS', 'LT', 'LU', 'LV', 'LY', 'MA', 'MC', 'MD', 'ME', 'MF', 'MG', 'MH', 'MK',
-  'ML', 'MM', 'MN', 'MO', 'MP', 'MQ', 'MR', 'MS', 'MT', 'MU', 'MV', 'MW', 'MX', 'MY', 'MZ', 'NA',
-  'NC', 'NE', 'NF', 'NG', 'NI', 'NL', 'NO', 'NP', 'NR', 'NU', 'NZ', 'OM', 'PA', 'PE', 'PF', 'PG',
-  'PH', 'PK', 'PL', 'PM', 'PN', 'PR', 'PS', 'PT', 'PW', 'PY', 'QA', 'RE', 'RO', 'RS', 'RU', 'RW',
-  'SA', 'SB', 'SC', 'SD', 'SE', 'SG', 'SH', 'SI', 'SJ', 'SK', 'SL', 'SM', 'SN', 'SO', 'SR', 'SS',
-  'ST', 'SV', 'SX', 'SY', 'SZ', 'TC', 'TD', 'TF', 'TG', 'TH', 'TJ', 'TK', 'TL', 'TM', 'TN', 'TO',
-  'TR', 'TT', 'TV', 'TW', 'TZ', 'UA', 'UG', 'UM', 'US', 'UY', 'UZ', 'VA', 'VC', 'VE', 'VG', 'VI',
-  'VN', 'VU', 'WF', 'WS', 'YE', 'YT', 'ZA', 'ZM', 'ZW'
+  'AD',
+  'AE',
+  'AF',
+  'AG',
+  'AI',
+  'AL',
+  'AM',
+  'AO',
+  'AQ',
+  'AR',
+  'AS',
+  'AT',
+  'AU',
+  'AW',
+  'AX',
+  'AZ',
+  'BA',
+  'BB',
+  'BD',
+  'BE',
+  'BF',
+  'BG',
+  'BH',
+  'BI',
+  'BJ',
+  'BL',
+  'BM',
+  'BN',
+  'BO',
+  'BQ',
+  'BR',
+  'BS',
+  'BT',
+  'BV',
+  'BW',
+  'BY',
+  'BZ',
+  'CA',
+  'CC',
+  'CD',
+  'CF',
+  'CG',
+  'CH',
+  'CI',
+  'CK',
+  'CL',
+  'CM',
+  'CN',
+  'CO',
+  'CR',
+  'CU',
+  'CV',
+  'CW',
+  'CX',
+  'CY',
+  'CZ',
+  'DE',
+  'DJ',
+  'DK',
+  'DM',
+  'DO',
+  'DZ',
+  'EC',
+  'EE',
+  'EG',
+  'EH',
+  'ER',
+  'ES',
+  'ET',
+  'FI',
+  'FJ',
+  'FK',
+  'FM',
+  'FO',
+  'FR',
+  'GA',
+  'GB',
+  'GD',
+  'GE',
+  'GF',
+  'GG',
+  'GH',
+  'GI',
+  'GL',
+  'GM',
+  'GN',
+  'GP',
+  'GQ',
+  'GR',
+  'GS',
+  'GT',
+  'GU',
+  'GW',
+  'GY',
+  'HK',
+  'HM',
+  'HN',
+  'HR',
+  'HT',
+  'HU',
+  'ID',
+  'IE',
+  'IL',
+  'IM',
+  'IN',
+  'IO',
+  'IQ',
+  'IR',
+  'IS',
+  'IT',
+  'JE',
+  'JM',
+  'JO',
+  'JP',
+  'KE',
+  'KG',
+  'KH',
+  'KI',
+  'KM',
+  'KN',
+  'KP',
+  'KR',
+  'KW',
+  'KY',
+  'KZ',
+  'LA',
+  'LB',
+  'LC',
+  'LI',
+  'LK',
+  'LR',
+  'LS',
+  'LT',
+  'LU',
+  'LV',
+  'LY',
+  'MA',
+  'MC',
+  'MD',
+  'ME',
+  'MF',
+  'MG',
+  'MH',
+  'MK',
+  'ML',
+  'MM',
+  'MN',
+  'MO',
+  'MP',
+  'MQ',
+  'MR',
+  'MS',
+  'MT',
+  'MU',
+  'MV',
+  'MW',
+  'MX',
+  'MY',
+  'MZ',
+  'NA',
+  'NC',
+  'NE',
+  'NF',
+  'NG',
+  'NI',
+  'NL',
+  'NO',
+  'NP',
+  'NR',
+  'NU',
+  'NZ',
+  'OM',
+  'PA',
+  'PE',
+  'PF',
+  'PG',
+  'PH',
+  'PK',
+  'PL',
+  'PM',
+  'PN',
+  'PR',
+  'PS',
+  'PT',
+  'PW',
+  'PY',
+  'QA',
+  'RE',
+  'RO',
+  'RS',
+  'RU',
+  'RW',
+  'SA',
+  'SB',
+  'SC',
+  'SD',
+  'SE',
+  'SG',
+  'SH',
+  'SI',
+  'SJ',
+  'SK',
+  'SL',
+  'SM',
+  'SN',
+  'SO',
+  'SR',
+  'SS',
+  'ST',
+  'SV',
+  'SX',
+  'SY',
+  'SZ',
+  'TC',
+  'TD',
+  'TF',
+  'TG',
+  'TH',
+  'TJ',
+  'TK',
+  'TL',
+  'TM',
+  'TN',
+  'TO',
+  'TR',
+  'TT',
+  'TV',
+  'TW',
+  'TZ',
+  'UA',
+  'UG',
+  'UM',
+  'US',
+  'UY',
+  'UZ',
+  'VA',
+  'VC',
+  'VE',
+  'VG',
+  'VI',
+  'VN',
+  'VU',
+  'WF',
+  'WS',
+  'YE',
+  'YT',
+  'ZA',
+  'ZM',
+  'ZW',
 ]);
 
 const normalizeCountry = (country) => {
@@ -176,14 +409,16 @@ async function fetchMenuData() {
     const response = await fetch(MENU_API_URL);
 
     if (!response.ok) {
-      console.warn(`Warning: Menu API returned ${response.status}. ProductList schemas will be skipped in static HTML.`);
+      console.warn(
+        `Warning: Menu API returned ${response.status}. ProductList schemas will be skipped in static HTML.`
+      );
       return [];
     }
 
     const data = await response.json();
     const menuItems = data.menu || [];
 
-    console.log(`✓ Fetched ${menuItems.length} menu items (${menuItems.filter(i => i.featured).length} featured)`);
+    console.log(`✓ Fetched ${menuItems.length} menu items (${menuItems.filter((i) => i.featured).length} featured)`);
     return menuItems;
   } catch (error) {
     console.warn('Warning: Failed to fetch menu data. ProductList schemas will be skipped in static HTML.');
@@ -203,7 +438,9 @@ async function fetchServicesData() {
     const response = await fetch(SERVICES_API_URL);
 
     if (!response.ok) {
-      console.warn(`Warning: Services API returned ${response.status}. ServiceList schemas will use React client-side rendering.`);
+      console.warn(
+        `Warning: Services API returned ${response.status}. ServiceList schemas will use React client-side rendering.`
+      );
       return [];
     }
 
@@ -215,7 +452,9 @@ async function fetchServicesData() {
     }
 
     const services = data.services;
-    console.log(`✓ Fetched ${services.length} services from API (${services.filter(s => s.featured).length} featured)`);
+    console.log(
+      `✓ Fetched ${services.length} services from API (${services.filter((s) => s.featured).length} featured)`
+    );
     return services;
   } catch (error) {
     console.warn('Warning: Failed to fetch services data. ServiceList schemas will use React client-side rendering.');
@@ -235,14 +474,18 @@ async function fetchLocationsData() {
     const response = await fetch(LOCATIONS_API_URL);
 
     if (!response.ok) {
-      console.warn(`Warning: Locations API returned ${response.status}. LocationList schemas will use React client-side rendering.`);
+      console.warn(
+        `Warning: Locations API returned ${response.status}. LocationList schemas will use React client-side rendering.`
+      );
       return [];
     }
 
     const data = await response.json();
 
     if (!data.success || !Array.isArray(data.locations)) {
-      console.warn('Warning: Invalid locations API response. LocationList schemas will use React client-side rendering.');
+      console.warn(
+        'Warning: Invalid locations API response. LocationList schemas will use React client-side rendering.'
+      );
       return [];
     }
 
@@ -267,9 +510,7 @@ function buildProductListSchema(menuItems, featuredOnly = false) {
     return null;
   }
 
-  const items = featuredOnly
-    ? menuItems.filter(item => item.featured === true)
-    : menuItems;
+  const items = featuredOnly ? menuItems.filter((item) => item.featured === true) : menuItems;
 
   if (items.length === 0) {
     return null;
@@ -277,14 +518,12 @@ function buildProductListSchema(menuItems, featuredOnly = false) {
 
   // Build Product schemas using same logic as StructuredData component
   const productSchemas = items
-    .map(menuItem => buildMenuItemSchema(
-      menuItem,
-      'https://romamart.ca/rocafe',
-      {
+    .map((menuItem) =>
+      buildMenuItemSchema(menuItem, 'https://romamart.ca/rocafe', {
         currency: 'CAD',
-        priceInCents: true // Menu API uses cents
-      }
-    ))
+        priceInCents: true, // Menu API uses cents
+      })
+    )
     .filter(Boolean);
 
   if (productSchemas.length === 0) {
@@ -297,8 +536,8 @@ function buildProductListSchema(menuItems, featuredOnly = false) {
     itemListElement: productSchemas.map((product, index) => ({
       '@type': 'ListItem',
       position: index + 1,
-      item: product
-    }))
+      item: product,
+    })),
   };
 }
 
@@ -319,7 +558,7 @@ const buildStructuredData = (routePath = '/', apiData = {}) => {
           '@type': 'OpeningHoursSpecification',
           dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
           opens: weekday.opens,
-          closes: weekday.closes
+          closes: weekday.closes,
         }
       : null,
     weekend.opens && weekend.closes
@@ -327,9 +566,9 @@ const buildStructuredData = (routePath = '/', apiData = {}) => {
           '@type': 'OpeningHoursSpecification',
           dayOfWeek: ['Saturday', 'Sunday'],
           opens: weekend.opens,
-          closes: weekend.closes
+          closes: weekend.closes,
         }
-      : null
+      : null,
   ].filter(Boolean);
 
   // Build base @graph with LocalBusiness and WebSite
@@ -340,7 +579,8 @@ const buildStructuredData = (routePath = '/', apiData = {}) => {
       name: COMPANY_DATA.dba || COMPANY_DATA.legalName || 'Roma Mart Convenience',
       legalName: COMPANY_DATA.legalName || undefined,
       alternateName: COMPANY_DATA.dba ? COMPANY_DATA.legalName : 'Roma Mart',
-      description: 'Your daily stop & go convenience store in Sarnia, Ontario. Fresh RoCafé beverages, ATM, Bitcoin ATM, printing, and more.',
+      description:
+        'Your daily stop & go convenience store in Sarnia, Ontario. Fresh RoCafé beverages, ATM, Bitcoin ATM, printing, and more.',
       url: BASE_URL,
       telephone: contact.phone || '+1-382-342-2000',
       email: contact.email || 'contact@romamart.ca',
@@ -353,21 +593,30 @@ const buildStructuredData = (routePath = '/', apiData = {}) => {
         addressLocality: address.city || 'Sarnia',
         addressRegion: address.province || 'ON',
         postalCode: address.postalCode || 'N7T 1G6',
-        addressCountry: normalizeCountry(address.country) || 'CA'
+        addressCountry: normalizeCountry(address.country) || 'CA',
       },
       geo: {
         '@type': 'GeoCoordinates',
         latitude: coords.lat || 42.970389,
-        longitude: coords.lng || -82.404589
+        longitude: coords.lng || -82.404589,
       },
       openingHoursSpecification,
       sameAs: Object.values(COMPANY_DATA.socialLinks || {}),
-      amenityFeature: (location?.amenities || []).map(amenity => ({
+      amenityFeature: (location?.amenities || []).map((amenity) => ({
         '@type': 'LocationFeatureSpecification',
         name: amenity.name,
-        value: amenity.value
+        value: amenity.value,
       })),
-      paymentAccepted: COMPANY_DATA.paymentMethods || ['Cash', 'Credit Card', 'Debit Card', 'Interac', 'Visa', 'Mastercard', 'American Express', 'Bitcoin']
+      paymentAccepted: COMPANY_DATA.paymentMethods || [
+        'Cash',
+        'Credit Card',
+        'Debit Card',
+        'Interac',
+        'Visa',
+        'Mastercard',
+        'American Express',
+        'Bitcoin',
+      ],
     },
     {
       '@type': 'WebSite',
@@ -375,8 +624,8 @@ const buildStructuredData = (routePath = '/', apiData = {}) => {
       url: BASE_URL,
       name: COMPANY_DATA.dba || 'Roma Mart Convenience',
       description: 'Your daily stop & go convenience store in Sarnia, Ontario.',
-      publisher: { '@id': `${BASE_URL}/#business` }
-    }
+      publisher: { '@id': `${BASE_URL}/#business` },
+    },
   ];
 
   // Add ProductList for homepage (featured items only)
@@ -397,7 +646,7 @@ const buildStructuredData = (routePath = '/', apiData = {}) => {
 
   // Add ServiceList for homepage (featured services only)
   if (routePath === '/' && services.length > 0) {
-    const featuredServices = services.filter(s => s.featured === true);
+    const featuredServices = services.filter((s) => s.featured === true);
     if (featuredServices.length > 0) {
       const serviceListSchema = buildServiceListSchema(featuredServices, { companyData: COMPANY_DATA });
       if (serviceListSchema) {
@@ -417,7 +666,7 @@ const buildStructuredData = (routePath = '/', apiData = {}) => {
   // Add LocationList for homepage (primary location only - matches display)
   if (routePath === '/' && locations.length > 0) {
     // Homepage displays only primary location, schema should match
-    const primaryLocation = locations.find(loc => loc.isPrimary) || locations[0];
+    const primaryLocation = locations.find((loc) => loc.isPrimary) || locations[0];
     if (primaryLocation) {
       const locationListSchema = buildLocationListSchema([primaryLocation], { companyData: COMPANY_DATA });
       if (locationListSchema) {
@@ -429,7 +678,7 @@ const buildStructuredData = (routePath = '/', apiData = {}) => {
   // Add LocationList for locations page (all active locations for SEO)
   // Display sorts by distance/primary, but schema includes all active for indexing
   if (routePath === '/locations' && locations.length > 0) {
-    const activeLocations = locations.filter(loc => loc.status === 'open');
+    const activeLocations = locations.filter((loc) => loc.status === 'open');
     if (activeLocations.length > 0) {
       const locationListSchema = buildLocationListSchema(activeLocations, { companyData: COMPANY_DATA });
       if (locationListSchema) {
@@ -440,28 +689,34 @@ const buildStructuredData = (routePath = '/', apiData = {}) => {
 
   const schema = {
     '@context': 'https://schema.org',
-    '@graph': graph
+    '@graph': graph,
   };
 
   return JSON.stringify(schema);
 };
 
 const buildSitemapXml = (routeList, lastModDate) => {
-  const urls = routeList.map(route => {
-    const priority = route.path === '/' ? '1.0' : '0.8';
-    const changefreq = route.path === '/' || route.path === '/rocafe' ? 'weekly' : 'monthly';
-    return `  <url>\n` +
-      `    <loc>${BASE_URL}${route.path}</loc>\n` +
-      `    <lastmod>${lastModDate}</lastmod>\n` +
-      `    <changefreq>${changefreq}</changefreq>\n` +
-      `    <priority>${priority}</priority>\n` +
-      `  </url>`;
-  }).join('\n');
+  const urls = routeList
+    .map((route) => {
+      const priority = route.path === '/' ? '1.0' : '0.8';
+      const changefreq = route.path === '/' || route.path === '/rocafe' ? 'weekly' : 'monthly';
+      return (
+        `  <url>\n` +
+        `    <loc>${BASE_URL}${route.path}</loc>\n` +
+        `    <lastmod>${lastModDate}</lastmod>\n` +
+        `    <changefreq>${changefreq}</changefreq>\n` +
+        `    <priority>${priority}</priority>\n` +
+        `  </url>`
+      );
+    })
+    .join('\n');
 
-  return `<?xml version="1.0" encoding="UTF-8"?>\n` +
+  return (
+    `<?xml version="1.0" encoding="UTF-8"?>\n` +
     `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
     `${urls}\n` +
-    `</urlset>\n`;
+    `</urlset>\n`
+  );
 };
 
 /**
@@ -491,9 +746,10 @@ function injectServiceWorkerPrecache(distPath) {
     return;
   }
 
-  const assetFiles = fs.readdirSync(assetsDir)
-    .filter(file => /\.(js|css)$/.test(file))
-    .map(file => `  \`\${BASE_URL}assets/${file}\``)
+  const assetFiles = fs
+    .readdirSync(assetsDir)
+    .filter((file) => /\.(js|css)$/.test(file))
+    .map((file) => `  \`\${BASE_URL}assets/${file}\``)
     .join(',\n');
 
   if (!assetFiles) {
@@ -507,8 +763,9 @@ function injectServiceWorkerPrecache(distPath) {
   const CACHE_VERSION_REGEX = /\/\*\s*__CACHE_VERSION__\s*\*\/\s*(['"])[^'"]*\1/;
   const cacheMatch = swContent.match(CACHE_VERSION_REGEX);
   if (cacheMatch) {
-    const sortedAssets = fs.readdirSync(assetsDir)
-      .filter(file => /\.(js|css)$/.test(file))
+    const sortedAssets = fs
+      .readdirSync(assetsDir)
+      .filter((file) => /\.(js|css)$/.test(file))
       .sort()
       .join('\n');
     const hash = createHash('sha256').update(sortedAssets).digest('hex').slice(0, 8);
@@ -554,35 +811,28 @@ function injectOfflineLocationData(distPath) {
   }
 
   const phoneRaw = loc.contact.phone.replace(/[^+\d]/g, '');
-  const locationsJson = JSON.stringify([{
-    id: loc.id,
-    name: loc.name,
-    address: loc.address.formatted,
-    phone: loc.contact.phone,
-    coordinates: loc.google.coordinates,
-    isPrimary: loc.isPrimary,
-  }]);
+  const locationsJson = JSON.stringify([
+    {
+      id: loc.id,
+      name: loc.name,
+      address: loc.address.formatted,
+      phone: loc.contact.phone,
+      coordinates: loc.google.coordinates,
+      isPrimary: loc.isPrimary,
+    },
+  ]);
 
   // Replace JS LOCATIONS array
   content = content.replace(LOCATIONS_PLACEHOLDER, locationsJson);
 
   // Replace static HTML using id-anchored patterns
-  content = content.replace(
-    /(<h3 id="location-name">)[^<]*/,
-    `$1${loc.name}`
-  );
-  content = content.replace(
-    /(<span id="location-address">)[^<]*/,
-    `$1${loc.address.formatted}`
-  );
+  content = content.replace(/(<h3 id="location-name">)[^<]*/, `$1${loc.name}`);
+  content = content.replace(/(<span id="location-address">)[^<]*/, `$1${loc.address.formatted}`);
   content = content.replace(
     /<a href="tel:[^"]*" class="contact-link">[^<]*/,
     `<a href="tel:${phoneRaw}" class="contact-link">${loc.contact.phone}`
   );
-  content = content.replace(
-    /(<span id="location-hours">)[^<]*/,
-    `$1${loc.hours.display}`
-  );
+  content = content.replace(/(<span id="location-hours">)[^<]*/, `$1${loc.hours.display}`);
 
   fs.writeFileSync(offlinePath, content);
   console.log('✓ Injected SSOT location data into offline.html');
@@ -608,7 +858,7 @@ async function prerender() {
   const [menuItems, services, locations] = await Promise.all([
     fetchMenuData(),
     fetchServicesData(),
-    fetchLocationsData()
+    fetchLocationsData(),
   ]);
   console.log('\n✓ API data fetching complete\n');
 
@@ -616,7 +866,7 @@ async function prerender() {
 
   for (const route of routes) {
     console.log(`Prerendering ${route.path}...`);
-    
+
     // For GitHub Pages SPA routing, create route-specific HTML
     let outputPath;
     if (route.path === '/') {
@@ -648,14 +898,8 @@ async function prerender() {
         /<meta name="description" content="[^"]*" \/>/,
         `<meta name="description" content="${route.description}" />`
       )
-      .replace(
-        /<link rel="canonical" href="[^"]*" \/>/,
-        `<link rel="canonical" href="${absoluteUrl}" />`
-      )
-      .replace(
-        /<meta property="og:url" content="[^"]*" \/>/,
-        `<meta property="og:url" content="${absoluteUrl}" />`
-      )
+      .replace(/<link rel="canonical" href="[^"]*" \/>/, `<link rel="canonical" href="${absoluteUrl}" />`)
+      .replace(/<meta property="og:url" content="[^"]*" \/>/, `<meta property="og:url" content="${absoluteUrl}" />`)
       .replace(
         /<meta property="og:description" content="[^"]*" \/>/,
         `<meta property="og:description" content="${route.description}" />`
@@ -701,7 +945,7 @@ async function prerender() {
   console.log('\n✓ Prerendering complete!');
 }
 
-prerender().catch(err => {
+prerender().catch((err) => {
   console.error('Prerender failed:', err);
   process.exit(1);
 });

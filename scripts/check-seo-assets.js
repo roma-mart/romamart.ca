@@ -1,4 +1,3 @@
-/* eslint-env node */
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -17,7 +16,7 @@ const ROUTES = [
   '/accessibility',
   '/privacy',
   '/terms',
-  '/cookies'
+  '/cookies',
 ];
 
 const distPath = path.resolve(__dirname, '../dist');
@@ -39,30 +38,23 @@ function checkRobots() {
   const robots = readFileSafe(robotsPath);
   assert(robots.includes('User-agent:'), 'robots.txt missing User-agent directive');
   assert(robots.includes('Sitemap:'), 'robots.txt missing Sitemap directive');
-  assert(
-    robots.includes(`Sitemap: ${BASE_URL}/sitemap.xml`),
-    `robots.txt Sitemap should be ${BASE_URL}/sitemap.xml`
-  );
+  assert(robots.includes(`Sitemap: ${BASE_URL}/sitemap.xml`), `robots.txt Sitemap should be ${BASE_URL}/sitemap.xml`);
 }
 
 function checkSitemap() {
   const sitemapPath = path.join(distPath, 'sitemap.xml');
   const sitemap = readFileSafe(sitemapPath);
 
-  ROUTES.forEach(route => {
+  ROUTES.forEach((route) => {
     const url = `${BASE_URL}${route}`;
-    assert(
-      sitemap.includes(`<loc>${url}</loc>`),
-      `sitemap.xml missing URL: ${url}`
-    );
+    assert(sitemap.includes(`<loc>${url}</loc>`), `sitemap.xml missing URL: ${url}`);
   });
 }
 
 function checkRouteHtml() {
-  ROUTES.forEach(route => {
-    const filePath = route === '/'
-      ? path.join(distPath, 'index.html')
-      : path.join(distPath, route.slice(1), 'index.html');
+  ROUTES.forEach((route) => {
+    const filePath =
+      route === '/' ? path.join(distPath, 'index.html') : path.join(distPath, route.slice(1), 'index.html');
 
     const html = readFileSafe(filePath);
     const canonical = `${BASE_URL}${route}`;
