@@ -6,12 +6,31 @@ import CopyButton from '../components/CopyButton';
 import Button from '../components/Button';
 import { formatDistance, getPreferredLocations } from '../data/locations';
 import { useLocations } from '../contexts/LocationsContext';
-import LocationImageCarousel from '../components/LocationImageCarousel';
+import ImageCarousel from '../components/ImageCarousel';
 import LiveHoursDisplay from '../components/LiveHoursDisplay';
 import { useAutoLocation } from '../hooks/useAutoLocation';
 import StructuredData from '../components/StructuredData';
 import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 import { normalizePhoneForTel } from '../utils/phone';
+
+/** Build a flat image list from a location's photos object */
+const getLocationImages = (photos, locationName) => {
+  const images = [];
+  if (photos?.primary) {
+    images.push({ src: photos.primary, alt: `${locationName} exterior` });
+  }
+  if (Array.isArray(photos?.exterior)) {
+    photos.exterior.forEach((src, i) => {
+      if (src) images.push({ src, alt: `${locationName} exterior ${i + 1}` });
+    });
+  }
+  if (Array.isArray(photos?.interior)) {
+    photos.interior.forEach((src, i) => {
+      if (src) images.push({ src, alt: `${locationName} interior ${i + 1}` });
+    });
+  }
+  return images;
+};
 
 const LocationsPage = () => {
   // Fetch locations from API with fallback to static data
@@ -64,9 +83,13 @@ const LocationsPage = () => {
     distanceText: Number.isFinite(loc.distance) ? formatDistance(loc.distance) : null
   }));
 
-  const handleLoadMap = (locationId) => {
+  const handleLoadMap = useCallback((locationId) => {
     setUserLoadedMaps(prev => (prev.includes(locationId) ? prev : [...prev, locationId]));
-  };
+  }, []);
+
+  const handleLoadMapClick = useCallback((e) => {
+    handleLoadMap(e.currentTarget.dataset.locationId);
+  }, [handleLoadMap]);
 
   return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>
@@ -268,7 +291,11 @@ const LocationsPage = () => {
               <div className="flex flex-col rounded-3xl overflow-hidden shadow-2xl">
                 {/* Carousel and map now share the same height and border radius handling */}
                 <div className="w-full aspect-[4/3] min-h-[18rem] max-h-[28rem] order-1">
-                  <LocationImageCarousel photos={location.photos} locationName={location.name} />
+                  <ImageCarousel
+                    images={getLocationImages(location.photos, location.name)}
+                    className="h-full rounded-none"
+                    ariaLabel={`${location.name} photos`}
+                  />
                 </div>
                 <div className="w-full aspect-[4/3] min-h-[18rem] max-h-[28rem] order-2 relative">
                   {location.id === preferredLocationId ? (
@@ -308,8 +335,9 @@ const LocationsPage = () => {
                         {location.mapUrl ? (
                           <button
                             type="button"
-                            onClick={() => handleLoadMap(location.id)}
-                            className="px-4 py-2 rounded-full text-sm font-semibold"
+                            data-location-id={location.id}
+                            onClick={handleLoadMapClick}
+                            className="px-4 py-2 min-h-[44px] rounded-full text-sm font-semibold focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
                             style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)' }}
                             aria-label={`Load interactive map for ${location.name}`}
                           >

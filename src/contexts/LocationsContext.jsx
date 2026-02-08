@@ -1,17 +1,18 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { LOCATIONS } from '../data/locations';
 
 /**
- * LocationsContext - Single source of truth for locations data
+ * LocationsContext - Single source of truth for locations data and selection
  * Fetches from API with fallback to static LOCATIONS array
+ * Owns selectedLocationId state (persisted in localStorage)
  * Prevents duplicate API calls when locations are needed on multiple routes
- * Caches results and shares across components
  *
  * @since February 5, 2026
  */
 const LocationsContext = createContext();
 
 const API_URL = 'https://romamart.netlify.app/api/public-locations';
+const STORAGE_KEY = 'roma_mart_selected_location';
 
 /**
  * LocationsProvider - Wraps app to provide shared locations state
@@ -23,6 +24,26 @@ export function LocationsProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [source, setSource] = useState('static'); // Track data source: 'api' or 'static'
+
+  // Selected location state (persisted in localStorage)
+  const [selectedLocationId, setSelectedLocationId] = useState(() => {
+    try {
+      return localStorage.getItem(STORAGE_KEY) || 'auto';
+    } catch {
+      return 'auto';
+    }
+  });
+
+  const selectLocation = useCallback((locationId) => {
+    setSelectedLocationId(locationId);
+    try {
+      if (locationId === 'auto') {
+        localStorage.removeItem(STORAGE_KEY);
+      } else {
+        localStorage.setItem(STORAGE_KEY, locationId);
+      }
+    } catch { /* Safari private mode */ }
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -82,7 +103,16 @@ export function LocationsProvider({ children }) {
     };
   }, []);
 
-  const value = { locations, loading, error, source };
+  // Reset selection if saved ID no longer exists in locations (e.g. API returned different set)
+  useEffect(() => {
+    if (loading || selectedLocationId === 'auto') return;
+    const exists = locations.some((loc) => loc.id === selectedLocationId);
+    if (!exists) {
+      selectLocation('auto');
+    }
+  }, [locations, loading, selectedLocationId, selectLocation]);
+
+  const value = { locations, loading, error, source, selectedLocationId, selectLocation };
 
   return (
     <LocationsContext.Provider value={value}>
@@ -96,7 +126,7 @@ export function LocationsProvider({ children }) {
  * Returns the same cached data across all components
  * Eliminates duplicate API calls
  *
- * @returns {Object} { locations: Array, loading: boolean, error: string, source: 'api'|'static' }
+ * @returns {Object} { locations, loading, error, source, selectedLocationId, selectLocation }
  */
 // eslint-disable-next-line react-refresh/only-export-components
 export function useLocations() {

@@ -47,7 +47,7 @@ function CategoryAccordionHeader({
           {icon}
         </span>
         <span className="text-left min-w-0">
-          <span className="block text-2xl font-heading truncate" style={{ color: 'var(--color-heading)' }}>{title}</span>
+          <span className="block text-2xl text-heading truncate" style={{ color: 'var(--color-heading)' }}>{title}</span>
           <span className="block text-sm font-inter truncate" style={{ color: 'var(--color-text-muted)' }}>{description}</span>
         </span>
       </span>

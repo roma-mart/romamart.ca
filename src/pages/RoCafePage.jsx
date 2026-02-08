@@ -1,17 +1,14 @@
 import Button from '../components/Button';
-/* eslint-disable no-unused-vars */
 import React, { useState, useCallback, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { ChevronRight, ChevronDown, Coffee, Wine, UtensilsCrossed, IceCream, Sparkles, AlertTriangle } from 'lucide-react';
+import { ChevronRight, AlertTriangle } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
 import CategoryAccordionHeader from '../components/CategoryAccordionHeader';
 import StandardizedItem from '../components/StandardizedItem';
 import { useLocationAware } from '../hooks/useLocationContext';
-import { ROCAFE_FULL_MENU, MENU_CATEGORIES, ALLERGEN_WARNING } from '../data/rocafe-menu';
-import COMPANY_DATA from '../config/company_data';
-import MenuExcelLoader from '../components/MenuExcelHolder';
+import { ROCAFE_FULL_MENU, ALLERGEN_WARNING } from '../data/rocafe-menu';
 import { useMenu } from '../contexts/MenuContext';
-import { groupExcelItemsByCategory, mergeCategoriesWithFallback } from '../utils/excelMenuTransform';
+import { groupExcelItemsByCategory } from '../utils/excelMenuTransform';
 import StructuredData from '../components/StructuredData';
 import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 
@@ -44,33 +41,22 @@ const RoCafePage = () => {
   // No fallback for schemas - API-only (ensures accuracy)
   const schemaMenuItems = menuItems;
 
-  // Log menu items for debugging
-  // eslint-disable-next-line no-console
-  console.log('[RoCafePage] Menu items for ProductList schema:', {
-    totalItems: schemaMenuItems.length,
-    sampleItems: schemaMenuItems.slice(0, 3).map(item => ({ id: item.id, name: item.name }))
-  });
+  if (import.meta.env.DEV) {
+    // eslint-disable-next-line no-console
+    console.log('[RoCafePage] Menu items for ProductList schema:', {
+      totalItems: schemaMenuItems.length,
+      sampleItems: schemaMenuItems.slice(0, 3).map(item => ({ id: item.id, name: item.name }))
+    });
+  }
 
   // API always returns prices in cents
   const schemaPriceInCents = true;
 
 
-  // create memoized handlers map for categories
-  const categoryHandlers = useMemo(() => {
-    const map = {};
-    for (const cat of menuCategories) {
-      map[cat.id] = () => toggleCategory(cat.id);
-    }
-    return map;
-  }, [toggleCategory, menuCategories]);
-
   return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>
       {/* Full menu Product schemas (API-only, no fallback) */}
       {schemaMenuItems.length > 0 && (
-        <>
-          {/* eslint-disable-next-line no-console */}
-          {console.log('[RoCafePage] Rendering ProductList schema with', schemaMenuItems.length, 'items')}
           <StructuredData
             type="ProductList"
             data={{
@@ -81,7 +67,6 @@ const RoCafePage = () => {
               }))
             }}
           />
-        </>
       )}
       <Helmet>
         <title>RoCafé Menu | Roma Mart Convenience</title>

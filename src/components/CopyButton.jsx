@@ -39,7 +39,7 @@ const CopyButton = ({ text, label, className = '', showIcon = true }) => {
     <button
       type="button"
       onClick={handleCopy}
-      className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-md font-inter text-sm font-medium transition-all hover:opacity-80 ${className}`}
+      className={`inline-flex items-center gap-2 px-3 py-1.5 min-h-[44px] rounded-md font-inter text-sm font-medium transition-all hover:opacity-80 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 ${className}`}
       aria-label={`Copy ${label || text}`}
     >
       {showIcon && (copied ? <Check size={16} /> : <Copy size={16} />)}

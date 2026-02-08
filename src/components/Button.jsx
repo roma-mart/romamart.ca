@@ -32,6 +32,7 @@ const VARIANT_VIBRATION = {
   navlink: 30,
   icon: 20,
   secondary: 20,
+  inverted: 40,
   custom: 35,
 };
 
@@ -43,40 +44,51 @@ const VARIANT_ANALYTICS = {
   navlink: 'navlink_click',
   icon: 'icon_click',
   secondary: 'secondary_cta',
+  inverted: 'inverted_cta',
   custom: 'custom_cta',
 };
 
+// Shared spring config — snappy with minimal overshoot (damping ratio ~0.875)
+const SPRING = { type: 'spring', stiffness: 400, damping: 35 };
+
 // Per-variant Framer Motion animation props
+// Scale tiers: primary CTAs 1.05, standard 1.03, icon 1.1
+// Golden halo glow (0-offset boxShadow) on all hover states
 const VARIANT_ANIMATION = {
   order: {
-    whileHover: { scale: 1.07, boxShadow: '0 10px 32px var(--color-accent-shadow, rgba(228,179,64,0.22))' },
-    whileTap: { scale: 0.96, boxShadow: '0 2px 8px var(--color-accent-shadow, rgba(228,179,64,0.10))' },
-    transition: { type: 'spring', stiffness: 400, damping: 30, duration: 0.18 },
+    whileHover: { scale: 1.05, boxShadow: '0 0 20px rgba(228,179,64,0.4), 0 10px 32px rgba(228,179,64,0.22)' },
+    whileTap: { scale: 0.97 },
+    transition: SPRING,
   },
   nav: {
-    whileHover: { scale: 1.03 },
-    whileTap: { scale: 0.98 },
-    transition: { duration: 0.15 },
+    whileHover: { scale: 1.03, boxShadow: '0 0 12px rgba(228,179,64,0.2)' },
+    whileTap: { scale: 0.97 },
+    transition: SPRING,
   },
   action: {
-    whileHover: { backgroundColor: 'var(--color-accent-hover, #f7d774)', boxShadow: '0 8px 28px var(--color-accent-shadow, rgba(228,179,64,0.22))' },
-    whileTap: { backgroundColor: 'var(--color-accent)', boxShadow: '0 2px 8px var(--color-accent-shadow, rgba(228,179,64,0.10))' },
-    transition: { duration: 0.18 },
+    whileHover: { scale: 1.03, boxShadow: '0 0 20px rgba(228,179,64,0.35), 0 8px 28px rgba(228,179,64,0.22)' },
+    whileTap: { scale: 0.97 },
+    transition: SPRING,
   },
   navlink: {
-    whileHover: { scale: 1.015 },
-    whileTap: { scale: 0.99 },
-    transition: { duration: 0.15 },
+    whileHover: { scale: 1.03, boxShadow: '0 0 12px rgba(228,179,64,0.2)' },
+    whileTap: { scale: 0.97 },
+    transition: SPRING,
   },
   icon: {
-    whileHover: { scale: 1.15 },
-    whileTap: { scale: 0.9 },
-    transition: { duration: 0.12 },
+    whileHover: { scale: 1.1, boxShadow: '0 0 12px rgba(228,179,64,0.25)' },
+    whileTap: { scale: 0.93 },
+    transition: SPRING,
   },
   secondary: {
-    whileHover: { scale: 1.02 },
-    whileTap: { scale: 0.98 },
-    transition: { duration: 0.13 },
+    whileHover: { scale: 1.03, boxShadow: '0 0 16px rgba(228,179,64,0.25)' },
+    whileTap: { scale: 0.97 },
+    transition: SPRING,
+  },
+  inverted: {
+    whileHover: { scale: 1.05, boxShadow: '0 0 20px rgba(228,179,64,0.35), 0 8px 28px rgba(2,1,120,0.22)' },
+    whileTap: { scale: 0.97 },
+    transition: SPRING,
   },
   custom: {},
 };
@@ -88,6 +100,7 @@ const VARIANT_STYLES = {
     fontWeight: 700,
     fontFamily: 'var(--font-heading)',
     border: 'none',
+    borderRadius: 'var(--radius-full)',
     boxShadow: '0 4px 16px var(--color-accent-shadow, rgba(228,179,64,0.15))',
   },
   nav: {
@@ -104,7 +117,7 @@ const VARIANT_STYLES = {
     fontWeight: 700,
     fontFamily: 'var(--font-heading)',
     border: 'none',
-    borderRadius: '9999px', // fully rounded
+    borderRadius: 'var(--radius-full)',
     boxShadow: '0 4px 16px var(--color-accent-shadow, rgba(228,179,64,0.15))',
     transition: 'all 0.2s',
     padding: '12px 28px',
@@ -117,7 +130,7 @@ const VARIANT_STYLES = {
     fontWeight: 700,
     fontFamily: 'var(--font-heading)',
     border: 'none',
-    borderRadius: '9999px', // fully rounded
+    borderRadius: 'var(--radius-full)',
     boxShadow: '0 4px 16px var(--color-accent-shadow, rgba(228,179,64,0.15))',
     transition: 'all 0.2s',
     padding: '12px 28px',
@@ -132,12 +145,46 @@ const VARIANT_STYLES = {
     padding: 0,
     fontSize: '1.25rem',
   },
+  secondary: {
+    backgroundColor: 'var(--color-surface)',
+    color: 'var(--color-text)',
+    fontWeight: 600,
+    fontFamily: 'var(--font-heading)',
+    border: 'none',
+    borderRadius: 'var(--radius-full)',
+    boxShadow: 'none',
+    transition: 'all 0.2s',
+    padding: '12px 28px',
+    minHeight: 44,
+    minWidth: 44,
+  },
+  inverted: {
+    backgroundColor: 'var(--color-primary)',
+    color: 'var(--color-accent)',
+    fontWeight: 700,
+    fontFamily: 'var(--font-heading)',
+    border: 'none',
+    borderRadius: 'var(--radius-full)',
+    boxShadow: '0 4px 16px rgba(2,1,120,0.15)',
+    transition: 'all 0.2s',
+    padding: '12px 28px',
+    minHeight: 44,
+    minWidth: 44,
+  },
+};
+
+// Size presets — applied after variant styles, before user style prop
+const SIZE_STYLES = {
+  sm: { padding: '8px 16px', fontSize: '0.875rem' },
+  md: {},
+  lg: { padding: '16px 32px', fontSize: '1.125rem' },
 };
 
 // fireAnalytics removed (unused)
 
 const Button = React.forwardRef(({
   variant = 'order',
+  size = 'md',
   children,
   icon,
   iconPosition = 'left',
@@ -157,16 +204,22 @@ const Button = React.forwardRef(({
   // useVibration removed (unused)
   const isNavlink = variant === 'navlink';
 
+  const sizeStyle = (size && variant !== 'icon') ? (SIZE_STYLES[size] || {}) : {};
   const mergedStyle = {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
     minHeight: 44,
     minWidth: 44,
     transition: 'background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s',
-    borderRadius: 12,
+    borderRadius: 'var(--radius-xl)',
     padding: variant === 'icon' ? 8 : '12px 28px',
     cursor: disabled ? 'not-allowed' : 'pointer',
     opacity: disabled ? 0.6 : 1,
     WebkitTapHighlightColor: 'transparent',
     ...VARIANT_STYLES[variant],
+    ...sizeStyle,
     ...style,
   };
 
@@ -195,11 +248,11 @@ const Button = React.forwardRef(({
     }
     return (
       <>
-        {icon && iconPosition === 'left' && !isNavlink && <span style={{ marginRight: children ? 10 : 0, display: 'inline-flex', alignItems: 'center' }}>{icon}</span>}
-        {icon && iconPosition === 'left' && isNavlink && <span style={{ marginRight: children ? 10 : 0, display: 'inline-flex', alignItems: 'center', position: "relative", top: "2px" }}>{icon}</span>}
+        {icon && iconPosition === 'left' && !isNavlink && <span style={{ display: 'inline-flex', alignItems: 'center' }}>{icon}</span>}
+        {icon && iconPosition === 'left' && isNavlink && <span style={{ display: 'inline-flex', alignItems: 'center' }}>{icon}</span>}
         {children && <span>{children}</span>}
-        {icon && iconPosition === 'right' && <span style={{ marginLeft: 10, display: 'inline-flex', alignItems: 'center' }}>{icon}</span>}
-        {loadingProp && <span className="inline-block ml-2 animate-spin" style={{ width: 18, height: 18, border: '2px solid var(--color-accent)', borderTop: '2px solid transparent', borderRadius: '50%' }} aria-hidden="true"></span>}
+        {icon && iconPosition === 'right' && <span style={{ display: 'inline-flex', alignItems: 'center' }}>{icon}</span>}
+        {loadingProp && <span className="inline-block ml-2 animate-spin" style={{ width: 18, height: 18, border: '2px solid var(--color-accent)', borderTop: '2px solid transparent', borderRadius: 'var(--radius-full)' }} aria-hidden="true"></span>}
       </>
     );
   }
@@ -321,7 +374,8 @@ const Button = React.forwardRef(({
 });
 
 Button.propTypes = {
-  variant: PropTypes.oneOf(['order', 'nav', 'navlink', 'action', 'secondary', 'icon', 'custom']),
+  variant: PropTypes.oneOf(['order', 'nav', 'navlink', 'action', 'secondary', 'inverted', 'icon', 'custom']),
+  size: PropTypes.oneOf(['sm', 'md', 'lg']),
   children: PropTypes.node,
   icon: PropTypes.node,
   iconPosition: PropTypes.oneOf(['left', 'right']),

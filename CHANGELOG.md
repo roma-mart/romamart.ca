@@ -7,6 +7,56 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.6.0] - 2026-02-08
+
+### Added
+- Unified `ImageCarousel` with ARIA carousel pattern, 44px targets, auto-advance, infinite wrapping
+- Unified `ContactForm` component (phone field, `useToast` feedback)
+- `FooterReviews`, `FooterLinks`, `FooterLocation` sub-components
+- `LoadingFallback` branded Suspense fallback
+- Button `size` prop (`sm`/`md`/`lg`), `inverted` and `secondary` variants
+- Golden halo glow on all button hover states
+- Border-radius design tokens (`--radius-sm` through `--radius-full`)
+- Google Consent Mode v2 defaults; `window.gtag` for Clickio CMP
+
+### Changed
+- `ErrorBoundary` rewritten with branded UI, Refresh/Go Home actions, GA tracking
+- Footer decomposed (468 → 189 lines); bottom padding clears FAB
+- Button base styles: `inline-flex` centering, unified spring animation (`stiffness: 400, damping: 35`)
+- Button `order` variant uses pill radius (`--radius-full`) for consistent CTA shape
+- 14 Button callsites cleaned of redundant overrides
+- Inline handlers memoized with `useCallback` across 7 components
+- FAB: safe-area bottom spacing, `animation-fill-mode: backwards`, removed conflicting CSS
+- `focus-visible:ring-accent` on carousel arrows and review controls
+- `console.warn` kept in production for SEO-impacting StructuredData issues
+- `LocationsContext` is now SSOT for `selectedLocationId` + `selectLocation`; validates selection on location updates
+- `LocationProvider` moved to root (`main.jsx`), no longer re-created inside App
+- Footer delegates distance calculation to shared `findNearestLocation` utility
+- Coordinate checks use strict `=== null || === undefined` instead of falsy guards (0 is a valid coordinate)
+- `useAutoLocation` no longer writes to localStorage (LocationProvider is sole writer)
+- Redundant `roma_mart_user_lat`/`roma_mart_user_lng` localStorage keys removed; localStorage now stores only nearest location ID (not coordinates) to satisfy CodeQL sensitive data requirements
+- Dead `getStoredLocation` export and coordinate cache logic removed from `useAutoLocation`
+- FooterLocation auto option text dynamically derives HQ name from locations array
+- FooterLinks: replaced inline `onMouseEnter`/`onMouseLeave` with CSS `hover:`/`focus-visible:` utilities
+- `font-heading` class replaced with `text-heading` (correct utility) across Footer, reviews, and accordion components
+- `ImageCarousel` accepts `ariaLabel` prop for unique accessible names per instance
+- `findNearestLocation` requires explicit locations list (no implicit static fallback)
+- `LocationProvider` uses live locations from `LocationsContext` for nearest-location computation
+
+### Fixed
+- LocationsPage carousel arrow direction and image selection
+- Production `console.log` in JSX render paths
+- Pluralization bug in review count
+- Laggy `backgroundColor` animation on action buttons
+- Double X close button in mobile navbar
+- Mobile overlay close button 44px touch target
+- `FooterLocation` fallback referenced nonexistent `COMPANY_DATA.hq`
+
+### Removed
+- `LocationImageCarousel` (replaced by unified `ImageCarousel`)
+- Duplicate contact form code (~260 lines across 2 files)
+- Dead code: unused props, stale comments
+
 ## [2.5.0] - 2026-02-07
 
 ### Added

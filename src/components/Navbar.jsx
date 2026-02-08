@@ -195,6 +195,7 @@ export default function Navbar({ currentPage = 'home' }) {
             ))}
             <Button
               variant="order"
+              size="sm"
               href={COMPANY_DATA.onlineStoreUrl}
               target="_blank"
               rel="noopener noreferrer"
@@ -202,7 +203,7 @@ export default function Navbar({ currentPage = 'home' }) {
               iconPosition="right"
               analyticsEvent={{ event: 'order_cta_click', cta_location: 'header_desktop', cta_text: 'Order Online' }}
               ariaLabel="Order Online"
-              className="font-bold font-inter text-sm shadow-lg no-drag"
+              className="shadow-lg no-drag"
               style={{ minWidth: 120 }}
             >
               ORDER NOW
@@ -211,6 +212,7 @@ export default function Navbar({ currentPage = 'home' }) {
 
           {/* Mobile Menu Button */}
           <button
+            type="button"
             ref={hamburgerRef}
             onClick={toggleMenu}
             onKeyDown={e => {
@@ -219,7 +221,7 @@ export default function Navbar({ currentPage = 'home' }) {
                 toggleMenu();
               }
             }}
-            className="md:hidden p-2 rounded-md no-drag"
+            className={`md:hidden p-2 min-w-[44px] min-h-[44px] rounded-md no-drag focus-visible:ring-2 focus-visible:ring-accent${isOpen ? ' invisible' : ''}`}
             style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-heading)' }}
             aria-label={isOpen ? "Close menu" : "Open menu"}
             aria-expanded={isOpen}
@@ -245,8 +247,9 @@ export default function Navbar({ currentPage = 'home' }) {
           >
             {/* Close button inside focus trap (hamburger X is inerted when overlay opens) */}
             <button
+              type="button"
               onClick={handleMenuClose}
-              className="absolute p-2 rounded-md md:hidden"
+              className="absolute p-2 rounded-md md:hidden focus-visible:ring-2 focus-visible:ring-accent min-w-[44px] min-h-[44px] flex items-center justify-center"
               style={{ top: 16, right: 16, zIndex: 10, color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-heading)' }}
               aria-label="Close menu"
             >

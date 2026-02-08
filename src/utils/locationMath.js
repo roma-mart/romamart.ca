@@ -1,10 +1,9 @@
 /**
- * Utility: Find nearest location from a list given user coordinates
- * Uses Haversine formula for distance calculation
+ * Utility: Haversine distance calculation and nearest location finder
+ * Single source of truth for all distance-based location logic
  */
-import { LOCATIONS } from '../data/locations';
 
-function haversineDistance(lat1, lng1, lat2, lng2) {
+export function haversineDistance(lat1, lng1, lat2, lng2) {
   const toRad = deg => deg * Math.PI / 180;
   const R = 6371; // Earth radius in km
   const dLat = toRad(lat2 - lat1);
@@ -17,8 +16,9 @@ function haversineDistance(lat1, lng1, lat2, lng2) {
   return R * c;
 }
 
-export function findNearestLocation(userLocation, locations = LOCATIONS) {
-  if (!userLocation || !userLocation.latitude || !userLocation.longitude) return null;
+export function findNearestLocation(userLocation, locations) {
+  if (!locations?.length) return null;
+  if (!userLocation || userLocation.latitude === null || userLocation.latitude === undefined || userLocation.longitude === null || userLocation.longitude === undefined) return null;
   let nearest = null;
   let minDist = Infinity;
   for (const loc of locations) {

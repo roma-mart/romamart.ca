@@ -1,5 +1,6 @@
 import React, { useState, useEffect, Suspense, lazy, useCallback, useMemo } from 'react';
 import ErrorBoundary from './components/ErrorBoundary';
+import LoadingFallback from './components/LoadingFallback';
 import { motion, useReducedMotion } from 'framer-motion';
 import {
   ShoppingBasket,
@@ -10,10 +11,8 @@ import {
   ExternalLink,
   MapPin,
   Coffee,
-  Send
 } from 'lucide-react';
 // ...existing code...
-import { LocationProvider } from './components/LocationProvider';
 import { getPreferredLocation, isLocationOpenNow } from './data/locations';
 import { Logo } from './components/Logo';
 import Navbar from './components/Navbar';
@@ -31,10 +30,8 @@ import { useMenu } from './contexts/MenuContext';
 import { useServices } from './contexts/ServicesContext';
 import { useLocations } from './contexts/LocationsContext';
 import { transformExcelToMenuItem } from './utils/excelMenuTransform';
-import HCaptchaWidget from './components/HCaptchaWidget';
+import ContactForm from './components/ContactForm';
 import StructuredData from './components/StructuredData';
-// import { getHCaptchaTheme } from './design/hcaptchaTheme'; // Uncomment if upgrading to Pro/Enterprise for custom themes
-import { useColorScheme } from './hooks/useColorScheme';
 import { useAutoLocation } from './hooks/useAutoLocation';
 
 // PWA Hooks
@@ -91,25 +88,24 @@ function Hero({ onTrackOrder }) {
             <div className="mb-6"><ShareButton title="Roma Mart" text="Check out Roma Mart - Sarnia's newest convenience store!" className="bg-white/10 text-white hover:bg-white/20 border border-white/30" /></div>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button
-                as="a"
                 href={COMPANY_DATA.onlineStoreUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 variant="order"
+                size="lg"
                 icon={<ExternalLink size={20} />}
                 analyticsEvent="order_cta_hero"
                 aria-label="Order online from Roma Mart"
                 onClick={handleOrderClick}
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-bold text-lg"
               >
                 ORDER ONLINE
               </Button>
               <Button
-                href={`${BASE_URL}locations`} // Uses base path for internal link
+                href={`${BASE_URL}locations`}
                 variant="navlink"
+                size="lg"
                 icon={<ArrowRight size={20} />}
                 aria-label="Visit In Store Location"
-                className="px-8 py-4 text-lg"
               >
                 Visit In Store
               </Button>
@@ -149,9 +145,9 @@ const ServicesSection = ({ featuredServices = [] }) => {
           <Button
             href={`${BASE_URL}services`}
             variant="navlink"
+            size="lg"
             icon={<ArrowRight size={20} />}
             aria-label="View all services"
-            className="px-8 py-4 text-lg"
           >
             View All Services
           </Button>
@@ -227,9 +223,9 @@ const RoCafeSection = ({ menuItems, loading }) => {
               <Button
                 href={`${BASE_URL}rocafe`}
                 variant="navlink"
+                size="lg"
                 icon={<ArrowRight size={20} />}
                 aria-label="View full RoCafe menu"
-                className="px-8 py-4 text-lg"
               >
                 View Full Menu
               </Button>
@@ -297,7 +293,7 @@ const Locations = () => {
       <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
           <span className="font-bold uppercase tracking-widest text-sm" style={{ color: 'var(--color-accent)' }}>Find Us</span>
-          <h2 className="text-4xl mt-2" style={{ color: 'var(--color-heading)' }}>Our Locations{locationCount > 1 ? 's' : ''}</h2>
+          <h2 className="text-4xl mt-2" style={{ color: 'var(--color-heading)' }}>Our Location{locationCount > 1 ? 's' : ''}</h2>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
@@ -377,9 +373,9 @@ const Locations = () => {
               <Button
                 href={`${BASE_URL}locations`}
                 variant="navlink"
+                size="lg"
                 icon={<ArrowRight size={20} />}
                 aria-label="View all locations"
-                className="px-8 py-4 text-lg"
               >
                 View All Locations
               </Button>
@@ -399,69 +395,12 @@ const ContactSection = () => {
     locations.find(loc => loc.isPrimary) || locations[0],
     [locations]
   );
-  const [captchaToken, setCaptchaToken] = React.useState('');
-  const [formStatus, setFormStatus] = React.useState('');
-  const [formMessage, setFormMessage] = React.useState('');
-  const [fieldErrors, setFieldErrors] = React.useState({});
-  const handleContactSubmit = useCallback(async (e) => {
-    e.preventDefault();
-    if (window.dataLayer) {
-      window.dataLayer.push({ event: 'contact_form_submit', form_location: 'contact_section' });
-    }
-    const form = e.target;
-    const name = form.elements.name?.value?.trim();
-    const email = form.elements.email?.value?.trim();
-    const message = form.elements.message?.value?.trim();
-    const errors = {};
-    if (!name) errors.name = 'Name is required.';
-    if (!email) {
-      errors.email = 'Email is required.';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      errors.email = 'Please enter a valid email address (e.g., name@example.com).';
-    }
-    if (!message) errors.message = 'Message is required.';
-    if (Object.keys(errors).length > 0) {
-      setFieldErrors(errors);
-      setFormStatus('error');
-      setFormMessage('Please fill in all required fields.');
-      return;
-    }
-    setFieldErrors({});
-    const formData = new FormData(form);
-    if (!captchaToken) {
-      setFormStatus('error');
-      setFormMessage('Please complete the captcha.');
-      return;
-    }
-    formData.set('h-captcha-response', captchaToken);
-    try {
-      const response = await fetch('https://api.web3forms.com/submit', {
-        method: 'POST',
-        body: formData
-      });
-      if (response.ok) {
-        setFormStatus('success');
-        setFormMessage('Message sent successfully!');
-        setFieldErrors({});
-        form.reset();
-        setCaptchaToken('');
-      } else {
-        setFormStatus('error');
-        setFormMessage('Failed to send message. Please try again.');
-      }
-    } catch {
-      setFormStatus('error');
-      setFormMessage('Failed to send message. Please try again.');
-    }
-  }, [captchaToken]);
-
-  const colorScheme = useColorScheme();
 
   return (
     <section id="contact" className="py-24" style={{ backgroundColor: 'var(--color-surface)' }}>
       <div className="max-w-7xl mx-auto px-4">
         <div className="grid md:grid-cols-2 gap-16">
-          
+
           {/* Contact Info Side */}
           <div>
             <span className="font-bold uppercase tracking-widest text-sm" style={{ color: 'var(--color-accent)' }}>Get in Touch</span>
@@ -478,7 +417,7 @@ const ContactSection = () => {
                 <div className="flex-1">
                   <h3 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Visit Us</h3>
                   <p className="mb-2" style={textColor}>{primaryLocation.address.formatted}</p>
-                  <CopyButton 
+                  <CopyButton
                     text={primaryLocation.address.formatted}
                     label="Address"
                     className="text-xs"
@@ -497,7 +436,7 @@ const ContactSection = () => {
                     <a href={`tel:${COMPANY_DATA.location.contact.phone}`} className="hover:underline" style={{ color: 'var(--color-accent)' }}>
                       {COMPANY_DATA.location.contact.phone}
                     </a>
-                    <CopyButton 
+                    <CopyButton
                       text={COMPANY_DATA.location.contact.phone}
                       label="Phone number"
                       style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)' }}
@@ -528,119 +467,19 @@ const ContactSection = () => {
             </div>
           </div>
 
-          {/* Web3Forms Contact Form */}
+          {/* Contact Form */}
           <div className="p-8 rounded-2xl shadow-lg border" style={{ backgroundColor: 'var(--color-bg)', borderColor: 'var(--color-border)' }}>
             <h3 className="text-2xl mb-6" style={{ color: 'var(--color-heading)' }}>Send a Message</h3>
-            
-            {formStatus === 'success' && (
-              <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'var(--color-success-bg)', borderColor: 'var(--color-success)' }} role="status" aria-live="polite" aria-atomic="true">
-                <p className="font-inter" style={{ color: 'var(--color-success)' }}>{formMessage}</p>
-              </div>
-            )}
-            {formStatus === 'error' && (
-              <div className="mb-6 p-4 rounded-lg border" style={{ backgroundColor: 'var(--color-error-bg)', borderColor: 'var(--color-error)' }} role="alert" aria-live="assertive" aria-atomic="true">
-                <p className="font-inter" style={{ color: 'var(--color-error)' }}>{formMessage}</p>
-              </div>
-            )}
-            <form 
-              className="space-y-6"
-              onSubmit={handleContactSubmit}
-            >
-              <input type="hidden" name="access_key" value={COMPANY_DATA.contact.web3FormsAccessKey} />
-              <input type="hidden" name="subject" value="New Contact from Roma Mart Website" />
-              <input type="hidden" name="from_name" value="Roma Mart Website" />
-              <input type="hidden" name="h-captcha-response" value={captchaToken} />
-
-              <div>
-                <label htmlFor="contact-name" className="block text_sm font-bold mb-2" style={textColor}>Full Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  id="contact-name"
-                  required
-                  autoComplete="name"
-                  aria-invalid={!!fieldErrors.name}
-                  aria-describedby={fieldErrors.name ? 'contact-name-error' : undefined}
-                  className="w-full px-4 py-3 rounded-lg border focus:border_navy-500 focus:ring-2 focus:ring_navy-200 outline-none transition-all"
-                  style={{ backgroundColor: 'var(--color-surface)', borderColor: fieldErrors.name ? 'var(--color-error)' : 'var(--color-surface)', color: 'var(--color-text)' }}
-                  placeholder="John Doe"
-                />
-                {fieldErrors.name && <p id="contact-name-error" className="text-sm mt-1" style={{ color: 'var(--color-error)' }}>{fieldErrors.name}</p>}
-              </div>
-
-              <div>
-                <label htmlFor="contact-email" className="block text_sm font-bold mb-2" style={textColor}>Email Address</label>
-                <input
-                  type="email"
-                  name="email"
-                  id="contact-email"
-                  required
-                  autoComplete="email"
-                  aria-invalid={!!fieldErrors.email}
-                  aria-describedby={fieldErrors.email ? 'contact-email-error' : undefined}
-                  className="w-full px-4 py-3 rounded-lg border focus:border_navy-500 focus:ring-2 focus:ring_navy-200 outline-none transition-all"
-                  style={{ backgroundColor: 'var(--color-surface)', borderColor: fieldErrors.email ? 'var(--color-error)' : 'var(--color-surface)', color: 'var(--color-text)' }}
-                  placeholder="john@example.com"
-                />
-                {fieldErrors.email && <p id="contact-email-error" className="text-sm mt-1" style={{ color: 'var(--color-error)' }}>{fieldErrors.email}</p>}
-              </div>
-
-              <div>
-                <label htmlFor="contact-message" className="block text_sm font-bold mb-2" style={textColor}>Message</label>
-                <textarea
-                  name="message"
-                  id="contact-message"
-                  required
-                  rows="4"
-                  aria-invalid={!!fieldErrors.message}
-                  aria-describedby={fieldErrors.message ? 'contact-message-error' : undefined}
-                  className="w-full px-4 py-3 rounded-lg border focus:border_navy-500 focus:ring-2 focus:ring_navy-200 outline-none transition-all"
-                  style={{ backgroundColor: 'var(--color-surface)', borderColor: fieldErrors.message ? 'var(--color-error)' : 'var(--color-surface)', color: 'var(--color-text)' }}
-                  placeholder="How can we help you?"
-                ></textarea>
-                {fieldErrors.message && <p id="contact-message-error" className="text-sm mt-1" style={{ color: 'var(--color-error)' }}>{fieldErrors.message}</p>}
-              </div>
-
-              {/* hCaptcha Widget */}
-              <React.Suspense fallback={<div>Loading captcha...</div>}>
-                {typeof window !== 'undefined' && (
-                  <HCaptchaWidget 
-                    onVerify={setCaptchaToken}
-                    // On free tier, only string 'dark' or 'light' is supported. For custom themes, see hcaptchaTheme.js
-                    theme={colorScheme}
-                    scriptHost="https://js.hcaptcha.com/1/api.js?custom=true"
-                  />
-                )}
-              </React.Suspense>
-
-              <Button
-                type="submit"
-                variant="action"
-                icon={<Send size={18} />}
-                className="w-full py-4 rounded-xl font-bold font-inter flex items-center justify-center gap-2"
-                style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-text-on-accent)' }}
-                aria-label="Send Message"
-                disabled={!captchaToken}
-              >
-                Send Message
-              </Button>
-            </form>
+            <ContactForm
+              idPrefix="home-contact"
+              formSubject="New Contact from Roma Mart Website"
+            />
           </div>
         </div>
       </div>
     </section>
   );
 };
-
-// Loading fallback component (defined outside App to prevent recreation)
-const LoadingFallback = () => (
-  <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--color-bg)' }}>
-    <div className="text-center">
-      <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: 'var(--color-accent)' }}></div>
-      <p className="mt-4 font-inter" style={{ color: 'var(--color-text)' }}>Loading...</p>
-    </div>
-  </div>
-);
 
 // --- MAIN APP ---
 function App() {
@@ -664,12 +503,14 @@ function App() {
   // Only include featured items for homepage schemas (limited selection)
   const featuredSchemaItems = useMemo(() => {
     const featured = menuItems.filter(item => item.featured);
-    // eslint-disable-next-line no-console
-    console.log('[App.jsx] Featured menu items for homepage:', {
-      totalMenuItems: menuItems.length,
-      featuredCount: featured.length,
-      featuredItems: featured.map(item => ({ id: item.id, name: item.name }))
-    });
+    if (import.meta.env.DEV) {
+      // eslint-disable-next-line no-console
+      console.log('[App.jsx] Featured menu items for homepage:', {
+        totalMenuItems: menuItems.length,
+        featuredCount: featured.length,
+        featuredItems: featured.map(item => ({ id: item.id, name: item.name }))
+      });
+    }
     return featured;
   }, [menuItems]);
 
@@ -688,7 +529,7 @@ function App() {
   } if (window.dataLayer) { window.dataLayer.push({ event: 'order_cta_click', cta_location: location, cta_text: 'Order Online' }); } }, []);
 
   return (
-    <LocationProvider>
+    <>
       <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--color-bg)' }}>
                 {/* PWA WebApplication Schema (Homepage Only) */}
                 {currentPage === 'home' && (
@@ -707,9 +548,6 @@ function App() {
                 )}
         {/* Homepage Product Schemas (Featured Items Only - Primary Source for Google) */}
         {currentPage === 'home' && featuredSchemaItems.length > 0 && (
-          <>
-            {/* eslint-disable-next-line no-console */}
-            {console.log('[App.jsx] Rendering ProductList schema on homepage with', featuredSchemaItems.length, 'items')}
             <StructuredData
               type="ProductList"
               data={{
@@ -720,7 +558,6 @@ function App() {
                 }))
               }}
             />
-          </>
         )}
         {/* Homepage Service Schemas (Featured Services Only) */}
         {currentPage === 'home' && featuredServices.length > 0 && (
@@ -750,7 +587,7 @@ function App() {
         </ErrorBoundary>
         <main className="flex-1">
           {currentPage !== 'home' ? (
-            <Suspense fallback={<div>Loading...</div>}>
+            <Suspense fallback={<LoadingFallback />}>
               <div id="main-content">
                 {currentPage === 'services' && (
                   <ErrorBoundary><ServicesPage /></ErrorBoundary>
@@ -808,7 +645,7 @@ function App() {
         onDismiss={() => { sessionStorage.setItem('pwa-update-dismissed', 'true'); setUpdateDismissed(true); }}
       />
       <NetworkStatus />
-    </LocationProvider>
+    </>
   );
 }
 
