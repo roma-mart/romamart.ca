@@ -55,6 +55,7 @@ const RoCafePage = lazy(() => import('./pages/RoCafePage'));
 const LocationsPage = lazy(() => import('./pages/LocationsPage'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 
 // component imports
 import NetworkStatus from  './components/NetworkStatus';
@@ -522,7 +523,7 @@ function App() {
   // Prices in API are always in cents
   const schemaPriceInCents = true;
   useEffect(() => { if (!isVisible && import.meta.env.DEV) { console.warn('[Performance] Tab hidden - pausing heavy operations'); } }, [isVisible]);
-  const getPage = useCallback(() => { if (pathname.includes('/services')) return 'services'; if (pathname.includes('/rocafe')) return 'rocafe'; if (pathname.includes('/locations')) return 'locations'; if (pathname.includes('/contact')) return 'contact'; if (pathname.includes('/about')) return 'about'; if (pathname.includes('/accessibility')) return 'accessibility'; if (pathname.includes('/privacy')) return 'privacy'; if (pathname.includes('/terms')) return 'terms'; if (pathname.includes('/cookies')) return 'cookies'; if (pathname.includes('/return-policy')) return 'return-policy'; return 'home'; }, [pathname]);
+  const getPage = useCallback(() => { const normalized = pathname === '/' ? '/' : pathname.replace(/\/+$/, ''); switch (normalized) { case '/': return 'home'; case '/services': return 'services'; case '/rocafe': return 'rocafe'; case '/locations': return 'locations'; case '/contact': return 'contact'; case '/about': return 'about'; case '/accessibility': return 'accessibility'; case '/privacy': return 'privacy'; case '/terms': return 'terms'; case '/cookies': return 'cookies'; case '/return-policy': return 'return-policy'; default: return 'not-found'; } }, [pathname]);
   const currentPage = getPage();
   const handleTrackOrderClick = useCallback((location = 'hero_section') => { try { if (typeof window.trackOrderClick === 'function') { window.trackOrderClick(location); } } catch (e) {
     console.warn('trackOrderClick failed:', e);
@@ -618,6 +619,9 @@ function App() {
                 )}
                 {currentPage === 'return-policy' && (
                   <ErrorBoundary><ReturnPolicyPage /></ErrorBoundary>
+                )}
+                {currentPage === 'not-found' && (
+                  <ErrorBoundary><NotFoundPage /></ErrorBoundary>
                 )}
               </div>
             </Suspense>
