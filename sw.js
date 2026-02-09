@@ -3,7 +3,7 @@
  * PWA implementation with smart caching strategies
  */
 
-const CACHE_VERSION = /* __CACHE_VERSION__ */ 'roma-mart-7525d441';
+const CACHE_VERSION = /* __CACHE_VERSION__ */ 'roma-mart-e850183d';
 const BASE_URL = '/';
 
 // Assets to cache immediately on install
@@ -19,22 +19,22 @@ const PRECACHE_ASSETS = [
   `${BASE_URL}android/android-launchericon-512-512.png`,
   `${BASE_URL}ios/180.png`,
   `${BASE_URL}windows11/Square150x150Logo.scale-100.png`,
-    `${BASE_URL}assets/AboutPage-ymP59pMq.js`,
-  `${BASE_URL}assets/AccessibilityPage-CkdCal5d.js`,
-  `${BASE_URL}assets/ContactPage-BiUlho4h.js`,
-  `${BASE_URL}assets/CookiesPage-BQTnXxRX.js`,
-  `${BASE_URL}assets/ImageCarousel-BD2VaVH0.js`,
-  `${BASE_URL}assets/LocationsPage-k0k2kycu.js`,
-  `${BASE_URL}assets/NotFoundPage-Cm-1vUMd.js`,
-  `${BASE_URL}assets/PrivacyPage-Ch7Wz2gv.js`,
-  `${BASE_URL}assets/ReturnPolicyPage-BxQP44mq.js`,
-  `${BASE_URL}assets/RoCafePage-Zikp-7AU.js`,
-  `${BASE_URL}assets/ServicesPage-B3ICwl7Y.js`,
-  `${BASE_URL}assets/TermsPage-B9M6RjWV.js`,
-  `${BASE_URL}assets/icons-Do6pNWw9.js`,
-  `${BASE_URL}assets/index-Cdt0ketG.css`,
-  `${BASE_URL}assets/index-D1f1mQe3.js`,
-  `${BASE_URL}assets/motion-CyNA3iz5.js`,
+    `${BASE_URL}assets/AboutPage-BUIPRULX.js`,
+  `${BASE_URL}assets/AccessibilityPage-B0IhlOKA.js`,
+  `${BASE_URL}assets/ContactPage-BpAXfHIq.js`,
+  `${BASE_URL}assets/CookiesPage-CudLkcKl.js`,
+  `${BASE_URL}assets/ImageCarousel-BwT1h0hs.js`,
+  `${BASE_URL}assets/LocationsPage-C7xtoht1.js`,
+  `${BASE_URL}assets/NotFoundPage-BlSogEWh.js`,
+  `${BASE_URL}assets/PrivacyPage-B1Y1oO2g.js`,
+  `${BASE_URL}assets/ReturnPolicyPage-7sxcG58x.js`,
+  `${BASE_URL}assets/RoCafePage-CfMCpCtr.js`,
+  `${BASE_URL}assets/ServicesPage-BjUHNeYX.js`,
+  `${BASE_URL}assets/TermsPage-BEEzHo8s.js`,
+  `${BASE_URL}assets/icons-BkDujjue.js`,
+  `${BASE_URL}assets/index-bOk0MJKf.css`,
+  `${BASE_URL}assets/index-bhtE19NA.js`,
+  `${BASE_URL}assets/motion-Chcw_o1p.js`,
   `${BASE_URL}assets/phone-DvfqJ5kM.js`,
   `${BASE_URL}assets/react-vendor-labSKdyf.js`
 ];
