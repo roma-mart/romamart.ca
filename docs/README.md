@@ -22,7 +22,7 @@
 | [Deployment Guide](./DEPLOYMENT_GUIDE.md) | Deployment procedures |
 | [Meta-Checker System](./META_CHECKER_SYSTEM.md) | Quality checker validation |
 | [Release Checklist](./RELEASE_CHECKLIST.md) | Pre-release verification |
-| [Structured Data Master Plan](./STRUCTURED_DATA_MASTER_PLAN.md) | SEO schema implementation |
+| [Structured Data Master Plan](./archive/STRUCTURED_DATA_MASTER_PLAN.md) | SEO schema implementation (archived) |
 | [Financial Case](./FINANCIAL_CASE.md) | Website valuation & ROI analysis |
 
 ### Guides
@@ -86,7 +86,6 @@ docs/
 ├── DEPLOYMENT_GUIDE.md                 # Deployment procedures
 ├── META_CHECKER_SYSTEM.md              # Meta-checker validation
 ├── RELEASE_CHECKLIST.md                # Pre-release verification
-├── STRUCTURED_DATA_MASTER_PLAN.md      # SEO schema roadmap
 ├── FINANCIAL_CASE.md                   # Website valuation & ROI
 ├── guides/                             # User & developer guides
 ├── content/                            # Content creation guides
@@ -94,7 +93,11 @@ docs/
 ├── checklists/                         # Operational checklists
 ├── implementation-notes/               # Development session notes
 ├── updates/                            # Project updates & releases
-└── archive/                            # Historical/deprecated docs
+└── archive/                            # Historical/completed docs
+    ├── ROADMAP.md                      # Sprint plan (completed)
+    ├── EXPERT_AUDIT_FEB_2026.md        # Audit findings (completed)
+    ├── STRUCTURED_DATA_MASTER_PLAN.md  # SEO schema roadmap (completed)
+    └── [other archived docs]
 ```
 
 ## 📝 Documentation Standards

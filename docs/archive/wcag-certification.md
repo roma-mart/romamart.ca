@@ -248,7 +248,7 @@ The following third-party services are used on this website and have been select
 
 ### Frameworks & Libraries
 
-- **React 19:** Semantic JSX with accessibility features
+- **React 18.3.1:** Semantic JSX with accessibility features
 - **Tailwind CSS:** Utility-first CSS with accessibility utilities
 - **Framer Motion:** Animations with reduced-motion support
 - **Font Awesome:** Accessible icon library

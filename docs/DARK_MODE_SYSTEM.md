@@ -113,38 +113,21 @@ Catches:
 
 ---
 
-### 4. Dark Mode Checker (`scripts/check-dark-mode.js`)
-**Standalone scanner for all files**
+### 4. Quality Checker Integration
+Dark mode checks are integrated into the universal quality checker (`scripts/check-quality.js`).
 
 ```bash
-npm run check:dark-mode
+npm run check:quality
 ```
 
-**Output:**
-```
-🔍 Scanning for dark mode compatibility issues...
-
-Checking 42 files in src/
-
-✅ No dark mode compatibility issues found!
-```
-
-**Or if violations found:**
-```
-⚠️  Found 3 violation(s) in 2 file(s):
-
-❌ src/components/MyComponent.jsx:15
-   Found: className="text-gray-600"
-   Issue: Hardcoded Tailwind gray text class
-   Fix: Use var(--color-text) or var(--color-text-muted)
-```
+The checker scans all files in `src/` and flags dark mode violations alongside other quality dimensions.
 
 ---
 
-### 5. Pre-commit Hook (`.git/hooks/pre-commit`)
+### 5. Pre-commit Hook (`.husky/pre-commit`)
 **Blocks commits with violations**
 
-Automatically runs on `git commit` and prevents bad code from entering the repo.
+Husky v9 runs lint-staged, check:quality, and check:integrity automatically on `git commit`.
 
 **Bypass (not recommended):**
 ```bash
@@ -162,7 +145,8 @@ npm run check:all
 Runs:
 1. ESLint (accessibility + dark mode)
 2. Stylelint (CSS)
-3. Dark mode checker
+3. Universal quality checker (9 dimensions including dark mode)
+4. Meta-checker (validates quality system integrity)
 
 ---
 
@@ -240,7 +224,7 @@ export default MyComponent;
 - [ ] Replace `bg-gray-*` with `colors.surface` or `var(--color-surface)`
 - [ ] Replace `border-gray-*` with `colors.border` or `var(--color-border)`
 - [ ] Test in both light and dark mode
-- [ ] Run `npm run check:dark-mode`
+- [ ] Run `npm run check:quality`
 - [ ] Verify no ESLint warnings
 
 ---
@@ -341,7 +325,7 @@ const colors = useThemeColors();
 **Cause:** Staged files contain violations
 
 **Fix:**
-1. Run `npm run check:dark-mode` to see violations
+1. Run `npm run check:quality` to see violations
 2. Fix each violation using migration guide
 3. Run `git add` to stage fixes
 4. Retry `git commit`
@@ -437,13 +421,13 @@ localStorage.setItem('theme', theme);
 
 **Issues?** Check:
 1. ESLint errors: `npm run lint`
-2. Dark mode violations: `npm run check:dark-mode`
+2. Dark mode violations: `npm run check:quality`
 3. Build errors: `npm run build`
 4. Theme utilities: `src/utils/theme.js`
 
 **Questions?** See inline documentation in:
 - `src/utils/theme.js` (JSDoc comments)
-- `scripts/check-dark-mode.js` (script documentation)
+- `scripts/check-quality.js` (universal quality checker)
 
 ---
 

@@ -38,18 +38,14 @@ Without self-validation, quality systems can:
 │   npm run check:integrity           │
 └─────────────┬───────────────────────┘
               │
-     ┌────────┴────────┐
-     │                 │
-┌────▼─────┐    ┌─────▼────┐
-│ Quality  │    │ Dark Mode│
-│ Checker  │    │ Checker  │
-└──────────┘    └──────────┘
-     │               │
-     └───────┬───────┘
-             │
-      ┌──────▼───────┐
-      │   Codebase   │
-      └──────────────┘
+       ┌──────▼───────┐
+       │   Quality    │
+       │   Checker    │
+       └──────┬───────┘
+              │
+       ┌──────▼───────┐
+       │   Codebase   │
+       └──────────────┘
 ```
 
 ---
@@ -67,7 +63,7 @@ Without self-validation, quality systems can:
 **Example Issue:**
 ```
 ❌ check-quality.js skips utils/theme.js
-❌ check-dark-mode.js scans utils/theme.js
+❌ ESLint scans utils/theme.js
 ➡️ Result: Inconsistent reports
 ```
 
@@ -142,15 +138,15 @@ Without self-validation, quality systems can:
 **Validates:** Docs match actual behavior
 
 **Tests:**
-- Dimension count matches (8 vs 9)
+- Dimension count matches (9 dimensions)
 - CSS variable names documented
 - Code examples valid
 
 **Example Issue:**
 ```
 ❌ Docs say "8 dimensions"
-❌ Code has 9 dimensions (added brand_consistency)
-➡️ Result: Documentation out of sync
+❌ Code has 9 dimensions (brand_consistency added)
+➡️ Result: Documentation out of sync -- now fixed
 ```
 
 ---
@@ -337,15 +333,13 @@ const DEV_ETHOS = {
 ```
 
 ### 3. Document Exception Logic
-When adding exceptions to checkers:
+When adding exceptions to the quality checker:
 ```javascript
-// In check-dark-mode.js
+// In check-quality.js
 // EXCEPTION: text-gray-900 on yellow (WCAG AAA contrast)
 if (line.includes('bg-yellow') && line.includes('text-gray-900')) {
   continue; // Intentional high contrast
 }
-
-// Also add to check-quality.js to maintain consistency
 ```
 
 ### 4. Test False Positive Scenarios
@@ -400,11 +394,7 @@ const BRAND = {
 
 **Fix:**
 ```javascript
-// Sync exception patterns across both checkers
-// check-quality.js
-if (line.includes('intentional-pattern')) continue;
-
-// check-dark-mode.js  
+// Sync exception patterns in check-quality.js
 if (line.includes('intentional-pattern')) continue;
 ```
 
@@ -412,8 +402,8 @@ if (line.includes('intentional-pattern')) continue;
 
 ## 📚 Related Documentation
 
-- **[QUALITY_SYSTEM.md](./QUALITY_SYSTEM.md)** - Main quality checker
-- **[DARK_MODE_SYSTEM.md](./DARK_MODE_SYSTEM.md)** - Dark mode checker
+- **[QUALITY_SYSTEM.md](./QUALITY_SYSTEM.md)** - Universal quality checker
+- **[DARK_MODE_SYSTEM.md](./DARK_MODE_SYSTEM.md)** - Dark mode system
 - **[DEVELOPMENT_ETHOS.md](./DEVELOPMENT_ETHOS.md)** - Core principles
 
 ---
@@ -473,15 +463,12 @@ Week 3: 1 issue (minor doc lag) → Acceptable
 
 ## 🚦 Integration
 
-### Pre-Commit (Recommended)
+### Pre-Commit (Active via Husky v9)
 ```bash
-# Add to .git/hooks/pre-commit
-npm run check:integrity
-if [ $? -ne 0 ]; then
-  echo "❌ Meta-checker found issues in quality system"
-  echo "   Fix checker conflicts before committing"
-  exit 1
-fi
+# .husky/pre-commit runs:
+# npx lint-staged
+# npm run check:quality
+# npm run check:integrity
 ```
 
 ### CI/CD Pipeline

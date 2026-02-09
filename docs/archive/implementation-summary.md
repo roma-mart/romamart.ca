@@ -61,7 +61,7 @@
 
 ### Stack
 
-- **React 19**: Latest stable with concurrent features
+- **React 18.3.1**: Latest stable with modern hooks
 - **Vite 7**: Fast build tool with HMR
 - **Tailwind CSS 3**: Utility-first styling
 - **Framer Motion 12**: Advanced animations

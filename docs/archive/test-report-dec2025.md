@@ -20,7 +20,7 @@
 
 ### ?? Dependency Installation
 
-**Notes:** React 19 peer compatibility ensured via overrides and `legacy-peer-deps=true` in `.npmrc`.
+**Notes:** React 18.3.1 peer compatibility ensured via overrides and `legacy-peer-deps=true` in `.npmrc`.
 
 **Status:** ? RESOLVED
 

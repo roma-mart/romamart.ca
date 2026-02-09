@@ -104,30 +104,30 @@ VS Code + ESLint + Extensions
 ```
 npm run check:quality
           ↓
-   8 quality dimensions
+   9 quality dimensions
    Detailed reports
    Exit codes for CI
 ```
 
 **Components:**
-- `scripts/check-quality.js` - Universal checker
-- `scripts/check-dark-mode.js` - Dark mode specific
+- `scripts/check-quality.js` - Universal checker (includes dark mode checks)
 - `package.json` - Script definitions
 
-### Layer 3: Git Hooks
-**Automated pre-commit/pre-push validation**
+### Layer 3: Git Hooks (Active -- Husky v9)
+**Automated pre-commit validation**
 
 ```
-git commit / git push
+git commit
           ↓
-   Run quality checks
+   lint-staged (ESLint + Stylelint)
+   npm run check:quality
+   npm run check:integrity
    Block if failures
-   Allow --no-verify bypass
 ```
 
 **Components:**
-- `.git/hooks/pre-commit` - Dark mode check
-- `.husky/pre-push` - Full quality suite
+- `.husky/pre-commit` - Quality suite (lint-staged + check:quality + check:integrity)
+- `.husky/commit-msg` - Commitlint (Conventional Commits)
 - Exit codes determine success/failure
 
 ### Layer 4: CI/CD Pipeline
@@ -196,7 +196,7 @@ GitHub Actions
 
 **Tools:**
 - Custom ESLint rules
-- `check-dark-mode.js` scanner
+- Universal quality checker (`check-quality.js` dark mode dimension)
 - Theme utilities (`src/utils/theme.js`)
 
 **Example Fix:**
@@ -448,7 +448,7 @@ npm run check:quality
 
 **What It Does:**
 1. Scans all `.js` and `.jsx` files in `src/`
-2. Applies 8 quality dimension checks
+2. Applies 9 quality dimension checks
 3. Categorizes issues by severity
 4. Provides detailed fix suggestions
 5. Returns exit code (0 = pass, 1 = fail)
@@ -495,20 +495,18 @@ Total Issues: 15
 
 ### Integration with Git Hooks
 
-**Pre-Commit Hook** (Fast - Dark Mode Only):
+**Pre-Commit Hook** (Husky v9 -- Comprehensive):
 ```bash
-# Runs automatically on git commit
-# Checks only staged files
-# Focuses on dark mode violations
-# ~2 seconds execution time
+# Runs automatically on git commit via .husky/pre-commit
+# 1. lint-staged (ESLint on *.{js,jsx}, Stylelint on *.css)
+# 2. npm run check:quality (9 dimensions)
+# 3. npm run check:integrity (meta-checker)
 ```
 
-**Pre-Push Hook** (Comprehensive):
+**Commit-Msg Hook** (Conventional Commits):
 ```bash
-# Runs automatically on git push
-# Full quality check + build
-# Catches all 9 dimensions
-# ~2 minutes execution time
+# Runs automatically via .husky/commit-msg
+# Validates commit message format: <type>(<scope>): <description>
 ```
 
 **Bypass Option:**
@@ -542,7 +540,8 @@ git push --no-verify
    git add .
    git commit -m "feat: add new feature"
    ```
-   - Pre-commit hook validates dark mode
+   - Husky pre-commit hook runs lint-staged + quality + integrity
+   - Commit-msg hook validates Conventional Commits format
    - Blocks commit if violations found
    - Fast feedback loop
 
@@ -550,9 +549,8 @@ git push --no-verify
    ```bash
    git push origin main
    ```
-   - Pre-push hook runs full quality suite
-   - Builds project to catch integration issues
-   - Only pushes if all checks pass
+   - All checks already passed at commit time
+   - CI/CD runs build validation on push
 
 ### Weekly Maintenance
 
@@ -620,20 +618,11 @@ git push --no-verify
 
 ### Progressive Enforcement
 
-**Phase 1: Awareness (Current)**
-- All rules enabled as **warnings**
-- Developers see issues but can commit
-- Focus on education and adoption
-
-**Phase 2: Soft Enforcement (Week 2)**
-- High and critical rules become **errors**
-- Pre-commit hook blocks obvious violations
-- Pre-push hook allows bypass with warning
-
-**Phase 3: Strict Enforcement (Week 4)**
+**Current State: Strict Enforcement (Active)**
 - All medium+ rules are errors
-- No bypass without documented exception
-- CI/CD blocks deployment on failures
+- Husky v9 pre-commit hook blocks violations automatically
+- Commit-msg hook enforces Conventional Commits
+- `npm run check:all` required before merging
 
 ### Exception Process
 
@@ -812,11 +801,11 @@ npm run check:quality > quality-report.txt
 **Solution:**
 ```bash
 # See what's blocking
-git status
-cat .git/hooks/pre-commit
+npm run check:quality
 
-# Fix the violations
-npm run check:dark-mode
+# Fix the violations, then retry
+git add .
+git commit -m "feat: your message"
 
 # Or bypass (not recommended)
 git commit --no-verify -m "emergency fix"
@@ -847,17 +836,15 @@ if (line.includes('intentional-pattern')) return;
 
 **Solution:**
 ```bash
-# Check hook exists and is executable
-ls -la .git/hooks/pre-commit
+# Verify Husky is installed
+ls .husky/pre-commit
 
-# Make executable (Git Bash/Mac/Linux)
-chmod +x .git/hooks/pre-commit
+# Re-install Husky hooks
+npx husky install
 
-# On Windows, ensure file has content
-cat .git/hooks/pre-commit
-
-# Re-create if missing
-# Copy from documentation
+# Check hook has correct content
+cat .husky/pre-commit
+# Should contain: npx lint-staged, npm run check:quality, npm run check:integrity
 ```
 
 ### Performance Issues
@@ -866,13 +853,14 @@ cat .git/hooks/pre-commit
 
 **Optimization:**
 ```bash
-# Use dark mode check only (fast)
-npm run check:dark-mode  # ~2 seconds
+# Run lint only (fast)
+npm run lint                # ~5 seconds
 
-# Skip full quality for commits
+# Skip quality checks for commits (not recommended)
 git commit -m "..." --no-verify
 
-# Run full quality before push instead
+# Run full quality before push
+npm run check:all
 ```
 
 #### Build Takes Too Long
@@ -890,8 +878,7 @@ git commit -m "..." --no-verify
 ### Internal Documentation
 
 - **[COMPREHENSIVE_AUDIT_DEC2025.md](./COMPREHENSIVE_AUDIT_DEC2025.md)** - Initial codebase audit (98/100 score)
-- **[DARK_MODE_SYSTEM.md](./DARK_MODE_SYSTEM.md)** - Dark mode utilities and patterns
-- **[DARK_MODE_FIX_DEC2025.md](./DARK_MODE_FIX_DEC2025.md)** - Dark mode incident report
+- **[DARK_MODE_SYSTEM.md](./DARK_MODE_SYSTEM.md)** - Dark mode system and patterns
 - **[CONTENT_PHASE_PLAN.md](./CONTENT_PHASE_PLAN.md)** - Content requirements and specs
 - **[WCAG_CERTIFICATION.md](./WCAG_CERTIFICATION.md)** - Accessibility compliance details
 
@@ -945,11 +932,10 @@ Install via VS Code or `.vscode/extensions.json`:
 
 ### Planned Improvements
 
-- [ ] **CI/CD Integration** - GitHub Actions workflow
 - [ ] **Visual Regression Testing** - Percy or Chromatic
 - [ ] **Type Safety** - Migrate to TypeScript
 - [ ] **Bundle Analysis** - Automated size tracking
-- [ ] **Test Coverage** - Jest + React Testing Library
+- [x] **Test Coverage** - Vitest (260 tests across 18 files)
 - [ ] **API Contract Testing** - Mock server validation
 - [ ] **Internationalization** - i18n quality checks
 
@@ -967,9 +953,9 @@ This system is **living documentation**. As we discover new patterns and issues:
 
 ### Version 1.0.0 (December 1, 2025)
 - ✅ Initial universal quality system
-- ✅ 8 quality dimensions implemented
+- ✅ 9 quality dimensions implemented (including brand consistency)
 - ✅ Automated checker created
-- ✅ Git hooks configured
+- ✅ Husky v9 git hooks configured
 - ✅ Editor integration complete
 - ✅ Comprehensive documentation
 - ✅ Example templates provided

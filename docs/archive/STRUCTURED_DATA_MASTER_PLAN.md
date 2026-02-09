@@ -317,7 +317,7 @@ Keep for emergency rollback reference.
 1. **React Frontend** (this repo)
    - GitHub Pages deployment
    - Renders UI, generates schemas
-   - React 19, Vite 7, Tailwind
+   - React 18.3.1, Vite 7, Tailwind
 
 2. **Admin System** (external)
    - MIUI Toolpad on Netlify

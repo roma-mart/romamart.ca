@@ -1,6 +1,6 @@
 # Comprehensive Schema Audit - February 5, 2026
 
-> **ARCHIVED:** This document has been fully integrated into the [STRUCTURED_DATA_MASTER_PLAN.md](../STRUCTURED_DATA_MASTER_PLAN.md) as Phase 4.
+> **ARCHIVED:** This document has been fully integrated into the [STRUCTURED_DATA_MASTER_PLAN.md](./STRUCTURED_DATA_MASTER_PLAN.md) as Phase 4.
 >
 > **Reason:** Master plan is the single working document for all schema implementation work.
 >
@@ -26,7 +26,7 @@ This comprehensive audit of all 13 schema types was completed on February 5, 202
 ### Quick Links
 
 For complete audit details, see:
-- **Master Plan Phase 4:** [STRUCTURED_DATA_MASTER_PLAN.md#phase-4](../STRUCTURED_DATA_MASTER_PLAN.md#phase-4-schema-audit--architecture-refinement-february-5-2026--complete)
+- **Master Plan Phase 4:** [STRUCTURED_DATA_MASTER_PLAN.md#phase-4](./STRUCTURED_DATA_MASTER_PLAN.md#phase-4-schema-audit--architecture-refinement-february-5-2026--complete)
 - **Compliance Ratings:** Phase 4 > Updated Compliance Ratings
 - **Amenities Migration:** Phase 4 > Amenities Architecture Migration
 - **De-Hardcoding:** Phase 4 > Complete De-Hardcoding Achievement

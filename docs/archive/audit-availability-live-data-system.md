@@ -539,7 +539,7 @@ import CurrentLocalTime from './CurrentLocalTime';
 | WCAG 2.2 AA+ | Semantics | ✅ | Proper HTML elements used |
 | WCAG 2.2 AA+ | ARIA | ✅ | Roles and labels on status indicators |
 | WCAG 2.2 AA+ | Keyboard | ✅ | All interactive elements keyboard accessible |
-| React 19 | Best Practices | ✅ | Functional components, hooks, proper dependencies |
+| React 18.3.1 | Best Practices | ✅ | Functional components, hooks, proper dependencies |
 | ESLint | Code Quality | ✅ | 0 errors across all files |
 | Quality System | Dimensions | ✅ | All 9+ dimensions pass for new code |
 

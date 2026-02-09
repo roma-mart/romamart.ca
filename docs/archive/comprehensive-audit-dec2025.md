@@ -327,7 +327,7 @@ web3FormsAccessKey: "YOUe4a0fd98-2ea3-4d6c-8449-346b6097c7dc"
 
 ### package.json
 
-✅ **Dependencies:** All up-to-date (React 19, Vite 7)  
+✅ **Dependencies:** All up-to-date (React 18.3.1, Vite 7)
 ✅ **Scripts:** build, dev, preview, deploy, lint  
 ✅ **No Vulnerabilities:** Clean npm audit  
 

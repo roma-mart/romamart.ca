@@ -9,9 +9,9 @@ Roma Mart 2.0 is a **React 18.3.1 + Vite 7** progressive web app for a multi-loc
 
 ### Current Status (Feb 2026)
 
-An expert-consolidated audit identified 56 problems and produced 55 recommendations organized into 8 sprints across 4 phases. See planning documents for details:
-- **[docs/ROADMAP.md](../docs/ROADMAP.md)** -- Sprint plan, phase breakdown, domain scorecard
-- **[docs/EXPERT_AUDIT_FEB_2026.md](../docs/EXPERT_AUDIT_FEB_2026.md)** -- Full audit findings and recommendations (R1-R55)
+An expert-consolidated audit identified 56 problems and produced 55 recommendations organized into 8 sprints (all complete). See planning documents for details:
+- **[docs/archive/ROADMAP.md](../docs/archive/ROADMAP.md)** -- Sprint plan, phase breakdown, domain scorecard (archived)
+- **[docs/archive/EXPERT_AUDIT_FEB_2026.md](../docs/archive/EXPERT_AUDIT_FEB_2026.md)** -- Full audit findings and recommendations (R1-R55) (archived)
 - **[docs/API_MIGRATION_READINESS.md](../docs/API_MIGRATION_READINESS.md)** -- Backend API spec for @Fern-Ali
 - **GitHub Issues:** #98-#106 (sprint issues), #107 (backend API), tracked on [RomaMart UI Roadmap](https://github.com/orgs/roma-mart/projects/4) project board
 
@@ -312,8 +312,8 @@ Before going live on custom domain:
 
 | File | Purpose |
 |------|---------|
-| `docs/ROADMAP.md` | Sprint plan and audit-driven roadmap |
-| `docs/EXPERT_AUDIT_FEB_2026.md` | Expert-consolidated codebase audit |
+| `docs/archive/ROADMAP.md` | Sprint plan and audit-driven roadmap (archived) |
+| `docs/archive/EXPERT_AUDIT_FEB_2026.md` | Expert-consolidated codebase audit (archived) |
 | `docs/API_MIGRATION_READINESS.md` | Backend API specification for migration |
 | `docs/DEVELOPMENT_ETHOS.md` | 25 core principles guiding all development |
 | `docs/ARCHITECTURE.md` | High-level system design and conventions |
@@ -527,11 +527,11 @@ This file is the Copilot-specific project context. A parallel `CLAUDE.md` exists
 - When updating project conventions, architecture, or workflows, update BOTH files
 - Each file is optimized for its respective AI's context format
 - If you notice drift between the files, flag it and propose corrections
-- Last synced: February 8, 2026
+- Last synced: February 9, 2026
 
 ---
 
-**Last Updated:** February 8, 2026
+**Last Updated:** February 9, 2026
 **Maintained by:** GitHub Copilot & Claude Code (keep in sync with `CLAUDE.md`)
 **Codebase Version:** React 18.3.1 + Vite 7 (ESM)
 **API Status:** Menu API live (200 OK); Services & Locations APIs pending (#107) -- frontend uses static fallback
