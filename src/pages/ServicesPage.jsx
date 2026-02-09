@@ -177,8 +177,8 @@ const ServicesPage = () => {
                   rel="noopener noreferrer"
                   style={{ color: 'var(--color-accent)' }}
                   className="hover:underline"
-                  onMouseOver={(e) => (e.currentTarget.style.color = 'rgba(228, 179, 64, 0.85)')}
-                  onFocus={(e) => (e.currentTarget.style.color = 'rgba(228, 179, 64, 0.85)')}
+                  onMouseOver={(e) => (e.currentTarget.style.color = 'var(--color-accent-hover)')}
+                  onFocus={(e) => (e.currentTarget.style.color = 'var(--color-accent-hover)')}
                   onMouseOut={(e) => (e.currentTarget.style.color = 'var(--color-accent)')}
                   onBlur={(e) => (e.currentTarget.style.color = 'var(--color-accent)')}
                 >
@@ -212,8 +212,8 @@ const ServicesPage = () => {
                   rel="noopener noreferrer"
                   style={{ color: 'var(--color-accent)' }}
                   className="hover:underline"
-                  onMouseOver={(e) => (e.currentTarget.style.color = 'rgba(228, 179, 64, 0.85)')}
-                  onFocus={(e) => (e.currentTarget.style.color = 'rgba(228, 179, 64, 0.85)')}
+                  onMouseOver={(e) => (e.currentTarget.style.color = 'var(--color-accent-hover)')}
+                  onFocus={(e) => (e.currentTarget.style.color = 'var(--color-accent-hover)')}
                   onMouseOut={(e) => (e.currentTarget.style.color = 'var(--color-accent)')}
                   onBlur={(e) => (e.currentTarget.style.color = 'var(--color-accent)')}
                 >

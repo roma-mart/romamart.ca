@@ -15,15 +15,7 @@ import { ChevronDown } from 'lucide-react';
  * @param {string} props.id - Unique id for button
  * @param {string} props.ariaControls - Id of the controlled panel
  */
-function CategoryAccordionHeader({
-  icon,
-  title,
-  description,
-  expanded,
-  onToggle,
-  id,
-  ariaControls,
-}) {
+function CategoryAccordionHeader({ icon, title, description, expanded, onToggle, id, ariaControls }) {
   return (
     <button
       type="button"
@@ -32,7 +24,7 @@ function CategoryAccordionHeader({
       aria-expanded={expanded}
       className="flex items-center w-full p-6 focus-visible:ring outline-none bg-transparent border-none text-left"
       onClick={onToggle}
-      onKeyDown={e => {
+      onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
           onToggle(e);
@@ -42,13 +34,17 @@ function CategoryAccordionHeader({
       <span className="flex items-center gap-4 flex-1 min-w-0">
         <span
           className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
-          style={{ backgroundColor: 'rgba(228, 179, 64, 0.15)', color: 'var(--color-icon)' }}
+          style={{ backgroundColor: 'var(--color-accent-bg)', color: 'var(--color-icon)' }}
         >
           {icon}
         </span>
         <span className="text-left min-w-0">
-          <span className="block text-2xl text-heading truncate" style={{ color: 'var(--color-heading)' }}>{title}</span>
-          <span className="block text-sm font-inter truncate" style={{ color: 'var(--color-text-muted)' }}>{description}</span>
+          <span className="block text-2xl text-heading truncate" style={{ color: 'var(--color-heading)' }}>
+            {title}
+          </span>
+          <span className="block text-sm font-inter truncate" style={{ color: 'var(--color-text-muted)' }}>
+            {description}
+          </span>
         </span>
       </span>
       <span className="w-8 flex items-center justify-center flex-shrink-0 ml-2" aria-hidden="true">

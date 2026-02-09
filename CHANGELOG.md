@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `refetch()` method on `useMenu()` for in-place retry without full page reload
 - Static HTML content injection into prerendered pages for non-JS crawlers (h1, descriptions, structured content per route)
 - `<h1>` presence assertion in SEO asset checker
-- `index.html` preconnect hints for Netlify API and Google Fonts
+- `dns-prefetch` hints for Netlify API and Google Places API
 - ESM Stylelint config replacing CommonJS `.stylelintrc.cjs`
 
 ### Changed

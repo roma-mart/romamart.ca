@@ -315,7 +315,7 @@ const LocationsPage = () => {
                         <span
                           key={idx}
                           className="px-3 py-1 rounded-full text-sm font-inter font-semibold"
-                          style={{ backgroundColor: 'rgba(228, 179, 64, 0.15)', color: 'var(--color-text)' }}
+                          style={{ backgroundColor: 'var(--color-accent-bg)', color: 'var(--color-text)' }}
                         >
                           {amenity.name}
                         </span>
