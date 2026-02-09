@@ -3,7 +3,6 @@ import path from 'path';
 import { createHash } from 'crypto';
 import { fileURLToPath } from 'url';
 import COMPANY_DATA from '../src/config/company_data.js';
-import { LOCATIONS as STATIC_LOCATIONS } from '../src/data/locations.js';
 import { buildMenuItemSchema } from '../src/schemas/menuItemSchema.js';
 import { buildServiceListSchema } from '../src/schemas/serviceSchema.js';
 import { buildLocationListSchema } from '../src/schemas/locationSchema.js';
@@ -872,9 +871,9 @@ function escapeHtml(str) {
 function buildStaticContent(routePath, apiData = {}) {
   const { menuItems = [], services = [], locations: apiLocations = [] } = apiData;
 
-  // Use API locations if available, otherwise fall back to static LOCATIONS data
-  const allLocations = apiLocations.length > 0 ? apiLocations : STATIC_LOCATIONS;
-  const activeLocations = allLocations.filter((l) => l.status === 'open');
+  // API locations only — no static data import (migrating to API-only)
+  // Falls back to COMPANY_DATA.location (SSOT) when API is unavailable
+  const activeLocations = apiLocations.filter((l) => l.status === 'open');
 
   const loc = COMPANY_DATA.location;
   const contact = loc?.contact || {};
