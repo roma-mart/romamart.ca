@@ -1,7 +1,7 @@
 # Roma Mart 2.0 - System Architecture
 
-> **Last Updated:** February 4, 2026  
-> **Version:** 2.0 (React 19 + Vite 7)
+> **Last Updated:** February 9, 2026
+> **Version:** 2.0 (React 18.3.1 + Vite 7)
 
 ## Table of Contents
 
@@ -24,7 +24,7 @@
 
 | Technology | Version | Purpose |
 |------------|---------|---------|
-| **React** | 19.0 | UI framework with modern hooks |
+| **React** | 18.3.1 | UI framework with modern hooks |
 | **Vite** | 7.0 | Lightning-fast build tool & dev server |
 | **Tailwind CSS** | 3.4 | Utility-first CSS framework |
 | **Framer Motion** | 11.x | Animation library |
@@ -189,7 +189,7 @@ function SomePage() {
 All schema builders in `src/schemas/`:
 - Import data from SSOT (services.js, locations.js, rocafe-menu.js)
 - Generate valid Schema.org JSON-LD
-- Unit tested with Vitest (83 tests passing)
+- Unit tested with Vitest (260 tests passing across 18 test files)
 
 ---
 
@@ -268,15 +268,24 @@ function Component() {
 - Offline queue (IndexedDB)
 - hCaptcha verification
 
-#### 3. **External Menu API**
-**Context:** `MenuContext.jsx`  
+#### 3. **Menu API**
+**Context:** `MenuContext.jsx`
 **Hook:** `useMenu()`
 
-**Status:** Active (production)
+**Status:** Active (production, 200 OK)
 - Fetches menu from `https://romamart.netlify.app/api/public-menu`
 - Single API call per session via React Context
 - Shared across App.jsx and RoCafePage.jsx
 - 50% reduction in API calls vs previous architecture
+
+#### 4. **Services & Locations APIs**
+**Contexts:** `ServicesContext.jsx`, `LocationsContext.jsx`
+**Hooks:** `useServices()`, `useLocations()`
+
+**Status:** Pending (#107) -- frontend uses static fallback
+- Endpoints defined but return 404
+- Context providers fall back to static data from `data/services.jsx` and `data/locations.js`
+- Each returns `{ data, loading, error, source }` where `source` is `'api'` or `'static'`
 
 ### Data Flow Pattern
 
@@ -313,18 +322,14 @@ else if (path === '/services') content = <ServicesPage />;
 
 ### Base Path Handling
 
-**Development:** `/` (root)
-**Staging (GitHub Pages):** `/romamart.ca/`
-**Production:** `/` (custom domain)
-
 **Configuration:** `vite.config.js`
 ```javascript
 export default defineConfig({
-  base: process.env.NODE_ENV === 'production' 
-    ? '/romamart.ca/'  // Change to '/' after production cutover
-    : '/'
+  base: '/'
 });
 ```
+
+> **Note:** Base path is set to `'/'` for production (custom domain). GitHub Pages staging uses a deploy script that handles path adjustments automatically.
 
 ### Prerendering
 
@@ -443,7 +448,7 @@ const { text, surface, primary } = useThemeColors();
 
 **Framework:** Vitest
 
-**Coverage:** 83/83 tests passing
+**Coverage:** 260 tests passing across 18 test files
 
 **Pattern:**
 ```javascript
@@ -514,8 +519,7 @@ npm run check:all  # Lint + quality + integrity
 #### Production (Custom Domain)
 - **URL:** `https://romamart.ca/`
 - **Base path:** `/`
-- **Host:** TBD (after cutover)
-- **Change required:** Update `base` in `vite.config.js`
+- **Host:** GitHub Pages with custom domain
 
 ### Environment Variables
 
@@ -540,17 +544,16 @@ npm run check:all  # Lint + quality + integrity
 #### Layer 2: Development Scripts
 - `npm run check:quality` - Universal checker (1000+ rules)
 - `npm run check:integrity` - Meta-checker
-- 8 quality dimensions: accessibility, dark mode, performance, security, SEO, code quality, responsive, browser compatibility
+- 9 quality dimensions: accessibility, dark mode, performance, security, SEO, code quality, responsive, browser compatibility, brand consistency
 
-#### Layer 3: Git Hooks (Future)
-- Pre-commit: Dark mode check
-- Pre-push: Full quality suite
-- Blocks bad commits
+#### Layer 3: Git Hooks (Active -- Husky v9)
+- Pre-commit: lint-staged (ESLint + Stylelint) + check:quality + check:integrity
+- Commit-msg: commitlint (Conventional Commits)
+- Blocks bad commits automatically
 
-#### Layer 4: CI/CD (Future)
-- GitHub Actions workflow
-- Build + quality checks
-- Deploy only if passing
+#### Layer 4: CI/CD
+- GitHub Actions workflow for deployment
+- Build + quality checks on push
 
 ### Quality Dimensions
 
@@ -562,6 +565,7 @@ npm run check:all  # Lint + quality + integrity
 6. **Code Quality** - No console.log, modern patterns
 7. **Responsive** - Mobile-first breakpoints
 8. **Browser Compatibility** - Modern features with fallbacks
+9. **Brand Consistency** - Design tokens, no hardcoded brand values
 
 ---
 
@@ -613,13 +617,13 @@ npm run check:all  # Lint + quality + integrity
 
 - [Development Ethos](./DEVELOPMENT_ETHOS.md) - 25 core principles
 - [Quality System](./QUALITY_SYSTEM.md) - Comprehensive quality standards
-- [Structured Data Master Plan](./STRUCTURED_DATA_MASTER_PLAN.md) - SEO schema roadmap
+- [Structured Data Master Plan](./archive/STRUCTURED_DATA_MASTER_PLAN.md) - SEO schema roadmap (archived)
 - [Component System](./architecture/component-system.md) - Component details
 - [Data Management](./architecture/data-management.md) - Data flow patterns
 - [Circuit Breaker Pattern](./architecture/circuit-breaker-pattern.md) - API protection
 
 ---
 
-**Last Updated:** February 4, 2026  
+**Last Updated:** February 9, 2026
 **Maintained By:** Roma Mart Development Team  
 **Status:** Living Document

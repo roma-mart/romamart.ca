@@ -93,7 +93,7 @@
 | R48 | Add Dependabot config | DevOps |
 | R49 | WebP/AVIF images with srcset | Performance |
 | R50 | Evaluate XLSX replacement | Security |
-| R51 | React 19 upgrade or doc correction | Core |
+| R51 | ~~React 19 upgrade or doc correction~~ | Core | ✅ Doc correction done (Sprint Post) |
 | R52 | TypeScript migration (incremental) | Core |
 | R53 | E2E tests with Playwright | Testing |
 | R54 | Lighthouse CI in pipeline | DevOps |
@@ -170,13 +170,14 @@ Work is grouped into 9 logical sprints based on domain alignment, dependency rel
 - **Version:** 2.6.3
 - **Status:** Complete
 - **Summary:** Full re-audit of all 55 recommendations confirmed 40 already fixed in Sprints 1-8. Sprint 9 closed 7 remaining actionable gaps: removed dead xlsx dependency (~230KB) and FontAwesome packages (~30-40KB), gated production console.warn calls, added Prettier + format-on-commit, created border-radius design tokens, made hero badge data-driven, and removed redundant footer title attributes. R39 (CookieConsent) confirmed handled by Clickio CMP via GTM -- no custom component needed.
-- **Remaining unfixed:** R38 (Coming Soon services -- user deferred), R39 (consent -- handled by Clickio CMP via GTM, not in codebase), R49 (WebP/AVIF), R51 (React 19 doc correction), R52 (TypeScript), R53 (Playwright), R54 (Lighthouse CI), R55 (vite-plugin-pwa)
+- **Remaining unfixed:** R38 (Coming Soon services -- user deferred), R39 (consent -- handled by Clickio CMP via GTM, not in codebase), R49 (WebP/AVIF), R52 (TypeScript), R53 (Playwright), R54 (Lighthouse CI), R55 (vite-plugin-pwa)
 
 ### Post-Sprint: Documentation Update
 - **Branch:** `docs/audit-alignment`
 - **Scope:** Fix documentation-vs-reality discrepancies identified in audit Section 4
 - **Labels:** `documentation`
-- **Guidance:** Many of the original 10 discrepancies have been resolved through Sprints 1-9. Review remaining drift items, update test counts (260 passing as of v2.6.2), confirm Husky is operational, update API status, and ensure React version references are correct (18.3.1, not 19). Also update this roadmap and expert audit with final post-sprint scoring.
+- **Status:** Complete (v2.6.4)
+- **Summary:** Corrected all 10 documentation-vs-reality discrepancies. Fixed React 18.3.1 version across 14+ files, updated test counts (18 files / 260 tests), corrected quality dimensions (9 not 8), updated Husky v9 git hooks documentation, fixed base path to `'/'`, clarified API status (Menu live, Services/Locations pending with fallback), removed stale `check-dark-mode.js` references, and updated all archive files.
 
 ### Nice-to-Have (Low Priority)
 These are non-critical enhancements to consider after all sprints are complete:

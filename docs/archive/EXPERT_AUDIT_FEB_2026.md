@@ -16,7 +16,7 @@ Roma Mart 2.0 is a React 18.3.1 + Vite 7 PWA for a single-location Canadian conv
 | **SEO** | B+ | Solid structured data; broken SearchAction, missing 404 page |
 | **Accessibility** | B- | Phase 1 done but no focus traps on modals, form errors not announced |
 | **UX/UI/Branding** | B- | Strong palette but font loading chaos, broken `var()` in classNames |
-| **Testing** | C | 11 files / ~122 tests; critical business logic untested |
+| **Testing** | C | 18 files / 260 tests (post-sprint); critical business logic coverage expanded |
 | **Performance** | D+ | Triple font loading, wrong LCP strategy, Framer Motion in critical path |
 | **DevOps/CI** | D | 3-4x redundant builds per push, Husky completely broken |
 | **PWA** | F | SW precaches wrong manifest filename; entire offline layer broken |
@@ -196,18 +196,20 @@ Roma Mart 2.0 is a React 18.3.1 + Vite 7 PWA for a single-location Canadian conv
 
 ## 4. Documentation vs Reality -- 10 Corrections
 
-| # | Docs Said | Code Shows |
-|---|-----------|------------|
-| 1 | "React 19 + Vite 7" | **React 18.3.1**. Override only for `react-helmet-async` peer dep. |
-| 2 | "Accessibility Phase 1 pending" | **All 5 items implemented** |
-| 3 | "5 test files / 67 tests" | **11 files / ~122 tests** |
-| 4 | ".env.local tracked in git" | **NOT tracked** -- `.gitignore` excludes it |
-| 5 | "100+ PWA icons" | **67 icons** |
-| 6 | "Husky partially working" | **Completely non-functional** (3 breakages) |
-| 7 | "App.jsx is 36KB monolithic" | **779 lines**, 5 sections as separate functions |
-| 8 | "Base path switches" | **Set to `'/'`** -- already configured |
-| 9 | "No CONTRIBUTING.md" | **EXISTS** + CODE_OF_CONDUCT.md + SECURITY.md |
-| 10 | "APIs ready" | Menu 200 OK; Services/Locations **404** (fallback works) |
+> **Post-Sprint Status:** All 10 discrepancies resolved in `docs/audit-alignment` branch (v2.6.4).
+
+| # | Docs Said | Code Shows | Resolution |
+|---|-----------|------------|------------|
+| 1 | "React 19 + Vite 7" | **React 18.3.1**. Override only for `react-helmet-async` peer dep. | ✅ Fixed across 14+ files |
+| 2 | "Accessibility Phase 1 pending" | **All 5 items implemented** | ✅ Already resolved pre-sprint |
+| 3 | "5 test files / 67 tests" | **18 files / 260 tests** (post-sprint) | ✅ Counts updated |
+| 4 | ".env.local tracked in git" | **NOT tracked** -- `.gitignore` excludes it | ✅ Already resolved pre-sprint |
+| 5 | "100+ PWA icons" | **67 icons** | ✅ Already resolved pre-sprint |
+| 6 | "Husky partially working" | **Fully functional** (Husky v9, fixed in Sprint 4) | ✅ Docs updated |
+| 7 | "App.jsx is 36KB monolithic" | **779 lines**, 5 sections as separate functions | ✅ Already resolved pre-sprint |
+| 8 | "Base path switches" | **Set to `'/'`** -- already configured | ✅ Docs updated |
+| 9 | "No CONTRIBUTING.md" | **EXISTS** + CODE_OF_CONDUCT.md + SECURITY.md | ✅ Already resolved pre-sprint |
+| 10 | "APIs ready" | Menu 200 OK; Services/Locations **404** (fallback works) | ✅ Docs updated |
 
 ---
 
@@ -216,8 +218,8 @@ Roma Mart 2.0 is a React 18.3.1 + Vite 7 PWA for a single-location Canadian conv
 ### 5.1 Security (B+)
 No critical vulnerabilities. XLSX CVEs low-risk client-side. Google API key exposure inherent to client-side Maps. Web3Forms key is public by design. No CSP but appropriate for static hosting. Overall posture: **good**.
 
-### 5.2 Testing (C)
-11 test files / ~122 tests across `src/test/schemas/` (5), `src/utils/__tests__/` (5), `src/hooks/__tests__/` (1). Schema builders well-tested. Critical gaps: `calculateItemPrice` (pricing), `ApiCircuitBreaker` (reliability), both API contexts (data layer), all page components (zero smoke tests).
+### 5.2 Testing (C → B-)
+18 test files / 260 tests across `src/test/schemas/` (5), `src/utils/__tests__/` (6), `src/hooks/__tests__/` (1), `src/contexts/__tests__/` (3), `src/test/hooks/` (1), `src/test/pages/` (1), `src/test/services/` (1). Schema builders and utilities well-tested. API circuit breaker, all 3 API contexts, service helpers, focus trap hook, and NotFoundPage now covered. Remaining gaps: page component smoke tests, integration tests.
 
 ### 5.3 Performance (D+)
 Triple font loading, hero image lazy-loaded (should be eager), hero text invisible for 800ms, Framer Motion in every button's critical path, no scroll throttle, FontAwesome for 5 icons, no modern image formats. Combined fix estimate: 1-3 seconds improvement on 3G.
@@ -345,7 +347,7 @@ These don't need branches -- they're operational:
 # Full quality suite
 npm run check:all            # lint + quality + integrity
 
-# Tests (11 files, ~122 tests)
+# Tests (18 files, 260 tests)
 npm run test                 # Vitest run
 npm run test:coverage        # Coverage report
 
@@ -408,7 +410,7 @@ All 55 recommendations were re-audited after 9 sprints of implementation work. S
 | R38 | Clean up Coming Soon services | Deferred by user -- leave as-is |
 | R39 | Cookie consent banner | Handled by Clickio CMP via GTM (not in codebase) |
 | R49 | WebP/AVIF images with srcset | Future -- requires asset pipeline |
-| R51 | React 19 upgrade or doc correction | Future -- documentation-only |
+| R51 | ~~React 19 upgrade or doc correction~~ | ✅ Doc correction done (v2.6.4) |
 | R52 | TypeScript migration | Future -- multi-sprint initiative |
 | R53 | E2E tests with Playwright | Future -- new test infrastructure |
 | R54 | Lighthouse CI in pipeline | Future -- CI config |

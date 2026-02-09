@@ -4,7 +4,7 @@
 
 ## Overview
 
-Roma Mart uses a React 19 functional component architecture with hooks for state management and side effects.
+Roma Mart uses a React 18.3.1 functional component architecture with hooks for state management and side effects.
 
 ## Directory Structure
 

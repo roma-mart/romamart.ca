@@ -13,9 +13,9 @@
 
 ### Current Status (Feb 2026)
 
-An expert-consolidated audit (9 domain experts, 56 findings, 55 recommendations) drives an 8-sprint roadmap. Key docs:
-- `docs/ROADMAP.md` -- Sprint plan, recommendations R1-R55, domain scorecard
-- `docs/EXPERT_AUDIT_FEB_2026.md` -- Full audit findings
+An expert-consolidated audit (9 domain experts, 56 findings, 55 recommendations) drove an 8-sprint roadmap (all complete). Key docs:
+- `docs/archive/ROADMAP.md` -- Sprint plan, recommendations R1-R55, domain scorecard (archived)
+- `docs/archive/EXPERT_AUDIT_FEB_2026.md` -- Full audit findings (archived)
 - `docs/API_MIGRATION_READINESS.md` -- Backend API spec
 - GitHub Issues #98-#106 (sprint issues), #107 (backend API)
 - Project board: RomaMart UI Roadmap (GitHub Projects)
@@ -175,7 +175,7 @@ Accessibility, dark mode, performance, security, SEO, code quality, responsive d
 ## Testing
 
 **Framework:** Vitest
-**Tests:** 260 passing (as of v2.6.2)
+**Tests:** 260 passing (as of v2.6.4)
 **Coverage thresholds:** statements 60%, branches 50%, functions 60%, lines 60%
 
 ### Test Locations
@@ -230,7 +230,7 @@ Located at `.github/PULL_REQUEST_TEMPLATE.md`. Includes sections for description
 | Feature Request | MINOR | Sprint 6 UX: 2.6.0 |
 | Maintenance | PATCH | Sprint 2 Perf: 2.3.3, Sprint 4 DevOps: 2.4.1, Sprint 7 Test: 2.6.1 |
 
-Sprint templates are defined in `docs/ROADMAP.md` under Sprint Plan.
+Sprint templates are defined in `docs/archive/ROADMAP.md` under Sprint Plan.
 
 ---
 
@@ -287,11 +287,11 @@ Sprint templates are defined in `docs/ROADMAP.md` under Sprint Plan.
 
 | File | Purpose |
 |------|---------|
-| `docs/ROADMAP.md` | Sprint plan, R1-R55 recommendations |
+| `docs/archive/ROADMAP.md` | Sprint plan, R1-R55 recommendations (archived) |
 | `docs/DEVELOPMENT_ETHOS.md` | 25 core development principles |
 | `docs/ARCHITECTURE.md` | System design and conventions |
-| `docs/QUALITY_SYSTEM.md` | Quality standards (8 dimensions) |
-| `docs/EXPERT_AUDIT_FEB_2026.md` | Full audit findings |
+| `docs/QUALITY_SYSTEM.md` | Quality standards (9 dimensions) |
+| `docs/archive/EXPERT_AUDIT_FEB_2026.md` | Full audit findings (archived) |
 | `.github/BRANCHING_STRATEGY.md` | Git workflow, branch naming, PR process |
 | `.github/PULL_REQUEST_TEMPLATE.md` | PR format requirements |
 | `src/design/tokens.js` | Design tokens SSOT |
@@ -315,10 +315,10 @@ This file (`CLAUDE.md`) is the Claude Code project context. A parallel `.github/
 - When updating project conventions, architecture, or workflows, update BOTH files
 - Each file is optimized for its respective AI's context format
 - If you notice drift between the files, flag it and propose corrections
-- Last synced: February 8, 2026
+- Last synced: February 9, 2026
 
 ---
 
-**Last Updated:** February 8, 2026
+**Last Updated:** February 9, 2026
 **Maintained by:** Claude Code (keep in sync with `.github/copilot-instructions.md`)
 **Codebase Version:** React 18.3.1 + Vite 7 (ESM)

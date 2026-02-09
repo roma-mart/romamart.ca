@@ -1546,7 +1546,7 @@ null
 
 **Implementation Questions:**
 - Field types unclear? Ask for examples from static data files
-- Schema requirements? See STRUCTURED_DATA_MASTER_PLAN.md
+- Schema requirements? See archive/STRUCTURED_DATA_MASTER_PLAN.md
 - Performance concerns? We can optimize frontend caching
 
 **Testing Coordination:**

@@ -130,7 +130,7 @@ getTTFB(console.log); // Time to First Byte
    - Hero image optimized (lazy loading)
    - Critical CSS inlined in `src/index.css`
    - Vite manual code splitting
-   - React 19 + Vite 7 modern toolchain
+   - React 18.3.1 + Vite 7 modern toolchain
 
 2. **FID < 100ms** because:
    - No blocking JavaScript
