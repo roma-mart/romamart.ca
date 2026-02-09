@@ -7,7 +7,8 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
  */
 const MenuContext = createContext();
 
-const API_URL = 'https://romamart.netlify.app/api/public-menu';
+// In dev, use relative URL so Vite's proxy handles the request (avoids CORS issues)
+const API_URL = import.meta.env.DEV ? '/api/public-menu' : 'https://romamart.netlify.app/api/public-menu';
 
 /**
  * MenuProvider - Wraps app to provide shared menu state
@@ -34,14 +35,14 @@ export function MenuProvider({ children }) {
         const data = await res.json();
 
         const menu = data.menu || [];
-        const featuredCount = menu.filter(item => item.featured).length;
+        const featuredCount = menu.filter((item) => item.featured).length;
 
         if (import.meta.env.DEV) {
           // eslint-disable-next-line no-console
           console.log('[MenuContext] Menu data received:', {
             totalItems: menu.length,
             featuredItems: featuredCount,
-            sampleItem: menu[0]?.name || 'N/A'
+            sampleItem: menu[0]?.name || 'N/A',
           });
         }
 
@@ -64,11 +65,7 @@ export function MenuProvider({ children }) {
 
   const value = { menuItems, loading, error };
 
-  return (
-    <MenuContext.Provider value={value}>
-      {children}
-    </MenuContext.Provider>
-  );
+  return <MenuContext.Provider value={value}>{children}</MenuContext.Provider>;
 }
 
 /**

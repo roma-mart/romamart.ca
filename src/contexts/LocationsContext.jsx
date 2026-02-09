@@ -11,7 +11,8 @@ import { LOCATIONS } from '../data/locations';
  */
 const LocationsContext = createContext();
 
-const API_URL = 'https://romamart.netlify.app/api/public-locations';
+// In dev, use relative URL so Vite's proxy handles the request (avoids CORS issues)
+const API_URL = import.meta.env.DEV ? '/api/public-locations' : 'https://romamart.netlify.app/api/public-locations';
 const STORAGE_KEY = 'roma_mart_selected_location';
 
 /**
@@ -42,7 +43,9 @@ export function LocationsProvider({ children }) {
       } else {
         localStorage.setItem(STORAGE_KEY, locationId);
       }
-    } catch { /* Safari private mode */ }
+    } catch {
+      /* Safari private mode */
+    }
   }, []);
 
   useEffect(() => {
@@ -114,11 +117,7 @@ export function LocationsProvider({ children }) {
 
   const value = { locations, loading, error, source, selectedLocationId, selectLocation };
 
-  return (
-    <LocationsContext.Provider value={value}>
-      {children}
-    </LocationsContext.Provider>
-  );
+  return <LocationsContext.Provider value={value}>{children}</LocationsContext.Provider>;
 }
 
 /**

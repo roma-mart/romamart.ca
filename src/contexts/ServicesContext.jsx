@@ -11,7 +11,8 @@ import { SERVICES } from '../data/services';
  */
 const ServicesContext = createContext();
 
-const API_URL = 'https://romamart.netlify.app/api/public-services';
+// In dev, use relative URL so Vite's proxy handles the request (avoids CORS issues)
+const API_URL = import.meta.env.DEV ? '/api/public-services' : 'https://romamart.netlify.app/api/public-services';
 
 /**
  * ServicesProvider - Wraps app to provide shared services state
@@ -84,11 +85,7 @@ export function ServicesProvider({ children }) {
 
   const value = { services, loading, error, source };
 
-  return (
-    <ServicesContext.Provider value={value}>
-      {children}
-    </ServicesContext.Provider>
-  );
+  return <ServicesContext.Provider value={value}>{children}</ServicesContext.Provider>;
 }
 
 /**
