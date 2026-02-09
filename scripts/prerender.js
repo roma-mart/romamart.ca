@@ -3,6 +3,7 @@ import path from 'path';
 import { createHash } from 'crypto';
 import { fileURLToPath } from 'url';
 import COMPANY_DATA from '../src/config/company_data.js';
+import { LOCATIONS as STATIC_LOCATIONS } from '../src/data/locations.js';
 import { buildMenuItemSchema } from '../src/schemas/menuItemSchema.js';
 import { buildServiceListSchema } from '../src/schemas/serviceSchema.js';
 import { buildLocationListSchema } from '../src/schemas/locationSchema.js';
@@ -840,6 +841,244 @@ function injectOfflineLocationData(distPath) {
   console.log('✓ Injected SSOT location data into offline.html');
 }
 
+/**
+ * Escapes HTML special characters to prevent injection in static content.
+ */
+function escapeHtml(str) {
+  if (!str || typeof str !== 'string') return '';
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+/**
+ * Builds static HTML content for <div id="root">.
+ *
+ * Crawlers that don't execute JavaScript (notably Bingbot) see only the
+ * prerendered HTML shell. Without body content they report "missing h1"
+ * and "insufficient content". This function generates lightweight,
+ * semantic HTML per route so crawlers can index meaningful content.
+ *
+ * React uses createRoot() (not hydrateRoot), so it replaces this content
+ * entirely on mount — no hydration mismatch issues.
+ *
+ * @param {string} routePath - Route path (e.g. '/', '/services')
+ * @param {Object} apiData - Data fetched from APIs during prerendering
+ * @returns {string} HTML string to inject inside <div id="root">
+ */
+function buildStaticContent(routePath, apiData = {}) {
+  const { menuItems = [], services = [], locations: apiLocations = [] } = apiData;
+
+  // Use API locations if available, otherwise fall back to static LOCATIONS data
+  const allLocations = apiLocations.length > 0 ? apiLocations : STATIC_LOCATIONS;
+  const activeLocations = allLocations.filter((l) => l.status === 'open');
+
+  const loc = COMPANY_DATA.location;
+  const contact = loc?.contact || {};
+  const address = loc?.address || {};
+
+  switch (routePath) {
+    case '/': {
+      const serviceList =
+        services.length > 0
+          ? services.map((s) => `<li>${escapeHtml(s.name)}</li>`).join('')
+          : [
+              'ATM',
+              'Bitcoin ATM',
+              'Gift Cards',
+              'Printing Services',
+              'Halal Meat',
+              'Perfumes &amp; Fragrances',
+              'Canadian Products',
+              'International Products',
+              'Pantry Essentials &amp; Groceries',
+              'Snacks &amp; Confectionery',
+              'Package Pickup &amp; Dropoff',
+              'Money Transfer',
+              'Tobacco &amp; Vape',
+              'Lottery',
+            ]
+              .map((s) => `<li>${s}</li>`)
+              .join('');
+      return (
+        `<header>` +
+        `<h1>Your Daily Stop &amp; Go</h1>` +
+        `<p>Experience Sarnia's newest convenience destination. From daily essentials to premium coffee, we have what you need.</p>` +
+        `</header>` +
+        `<main>` +
+        `<section><h2>Our Services</h2><ul>${serviceList}</ul></section>` +
+        `<section><h2>Visit Us</h2>` +
+        `<p>${escapeHtml(address.formatted || '3-189 Wellington Street, Sarnia, ON N7T 1G6')}</p>` +
+        `<p>Phone: ${escapeHtml(contact.phone || '+1 (382) 342-2000')}</p>` +
+        `<p>Email: ${escapeHtml(contact.email || 'contact@romamart.ca')}</p>` +
+        `<p>Hours: ${escapeHtml(loc?.hours?.display || 'Mon-Thu, Sat-Sun: 8:30 AM - 9:00 PM | Fri: 3:00 PM - 9:00 PM')}</p>` +
+        `</section>` +
+        `</main>`
+      );
+    }
+
+    case '/services': {
+      let serviceContent = '';
+      if (services.length > 0) {
+        serviceContent = services
+          .map(
+            (s) =>
+              `<article><h2>${escapeHtml(s.name)}</h2>` +
+              (s.description ? `<p>${escapeHtml(s.description)}</p>` : '') +
+              `</article>`
+          )
+          .join('');
+      }
+      return (
+        `<header>` +
+        `<h1>Our Services</h1>` +
+        `<p>Roma Mart is your one-stop convenience store offering a wide range of services to make your life easier. From financial services to everyday essentials, we've got you covered.</p>` +
+        `</header>` +
+        `<main>${serviceContent}</main>`
+      );
+    }
+
+    case '/rocafe': {
+      const categoryNames = [...new Set(menuItems.flatMap((item) => item.categories || []))];
+      let menuSummary;
+      if (categoryNames.length > 0) {
+        const featuredItems = menuItems.filter((item) => item.featured);
+        menuSummary =
+          `<p>Browse our ${menuItems.length} menu items across ${categoryNames.length} categories: ` +
+          `${categoryNames.map((c) => escapeHtml(c)).join(', ')}.</p>` +
+          (featuredItems.length > 0
+            ? `<h2>Featured Items</h2><ul>${featuredItems.map((item) => `<li>${escapeHtml(item.name)}${item.description ? ' — ' + escapeHtml(item.description) : ''}</li>`).join('')}</ul>`
+            : '');
+      } else {
+        menuSummary = `<p>Explore our full menu of handcrafted beverages and treats.</p>`;
+      }
+      return (
+        `<header>` +
+        `<h1>RoCaf\u00e9 Menu</h1>` +
+        `<p>Welcome to RoCaf\u00e9, where quality meets convenience. Enjoy our premium selection of beverages and food, crafted fresh daily with the finest ingredients.</p>` +
+        `</header>` +
+        `<main>${menuSummary}</main>`
+      );
+    }
+
+    case '/locations': {
+      let locationContent = '';
+      if (activeLocations.length > 0) {
+        locationContent = activeLocations
+          .map(
+            (l) =>
+              `<article>` +
+              `<h2>${escapeHtml(l.name)}</h2>` +
+              `<p>${escapeHtml(l.address?.formatted || l.address?.street || '')}</p>` +
+              (l.contact?.phone ? `<p>Phone: ${escapeHtml(l.contact.phone)}</p>` : '') +
+              (l.hours?.display ? `<p>Hours: ${escapeHtml(l.hours.display)}</p>` : '') +
+              (l.services && l.services.length > 0
+                ? `<p>Services: ${l.services.map((s) => escapeHtml(s.replace(/_/g, ' '))).join(', ')}</p>`
+                : '') +
+              `</article>`
+          )
+          .join('');
+      } else if (loc) {
+        locationContent =
+          `<article>` +
+          `<h2>${escapeHtml(loc.name)}</h2>` +
+          `<p>${escapeHtml(address.formatted || '')}</p>` +
+          `<p>Phone: ${escapeHtml(contact.phone || '')}</p>` +
+          `<p>Hours: ${escapeHtml(loc.hours?.display || '')}</p>` +
+          `</article>`;
+      }
+      return (
+        `<header>` +
+        `<h1>Our Locations</h1>` +
+        `<p>Visit us at any of our convenient locations. We're here to serve you with quality products and exceptional service.</p>` +
+        `</header>` +
+        `<main>${locationContent}</main>`
+      );
+    }
+
+    case '/contact':
+      return (
+        `<header>` +
+        `<h1>Contact Us</h1>` +
+        `<p>Have a question or feedback? We'd love to hear from you! Reach out through any of the methods below.</p>` +
+        `</header>` +
+        `<main>` +
+        `<p>${escapeHtml(address.formatted || '3-189 Wellington Street, Sarnia, ON N7T 1G6')}</p>` +
+        `<p>Phone: ${escapeHtml(contact.phone || '+1 (382) 342-2000')}</p>` +
+        `<p>Email: ${escapeHtml(contact.email || 'contact@romamart.ca')}</p>` +
+        `<p>Hours: ${escapeHtml(loc?.hours?.display || '')}</p>` +
+        `</main>`
+      );
+
+    case '/about':
+      return (
+        `<header>` +
+        `<h1>About Roma Mart</h1>` +
+        `<p>Roma Mart is your trusted neighborhood convenience store, proudly serving the Sarnia community. ` +
+        `We're more than just a store \u2013 we're your local partners in convenience, quality, and service.</p>` +
+        `</header>` +
+        `<main>` +
+        `<p>From our fresh RoCaf\u00e9 offerings to our comprehensive range of services, we strive to be your ` +
+        `one-stop destination for everything you need, delivered with a smile.</p>` +
+        `</main>`
+      );
+
+    case '/return-policy':
+      return (
+        `<header><h1>Return Policy</h1></header>` +
+        `<main>` +
+        `<p>At Roma Mart, all sales are final. Due to the nature of convenience store products (food, beverages, tobacco, lottery, and personal items), ` +
+        `we are unable to accept returns or offer refunds or exchanges on purchased items.</p>` +
+        `<p>If you receive a faulty or defective product, please report it within 24 hours of purchase with your receipt for review.</p>` +
+        `</main>`
+      );
+
+    case '/accessibility':
+      return (
+        `<header><h1>Accessibility Statement</h1></header>` +
+        `<main>` +
+        `<p>Roma Mart is committed to ensuring digital accessibility for people with disabilities. ` +
+        `We continually improve the user experience for everyone and apply the relevant accessibility standards ` +
+        `to achieve WCAG 2.2 Level AA compliance.</p>` +
+        `</main>`
+      );
+
+    case '/privacy':
+      return (
+        `<header><h1>Privacy Policy</h1></header>` +
+        `<main>` +
+        `<p>Roma Mart Convenience respects your privacy. This policy explains how we collect, use, and protect your personal information ` +
+        `when you visit our website or use our services.</p>` +
+        `</main>`
+      );
+
+    case '/terms':
+      return (
+        `<header><h1>Terms of Service</h1></header>` +
+        `<main>` +
+        `<p>Welcome to Roma Mart. By accessing or using our website and services, you agree to be bound by these terms and conditions. ` +
+        `Please read them carefully before using our services.</p>` +
+        `</main>`
+      );
+
+    case '/cookies':
+      return (
+        `<header><h1>Cookie Policy</h1></header>` +
+        `<main>` +
+        `<p>Roma Mart uses cookies and similar technologies to improve your browsing experience, ` +
+        `analyze site traffic, and personalize content. This policy explains what cookies are, ` +
+        `how we use them, and your choices regarding their use.</p>` +
+        `</main>`
+      );
+
+    default:
+      return '';
+  }
+}
+
 async function prerender() {
   const distPath = path.resolve(__dirname, '../dist');
   const indexPath = path.join(distPath, 'index.html');
@@ -935,6 +1174,10 @@ async function prerender() {
       .replace(
         /<\/head>/,
         `<script type="application/ld+json">${buildStructuredData(route.path, { menuItems, services, locations })}</script>\n  </head>`
+      )
+      .replace(
+        '<div id="root"></div>',
+        `<div id="root">${buildStaticContent(route.path, { menuItems, services, locations })}</div>`
       );
 
     fs.writeFileSync(outputPath, html);
