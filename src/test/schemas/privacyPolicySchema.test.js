@@ -1,7 +1,7 @@
 /**
  * Unit Tests for Privacy Policy Schema Builder
  * Validates schema generation, defaults, and sanitization
- * 
+ *
  * @since February 4, 2026
  */
 
@@ -18,10 +18,10 @@ describe('buildPrivacyPolicySchema', () => {
         '@context': 'https://schema.org',
         '@type': 'PrivacyPolicy',
         name: 'Roma Mart Convenience Privacy Policy',
-        url: 'https://romamart.ca/privacy',
+        url: 'https://romamart.ca/privacy/',
         inLanguage: 'en-CA',
         datePublished: '2025-07-28',
-        dateModified: '2025-07-28'
+        dateModified: '2025-07-28',
       });
 
       expect(schema.description).toContain('Roma Mart Corp. values your privacy');
@@ -39,7 +39,7 @@ describe('buildPrivacyPolicySchema', () => {
       expect(schema.publisher).toMatchObject({
         '@type': 'Organization',
         name: 'Roma Mart Corp.',
-        url: 'https://romamart.ca'
+        url: 'https://romamart.ca',
       });
     });
 
@@ -49,7 +49,7 @@ describe('buildPrivacyPolicySchema', () => {
       expect(schema.publisher.contactPoint).toMatchObject({
         '@type': 'ContactPoint',
         contactType: 'privacy',
-        email: 'privacy@romamart.ca'
+        email: 'privacy@romamart.ca',
       });
     });
 
@@ -64,7 +64,7 @@ describe('buildPrivacyPolicySchema', () => {
   describe('Data Overrides', () => {
     it('should override name when provided', () => {
       const schema = buildPrivacyPolicySchema({
-        name: 'Custom Privacy Policy'
+        name: 'Custom Privacy Policy',
       });
 
       expect(schema.name).toBe('Custom Privacy Policy');
@@ -72,7 +72,7 @@ describe('buildPrivacyPolicySchema', () => {
 
     it('should override url when provided', () => {
       const schema = buildPrivacyPolicySchema({
-        url: 'https://example.com/privacy'
+        url: 'https://example.com/privacy',
       });
 
       expect(schema.url).toBe('https://example.com/privacy');
@@ -80,7 +80,7 @@ describe('buildPrivacyPolicySchema', () => {
 
     it('should override effectiveDate when provided', () => {
       const schema = buildPrivacyPolicySchema({
-        effectiveDate: '2026-01-01'
+        effectiveDate: '2026-01-01',
       });
 
       expect(schema.datePublished).toBe('2026-01-01');
@@ -90,7 +90,7 @@ describe('buildPrivacyPolicySchema', () => {
     it('should override description when provided', () => {
       const customDescription = 'Custom privacy policy description';
       const schema = buildPrivacyPolicySchema({
-        description: customDescription
+        description: customDescription,
       });
 
       expect(schema.description).toBe(customDescription);
@@ -98,7 +98,7 @@ describe('buildPrivacyPolicySchema', () => {
 
     it('should override contactEmail when provided', () => {
       const schema = buildPrivacyPolicySchema({
-        contactEmail: 'custom@example.com'
+        contactEmail: 'custom@example.com',
       });
 
       expect(schema.publisher.contactPoint.email).toBe('custom@example.com');
@@ -106,7 +106,7 @@ describe('buildPrivacyPolicySchema', () => {
 
     it('should override contactPhone when provided', () => {
       const schema = buildPrivacyPolicySchema({
-        contactPhone: '+1-555-0123'
+        contactPhone: '+1-555-0123',
       });
 
       expect(schema.publisher.contactPoint.telephone).toBe('+1-555-0123');
@@ -123,7 +123,7 @@ describe('buildPrivacyPolicySchema', () => {
     it('should use custom date for both published and modified', () => {
       const customDate = '2026-12-31';
       const schema = buildPrivacyPolicySchema({
-        effectiveDate: customDate
+        effectiveDate: customDate,
       });
 
       expect(schema.datePublished).toBe(customDate);
@@ -142,7 +142,7 @@ describe('buildPrivacyPolicySchema', () => {
   describe('Input Sanitization', () => {
     it('should sanitize HTML in name', () => {
       const schema = buildPrivacyPolicySchema({
-        name: '<script>alert("xss")</script>Clean Name'
+        name: '<script>alert("xss")</script>Clean Name',
       });
 
       expect(schema.name).not.toContain('<script>');
@@ -151,7 +151,7 @@ describe('buildPrivacyPolicySchema', () => {
 
     it('should sanitize HTML in description', () => {
       const schema = buildPrivacyPolicySchema({
-        description: '<img src=x onerror=alert(1) alt="">Safe Description'
+        description: '<img src=x onerror=alert(1) alt="">Safe Description',
       });
 
       expect(schema.description).not.toContain('<img');
@@ -225,7 +225,7 @@ describe('buildPrivacyPolicySchema', () => {
     it('should handle null values in data object', () => {
       const schema = buildPrivacyPolicySchema({
         name: null,
-        description: null
+        description: null,
       });
 
       expect(schema.name).toBe('Roma Mart Convenience Privacy Policy');
@@ -235,11 +235,11 @@ describe('buildPrivacyPolicySchema', () => {
     it('should handle undefined values in data object', () => {
       const schema = buildPrivacyPolicySchema({
         name: undefined,
-        url: undefined
+        url: undefined,
       });
 
       expect(schema.name).toBe('Roma Mart Convenience Privacy Policy');
-      expect(schema.url).toBe('https://romamart.ca/privacy');
+      expect(schema.url).toBe('https://romamart.ca/privacy/');
     });
   });
 });

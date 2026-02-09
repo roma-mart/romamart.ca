@@ -11,16 +11,16 @@ import COMPANY_DATA from '../config/company_data';
 
 /**
  * Build BreadcrumbList schema for Google Rich Results
- * 
+ *
  * @param {Array<Object>} breadcrumbs - Array of breadcrumb items
  * @param {string} breadcrumbs[].name - Display name
  * @param {string} breadcrumbs[].url - Full URL (must be absolute)
  * @returns {Object} BreadcrumbList schema
- * 
+ *
  * @example
  * buildBreadcrumbSchema([
  *   { name: 'Home', url: 'https://romamart.ca/' },
- *   { name: 'Services', url: 'https://romamart.ca/services' }
+ *   { name: 'Services', url: 'https://romamart.ca/services/' }
  * ])
  */
 export function buildBreadcrumbSchema(breadcrumbs = []) {
@@ -31,7 +31,7 @@ export function buildBreadcrumbSchema(breadcrumbs = []) {
 
   // Filter invalid items
   const validBreadcrumbs = breadcrumbs.filter(
-    item => item && typeof item.name === 'string' && typeof item.url === 'string'
+    (item) => item && typeof item.name === 'string' && typeof item.url === 'string'
   );
 
   if (validBreadcrumbs.length === 0) {
@@ -45,29 +45,29 @@ export function buildBreadcrumbSchema(breadcrumbs = []) {
       '@type': 'ListItem',
       position: index + 1,
       name: item.name,
-      item: item.url
-    }))
+      item: item.url,
+    })),
   };
 }
 
 /**
  * Helper to build breadcrumb array from page metadata
- * 
+ *
  * @param {string} currentPageName - Current page name
  * @param {string} currentPageUrl - Current page URL (absolute)
  * @param {Array<Object>} [parentPages] - Optional parent page(s)
  * @returns {Array<Object>} Breadcrumb items array
- * 
+ *
  * @example
- * buildBreadcrumbArray('Services', 'https://romamart.ca/services')
+ * buildBreadcrumbArray('Services', 'https://romamart.ca/services/')
  * // Returns: [{ name: 'Home', url: '...' }, { name: 'Services', url: '...' }]
  */
 export function buildBreadcrumbArray(currentPageName, currentPageUrl, parentPages = []) {
   const breadcrumbs = [
     {
       name: 'Home',
-      url: `${COMPANY_DATA.baseUrl}/`
-    }
+      url: `${COMPANY_DATA.baseUrl}/`,
+    },
   ];
 
   // Add any parent pages
@@ -78,7 +78,7 @@ export function buildBreadcrumbArray(currentPageName, currentPageUrl, parentPage
   // Add current page
   breadcrumbs.push({
     name: currentPageName,
-    url: currentPageUrl
+    url: currentPageUrl,
   });
 
   return breadcrumbs;
@@ -86,19 +86,16 @@ export function buildBreadcrumbArray(currentPageName, currentPageUrl, parentPage
 
 /**
  * Quick helper for simple page breadcrumbs (Home > Current Page)
- * 
+ *
  * @param {string} pageName - Page name
  * @param {string} pageSlug - Page slug (e.g., 'services')
  * @returns {Object} BreadcrumbList schema
- * 
+ *
  * @example
  * quickBreadcrumb('Services', 'services')
  */
 export function quickBreadcrumb(pageName, pageSlug) {
-  const breadcrumbs = buildBreadcrumbArray(
-    pageName,
-    `${COMPANY_DATA.baseUrl}/${pageSlug}`
-  );
-  
+  const breadcrumbs = buildBreadcrumbArray(pageName, `${COMPANY_DATA.baseUrl}/${pageSlug}/`);
+
   return buildBreadcrumbSchema(breadcrumbs);
 }

@@ -134,7 +134,7 @@ const StandardizedItem = ({ item, itemType, defaultExpanded = false }) => {
       style={{
         backgroundColor: 'var(--color-bg)',
         borderColor: isExpanded ? 'var(--color-accent)' : getAvailabilityColor(),
-        borderWidth: isExpanded ? '2px' : '2px',
+        borderWidth: '2px',
         opacity: availabilityState === 'unavailable' ? 0.6 : availabilityState === 'coming_soon' ? 0.85 : 1,
         position: 'relative',
       }}

@@ -17,19 +17,19 @@ const COMPANY_DATA = {
   dba: 'Roma Mart Convenience',
   heroBadge: 'New In Town',
   gstNumber: '780971768',
-  naicsCode: '4541',  // Grocery stores (North American Industry Classification System)
+  naicsCode: '4541', // Grocery stores (North American Industry Classification System)
   naicsDescription: 'Grocery Stores',
   // Base URLs (SSOT for all schema URLs)
   baseUrl: 'https://romamart.ca',
   logoUrl: 'https://romamart.ca/logo.png',
   onlineStoreUrl: null,
-  // Schema-specific endpoints
+  // Schema-specific endpoints (trailing slashes match canonical URLs)
   endpoints: {
-    returnPolicy: '/return-policy',
-    privacy: '/privacy',
-    services: '/services',
-    locations: '/locations',
-    menu: '/menu'
+    returnPolicy: '/return-policy/',
+    privacy: '/privacy/',
+    services: '/services/',
+    locations: '/locations/',
+    menu: '/menu/',
   },
   // Default values for schemas
   defaults: {
@@ -38,33 +38,24 @@ const COMPANY_DATA = {
     country: 'CA',
     currency: 'CAD',
     timezone: 'America/Toronto',
-    ageRestriction: '19-' // Minimum age for age-restricted products/services (Ontario law)
+    ageRestriction: '19-', // Minimum age for age-restricted products/services (Ontario law)
   },
   // Accepted payment methods (business-wide, for LocalBusiness schema)
-  paymentMethods: [
-    'Cash',
-    'Credit Card',
-    'Debit Card',
-    'Interac',
-    'Visa',
-    'Mastercard',
-    'American Express',
-    'Bitcoin'
-  ],
+  paymentMethods: ['Cash', 'Credit Card', 'Debit Card', 'Interac', 'Visa', 'Mastercard', 'American Express', 'Bitcoin'],
   // Return policy defaults (business-wide, for MerchantReturnPolicy schema)
   returnPolicy: {
     merchantReturnDays: 1,
     returnMethod: 'https://schema.org/ReturnInStore',
     returnFees: 'https://schema.org/FreeReturn',
     itemCondition: 'https://schema.org/DamagedCondition',
-    returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow'
+    returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
   },
   socialLinks: {
     facebook: 'https://www.facebook.com/romamartca',
     instagram: 'https://www.instagram.com/romamartca/',
     tiktok: 'https://www.tiktok.com/@romamartca/',
     snapchat: 'https://www.snapchat.com/@romamartca/',
-    x: 'https://www.x.com/romamartca/'
+    x: 'https://www.x.com/romamartca/',
   },
   // Fallback HQ info for resilience
   // HQ info is now sourced directly from the (primary) location in LOCATIONS
@@ -74,7 +65,7 @@ const COMPANY_DATA = {
   contact: {
     phone: getPrimaryLocation().contact.phone,
     email: getPrimaryLocation().contact.email,
-    web3FormsAccessKey: getEnvVar('VITE_WEB3FORMS_KEY', 'YOUR_WEB3FORMS_KEY')
+    web3FormsAccessKey: getEnvVar('VITE_WEB3FORMS_KEY', 'YOUR_WEB3FORMS_KEY'),
   },
   // Contextual email addresses for specialized pages
   contextualEmails: {
@@ -83,7 +74,7 @@ const COMPANY_DATA = {
     accessibility: 'accessibility@romamart.ca',
     technology: 'technology@romamart.ca',
     legal: 'legal@romamart.ca',
-    support: 'support@romamart.ca'
+    support: 'support@romamart.ca',
   },
   // Location-dependent info is mapped from the primary location object
   location: getPrimaryLocation(),
@@ -93,17 +84,18 @@ const COMPANY_DATA = {
     webApplication: {
       name: 'Roma Mart Convenience',
       url: 'https://romamart.ca',
-      description: 'Shop Roma Mart online - groceries, global snacks, halal meat, RoCafé coffee, and more. Available 24/7 from any device with offline support.',
+      description:
+        'Shop Roma Mart online - groceries, global snacks, halal meat, RoCafé coffee, and more. Available 24/7 from any device with offline support.',
       applicationCategory: 'Shopping',
       operatingSystem: 'Any (Web Browser)',
       offers: {
         price: '0',
-        priceCurrency: 'CAD'
+        priceCurrency: 'CAD',
       },
       browserRequirements: 'Requires JavaScript. Modern browsers (Chrome, Firefox, Safari, Edge) recommended.',
-      permissions: ['Location (optional, for nearest store)']
-    }
-  }
+      permissions: ['Location (optional, for nearest store)'],
+    },
+  },
   // Add other brand data as needed
 };
 

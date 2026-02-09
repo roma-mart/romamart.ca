@@ -688,7 +688,7 @@ function App() {
             data={{
               products: featuredSchemaItems.map((item) => ({
                 menuItem: item,
-                itemUrl: 'https://romamart.ca/rocafe',
+                itemUrl: 'https://romamart.ca/rocafe/',
                 priceInCents: schemaPriceInCents,
               })),
             }}
@@ -701,7 +701,7 @@ function App() {
             data={{
               services: featuredServices,
               options: {
-                serviceUrl: 'https://romamart.ca/services',
+                serviceUrl: 'https://romamart.ca/services/',
                 providerUrl: 'https://romamart.ca',
               },
             }}

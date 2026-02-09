@@ -37,16 +37,16 @@ const LocationsPage = () => {
   const { locations: allLocations } = useLocations();
 
   // Filter to only active locations (status === 'open')
-  const activeLocations = allLocations.filter(loc => loc.status === 'open');
+  const activeLocations = allLocations.filter((loc) => loc.status === 'open');
 
   const [userLoadedMaps, setUserLoadedMaps] = useState(() => []);
   const [userCoords, setUserCoords] = useState(null);
 
-
   const textColor = { color: 'var(--color-text)' };
   const mutedTextColor = { color: 'var(--color-text-muted)' };
 
-  const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
+  const BASE_URL =
+    typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
 
   const handleAutoLocation = useCallback((pos) => {
     const coords = pos?.coords;
@@ -59,7 +59,7 @@ const LocationsPage = () => {
 
   const sortedLocations = getPreferredLocations({
     userCoords,
-    locations: activeLocations
+    locations: activeLocations,
   });
   const preferredLocationId = sortedLocations[0]?.id;
   const loadedMaps = (() => {
@@ -70,7 +70,7 @@ const LocationsPage = () => {
     return combined;
   })();
 
-  const locations = sortedLocations.map(loc => ({
+  const locations = sortedLocations.map((loc) => ({
     ...loc,
     id: loc.id,
     name: loc.name,
@@ -79,28 +79,37 @@ const LocationsPage = () => {
     hours: loc.hours,
     isOpen: loc.status === 'open',
     mapUrl: loc.google.embedUrl,
-    features: loc.services.map(s => s.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())),
-    distanceText: Number.isFinite(loc.distance) ? formatDistance(loc.distance) : null
+    features: loc.services.map((s) => s.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())),
+    distanceText: Number.isFinite(loc.distance) ? formatDistance(loc.distance) : null,
   }));
 
   const handleLoadMap = useCallback((locationId) => {
-    setUserLoadedMaps(prev => (prev.includes(locationId) ? prev : [...prev, locationId]));
+    setUserLoadedMaps((prev) => (prev.includes(locationId) ? prev : [...prev, locationId]));
   }, []);
 
-  const handleLoadMapClick = useCallback((e) => {
-    handleLoadMap(e.currentTarget.dataset.locationId);
-  }, [handleLoadMap]);
+  const handleLoadMapClick = useCallback(
+    (e) => {
+      handleLoadMap(e.currentTarget.dataset.locationId);
+    },
+    [handleLoadMap]
+  );
 
   return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>
       <Helmet>
         <title>Our Locations | Roma Mart Convenience</title>
-        <meta name="description" content="Find Roma Mart convenience store locations in Sarnia, Ontario. Get directions, hours, and contact information." />
-        <link rel="canonical" href="https://romamart.ca/locations" />
+        <meta
+          name="description"
+          content="Find Roma Mart convenience store locations in Sarnia, Ontario. Get directions, hours, and contact information."
+        />
+        <link rel="canonical" href="https://romamart.ca/locations/" />
       </Helmet>
 
       {/* Breadcrumb Schema */}
-      <StructuredData type="BreadcrumbList" data={{ breadcrumbs: buildBreadcrumbArray('Locations', 'https://romamart.ca/locations') }} />
+      <StructuredData
+        type="BreadcrumbList"
+        data={{ breadcrumbs: buildBreadcrumbArray('Locations', 'https://romamart.ca/locations/') }}
+      />
 
       {/* Location List Schema */}
       {activeLocations.length > 0 && (
@@ -108,7 +117,7 @@ const LocationsPage = () => {
           type="LocationList"
           data={{
             locations: activeLocations,
-            options: {}
+            options: {},
           }}
         />
       )}
@@ -116,10 +125,16 @@ const LocationsPage = () => {
       <nav aria-label="Breadcrumb" className="max-w-7xl mx-auto px-4 mb-8">
         <ol className="flex items-center gap-2 text-sm font-inter">
           <li>
-            <a href={`${BASE_URL}`} className="hover:text-accent transition-colors" style={mutedTextColor}>Home</a>
+            <a href={`${BASE_URL}`} className="hover:text-accent transition-colors" style={mutedTextColor}>
+              Home
+            </a>
           </li>
-          <li aria-hidden="true"><ChevronRight size={16} style={mutedTextColor} /></li>
-          <li aria-current="page" className="font-semibold" style={textColor}>Locations</li>
+          <li aria-hidden="true">
+            <ChevronRight size={16} style={mutedTextColor} />
+          </li>
+          <li aria-current="page" className="font-semibold" style={textColor}>
+            Locations
+          </li>
         </ol>
       </nav>
 
@@ -130,11 +145,12 @@ const LocationsPage = () => {
               Our <span style={{ color: 'var(--color-accent)' }}>Locations</span>
             </h1>
             <p className="text-lg font-inter leading-relaxed max-w-3xl" style={textColor}>
-              Visit us at any of our convenient locations. We're here to serve you with quality products and exceptional service.
+              Visit us at any of our convenient locations. We're here to serve you with quality products and exceptional
+              service.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <ShareButton 
+            <ShareButton
               title="Roma Mart Locations"
               text="Find Roma Mart convenience stores near you in Sarnia!"
               className="bg-[var(--color-accent)] text-[var(--color-primary)] hover:bg-[color-mix(in srgb, var(--color-accent) 85%, transparent)]"
@@ -146,14 +162,14 @@ const LocationsPage = () => {
       <section className="max-w-7xl mx-auto px-4">
         <div className="space-y-12">
           {locations.map((location) => (
-            <div 
+            <div
               key={location.id}
               id={`location-${location.id}`}
               className="grid lg:grid-cols-2 gap-8"
               style={{
                 border: location.id === preferredLocationId ? '3px solid var(--color-accent)' : 'none',
                 borderRadius: '1rem',
-                padding: location.id === preferredLocationId ? '0.5rem' : '0'
+                padding: location.id === preferredLocationId ? '0.5rem' : '0',
               }}
             >
               {/* Info column (always first on mobile, left on desktop) */}
@@ -166,7 +182,7 @@ const LocationsPage = () => {
                       alt={`${location.name} exterior`}
                       className="rounded-2xl w-40 h-32 object-cover shadow-lg"
                       loading="lazy"
-                      aria-hidden={location.photos.thumbnail ? "true" : "false"}
+                      aria-hidden={location.photos.thumbnail ? 'true' : 'false'}
                     />
                   )}
                   {location.photos?.thumbnail && (
@@ -206,11 +222,11 @@ const LocationsPage = () => {
                   <h2 className="text-3xl" style={{ color: 'var(--color-heading)' }}>
                     {location.name}
                   </h2>
-                  <div 
+                  <div
                     className="px-3 py-1 rounded-full text-sm font-bold"
                     style={{
                       backgroundColor: location.isOpen ? 'var(--color-success-bg)' : 'var(--color-error-bg)',
-                      color: location.isOpen ? 'var(--color-success)' : 'var(--color-error)'
+                      color: location.isOpen ? 'var(--color-success)' : 'var(--color-error)',
                     }}
                   >
                     {location.isOpen ? 'Open Now' : 'Closed'}
@@ -219,12 +235,21 @@ const LocationsPage = () => {
 
                 <div className="space-y-6">
                   <div className="flex gap-4">
-                    <MapPin size={24} aria-hidden="true" style={{ color: 'var(--color-icon)' }} className="flex-shrink-0 mt-1" />
+                    <MapPin
+                      size={24}
+                      aria-hidden="true"
+                      style={{ color: 'var(--color-icon)' }}
+                      className="flex-shrink-0 mt-1"
+                    />
                     <div className="flex-1">
-                      <h3 className="font-bold mb-1" style={textColor}>Address</h3>
-                      <p className="font-inter mb-2" style={mutedTextColor}>{location.address}</p>
+                      <h3 className="font-bold mb-1" style={textColor}>
+                        Address
+                      </h3>
+                      <p className="font-inter mb-2" style={mutedTextColor}>
+                        {location.address}
+                      </p>
                       <div className="flex items-center gap-2 flex-wrap">
-                        <a 
+                        <a
                           href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location.address)}`}
                           target="_blank"
                           rel="noopener noreferrer"
@@ -233,7 +258,7 @@ const LocationsPage = () => {
                         >
                           Get Directions <ExternalLink size={14} />
                         </a>
-                        <CopyButton 
+                        <CopyButton
                           text={location.address}
                           label="Address"
                           className="text-xs"
@@ -243,35 +268,48 @@ const LocationsPage = () => {
                     </div>
                   </div>
 
-                  <LiveHoursDisplay 
+                  <LiveHoursDisplay
                     placeId={location.google.placeId}
                     fallbackHours={{
                       daily: location.hours.daily,
-                      exceptions: location.hours.exceptions
+                      exceptions: location.hours.exceptions,
                     }}
                     showStatus={true}
                     showRefreshOnError={true}
                   />
 
                   <div className="flex gap-4">
-                    <Phone size={24} aria-hidden="true" style={{ color: 'var(--color-icon)' }} className="flex-shrink-0 mt-1" />
+                    <Phone
+                      size={24}
+                      aria-hidden="true"
+                      style={{ color: 'var(--color-icon)' }}
+                      className="flex-shrink-0 mt-1"
+                    />
                     <div className="flex-1">
-                      <h3 className="font-bold mb-1" style={textColor}>Phone</h3>
+                      <h3 className="font-bold mb-1" style={textColor}>
+                        Phone
+                      </h3>
                       <div className="flex items-center gap-2 flex-wrap">
-                        <a href={`tel:${normalizePhoneForTel(location.phone)}`} className="font-inter hover:underline" style={{ color: 'var(--color-accent)' }}>
+                        <a
+                          href={`tel:${normalizePhoneForTel(location.phone)}`}
+                          className="font-inter hover:underline"
+                          style={{ color: 'var(--color-accent)' }}
+                        >
                           {location.phone}
                         </a>
-                      <CopyButton 
-                        text={location.phone}
-                        label="Phone number"
-                        style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)' }}
-                      />
+                        <CopyButton
+                          text={location.phone}
+                          label="Phone number"
+                          style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)' }}
+                        />
                       </div>
                     </div>
                   </div>
 
                   <div>
-                    <h3 className="font-bold mb-3" style={textColor}>Amenities</h3>
+                    <h3 className="font-bold mb-3" style={textColor}>
+                      Amenities
+                    </h3>
                     <div className="flex flex-wrap gap-2">
                       {(location.amenities || []).map((amenity, idx) => (
                         <span
@@ -301,7 +339,7 @@ const LocationsPage = () => {
                   {location.id === preferredLocationId ? (
                     location.mapUrl && loadedMaps.has(location.id) ? (
                       <>
-                        <iframe 
+                        <iframe
                           title={`Google Maps - ${location.name}`}
                           src={location.mapUrl}
                           width="100%"
@@ -377,7 +415,6 @@ const LocationsPage = () => {
                   )}
                 </div>
               </div>
-
             </div>
           ))}
         </div>
@@ -388,7 +425,10 @@ const LocationsPage = () => {
           <h2 className="text-3xl md:text-4xl uppercase mb-4" style={{ color: 'var(--color-text-on-primary)' }}>
             Visit Us Today
           </h2>
-          <p className="font-inter text-lg mb-8 max-w-2xl mx-auto" style={{ color: 'var(--color-text-on-primary)', opacity: 0.9 }}>
+          <p
+            className="font-inter text-lg mb-8 max-w-2xl mx-auto"
+            style={{ color: 'var(--color-text-on-primary)', opacity: 0.9 }}
+          >
             Stop by any of our locations for quality products and friendly service!
           </p>
           <Button

@@ -10,7 +10,7 @@ describe('breadcrumbSchema', () => {
     it('should build valid BreadcrumbList schema', () => {
       const breadcrumbs = [
         { name: 'Home', url: 'https://romamart.ca/' },
-        { name: 'Services', url: 'https://romamart.ca/services' }
+        { name: 'Services', url: 'https://romamart.ca/services/' },
       ];
 
       const schema = buildBreadcrumbSchema(breadcrumbs);
@@ -23,15 +23,15 @@ describe('breadcrumbSchema', () => {
             '@type': 'ListItem',
             position: 1,
             name: 'Home',
-            item: 'https://romamart.ca/'
+            item: 'https://romamart.ca/',
           },
           {
             '@type': 'ListItem',
             position: 2,
             name: 'Services',
-            item: 'https://romamart.ca/services'
-          }
-        ]
+            item: 'https://romamart.ca/services/',
+          },
+        ],
       });
     });
 
@@ -49,10 +49,10 @@ describe('breadcrumbSchema', () => {
       const breadcrumbs = [
         { name: 'Home', url: 'https://romamart.ca/' },
         { name: 'Invalid' }, // Missing url
-        { url: 'https://romamart.ca/test' }, // Missing name
+        { url: 'https://romamart.ca/test/' }, // Missing name
         null,
         undefined,
-        { name: 'Services', url: 'https://romamart.ca/services' }
+        { name: 'Services', url: 'https://romamart.ca/services/' },
       ];
 
       const schema = buildBreadcrumbSchema(breadcrumbs);
@@ -64,9 +64,7 @@ describe('breadcrumbSchema', () => {
     });
 
     it('should handle single breadcrumb', () => {
-      const breadcrumbs = [
-        { name: 'Home', url: 'https://romamart.ca/' }
-      ];
+      const breadcrumbs = [{ name: 'Home', url: 'https://romamart.ca/' }];
 
       const schema = buildBreadcrumbSchema(breadcrumbs);
 
@@ -78,8 +76,8 @@ describe('breadcrumbSchema', () => {
     it('should correctly number positions', () => {
       const breadcrumbs = [
         { name: 'Home', url: 'https://romamart.ca/' },
-        { name: 'Products', url: 'https://romamart.ca/products' },
-        { name: 'RoCafé', url: 'https://romamart.ca/rocafe' }
+        { name: 'Products', url: 'https://romamart.ca/products/' },
+        { name: 'RoCafé', url: 'https://romamart.ca/rocafe/' },
       ];
 
       const schema = buildBreadcrumbSchema(breadcrumbs);
@@ -92,43 +90,34 @@ describe('breadcrumbSchema', () => {
     it('should preserve URL formatting', () => {
       const breadcrumbs = [
         { name: 'Home', url: 'https://romamart.ca/' },
-        { name: 'Services', url: 'https://romamart.ca/services#atm' }
+        { name: 'Services', url: 'https://romamart.ca/services/#atm' },
       ];
 
       const schema = buildBreadcrumbSchema(breadcrumbs);
 
-      expect(schema.itemListElement[1].item).toBe('https://romamart.ca/services#atm');
+      expect(schema.itemListElement[1].item).toBe('https://romamart.ca/services/#atm');
     });
   });
 
   describe('buildBreadcrumbArray', () => {
     it('should build breadcrumb array with home and current page', () => {
-      const breadcrumbs = buildBreadcrumbArray(
-        'Services',
-        'https://romamart.ca/services'
-      );
+      const breadcrumbs = buildBreadcrumbArray('Services', 'https://romamart.ca/services/');
 
       expect(breadcrumbs).toHaveLength(2);
       expect(breadcrumbs[0]).toEqual({
         name: 'Home',
-        url: 'https://romamart.ca/'
+        url: 'https://romamart.ca/',
       });
       expect(breadcrumbs[1]).toEqual({
         name: 'Services',
-        url: 'https://romamart.ca/services'
+        url: 'https://romamart.ca/services/',
       });
     });
 
     it('should include parent pages', () => {
-      const parentPages = [
-        { name: 'Products', url: 'https://romamart.ca/products' }
-      ];
+      const parentPages = [{ name: 'Products', url: 'https://romamart.ca/products/' }];
 
-      const breadcrumbs = buildBreadcrumbArray(
-        'RoCafé',
-        'https://romamart.ca/rocafe',
-        parentPages
-      );
+      const breadcrumbs = buildBreadcrumbArray('RoCafé', 'https://romamart.ca/rocafe/', parentPages);
 
       expect(breadcrumbs).toHaveLength(3);
       expect(breadcrumbs[0].name).toBe('Home');
@@ -137,20 +126,13 @@ describe('breadcrumbSchema', () => {
     });
 
     it('should handle empty parent pages', () => {
-      const breadcrumbs = buildBreadcrumbArray(
-        'Contact',
-        'https://romamart.ca/contact',
-        []
-      );
+      const breadcrumbs = buildBreadcrumbArray('Contact', 'https://romamart.ca/contact/', []);
 
       expect(breadcrumbs).toHaveLength(2);
     });
 
     it('should handle undefined parent pages', () => {
-      const breadcrumbs = buildBreadcrumbArray(
-        'About',
-        'https://romamart.ca/about'
-      );
+      const breadcrumbs = buildBreadcrumbArray('About', 'https://romamart.ca/about/');
 
       expect(breadcrumbs).toHaveLength(2);
     });
@@ -165,19 +147,19 @@ describe('breadcrumbSchema', () => {
       expect(schema.itemListElement).toHaveLength(2);
       expect(schema.itemListElement[0].name).toBe('Home');
       expect(schema.itemListElement[1].name).toBe('Services');
-      expect(schema.itemListElement[1].item).toBe('https://romamart.ca/services');
+      expect(schema.itemListElement[1].item).toBe('https://romamart.ca/services/');
     });
 
-    it('should handle page with trailing slash', () => {
+    it('should produce trailing-slash URLs', () => {
       const schema = quickBreadcrumb('Contact', 'contact');
 
-      expect(schema.itemListElement[1].item).toBe('https://romamart.ca/contact');
+      expect(schema.itemListElement[1].item).toBe('https://romamart.ca/contact/');
     });
 
     it('should handle nested paths', () => {
       const schema = quickBreadcrumb('Privacy Policy', 'privacy');
 
-      expect(schema.itemListElement[1].item).toBe('https://romamart.ca/privacy');
+      expect(schema.itemListElement[1].item).toBe('https://romamart.ca/privacy/');
     });
   });
 
@@ -194,14 +176,14 @@ describe('breadcrumbSchema', () => {
 
     it('should have ListItem @type for all items', () => {
       const schema = quickBreadcrumb('Test', 'test');
-      schema.itemListElement.forEach(item => {
+      schema.itemListElement.forEach((item) => {
         expect(item['@type']).toBe('ListItem');
       });
     });
 
     it('should have required properties for ListItem', () => {
       const schema = quickBreadcrumb('Test', 'test');
-      schema.itemListElement.forEach(item => {
+      schema.itemListElement.forEach((item) => {
         expect(item).toHaveProperty('position');
         expect(item).toHaveProperty('name');
         expect(item).toHaveProperty('item');

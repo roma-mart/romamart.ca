@@ -827,14 +827,14 @@ function injectOfflineLocationData(distPath) {
   // Replace JS LOCATIONS array
   content = content.replace(LOCATIONS_PLACEHOLDER, locationsJson);
 
-  // Replace static HTML using id-anchored patterns
-  content = content.replace(/(<h3 id="location-name">)[^<]*/, `$1${loc.name}`);
-  content = content.replace(/(<span id="location-address">)[^<]*/, `$1${loc.address.formatted}`);
+  // Replace static HTML using id-anchored patterns (escape to prevent injection)
+  content = content.replace(/(<h3 id="location-name">)[^<]*/, `$1${escapeHtml(loc.name)}`);
+  content = content.replace(/(<span id="location-address">)[^<]*/, `$1${escapeHtml(loc.address.formatted)}`);
   content = content.replace(
     /<a href="tel:[^"]*" class="contact-link">[^<]*/,
-    `<a href="tel:${phoneRaw}" class="contact-link">${loc.contact.phone}`
+    `<a href="tel:${phoneRaw}" class="contact-link">${escapeHtml(loc.contact.phone)}`
   );
-  content = content.replace(/(<span id="location-hours">)[^<]*/, `$1${loc.hours.display}`);
+  content = content.replace(/(<span id="location-hours">)[^<]*/, `$1${escapeHtml(loc.hours.display)}`);
 
   fs.writeFileSync(offlinePath, content);
   console.log('✓ Injected SSOT location data into offline.html');

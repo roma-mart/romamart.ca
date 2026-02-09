@@ -11,16 +11,15 @@ const ReturnPolicyPage = () => {
   const textColor = { color: 'var(--color-text)' };
   const mutedTextColor = { color: 'var(--color-text-muted)' };
 
-  const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL
-    ? import.meta.env.BASE_URL
-    : '/';
+  const BASE_URL =
+    typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
 
   return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>
       <StructuredData
         type="ReturnPolicy"
         data={{
-          url: 'https://romamart.ca/return-policy'
+          url: 'https://romamart.ca/return-policy/',
         }}
       />
       <Helmet>
@@ -29,11 +28,14 @@ const ReturnPolicyPage = () => {
           name="description"
           content="Review Roma Mart's returns and refund policy. All sales are final except for faulty products reported within 24 hours."
         />
-        <link rel="canonical" href="https://romamart.ca/return-policy" />
+        <link rel="canonical" href="https://romamart.ca/return-policy/" />
       </Helmet>
 
       {/* Breadcrumb Schema */}
-      <StructuredData type="BreadcrumbList" data={{ breadcrumbs: buildBreadcrumbArray('Return Policy', 'https://romamart.ca/return-policy') }} />
+      <StructuredData
+        type="BreadcrumbList"
+        data={{ breadcrumbs: buildBreadcrumbArray('Return Policy', 'https://romamart.ca/return-policy/') }}
+      />
 
       {/* Breadcrumb */}
       <nav aria-label="Breadcrumb" className="max-w-4xl mx-auto px-4 mb-8">
@@ -43,8 +45,12 @@ const ReturnPolicyPage = () => {
               Home
             </a>
           </li>
-          <li aria-hidden="true"><ChevronRight size={16} style={mutedTextColor} /></li>
-          <li aria-current="page" className="font-semibold" style={textColor}>Return Policy</li>
+          <li aria-hidden="true">
+            <ChevronRight size={16} style={mutedTextColor} />
+          </li>
+          <li aria-current="page" className="font-semibold" style={textColor}>
+            Return Policy
+          </li>
         </ol>
       </nav>
 
@@ -70,7 +76,8 @@ const ReturnPolicyPage = () => {
               1. All Sales Final
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
-              All Roma Mart Corp. sales are final. Returns and refunds are accepted only for faulty products confirmed to be faulty due to an issue that existed prior to purchase.
+              All Roma Mart Corp. sales are final. Returns and refunds are accepted only for faulty products confirmed
+              to be faulty due to an issue that existed prior to purchase.
             </p>
           </section>
 
@@ -79,7 +86,8 @@ const ReturnPolicyPage = () => {
               2. Faulty Products Only
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
-              A product is considered faulty if it was damaged, expired, or had a manufacturing defect at the time of purchase. The fault must be clearly attributable to Roma Mart Corp. or the manufacturer.
+              A product is considered faulty if it was damaged, expired, or had a manufacturing defect at the time of
+              purchase. The fault must be clearly attributable to Roma Mart Corp. or the manufacturer.
             </p>
           </section>
 
@@ -88,7 +96,8 @@ const ReturnPolicyPage = () => {
               3. 24-Hour Reporting Window
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
-              Faulty products must be reported within 24 hours of purchase. Claims made after this window may be declined.
+              Faulty products must be reported within 24 hours of purchase. Claims made after this window may be
+              declined.
             </p>
           </section>
 
@@ -97,7 +106,8 @@ const ReturnPolicyPage = () => {
               4. Receipt & Packaging Required
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
-              Original receipt is required for all return requests. Products must be returned in original packaging (if applicable) and show no signs of use or tampering.
+              Original receipt is required for all return requests. Products must be returned in original packaging (if
+              applicable) and show no signs of use or tampering.
             </p>
           </section>
 
@@ -127,12 +137,32 @@ const ReturnPolicyPage = () => {
               If you believe a product is faulty, contact us with your receipt details as soon as possible:
             </p>
             <div className="p-6 rounded-lg" style={{ backgroundColor: 'var(--color-surface)' }}>
-              <p style={textColor}><strong>{COMPANY_DATA.legalName}</strong></p>
+              <p style={textColor}>
+                <strong>{COMPANY_DATA.legalName}</strong>
+              </p>
               <p style={textColor}>{COMPANY_DATA.location.address.street}</p>
-              <p style={textColor}>{COMPANY_DATA.location.address.city}, {COMPANY_DATA.location.address.province} {COMPANY_DATA.location.address.postalCode}</p>
-              <p style={textColor}>Email: <a href={`mailto:${getContextualEmail('support')}`} style={{ color: 'var(--color-accent)' }}>{getContextualEmail('support')}</a></p>
-              <p style={textColor}>Phone: <a href={`tel:${normalizePhoneForTel(COMPANY_DATA.location.contact.phone)}`} style={{ color: 'var(--color-accent)' }}>{COMPANY_DATA.location.contact.phone}</a></p>
-              <p className="text-sm mt-4" style={mutedTextColor}>GST/HST#: {COMPANY_DATA.gstNumber}</p>
+              <p style={textColor}>
+                {COMPANY_DATA.location.address.city}, {COMPANY_DATA.location.address.province}{' '}
+                {COMPANY_DATA.location.address.postalCode}
+              </p>
+              <p style={textColor}>
+                Email:{' '}
+                <a href={`mailto:${getContextualEmail('support')}`} style={{ color: 'var(--color-accent)' }}>
+                  {getContextualEmail('support')}
+                </a>
+              </p>
+              <p style={textColor}>
+                Phone:{' '}
+                <a
+                  href={`tel:${normalizePhoneForTel(COMPANY_DATA.location.contact.phone)}`}
+                  style={{ color: 'var(--color-accent)' }}
+                >
+                  {COMPANY_DATA.location.contact.phone}
+                </a>
+              </p>
+              <p className="text-sm mt-4" style={mutedTextColor}>
+                GST/HST#: {COMPANY_DATA.gstNumber}
+              </p>
             </div>
           </section>
         </div>

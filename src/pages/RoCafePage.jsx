@@ -13,7 +13,7 @@ import StructuredData from '../components/StructuredData';
 import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 
 const RoCafePage = () => {
-  const { menuItems, loading, error } = useMenu();
+  const { menuItems, loading, error, refetch } = useMenu();
 
   const textColor = { color: 'var(--color-text)' };
   const mutedTextColor = { color: 'var(--color-text-muted)' };
@@ -58,7 +58,7 @@ const RoCafePage = () => {
           data={{
             products: schemaMenuItems.map((item) => ({
               menuItem: item,
-              itemUrl: 'https://romamart.ca/rocafe',
+              itemUrl: 'https://romamart.ca/rocafe/',
               priceInCents: schemaPriceInCents,
             })),
           }}
@@ -70,13 +70,13 @@ const RoCafePage = () => {
           name="description"
           content="Explore the RoCafé menu featuring hot coffee, iced coffee, tea, fresh juice, smoothies, frappés, specialty drinks, food, and seasonal items."
         />
-        <link rel="canonical" href="https://romamart.ca/rocafe" />
+        <link rel="canonical" href="https://romamart.ca/rocafe/" />
       </Helmet>
 
       {/* Breadcrumb Schema */}
       <StructuredData
         type="BreadcrumbList"
-        data={{ breadcrumbs: buildBreadcrumbArray('RoCafé', 'https://romamart.ca/rocafe') }}
+        data={{ breadcrumbs: buildBreadcrumbArray('RoCafé', 'https://romamart.ca/rocafe/') }}
       />
 
       {/* Breadcrumb Navigation */}
@@ -164,11 +164,11 @@ const RoCafePage = () => {
             </p>
             <button
               type="button"
-              onClick={() => window.location.reload()}
+              onClick={refetch}
               className="px-6 py-3 rounded-lg font-bold font-inter transition-colors"
               style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)' }}
             >
-              Refresh Page
+              Try Again
             </button>
           </div>
         ) : (
