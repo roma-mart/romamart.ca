@@ -329,7 +329,7 @@ export default defineConfig({
 });
 ```
 
-> **Note:** Base path is set to `'/'` for production (custom domain). GitHub Pages staging uses a deploy script that handles path adjustments automatically.
+> **Note:** Base path is set to `'/'` for production (custom domain). For GitHub Pages staging, the base would need to be changed to `'/romamart.ca/'` in `vite.config.js` before deploying. The deploy script (`npm run deploy`) is a thin wrapper around `gh-pages -d dist` with no post-build path rewriting.
 
 ### Prerendering
 
