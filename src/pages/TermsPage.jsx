@@ -8,22 +8,28 @@ import StructuredData from '../components/StructuredData';
 import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 
 const TermsPage = () => {
-
   const textColor = { color: 'var(--color-text)' };
   const mutedTextColor = { color: 'var(--color-text-muted)' };
 
-  const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
+  const BASE_URL =
+    typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
 
   return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>
       <Helmet>
         <title>Terms of Service | Roma Mart Convenience</title>
-        <meta name="description" content="Terms and conditions for using Roma Mart Convenience services. Understand your rights and obligations." />
-        <link rel="canonical" href="https://romamart.ca/terms" />
+        <meta
+          name="description"
+          content="Terms and conditions for using Roma Mart Convenience services. Understand your rights and obligations."
+        />
+        <link rel="canonical" href="https://romamart.ca/terms/" />
       </Helmet>
 
       {/* Breadcrumb Schema */}
-      <StructuredData type="BreadcrumbList" data={{ breadcrumbs: buildBreadcrumbArray('Terms', 'https://romamart.ca/terms') }} />
+      <StructuredData
+        type="BreadcrumbList"
+        data={{ breadcrumbs: buildBreadcrumbArray('Terms', 'https://romamart.ca/terms/') }}
+      />
 
       {/* Breadcrumb */}
       <nav aria-label="Breadcrumb" className="max-w-4xl mx-auto px-4 mb-8">
@@ -33,8 +39,12 @@ const TermsPage = () => {
               Home
             </a>
           </li>
-          <li aria-hidden="true"><ChevronRight size={16} style={mutedTextColor} /></li>
-          <li aria-current="page" className="font-semibold" style={textColor}>Terms of Service</li>
+          <li aria-hidden="true">
+            <ChevronRight size={16} style={mutedTextColor} />
+          </li>
+          <li aria-current="page" className="font-semibold" style={textColor}>
+            Terms of Service
+          </li>
         </ol>
       </nav>
 
@@ -43,7 +53,7 @@ const TermsPage = () => {
           <h1 className="text-4xl uppercase" style={{ color: 'var(--color-heading)' }}>
             Terms of Service
           </h1>
-          <ShareButton 
+          <ShareButton
             title="Roma Mart Terms of Service"
             text="Read Roma Mart's terms of service"
             style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-on-accent)' }}
@@ -60,7 +70,8 @@ const TermsPage = () => {
               1. Acceptance of Terms
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
-              By accessing or using the Roma Mart Convenience website (romamart.ca) or visiting our physical store, you agree to be bound by these Terms of Service and all applicable laws and regulations.
+              By accessing or using the Roma Mart Convenience website (romamart.ca) or visiting our physical store, you
+              agree to be bound by these Terms of Service and all applicable laws and regulations.
             </p>
           </section>
 
@@ -84,7 +95,8 @@ const TermsPage = () => {
               3. Age Restrictions
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
-              Certain products (tobacco, vape products, lottery tickets, etc. where applicable) are restricted to customers 19 years of age or older in Ontario. Valid government-issued photo ID is required for purchase.
+              Certain products (tobacco, vape products, lottery tickets, etc. where applicable) are restricted to
+              customers 19 years of age or older in Ontario. Valid government-issued photo ID is required for purchase.
             </p>
           </section>
 
@@ -93,7 +105,8 @@ const TermsPage = () => {
               4. Payment Terms
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
-              We accept cash, debit, and credit card payments. All prices exclude applicable taxes unless otherwise stated.
+              We accept cash, debit, and credit card payments. All prices exclude applicable taxes unless otherwise
+              stated.
             </p>
           </section>
 
@@ -102,7 +115,8 @@ const TermsPage = () => {
               5. Intellectual Property
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
-              All content on this website, including text, graphics, logos, and images, is the property of Roma Mart Corp. or its content suppliers and is protected by Canadian and international copyright laws.
+              All content on this website, including text, graphics, logos, and images, is the property of Roma Mart
+              Corp. or its content suppliers and is protected by Canadian and international copyright laws.
             </p>
           </section>
 
@@ -111,7 +125,8 @@ const TermsPage = () => {
               6. Limitation of Liability
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
-              To the fullest extent permitted by law, Roma Mart Corp. shall not be liable for any indirect, incidental, special, or consequential damages arising out of or related to your use of our services.
+              To the fullest extent permitted by law, Roma Mart Corp. shall not be liable for any indirect, incidental,
+              special, or consequential damages arising out of or related to your use of our services.
             </p>
           </section>
 
@@ -120,7 +135,8 @@ const TermsPage = () => {
               7. Governing Law
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
-              These Terms are governed by the laws of the Province of Ontario and the federal laws of Canada applicable therein.
+              These Terms are governed by the laws of the Province of Ontario and the federal laws of Canada applicable
+              therein.
             </p>
           </section>
 
@@ -132,12 +148,32 @@ const TermsPage = () => {
               For questions about these Terms, please contact us:
             </p>
             <div className="p-6 rounded-lg" style={{ backgroundColor: 'var(--color-surface)' }}>
-              <p style={textColor}><strong>{COMPANY_DATA.legalName}</strong></p>
+              <p style={textColor}>
+                <strong>{COMPANY_DATA.legalName}</strong>
+              </p>
               <p style={textColor}>{COMPANY_DATA.location.address.street}</p>
-              <p style={textColor}>{COMPANY_DATA.location.address.city}, {COMPANY_DATA.location.address.province} {COMPANY_DATA.location.address.postalCode}</p>
-              <p style={textColor}>Email: <a href={`mailto:${getContextualEmail('legal')}`} style={{ color: 'var(--color-accent)' }}>{getContextualEmail('legal')}</a></p>
-              <p style={textColor}>Phone: <a href={`tel:${normalizePhoneForTel(COMPANY_DATA.location.contact.phone)}`} style={{ color: 'var(--color-accent)' }}>{COMPANY_DATA.location.contact.phone}</a></p>
-              <p className="text-sm mt-4" style={mutedTextColor}>GST/HST#: {COMPANY_DATA.gstNumber}</p>
+              <p style={textColor}>
+                {COMPANY_DATA.location.address.city}, {COMPANY_DATA.location.address.province}{' '}
+                {COMPANY_DATA.location.address.postalCode}
+              </p>
+              <p style={textColor}>
+                Email:{' '}
+                <a href={`mailto:${getContextualEmail('legal')}`} style={{ color: 'var(--color-accent)' }}>
+                  {getContextualEmail('legal')}
+                </a>
+              </p>
+              <p style={textColor}>
+                Phone:{' '}
+                <a
+                  href={`tel:${normalizePhoneForTel(COMPANY_DATA.location.contact.phone)}`}
+                  style={{ color: 'var(--color-accent)' }}
+                >
+                  {COMPANY_DATA.location.contact.phone}
+                </a>
+              </p>
+              <p className="text-sm mt-4" style={mutedTextColor}>
+                GST/HST#: {COMPANY_DATA.gstNumber}
+              </p>
             </div>
           </section>
         </div>

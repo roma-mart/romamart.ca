@@ -18,10 +18,10 @@ import tokens from '../design/tokens';
 
 /**
  * StandardizedItem Component
- * 
+ *
  * Universal collapsible/expandable item for Services and RoCafé menu
  * Auto-adapts styling based on item data structure (no variant prop needed)
- * 
+ *
  * Features:
  * - Compact "basic" view (default collapsed state)
  * - Expanded "detailed" view (click to expand/collapse)
@@ -35,7 +35,7 @@ import tokens from '../design/tokens';
  * - Action buttons (email, URL, ordering)
  * - Location-aware availability messaging
  * - Responsive layout (mobile, tablet, desktop)
- * 
+ *
  * @param {Object} props
  * @param {Object} props.item - Item data object (menu item or service)
  * @param {'service'|'menu'} props.itemType - Type of item ('service' or 'menu')
@@ -43,19 +43,17 @@ import tokens from '../design/tokens';
  */
 
 const StandardizedItem = ({ item, itemType, defaultExpanded = false }) => {
-    // ...existing code...
-    const { nearestLocation } = useLocationContext();
+  // ...existing code...
+  const { nearestLocation } = useLocationContext();
   const { services } = useServices();
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 
   // Get live open/closed status from Google Places API if available
-  const { isOpenNow: liveOpenStatus } = useGooglePlaceHours(
-    nearestLocation?.google?.placeId || null
-  );
+  const { isOpenNow: liveOpenStatus } = useGooglePlaceHours(nearestLocation?.google?.placeId || null);
 
   // Compute effective status for item at nearest location
   let effectiveStatus = item.status;
-  let locationIsOpen = false;
+  let locationIsOpen;
 
   let availabilityState = 'unavailable';
   if (!nearestLocation) {
@@ -80,16 +78,16 @@ const StandardizedItem = ({ item, itemType, defaultExpanded = false }) => {
     }
   }
 
-  // Destructure item data  
+  // Destructure item data
   const {
-    description,          // Full description (detailed view)
-    defaultSize = 0,      // Index of default selected size
-    customizations = [],  // [{type: 'Milk Choice', options: [{name: 'Whole Milk', price: 0}]}]
-    ingredients,          // Optional: ingredient list
-    action,               // Optional: CTA button config {text, email, url, subject, body}
-    features = [],        // Optional: List of features (for services)
-    legalNotice,          // Optional: {text, law, url} for age-restricted items
-    partner,              // Optional: {name, url, logo} for partner services
+    description, // Full description (detailed view)
+    defaultSize = 0, // Index of default selected size
+    customizations = [], // [{type: 'Milk Choice', options: [{name: 'Whole Milk', price: 0}]}]
+    ingredients, // Optional: ingredient list
+    action, // Optional: CTA button config {text, email, url, subject, body}
+    features = [], // Optional: List of features (for services)
+    legalNotice, // Optional: {text, law, url} for age-restricted items
+    partner, // Optional: {name, url, logo} for partner services
   } = item;
 
   // State for size selection and customization options
@@ -97,14 +95,17 @@ const StandardizedItem = ({ item, itemType, defaultExpanded = false }) => {
   const [selectedOptions, setSelectedOptions] = useState(() => getDefaultSelections(customizations));
 
   // Calculate current price based on selections
-  const currentPrice = useMemo(() => calculateItemPrice(item, selectedSize, selectedOptions), [item, selectedSize, selectedOptions]);
+  const currentPrice = useMemo(
+    () => calculateItemPrice(item, selectedSize, selectedOptions),
+    [item, selectedSize, selectedOptions]
+  );
 
   // Get calories for selected size
   const currentCalories = useMemo(() => getCaloriesForSize(item, selectedSize), [item, selectedSize]);
 
   // Toggle handler
   const toggleExpanded = () => {
-    setIsExpanded(prev => !prev);
+    setIsExpanded((prev) => !prev);
   };
 
   // 4-state availability system for services
@@ -127,32 +128,20 @@ const StandardizedItem = ({ item, itemType, defaultExpanded = false }) => {
   const fontSize = tokens?.TYPOGRAPHY?.fontSize?.base || '1rem';
   const lineHeight = tokens?.TYPOGRAPHY?.lineHeight?.relaxed || 1.5;
 
-
-  {/* Apply typography tokens explicitly */
-      const bodyFont = tokens?.fonts?.body || 'var(--font-body)';
-      const headingFont = tokens?.fonts?.heading || 'var(--font-heading)';
-
-      {/* Example usage in JSX */}
-      <>
-        <div style={{ fontFamily: bodyFont }}>Body Text Example</div>
-        <h1 style={{ fontFamily: headingFont }}>Heading Example</h1>
-      </>
-  }
-
   return (
-    <div 
-      className="rounded-xl border transition-all duration-300"
-      style={{ 
+    <div
+      className="rounded-xl border transition-colors duration-200"
+      style={{
         backgroundColor: 'var(--color-bg)',
         borderColor: isExpanded ? 'var(--color-accent)' : getAvailabilityColor(),
-        borderWidth: isExpanded ? '2px' : '2px',
-        opacity: availabilityState === 'unavailable' ? 0.6 : (availabilityState === 'coming_soon' ? 0.85 : 1),
-        position: 'relative'
+        borderWidth: '2px',
+        opacity: availabilityState === 'unavailable' ? 0.6 : availabilityState === 'coming_soon' ? 0.85 : 1,
+        position: 'relative',
       }}
     >
       {/* Unavailable Overlay - Large X */}
       {availabilityState === 'unavailable' && (
-        <div 
+        <div
           style={{
             position: 'absolute',
             top: '50%',
@@ -163,16 +152,16 @@ const StandardizedItem = ({ item, itemType, defaultExpanded = false }) => {
             fontWeight: 'bold',
             opacity: 0.15,
             pointerEvents: 'none',
-            zIndex: 1
+            zIndex: 1,
           }}
         >
           ✕
         </div>
       )}
-      
+
       {/* Coming Soon Overlay */}
       {availabilityState === 'coming_soon' && (
-        <div 
+        <div
           style={{
             position: 'absolute',
             top: '50%',
@@ -185,7 +174,7 @@ const StandardizedItem = ({ item, itemType, defaultExpanded = false }) => {
             textTransform: 'uppercase',
             letterSpacing: '0.1em',
             pointerEvents: 'none',
-            zIndex: 1
+            zIndex: 1,
           }}
         >
           Coming Soon
@@ -205,18 +194,18 @@ const StandardizedItem = ({ item, itemType, defaultExpanded = false }) => {
 
       {/* DETAILED VIEW (Expanded) */}
       {isExpanded && (
-        <div 
+        <div
           className="px-4 pb-4 border-t"
           style={{ borderColor: 'var(--color-border)', position: 'relative', zIndex: 2 }}
         >
           {/* Full Description */}
-          <p 
+          <p
             className="text-sm font-inter leading-relaxed mb-4 mt-4"
-            style={{ 
+            style={{
               color: 'var(--color-text)',
               fontFamily: fontFamily,
               fontSize: fontSize,
-              lineHeight: lineHeight
+              lineHeight: lineHeight,
             }}
           >
             {description}
@@ -232,9 +221,9 @@ const StandardizedItem = ({ item, itemType, defaultExpanded = false }) => {
           {/* Features List (for Services) */}
           {features.length > 0 && (
             <div className="mb-4">
-              <h4 
+              <h4
                 className="text-sm font-bold text-heading mb-2"
-                style={{ 
+                style={{
                   color: 'var(--color-heading)',
                   fontFamily: tokens?.fonts?.heading || 'inherit',
                   fontSize: tokens?.fontSize?.sm || '1rem',
@@ -245,7 +234,7 @@ const StandardizedItem = ({ item, itemType, defaultExpanded = false }) => {
               </h4>
               <ul className="space-y-1">
                 {features.map((feature, idx) => (
-                  <li 
+                  <li
                     key={idx}
                     className="text-sm font-inter flex items-start gap-2"
                     style={{ color: 'var(--color-text)' }}
@@ -270,23 +259,14 @@ const StandardizedItem = ({ item, itemType, defaultExpanded = false }) => {
 
           {/* Nutritional Info */}
           {(currentCalories || ingredients) && (
-            <div 
-              className="p-3 rounded-lg mb-4"
-              style={{ backgroundColor: 'var(--color-bg)' }}
-            >
+            <div className="p-3 rounded-lg mb-4" style={{ backgroundColor: 'var(--color-bg)' }}>
               {currentCalories && (
-                <p 
-                  className="text-xs font-inter mb-1"
-                  style={{ color: 'var(--color-text-muted)' }}
-                >
+                <p className="text-xs font-inter mb-1" style={{ color: 'var(--color-text-muted)' }}>
                   <strong>Calories:</strong> {currentCalories} cal
                 </p>
               )}
               {ingredients && (
-                <p 
-                  className="text-xs font-inter"
-                  style={{ color: 'var(--color-text-muted)' }}
-                >
+                <p className="text-xs font-inter" style={{ color: 'var(--color-text-muted)' }}>
                   <strong>Ingredients:</strong> {ingredients}
                 </p>
               )}
@@ -304,13 +284,17 @@ const StandardizedItem = ({ item, itemType, defaultExpanded = false }) => {
                     event: 'order_cta_click',
                     cta_location: 'menu_item_button',
                     cta_text: 'Order Now',
-                    item_price: currentPrice
+                    item_price: currentPrice,
                   });
                 }
                 window.open(getOrderingUrl(), '_blank', 'noopener,noreferrer');
               }}
-              className="w-full py-3 px-4 rounded-lg font-bold font-inter text-center transition-all mb-2 flex items-center justify-center gap-2 transform hover:scale-105"
-              style={{ WebkitTapHighlightColor: 'transparent', backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)' }}
+              className="w-full py-3 px-4 rounded-lg font-bold font-inter text-center transition-transform duration-200 mb-2 flex items-center justify-center gap-2 transform hover:scale-105"
+              style={{
+                WebkitTapHighlightColor: 'transparent',
+                backgroundColor: 'var(--color-accent)',
+                color: 'var(--color-primary)',
+              }}
               aria-label={`Order this item for ${formatPrice(currentPrice)}`}
             >
               <ShoppingCart className="w-5 h-5" aria-hidden="true" />
@@ -321,12 +305,21 @@ const StandardizedItem = ({ item, itemType, defaultExpanded = false }) => {
           {/* Action Button (for Services) */}
           {action && availabilityState === 'available' && (
             <a
-              href={action.email ? `mailto:${action.email}?subject=${encodeURIComponent(action.subject || '')}&body=${encodeURIComponent(action.body || '')}` : action.url}
-              target={action.url ? "_blank" : undefined}
-              rel={action.url ? "noopener noreferrer" : undefined}
+              href={
+                action.email
+                  ? `mailto:${action.email}?subject=${encodeURIComponent(action.subject || '')}&body=${encodeURIComponent(action.body || '')}`
+                  : action.url
+              }
+              target={action.url ? '_blank' : undefined}
+              rel={action.url ? 'noopener noreferrer' : undefined}
               onClick={(e) => e.stopPropagation()}
-              className="block w-full py-3 px-4 rounded-lg font-bold font-inter text-center transition-all transform hover:scale-105"
-              style={{ WebkitTapHighlightColor: 'transparent', backgroundColor: 'var(--color-primary)', color: 'var(--color-accent)', textDecoration: 'none' }}
+              className="block w-full py-3 px-4 rounded-lg font-bold font-inter text-center transition-transform duration-200 transform hover:scale-105"
+              style={{
+                WebkitTapHighlightColor: 'transparent',
+                backgroundColor: 'var(--color-primary)',
+                color: 'var(--color-accent)',
+                textDecoration: 'none',
+              }}
             >
               {action.text}
             </a>

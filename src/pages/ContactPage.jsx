@@ -19,20 +19,32 @@ const ContactPage = () => {
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>
       <Helmet>
         <title>Contact Us | Roma Mart Convenience</title>
-        <meta name="description" content="Get in touch with Roma Mart. Visit us, call, or send a message. We're here to help!" />
-        <link rel="canonical" href="https://romamart.ca/contact" />
+        <meta
+          name="description"
+          content="Get in touch with Roma Mart. Visit us, call, or send a message. We're here to help!"
+        />
+        <link rel="canonical" href="https://romamart.ca/contact/" />
       </Helmet>
 
       {/* Breadcrumb Schema */}
-      <StructuredData type="BreadcrumbList" data={{ breadcrumbs: buildBreadcrumbArray('Contact', 'https://romamart.ca/contact') }} />
+      <StructuredData
+        type="BreadcrumbList"
+        data={{ breadcrumbs: buildBreadcrumbArray('Contact', 'https://romamart.ca/contact/') }}
+      />
 
       <nav aria-label="Breadcrumb" className="max-w-7xl mx-auto px-4 mb-8">
         <ol className="flex items-center gap-2 text-sm font-inter">
           <li>
-            <a href={`${BASE_URL}`} className="hover:text-accent transition-colors" style={mutedTextColor}>Home</a>
+            <a href={`${BASE_URL}`} className="hover:text-accent transition-colors" style={mutedTextColor}>
+              Home
+            </a>
           </li>
-          <li aria-hidden="true"><ChevronRight size={16} style={mutedTextColor} /></li>
-          <li aria-current="page" className="font-semibold" style={textColor}>Contact</li>
+          <li aria-hidden="true">
+            <ChevronRight size={16} style={mutedTextColor} />
+          </li>
+          <li aria-current="page" className="font-semibold" style={textColor}>
+            Contact
+          </li>
         </ol>
       </nav>
 
@@ -64,11 +76,16 @@ const ContactPage = () => {
 
             <div className="space-y-8">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'var(--color-surface)' }}>
+                <div
+                  className="w-12 h-12 rounded-full flex items-center justify-center shrink-0"
+                  style={{ backgroundColor: 'var(--color-surface)' }}
+                >
                   <MapPin aria-hidden="true" style={{ color: 'var(--color-icon)' }} />
                 </div>
                 <div>
-                  <h3 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Visit Us</h3>
+                  <h3 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>
+                    Visit Us
+                  </h3>
                   <p style={textColor}>{COMPANY_DATA.location.address.formatted}</p>
                   <a
                     href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(COMPANY_DATA.location.address.formatted)}`}
@@ -84,13 +101,22 @@ const ContactPage = () => {
               </div>
 
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'var(--color-surface)' }}>
+                <div
+                  className="w-12 h-12 rounded-full flex items-center justify-center shrink-0"
+                  style={{ backgroundColor: 'var(--color-surface)' }}
+                >
                   <Phone aria-hidden="true" style={{ color: 'var(--color-icon)' }} />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Call Us</h3>
+                  <h3 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>
+                    Call Us
+                  </h3>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <a href={`tel:${normalizePhoneForTel(COMPANY_DATA.location.contact.phone)}`} className="hover:underline" style={{ color: 'var(--color-accent)' }}>
+                    <a
+                      href={`tel:${normalizePhoneForTel(COMPANY_DATA.location.contact.phone)}`}
+                      className="hover:underline"
+                      style={{ color: 'var(--color-accent)' }}
+                    >
                       {COMPANY_DATA.location.contact.phone}
                     </a>
                     <CopyButton
@@ -103,13 +129,22 @@ const ContactPage = () => {
               </div>
 
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'var(--color-surface)' }}>
+                <div
+                  className="w-12 h-12 rounded-full flex items-center justify-center shrink-0"
+                  style={{ backgroundColor: 'var(--color-surface)' }}
+                >
                   <Mail aria-hidden="true" style={{ color: 'var(--color-icon)' }} />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Email Us</h3>
+                  <h3 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>
+                    Email Us
+                  </h3>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <a href={`mailto:${COMPANY_DATA.location.contact.email}`} className="hover:underline" style={{ color: 'var(--color-accent)' }}>
+                    <a
+                      href={`mailto:${COMPANY_DATA.location.contact.email}`}
+                      className="hover:underline"
+                      style={{ color: 'var(--color-accent)' }}
+                    >
                       {COMPANY_DATA.location.contact.email}
                     </a>
                     <CopyButton
@@ -122,16 +157,21 @@ const ContactPage = () => {
               </div>
 
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: 'var(--color-surface)' }}>
+                <div
+                  className="w-12 h-12 rounded-full flex items-center justify-center shrink-0"
+                  style={{ backgroundColor: 'var(--color-surface)' }}
+                >
                   <Clock aria-hidden="true" style={{ color: 'var(--color-icon)' }} />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>Hours</h3>
+                  <h3 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>
+                    Hours
+                  </h3>
                   <LiveHoursDisplay
                     placeId={COMPANY_DATA.location.google.placeId}
                     fallbackHours={{
                       daily: COMPANY_DATA.location.hours.daily,
-                      exceptions: COMPANY_DATA.location.hours.exceptions
+                      exceptions: COMPANY_DATA.location.hours.exceptions,
                     }}
                     showStatus={true}
                     compact={true}
@@ -144,7 +184,10 @@ const ContactPage = () => {
           </div>
 
           {/* Contact Form */}
-          <div className="p-8 rounded-2xl shadow-lg border" style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
+          <div
+            className="p-8 rounded-2xl shadow-lg border"
+            style={{ backgroundColor: 'var(--color-surface)', borderColor: 'var(--color-border)' }}
+          >
             <h3 className="text-heading text-2xl mb-6" style={{ color: 'var(--color-heading)' }}>
               Send a Message
             </h3>

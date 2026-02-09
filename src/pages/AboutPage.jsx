@@ -6,79 +6,82 @@ import Button from '../components/Button';
 import ImageCarousel from '../components/ImageCarousel';
 import StructuredData from '../components/StructuredData';
 import COMPANY_DATA from '../config/company_data';
-import { getAssetUrl } from "../utils/getAssetUrl";
+import { getAssetUrl } from '../utils/getAssetUrl';
 import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 
 const AboutPage = () => {
-
   const textColor = { color: 'var(--color-text)' };
   const mutedTextColor = { color: 'var(--color-text-muted)' };
 
-  const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
+  const BASE_URL =
+    typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
 
   // Hero images for carousel
-  const heroImages = useMemo(() => [
-    { src: getAssetUrl('/images/romamart-opening1.png'), alt: 'Roma Mart store front, opening day' },
-    { src: getAssetUrl('/images/romamart-interior1.png'), alt: 'Roma Mart store interior, counter' },
-    { src: getAssetUrl('/images/romamart-interior3.jpg'), alt: 'RoCafe area inside Roma Mart' },
-    { src: getAssetUrl('/images/romamart-opening2.png'), alt: 'Roma Mart opening day celebration' },
-    { src: getAssetUrl('/images/romamart-opening3.png'), alt: 'Roma Mart team on opening day' },
-  ], []);
+  const heroImages = useMemo(
+    () => [
+      { src: getAssetUrl('/images/romamart-opening1.png'), alt: 'Roma Mart store front, opening day' },
+      { src: getAssetUrl('/images/romamart-interior1.png'), alt: 'Roma Mart store interior, counter' },
+      { src: getAssetUrl('/images/romamart-interior3.jpg'), alt: 'RoCafe area inside Roma Mart' },
+      { src: getAssetUrl('/images/romamart-opening2.png'), alt: 'Roma Mart opening day celebration' },
+      { src: getAssetUrl('/images/romamart-opening3.png'), alt: 'Roma Mart team on opening day' },
+    ],
+    []
+  );
 
   const team = [
     {
       name: 'Mohammed Osman Khan',
       role: 'Owner/GM',
       image: getAssetUrl('/images/id-mohammedosmankhan.png'),
-      bio: 'Founder and owner of Roma Mart Corp., dedicated to serving the community with quality products and exceptional service.'
+      bio: 'Founder and owner of Roma Mart Corp., dedicated to serving the community with quality products and exceptional service.',
     },
     {
       name: 'Rumana Mohammadi',
       role: 'RoCafé Manager',
       image: getAssetUrl('/images/id-rumanamohammadi.png'),
-      bio: 'Mother, wife, and heart of Roma Mart, ensuring every customer feels at home.'
+      bio: 'Mother, wife, and heart of Roma Mart, ensuring every customer feels at home.',
     },
     {
       name: 'Faizan Osman Khan',
       role: 'Management',
       image: getAssetUrl('/images/id-faizanosmankhan.png'),
-      bio: 'Dedicated son and team member, passionate about delivering excellent service and supporting our community.'
+      bio: 'Dedicated son and team member, passionate about delivering excellent service and supporting our community.',
     },
     {
       name: 'Raaida Malak Khan',
       role: 'Social Media Manager',
       image: getAssetUrl('/images/id-raaidamkhan.png'),
-      bio: 'Social media manager and community liaison, connecting Roma Mart with our valued customers online and offline.'
+      bio: 'Social media manager and community liaison, connecting Roma Mart with our valued customers online and offline.',
     },
     {
       name: 'Adyan Osman Khan',
       role: 'Team Member',
       image: getAssetUrl('/images/id-adyanosmankhan.png'),
-      bio: 'Youngest member of the Roma Mart family, bringing fresh ideas and enthusiasm to our team.'
-    }
+      bio: 'Youngest member of the Roma Mart family, bringing fresh ideas and enthusiasm to our team.',
+    },
   ];
 
   const values = [
     {
       icon: <Heart size={32} />,
       title: 'Community First',
-      description: 'We are committed to serving our local community with integrity and care.'
+      description: 'We are committed to serving our local community with integrity and care.',
     },
     {
       icon: <Award size={32} />,
       title: 'Quality Products',
-      description: 'We source the best products to ensure customer satisfaction every time.'
+      description: 'We source the best products to ensure customer satisfaction every time.',
     },
     {
       icon: <Users size={32} />,
       title: 'Customer Service',
-      description: 'Our friendly staff is always ready to assist you with a smile.'
+      description: 'Our friendly staff is always ready to assist you with a smile.',
     },
     {
       icon: <MapPin size={32} />,
       title: 'Local Focus',
-      description: 'Dedicated to serving Sarnia and the surrounding areas for many years to come.'
-    }
+      description: 'Dedicated to serving Sarnia and the surrounding areas for many years to come.',
+    },
   ];
 
   // --- Team Section Scroll State ---
@@ -122,27 +125,33 @@ const AboutPage = () => {
       <StructuredData type="Organization" />
       <Helmet>
         <title>About Us | Roma Mart Convenience</title>
-        <meta name="description" content="Learn about Roma Mart's story, mission, and the team dedicated to serving the Sarnia community with quality products and exceptional service." />
-        <link rel="canonical" href="https://romamart.ca/about" />
+        <meta
+          name="description"
+          content="Learn about Roma Mart's story, mission, and the team dedicated to serving the Sarnia community with quality products and exceptional service."
+        />
+        <link rel="canonical" href="https://romamart.ca/about/" />
       </Helmet>
 
       {/* Breadcrumb Schema */}
-      <StructuredData type="BreadcrumbList" data={{ breadcrumbs: buildBreadcrumbArray('About', 'https://romamart.ca/about') }} />
+      <StructuredData
+        type="BreadcrumbList"
+        data={{ breadcrumbs: buildBreadcrumbArray('About', 'https://romamart.ca/about/') }}
+      />
 
       {/* Breadcrumb Navigation */}
       <nav aria-label="Breadcrumb" className="max-w-7xl mx-auto px-4 mb-8">
         <ol className="flex items-center gap-2 text-sm font-inter">
           <li>
-            <a
-              href={`${BASE_URL}`}
-              className="hover:text-accent transition-colors"
-              style={mutedTextColor}
-            >
+            <a href={`${BASE_URL}`} className="hover:text-accent transition-colors" style={mutedTextColor}>
               Home
             </a>
           </li>
-          <li aria-hidden="true"><ChevronRight size={16} style={mutedTextColor} /></li>
-          <li aria-current="page" className="font-semibold" style={textColor}>About Us</li>
+          <li aria-hidden="true">
+            <ChevronRight size={16} style={mutedTextColor} />
+          </li>
+          <li aria-current="page" className="font-semibold" style={textColor}>
+            About Us
+          </li>
         </ol>
       </nav>
 
@@ -150,26 +159,27 @@ const AboutPage = () => {
       <section className="max-w-7xl mx-auto px-4 mb-20">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div>
-            <h1 
-              className="text-4xl md:text-5xl uppercase mb-6"
-              style={{ color: 'var(--color-heading)' }}
-            >
+            <h1 className="text-4xl md:text-5xl uppercase mb-6" style={{ color: 'var(--color-heading)' }}>
               About <span style={{ color: 'var(--color-accent)' }}>Roma Mart</span>
             </h1>
             <p className="text-lg font-inter leading-relaxed mb-6" style={textColor}>
-              Roma Mart is your trusted neighborhood convenience store, proudly serving the Sarnia community. 
-              We're more than just a store – we're your local partners in convenience, quality, and service.
+              Roma Mart is your trusted neighborhood convenience store, proudly serving the Sarnia community. We're more
+              than just a store – we're your local partners in convenience, quality, and service.
             </p>
             <p className="text-lg font-inter leading-relaxed mb-6" style={mutedTextColor}>
-              From our fresh RoCafé offerings to our comprehensive range of services, we strive to be your 
-              one-stop destination for everything you need, delivered with a smile.
+              From our fresh RoCafé offerings to our comprehensive range of services, we strive to be your one-stop
+              destination for everything you need, delivered with a smile.
             </p>
-            <ShareButton 
+            <ShareButton
               title="About Roma Mart"
               text="Learn about Roma Mart - your trusted convenience store in Sarnia!"
-              style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-text)', transition: 'background-color 0.2s' }}
-              onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--color-accent-hover)'}
-              onMouseOut={e => e.currentTarget.style.backgroundColor = 'var(--color-accent)'}
+              style={{
+                backgroundColor: 'var(--color-accent)',
+                color: 'var(--color-text)',
+                transition: 'background-color 0.2s',
+              }}
+              onMouseOver={(e) => (e.currentTarget.style.backgroundColor = 'var(--color-accent-hover)')}
+              onMouseOut={(e) => (e.currentTarget.style.backgroundColor = 'var(--color-accent)')}
             />
           </div>
 
@@ -177,7 +187,9 @@ const AboutPage = () => {
           <ImageCarousel
             images={heroImages}
             className="h-96 rounded-3xl shadow-2xl"
-            overlay={<div className="absolute inset-0 bg-gradient-to-r from-blue-950 via-transparent to-transparent opacity-40 z-10 pointer-events-none" />}
+            overlay={
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-950 via-transparent to-transparent opacity-40 z-10 pointer-events-none" />
+            }
             ariaLabel="About Roma Mart photos"
           />
         </div>
@@ -185,21 +197,18 @@ const AboutPage = () => {
 
       {/* Our Values */}
       <section className="max-w-7xl mx-auto px-4 mb-20">
-        <h2 
-          className="text-3xl md:text-4xl uppercase text-center mb-12"
-          style={{ color: 'var(--color-heading)' }}
-        >
+        <h2 className="text-3xl md:text-4xl uppercase text-center mb-12" style={{ color: 'var(--color-heading)' }}>
           Our <span style={{ color: 'var(--color-accent)' }}>Values</span>
         </h2>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {values.map((value, index) => (
-            <div 
+            <div
               key={index}
               className="p-6 rounded-2xl text-center hover:shadow-lg transition-shadow"
               style={{ backgroundColor: 'var(--color-surface)' }}
             >
-              <div 
+              <div
                 className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center"
                 style={{ backgroundColor: 'var(--color-accent-bg)', color: 'var(--color-icon)' }}
               >
@@ -218,10 +227,7 @@ const AboutPage = () => {
 
       {/* Team Section */}
       <section className="max-w-7xl mx-auto px-4 mb-20">
-        <h2 
-          className="text-3xl md:text-4xl uppercase text-center mb-12"
-          style={{ color: 'var(--color-heading)' }}
-        >
+        <h2 className="text-3xl md:text-4xl uppercase text-center mb-12" style={{ color: 'var(--color-heading)' }}>
           Meet Our <span style={{ color: 'var(--color-accent)' }}>Team</span>
         </h2>
 
@@ -261,7 +267,10 @@ const AboutPage = () => {
                 style={{ backgroundColor: 'var(--color-surface)' }}
               >
                 {/* Circular headshot */}
-                <div className="w-40 h-40 md:w-48 md:h-48 rounded-full mx-auto mb-6 overflow-hidden border-4 shadow-lg" style={{ borderColor: 'var(--color-accent)' }}>
+                <div
+                  className="w-40 h-40 md:w-48 md:h-48 rounded-full mx-auto mb-6 overflow-hidden border-4 shadow-lg"
+                  style={{ borderColor: 'var(--color-accent)' }}
+                >
                   <img
                     src={member.image}
                     alt={`${member.name}, ${member.role}`}
@@ -272,7 +281,10 @@ const AboutPage = () => {
                 <h3 className="text-heading text-2xl mb-2" style={{ color: 'var(--color-heading)' }}>
                   {member.name}
                 </h3>
-                <p className="text-sm font-inter font-bold uppercase tracking-wider mb-4" style={{ color: 'var(--color-accent)' }}>
+                <p
+                  className="text-sm font-inter font-bold uppercase tracking-wider mb-4"
+                  style={{ color: 'var(--color-accent)' }}
+                >
                   {member.role}
                 </p>
                 <p className="font-inter leading-relaxed" style={mutedTextColor}>
@@ -290,7 +302,10 @@ const AboutPage = () => {
           <h2 className="text-3xl md:text-4xl uppercase mb-4" style={{ color: 'var(--color-text-on-primary)' }}>
             Visit Us Today
           </h2>
-          <p className="font-inter text-lg mb-8 max-w-2xl mx-auto" style={{ color: 'var(--color-text-on-primary)', opacity: 0.9 }}>
+          <p
+            className="font-inter text-lg mb-8 max-w-2xl mx-auto"
+            style={{ color: 'var(--color-text-on-primary)', opacity: 0.9 }}
+          >
             Come experience the Roma Mart difference. We're here to serve you with a smile!
           </p>
           <div className="flex flex-wrap justify-center gap-4">
@@ -317,6 +332,6 @@ const AboutPage = () => {
       </section>
     </div>
   );
-}
+};
 
 export default AboutPage;

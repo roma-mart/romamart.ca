@@ -1,7 +1,7 @@
 /**
  * Unit Tests for Return Policy Schema Builder
  * Validates schema generation, defaults, and sanitization
- * 
+ *
  * @since February 4, 2026
  */
 
@@ -17,17 +17,17 @@ describe('buildReturnPolicySchema', () => {
         '@context': 'https://schema.org',
         '@type': 'MerchantReturnPolicy',
         name: 'Roma Mart Convenience Returns & Refund Policy',
-        url: 'https://romamart.ca/return-policy',
+        url: 'https://romamart.ca/return-policy/',
         itemCondition: 'https://schema.org/DamagedCondition',
         returnMethod: 'https://schema.org/ReturnInStore',
         returnFees: 'https://schema.org/FreeReturn',
-        merchantReturnDays: 1
+        merchantReturnDays: 1,
       });
 
       expect(schema.description).toContain('All Roma Mart Corp. sales are final');
       // acceptanceConditions and nonAcceptedReturns are now in additionalProperty array
-      const acceptanceProp = schema.additionalProperty.find(p => p.name === 'Acceptance Conditions');
-      const nonAcceptedProp = schema.additionalProperty.find(p => p.name === 'Non-Accepted Returns');
+      const acceptanceProp = schema.additionalProperty.find((p) => p.name === 'Acceptance Conditions');
+      const nonAcceptedProp = schema.additionalProperty.find((p) => p.name === 'Non-Accepted Returns');
       expect(acceptanceProp.value).toContain('24 hours of purchase');
       expect(nonAcceptedProp.value).toContain('Food and beverages');
     });
@@ -38,13 +38,13 @@ describe('buildReturnPolicySchema', () => {
       expect(schema.returnShippingFeesAmount).toEqual({
         '@type': 'MonetaryAmount',
         currency: 'CAD',
-        value: '0'
+        value: '0',
       });
 
       expect(schema.restockingFee).toEqual({
         '@type': 'MonetaryAmount',
         currency: 'CAD',
-        value: '0'
+        value: '0',
       });
     });
   });
@@ -52,7 +52,7 @@ describe('buildReturnPolicySchema', () => {
   describe('Data Overrides', () => {
     it('should override name when provided', () => {
       const schema = buildReturnPolicySchema({
-        name: 'Custom Return Policy'
+        name: 'Custom Return Policy',
       });
 
       expect(schema.name).toBe('Custom Return Policy');
@@ -60,7 +60,7 @@ describe('buildReturnPolicySchema', () => {
 
     it('should override url when provided', () => {
       const schema = buildReturnPolicySchema({
-        url: 'https://example.com/returns'
+        url: 'https://example.com/returns',
       });
 
       expect(schema.url).toBe('https://example.com/returns');
@@ -69,7 +69,7 @@ describe('buildReturnPolicySchema', () => {
     it('should override description when provided', () => {
       const customDescription = 'Custom return policy description';
       const schema = buildReturnPolicySchema({
-        description: customDescription
+        description: customDescription,
       });
 
       expect(schema.description).toBe(customDescription);
@@ -78,20 +78,20 @@ describe('buildReturnPolicySchema', () => {
     it('should override acceptanceConditions when provided', () => {
       const customConditions = 'Custom acceptance conditions';
       const schema = buildReturnPolicySchema({
-        acceptanceConditions: customConditions
+        acceptanceConditions: customConditions,
       });
 
-      const acceptanceProp = schema.additionalProperty.find(p => p.name === 'Acceptance Conditions');
+      const acceptanceProp = schema.additionalProperty.find((p) => p.name === 'Acceptance Conditions');
       expect(acceptanceProp.value).toBe(customConditions);
     });
 
     it('should override nonAcceptedReturns when provided', () => {
       const customNonAccepted = 'Custom non-accepted items list';
       const schema = buildReturnPolicySchema({
-        nonAcceptedReturns: customNonAccepted
+        nonAcceptedReturns: customNonAccepted,
       });
 
-      const nonAcceptedProp = schema.additionalProperty.find(p => p.name === 'Non-Accepted Returns');
+      const nonAcceptedProp = schema.additionalProperty.find((p) => p.name === 'Non-Accepted Returns');
       expect(nonAcceptedProp.value).toBe(customNonAccepted);
     });
   });
@@ -107,7 +107,7 @@ describe('buildReturnPolicySchema', () => {
       const schema = buildReturnPolicySchema();
 
       expect(schema.merchantReturnDays).toBe(1);
-      const acceptanceProp = schema.additionalProperty.find(p => p.name === 'Acceptance Conditions');
+      const acceptanceProp = schema.additionalProperty.find((p) => p.name === 'Acceptance Conditions');
       expect(acceptanceProp.value).toContain('24 hours');
     });
   });
@@ -135,7 +135,7 @@ describe('buildReturnPolicySchema', () => {
   describe('Input Sanitization', () => {
     it('should sanitize HTML in name', () => {
       const schema = buildReturnPolicySchema({
-        name: '<script>alert("xss")</script>Clean Name'
+        name: '<script>alert("xss")</script>Clean Name',
       });
 
       expect(schema.name).not.toContain('<script>');
@@ -144,7 +144,7 @@ describe('buildReturnPolicySchema', () => {
 
     it('should sanitize HTML in description', () => {
       const schema = buildReturnPolicySchema({
-        description: '<img src=x onerror=alert(1) alt="">Safe Description'
+        description: '<img src=x onerror=alert(1) alt="">Safe Description',
       });
 
       expect(schema.description).not.toContain('<img');
@@ -153,20 +153,20 @@ describe('buildReturnPolicySchema', () => {
 
     it('should sanitize HTML in acceptanceConditions', () => {
       const schema = buildReturnPolicySchema({
-        acceptanceConditions: '<a href="javascript:void(0)">Click</a> Valid conditions'
+        acceptanceConditions: '<a href="javascript:void(0)">Click</a> Valid conditions',
       });
 
-      const acceptanceProp = schema.additionalProperty.find(p => p.name === 'Acceptance Conditions');
+      const acceptanceProp = schema.additionalProperty.find((p) => p.name === 'Acceptance Conditions');
       expect(acceptanceProp.value).not.toContain('javascript:');
       expect(acceptanceProp.value).toContain('Valid conditions');
     });
 
     it('should sanitize HTML in nonAcceptedReturns', () => {
       const schema = buildReturnPolicySchema({
-        nonAcceptedReturns: '<b onmouseover=alert(1)>Items</b> list'
+        nonAcceptedReturns: '<b onmouseover=alert(1)>Items</b> list',
       });
 
-      const nonAcceptedProp = schema.additionalProperty.find(p => p.name === 'Non-Accepted Returns');
+      const nonAcceptedProp = schema.additionalProperty.find((p) => p.name === 'Non-Accepted Returns');
       expect(nonAcceptedProp.value).not.toContain('onmouseover');
       expect(nonAcceptedProp.value).toContain('list');
     });
@@ -208,7 +208,7 @@ describe('buildReturnPolicySchema', () => {
     it('should handle null values in data object', () => {
       const schema = buildReturnPolicySchema({
         name: null,
-        description: null
+        description: null,
       });
 
       expect(schema.name).toBe('Roma Mart Convenience Returns & Refund Policy');
@@ -218,11 +218,11 @@ describe('buildReturnPolicySchema', () => {
     it('should handle undefined values in data object', () => {
       const schema = buildReturnPolicySchema({
         name: undefined,
-        url: undefined
+        url: undefined,
       });
 
       expect(schema.name).toBe('Roma Mart Convenience Returns & Refund Policy');
-      expect(schema.url).toBe('https://romamart.ca/return-policy');
+      expect(schema.url).toBe('https://romamart.ca/return-policy/');
     });
   });
 });

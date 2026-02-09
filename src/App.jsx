@@ -79,9 +79,9 @@ function Hero({ onTrackOrder }) {
       <div className="relative z-10 max-w-7xl mx-auto px-4 w-full pt-20">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <motion.div
-            initial={shouldReduceMotion ? false : { x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: shouldReduceMotion ? 0 : 0.8 }}
+            initial={shouldReduceMotion ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: shouldReduceMotion ? 0 : 0.6 }}
           >
             <div
               className="inline-block px-4 py-1 mb-6 rounded-full border"
@@ -145,9 +145,9 @@ function Hero({ onTrackOrder }) {
             </div>
           </motion.div>
           <motion.div
-            initial={shouldReduceMotion ? false : { scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={shouldReduceMotion ? { duration: 0 } : { duration: 1, delay: 0.2 }}
+            initial={shouldReduceMotion ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.8, delay: 0.2 }}
             className="relative hidden md:block"
           >
             <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl border-4 border-white/10 rotate-3 hover:rotate-0 transition-transform duration-500">
@@ -688,7 +688,7 @@ function App() {
             data={{
               products: featuredSchemaItems.map((item) => ({
                 menuItem: item,
-                itemUrl: 'https://romamart.ca/rocafe',
+                itemUrl: 'https://romamart.ca/rocafe/',
                 priceInCents: schemaPriceInCents,
               })),
             }}
@@ -701,7 +701,7 @@ function App() {
             data={{
               services: featuredServices,
               options: {
-                serviceUrl: 'https://romamart.ca/services',
+                serviceUrl: 'https://romamart.ca/services/',
                 providerUrl: 'https://romamart.ca',
               },
             }}

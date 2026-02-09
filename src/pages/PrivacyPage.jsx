@@ -8,22 +8,28 @@ import { normalizePhoneForTel } from '../utils/phone';
 import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 
 const PrivacyPage = () => {
-
   const textColor = { color: 'var(--color-text)' };
   const mutedTextColor = { color: 'var(--color-text-muted)' };
 
-  const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
+  const BASE_URL =
+    typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
 
   return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>
       <Helmet>
         <title>Privacy Policy | Roma Mart Convenience</title>
-        <meta name="description" content="Learn how Roma Mart Convenience collects, uses, and protects your personal information. PIPEDA compliant privacy policy." />
-        <link rel="canonical" href="https://romamart.ca/privacy" />
+        <meta
+          name="description"
+          content="Learn how Roma Mart Convenience collects, uses, and protects your personal information. PIPEDA compliant privacy policy."
+        />
+        <link rel="canonical" href="https://romamart.ca/privacy/" />
       </Helmet>
 
       {/* Breadcrumb Schema */}
-      <StructuredData type="BreadcrumbList" data={{ breadcrumbs: buildBreadcrumbArray('Privacy', 'https://romamart.ca/privacy') }} />
+      <StructuredData
+        type="BreadcrumbList"
+        data={{ breadcrumbs: buildBreadcrumbArray('Privacy', 'https://romamart.ca/privacy/') }}
+      />
 
       {/* Breadcrumb */}
       <nav aria-label="Breadcrumb" className="max-w-4xl mx-auto px-4 mb-8">
@@ -33,8 +39,12 @@ const PrivacyPage = () => {
               Home
             </a>
           </li>
-          <li aria-hidden="true"><ChevronRight size={16} style={mutedTextColor} /></li>
-          <li aria-current="page" className="font-semibold" style={textColor}>Privacy Policy</li>
+          <li aria-hidden="true">
+            <ChevronRight size={16} style={mutedTextColor} />
+          </li>
+          <li aria-current="page" className="font-semibold" style={textColor}>
+            Privacy Policy
+          </li>
         </ol>
       </nav>
 
@@ -43,7 +53,7 @@ const PrivacyPage = () => {
           <h1 className="text-4xl uppercase" style={{ color: 'var(--color-heading)' }}>
             Privacy Policy
           </h1>
-          <ShareButton 
+          <ShareButton
             title="Roma Mart Privacy Policy"
             text="Read Roma Mart's privacy policy"
             style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-on-accent)' }}
@@ -60,7 +70,10 @@ const PrivacyPage = () => {
               1. Introduction
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
-              Roma Mart Corp. ("we," "us," or "our") operates the website romamart.ca and the retail store at 189-3 Wellington Street, Sarnia, ON N7T 1G6. We are committed to protecting your personal information and your right to privacy in accordance with Canadian privacy laws, including the Personal Information Protection and Electronic Documents Act (PIPEDA).
+              Roma Mart Corp. ("we," "us," or "our") operates the website romamart.ca and the retail store at 189-3
+              Wellington Street, Sarnia, ON N7T 1G6. We are committed to protecting your personal information and your
+              right to privacy in accordance with Canadian privacy laws, including the Personal Information Protection
+              and Electronic Documents Act (PIPEDA).
             </p>
           </section>
 
@@ -104,10 +117,12 @@ const PrivacyPage = () => {
               4. Cookies and Tracking
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
-              We use cookies and similar tracking technologies to enhance your experience. For detailed information, please see our{' '}
+              We use cookies and similar tracking technologies to enhance your experience. For detailed information,
+              please see our{' '}
               <a href={`${BASE_URL}cookies`} style={{ color: 'var(--color-accent)', textDecoration: 'underline' }}>
                 Cookie Policy
-              </a>.
+              </a>
+              .
             </p>
           </section>
 
@@ -116,7 +131,10 @@ const PrivacyPage = () => {
               5. Data Retention
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
-              We retain your personal information only for as long as necessary to fulfill the purposes outlined in this policy, unless a longer retention period is required by law. CCTV footage is retained for a limited time and automatically deleted unless required for a security investigation. Customer data (e.g., loyalty program information) is kept only as long as needed to provide you with service.
+              We retain your personal information only for as long as necessary to fulfill the purposes outlined in this
+              policy, unless a longer retention period is required by law. CCTV footage is retained for a limited time
+              and automatically deleted unless required for a security investigation. Customer data (e.g., loyalty
+              program information) is kept only as long as needed to provide you with service.
             </p>
           </section>
 
@@ -125,7 +143,8 @@ const PrivacyPage = () => {
               6. Sharing Your Information
             </h2>
             <p className="leading-relaxed mb-4" style={textColor}>
-              We do not sell or share your personal information with third parties unless required by law or needed to fulfill a service you requested (e.g., payment processing).
+              We do not sell or share your personal information with third parties unless required by law or needed to
+              fulfill a service you requested (e.g., payment processing).
             </p>
           </section>
 
@@ -147,7 +166,8 @@ const PrivacyPage = () => {
               We aim to respond to access requests within 30 days, or as required by law.
             </p>
             <p className="leading-relaxed" style={textColor}>
-              This privacy policy is displayed in-store, available at the checkout and upon request. By shopping with us or participating in store programs, you consent to this policy.
+              This privacy policy is displayed in-store, available at the checkout and upon request. By shopping with us
+              or participating in store programs, you consent to this policy.
             </p>
           </section>
 
@@ -159,12 +179,32 @@ const PrivacyPage = () => {
               If you have questions about this Privacy Policy or wish to exercise your rights, please contact us:
             </p>
             <div className="p-6 rounded-lg" style={{ backgroundColor: 'var(--color-surface)' }}>
-              <p style={textColor}><strong>{COMPANY_DATA.legalName}</strong></p>
+              <p style={textColor}>
+                <strong>{COMPANY_DATA.legalName}</strong>
+              </p>
               <p style={textColor}>{COMPANY_DATA.location.address.street}</p>
-              <p style={textColor}>{COMPANY_DATA.location.address.city}, {COMPANY_DATA.location.address.province} {COMPANY_DATA.location.address.postalCode}</p>
-              <p style={textColor}>Email: <a href={`mailto:${getContextualEmail('privacy')}`} style={{ color: 'var(--color-accent)' }}>{getContextualEmail('privacy')}</a></p>
-              <p style={textColor}>Phone: <a href={`tel:${normalizePhoneForTel(COMPANY_DATA.location.contact.phone)}`} style={{ color: 'var(--color-accent)' }}>{COMPANY_DATA.location.contact.phone}</a></p>
-              <p className="text-sm mt-4" style={mutedTextColor}>GST/HST#: {COMPANY_DATA.gstNumber}</p>
+              <p style={textColor}>
+                {COMPANY_DATA.location.address.city}, {COMPANY_DATA.location.address.province}{' '}
+                {COMPANY_DATA.location.address.postalCode}
+              </p>
+              <p style={textColor}>
+                Email:{' '}
+                <a href={`mailto:${getContextualEmail('privacy')}`} style={{ color: 'var(--color-accent)' }}>
+                  {getContextualEmail('privacy')}
+                </a>
+              </p>
+              <p style={textColor}>
+                Phone:{' '}
+                <a
+                  href={`tel:${normalizePhoneForTel(COMPANY_DATA.location.contact.phone)}`}
+                  style={{ color: 'var(--color-accent)' }}
+                >
+                  {COMPANY_DATA.location.contact.phone}
+                </a>
+              </p>
+              <p className="text-sm mt-4" style={mutedTextColor}>
+                GST/HST#: {COMPANY_DATA.gstNumber}
+              </p>
             </div>
           </section>
         </div>

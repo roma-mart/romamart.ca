@@ -1,4 +1,3 @@
-/* eslint-env node */
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -11,13 +10,14 @@ const ROUTES = [
   '/',
   '/services',
   '/rocafe',
+  '/return-policy',
   '/locations',
   '/contact',
   '/about',
   '/accessibility',
   '/privacy',
   '/terms',
-  '/cookies'
+  '/cookies',
 ];
 
 const distPath = path.resolve(__dirname, '../dist');
@@ -39,38 +39,34 @@ function checkRobots() {
   const robots = readFileSafe(robotsPath);
   assert(robots.includes('User-agent:'), 'robots.txt missing User-agent directive');
   assert(robots.includes('Sitemap:'), 'robots.txt missing Sitemap directive');
-  assert(
-    robots.includes(`Sitemap: ${BASE_URL}/sitemap.xml`),
-    `robots.txt Sitemap should be ${BASE_URL}/sitemap.xml`
-  );
+  assert(robots.includes(`Sitemap: ${BASE_URL}/sitemap.xml`), `robots.txt Sitemap should be ${BASE_URL}/sitemap.xml`);
 }
 
 function checkSitemap() {
   const sitemapPath = path.join(distPath, 'sitemap.xml');
   const sitemap = readFileSafe(sitemapPath);
 
-  ROUTES.forEach(route => {
-    const url = `${BASE_URL}${route}`;
-    assert(
-      sitemap.includes(`<loc>${url}</loc>`),
-      `sitemap.xml missing URL: ${url}`
-    );
+  ROUTES.forEach((route) => {
+    // All URLs use trailing slashes to match dir/index.html serving structure
+    const url = route === '/' ? `${BASE_URL}/` : `${BASE_URL}${route}/`;
+    assert(sitemap.includes(`<loc>${url}</loc>`), `sitemap.xml missing URL: ${url}`);
   });
 }
 
 function checkRouteHtml() {
-  ROUTES.forEach(route => {
-    const filePath = route === '/'
-      ? path.join(distPath, 'index.html')
-      : path.join(distPath, route.slice(1), 'index.html');
+  ROUTES.forEach((route) => {
+    const filePath =
+      route === '/' ? path.join(distPath, 'index.html') : path.join(distPath, route.slice(1), 'index.html');
 
     const html = readFileSafe(filePath);
-    const canonical = `${BASE_URL}${route}`;
+    // All URLs use trailing slashes to match dir/index.html serving structure
+    const canonical = route === '/' ? `${BASE_URL}/` : `${BASE_URL}${route}/`;
 
     assert(html.includes(`rel="canonical" href="${canonical}"`), `Missing canonical for ${route}`);
     assert(html.includes(`property="og:url" content="${canonical}"`), `Missing og:url for ${route}`);
     assert(html.includes(`property="twitter:url" content="${canonical}"`), `Missing twitter:url for ${route}`);
     assert(html.includes('application/ld+json'), `Missing JSON-LD for ${route}`);
+    assert(/<h1[^>]*>/.test(html), `Missing <h1> in prerendered HTML for ${route}`);
   });
 }
 

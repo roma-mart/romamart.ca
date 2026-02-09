@@ -3,7 +3,7 @@ import { buildMenuItemSchema } from '../../schemas/menuItemSchema';
 import menuItems from '../fixtures/menu-items';
 
 describe('buildMenuItemSchema', () => {
-  const baseUrl = 'https://romamart.ca/rocafe';
+  const baseUrl = 'https://romamart.ca/rocafe/';
 
   it('builds a Product schema with a single Offer', () => {
     const schema = buildMenuItemSchema(menuItems.singleSizeCents, baseUrl);
