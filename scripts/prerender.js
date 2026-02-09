@@ -700,9 +700,11 @@ const buildSitemapXml = (routeList, lastModDate) => {
     .map((route) => {
       const priority = route.path === '/' ? '1.0' : '0.8';
       const changefreq = route.path === '/' || route.path === '/rocafe' ? 'weekly' : 'monthly';
+      // Trailing slash on all URLs to match canonical links and served dir/index.html structure
+      const loc = route.path === '/' ? `${BASE_URL}/` : `${BASE_URL}${route.path}/`;
       return (
         `  <url>\n` +
-        `    <loc>${BASE_URL}${route.path}</loc>\n` +
+        `    <loc>${loc}</loc>\n` +
         `    <lastmod>${lastModDate}</lastmod>\n` +
         `    <changefreq>${changefreq}</changefreq>\n` +
         `    <priority>${priority}</priority>\n` +
@@ -880,7 +882,9 @@ async function prerender() {
     }
 
     // Copy template with route-specific meta tags
-    const absoluteUrl = `${BASE_URL}${route.path}`;
+    // Non-root routes are served as dir/index.html so canonical URL needs trailing slash
+    // Root route: BASE_URL + '/' to match <link rel="canonical" href="https://romamart.ca/" />
+    const absoluteUrl = route.path === '/' ? `${BASE_URL}/` : `${BASE_URL}${route.path}/`;
     const html = indexTemplate
       .replace(
         /<title>[^<]*<\/title>/,
