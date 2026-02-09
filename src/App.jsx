@@ -74,7 +74,6 @@ function Hero({ onTrackOrder }) {
         alt=""
         className="absolute inset-0 w-full h-full object-cover opacity-20 z-0"
         aria-hidden="true"
-        loading="lazy"
       />
       <div className="absolute inset-0 bg-gradient-to-r from-blue-950 via-blue-900 to-transparent opacity-90 z-0" />
       <div className="relative z-10 max-w-7xl mx-auto px-4 w-full pt-20">

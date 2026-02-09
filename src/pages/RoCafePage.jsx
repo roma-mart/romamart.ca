@@ -163,6 +163,7 @@ const RoCafePage = () => {
               Unable to load menu. Please try again.
             </p>
             <button
+              type="button"
               onClick={() => window.location.reload()}
               className="px-6 py-3 rounded-lg font-bold font-inter transition-colors"
               style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)' }}
