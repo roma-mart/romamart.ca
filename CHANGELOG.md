@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.6.5] - 2026-02-09
+
+### Changed
+- **Documentation:** Resolved all 10 documentation-vs-reality discrepancies from expert audit (Section 4)
+- React version references corrected from 19 to 18.3.1 across all docs (14 files)
+- Test counts updated from 83/122 to 18 files / 260 tests
+- Quality dimensions updated from 8 to 9 (brand consistency added)
+- Git hooks updated from "Future" to "Active -- Husky v9" with correct paths
+- Base path documentation simplified to actual `base: '/'` config
+- API status clarified: Menu live, Services/Locations pending (#107) with static fallback
+- Stale `check-dark-mode.js` references removed (consolidated into check-quality.js)
+- Progressive enforcement section updated to reflect current strict enforcement state
+- ROADMAP.md, EXPERT_AUDIT_FEB_2026.md, STRUCTURED_DATA_MASTER_PLAN.md moved to `docs/archive/`
+- All cross-references updated for archived files
+
 ## [2.6.4] - 2026-02-09
 
 ### Added
