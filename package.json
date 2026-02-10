@@ -28,7 +28,7 @@
     "lucide-react": "^0.563.0",
     "prop-types": "^15.8.1",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "react-dom": "^19.2.4",
     "react-helmet-async": "^2.0.5",
     "vite-plugin-pages": "^0.33.1",
     "vite-ssg": "^28.2.2"
