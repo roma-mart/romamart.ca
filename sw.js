@@ -3,7 +3,7 @@
  * PWA implementation with smart caching strategies
  */
 
-const CACHE_VERSION = /* __CACHE_VERSION__ */ 'roma-mart-e850183d';
+const CACHE_VERSION = /* __CACHE_VERSION__ */ 'roma-mart-3821cb5f';
 const BASE_URL = '/';
 
 // Assets to cache immediately on install
@@ -19,21 +19,21 @@ const PRECACHE_ASSETS = [
   `${BASE_URL}android/android-launchericon-512-512.png`,
   `${BASE_URL}ios/180.png`,
   `${BASE_URL}windows11/Square150x150Logo.scale-100.png`,
-    `${BASE_URL}assets/AboutPage-BUIPRULX.js`,
-  `${BASE_URL}assets/AccessibilityPage-B0IhlOKA.js`,
-  `${BASE_URL}assets/ContactPage-BpAXfHIq.js`,
-  `${BASE_URL}assets/CookiesPage-CudLkcKl.js`,
+    `${BASE_URL}assets/AboutPage-CRgnlbDK.js`,
+  `${BASE_URL}assets/AccessibilityPage-C9dX6a5J.js`,
+  `${BASE_URL}assets/ContactPage--mYFTWDJ.js`,
+  `${BASE_URL}assets/CookiesPage-BH31I5fC.js`,
   `${BASE_URL}assets/ImageCarousel-BwT1h0hs.js`,
-  `${BASE_URL}assets/LocationsPage-C7xtoht1.js`,
-  `${BASE_URL}assets/NotFoundPage-BlSogEWh.js`,
-  `${BASE_URL}assets/PrivacyPage-B1Y1oO2g.js`,
-  `${BASE_URL}assets/ReturnPolicyPage-7sxcG58x.js`,
-  `${BASE_URL}assets/RoCafePage-CfMCpCtr.js`,
-  `${BASE_URL}assets/ServicesPage-BjUHNeYX.js`,
-  `${BASE_URL}assets/TermsPage-BEEzHo8s.js`,
+  `${BASE_URL}assets/LocationsPage-BpTTQGzn.js`,
+  `${BASE_URL}assets/NotFoundPage-DM7bilsQ.js`,
+  `${BASE_URL}assets/PrivacyPage-f1Ep5ABs.js`,
+  `${BASE_URL}assets/ReturnPolicyPage-C5arJlsb.js`,
+  `${BASE_URL}assets/RoCafePage-CXh3HYlZ.js`,
+  `${BASE_URL}assets/ServicesPage-C86rwJxi.js`,
+  `${BASE_URL}assets/TermsPage-BwxKpoJn.js`,
   `${BASE_URL}assets/icons-BkDujjue.js`,
+  `${BASE_URL}assets/index-C9zET9a-.js`,
   `${BASE_URL}assets/index-bOk0MJKf.css`,
-  `${BASE_URL}assets/index-bhtE19NA.js`,
   `${BASE_URL}assets/motion-Chcw_o1p.js`,
   `${BASE_URL}assets/phone-DvfqJ5kM.js`,
   `${BASE_URL}assets/react-vendor-labSKdyf.js`
