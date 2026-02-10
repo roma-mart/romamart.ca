@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.6.6] - 2026-02-10
+
+### Added
+- Partner service logos for NowPrepay (`public/images/NowPrepayLogo.webp`)
+- Partner service logo for SmartHub (`public/images/logo-smarthub.png`)
+- Partner service logo for RIA Money Transfer (`public/images/ria-logo.svg`)
+
+### Changed
+- Code formatting improvements in `src/data/services.jsx` (normalized imports, trailing commas, string literals)
+
 ## [2.6.5] - 2026-02-09
 
 ### Changed
