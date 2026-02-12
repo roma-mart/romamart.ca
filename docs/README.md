@@ -18,6 +18,7 @@
 | Document | Description |
 |----------|-------------|
 | [Accessibility Compliance](./ACCESSIBILITY_COMPLIANCE.md) | WCAG 2.2 AA compliance details |
+| [Compliance System Plan](./COMPLIANCE_SYSTEM_PLAN.md) | Food safety & quality management system roadmap |
 | [Content Guide](./CONTENT_GUIDE.md) | Content creation standards |
 | [Deployment Guide](./DEPLOYMENT_GUIDE.md) | Deployment procedures |
 | [Meta-Checker System](./META_CHECKER_SYSTEM.md) | Quality checker validation |
@@ -78,6 +79,7 @@ Historical implementation documents preserved for reference:
 docs/
 ├── README.md                           # This file - documentation index
 ├── ARCHITECTURE.md                     # System design overview
+├── COMPLIANCE_SYSTEM_PLAN.md           # Food safety & quality management roadmap
 ├── DEVELOPMENT_ETHOS.md                # 25 core development principles
 ├── QUALITY_SYSTEM.md                   # Universal quality standards
 ├── DARK_MODE_SYSTEM.md                 # Dark mode implementation
@@ -156,4 +158,4 @@ import COMPANY_DATA from '../config/company_data';
 
 ---
 
-**Last Updated:** February 4, 2026
+**Last Updated:** February 12, 2026
