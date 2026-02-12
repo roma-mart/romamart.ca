@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.6.7] - 2026-02-12
+
+### Changed
+- Updated 10 dependencies to latest within-range versions
+- Added Dependabot ignore rules for deferred major upgrades (React 19, Tailwind v4, hCaptcha v2)
+
+### Removed
+- Removed dead dependencies: `vite-ssg`, `vite-plugin-pages` (unused Vue SSG libraries)
+- Removed dead `build:ssg` npm script
+
 ## [2.6.6] - 2026-02-10
 
 ### Added

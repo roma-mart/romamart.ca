@@ -8,7 +8,7 @@
 **App:** Roma Mart 2.0 -- React PWA for a multi-location convenience store chain (Sarnia, ON)
 **Stack:** React 18.3.1, Vite 7, Tailwind CSS 3.4, Framer Motion, ESM modules
 **Deployment:** GitHub Pages (staging at `https://roma-mart.github.io/romamart.ca/`), custom domain (production)
-**Version:** 2.6.5 (see Versioning Convention below)
+**Version:** 2.6.7 (see Versioning Convention below)
 **Repo:** `roma-mart/romamart.ca`
 
 ### Current Status (Feb 2026)
@@ -175,7 +175,7 @@ Accessibility, dark mode, performance, security, SEO, code quality, responsive d
 ## Testing
 
 **Framework:** Vitest
-**Tests:** 260 passing (as of v2.6.5)
+**Tests:** 260 passing (as of v2.6.7)
 **Coverage thresholds:** statements 60%, branches 50%, functions 60%, lines 60%
 
 ### Test Locations
@@ -319,6 +319,6 @@ This file (`CLAUDE.md`) is the Claude Code project context. A parallel `.github/
 
 ---
 
-**Last Updated:** February 9, 2026
+**Last Updated:** February 12, 2026
 **Maintained by:** Claude Code (keep in sync with `.github/copilot-instructions.md`)
 **Codebase Version:** React 18.3.1 + Vite 7 (ESM)
