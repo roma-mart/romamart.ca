@@ -3,7 +3,7 @@
  * PWA implementation with smart caching strategies
  */
 
-const CACHE_VERSION = /* __CACHE_VERSION__ */ 'roma-mart-3821cb5f';
+const CACHE_VERSION = /* __CACHE_VERSION__ */ 'roma-mart-92ac5a49';
 const BASE_URL = '/';
 
 // Assets to cache immediately on install
@@ -19,24 +19,24 @@ const PRECACHE_ASSETS = [
   `${BASE_URL}android/android-launchericon-512-512.png`,
   `${BASE_URL}ios/180.png`,
   `${BASE_URL}windows11/Square150x150Logo.scale-100.png`,
-    `${BASE_URL}assets/AboutPage-CRgnlbDK.js`,
-  `${BASE_URL}assets/AccessibilityPage-C9dX6a5J.js`,
-  `${BASE_URL}assets/ContactPage--mYFTWDJ.js`,
-  `${BASE_URL}assets/CookiesPage-BH31I5fC.js`,
-  `${BASE_URL}assets/ImageCarousel-BwT1h0hs.js`,
-  `${BASE_URL}assets/LocationsPage-BpTTQGzn.js`,
-  `${BASE_URL}assets/NotFoundPage-DM7bilsQ.js`,
-  `${BASE_URL}assets/PrivacyPage-f1Ep5ABs.js`,
-  `${BASE_URL}assets/ReturnPolicyPage-C5arJlsb.js`,
-  `${BASE_URL}assets/RoCafePage-CXh3HYlZ.js`,
-  `${BASE_URL}assets/ServicesPage-C86rwJxi.js`,
-  `${BASE_URL}assets/TermsPage-BwxKpoJn.js`,
-  `${BASE_URL}assets/icons-BkDujjue.js`,
-  `${BASE_URL}assets/index-C9zET9a-.js`,
+    `${BASE_URL}assets/AboutPage-Db88iLb3.js`,
+  `${BASE_URL}assets/AccessibilityPage-FH_ujQZ6.js`,
+  `${BASE_URL}assets/ContactPage-DTWw0kdT.js`,
+  `${BASE_URL}assets/CookiesPage-CNiwayfd.js`,
+  `${BASE_URL}assets/ImageCarousel-C2fxEsO7.js`,
+  `${BASE_URL}assets/LocationsPage-B5qaEQIA.js`,
+  `${BASE_URL}assets/NotFoundPage-D0ImzHcX.js`,
+  `${BASE_URL}assets/PrivacyPage-Dn4cz5wN.js`,
+  `${BASE_URL}assets/ReturnPolicyPage-eAV4Lrzj.js`,
+  `${BASE_URL}assets/RoCafePage-yRotA8HT.js`,
+  `${BASE_URL}assets/ServicesPage-BnBZTxl7.js`,
+  `${BASE_URL}assets/TermsPage-DfQ8gpVm.js`,
+  `${BASE_URL}assets/icons-9zf6nQjn.js`,
+  `${BASE_URL}assets/index-CL_n6h9x.js`,
   `${BASE_URL}assets/index-bOk0MJKf.css`,
-  `${BASE_URL}assets/motion-Chcw_o1p.js`,
+  `${BASE_URL}assets/motion-wIiFLnBr.js`,
   `${BASE_URL}assets/phone-DvfqJ5kM.js`,
-  `${BASE_URL}assets/react-vendor-labSKdyf.js`
+  `${BASE_URL}assets/react-vendor-BGNRaRkq.js`
 ];
 
 // Pages to cache on first visit (runtime caching)
