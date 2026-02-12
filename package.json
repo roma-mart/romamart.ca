@@ -1,12 +1,11 @@
 {
   "name": "roma-mart-site",
   "private": true,
-  "version": "2.6.6",
+  "version": "2.6.7",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build --mode production && node scripts/prerender.js",
-    "build:ssg": "vite-ssg build",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
@@ -29,9 +28,7 @@
     "prop-types": "^15.8.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-helmet-async": "^2.0.5",
-    "vite-plugin-pages": "^0.33.1",
-    "vite-ssg": "^28.2.2"
+    "react-helmet-async": "^2.0.5"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.4.1",
