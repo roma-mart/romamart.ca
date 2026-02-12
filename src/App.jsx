@@ -47,6 +47,13 @@ const ContactPage = lazy(() => import('./pages/ContactPage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 
+// Internal compliance system (lazy-loaded, code-split)
+const InternalLoginPage = lazy(() => import('./pages/internal/LoginPage'));
+const InternalApp = lazy(() => import('./pages/internal/InternalLayout'));
+
+// Auth provider for internal routes only
+import { AuthProvider } from './contexts/AuthContext';
+
 // component imports
 import NetworkStatus from './components/NetworkStatus';
 import CopyButton from './components/CopyButton';
@@ -646,6 +653,7 @@ function App() {
       case '/return-policy':
         return 'return-policy';
       default:
+        if (normalized.startsWith('/internal')) return 'internal';
         return 'not-found';
     }
   }, [pathname]);
@@ -662,6 +670,19 @@ function App() {
       window.dataLayer.push({ event: 'order_cta_click', cta_location: location, cta_text: 'Order Online' });
     }
   }, []);
+
+  // --- Internal compliance system: render separate from public site ---
+  if (currentPage === 'internal') {
+    const isLoginPage = pathname === '/internal/login' || pathname === '/internal/login/';
+
+    return (
+      <AuthProvider>
+        <Suspense fallback={<LoadingFallback />}>
+          <ErrorBoundary>{isLoginPage ? <InternalLoginPage /> : <InternalApp pathname={pathname} />}</ErrorBoundary>
+        </Suspense>
+      </AuthProvider>
+    );
+  }
 
   return (
     <>

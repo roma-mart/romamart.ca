@@ -24,6 +24,7 @@
   "dependencies": {
     "@hcaptcha/react-hcaptcha": "^1.17.1",
     "framer-motion": "^12.33.0",
+    "idb": "^7.1.1",
     "lucide-react": "^0.563.0",
     "prop-types": "^15.8.1",
     "react": "^18.3.1",
@@ -46,6 +47,7 @@
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.5.0",
+    "fake-indexeddb": "^6.2.5",
     "gh-pages": "^6.3.0",
     "globals": "^17.3.0",
     "husky": "^9.1.0",

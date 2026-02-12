@@ -71,6 +71,8 @@ src/
   schemas/                    # Schema.org JSON-LD builders
   design/                     # Design tokens (tokens.js)
   assets/                     # Static assets
+  services/                   # API service layer (compliance)
+  pages/internal/             # Internal compliance pages (not indexed)
 public/
   sw.js                       # Service worker template
   manifest.webmanifest        # PWA manifest
@@ -141,6 +143,43 @@ import { SERVICES } from '../data/services';
 // Wrong
 <div style={{ color: '#020178' }}>
 ```
+
+---
+
+## Internal Compliance System
+
+### Overview
+Staff-only food safety and compliance management system at `/internal/*` routes. Replaces paper-based logging for Ontario Reg. 493/17, ISO 9001:2015, ISO 22000:2018, HACCP compliance.
+
+### Architecture
+- **Routes:** `/internal/*` paths in `App.jsx` render a separate UI tree (no Navbar, Footer, or SEO)
+- **Auth:** `AuthProvider` wraps only internal routes. Hybrid model: httpOnly cookie + in-memory access token (HSC-01)
+- **API:** `src/services/api.js` (centralized fetch wrapper) + `src/services/mockApi.js` (mock backend when `VITE_API_URL` absent)
+- **Queue:** `src/services/submitQueue.js` -- IndexedDB via `idb`, separate `RomaMartComplianceDB` database
+- **Roles:** `staff` and `manager` (backend-enforced; frontend checks are UX only -- HSC-04)
+
+### Key Hooks & Contexts
+| Hook/Context | Source | Purpose |
+|---|---|---|
+| `useAuth()` | `src/hooks/useAuth.js` | Auth state: `{ user, login, logout, loading, isAuthenticated, role, getAccessToken }` |
+| `AuthContext` | `src/contexts/AuthContext.jsx` | Provider for auth state (wraps `/internal/*` only) |
+
+### CSS Variables
+All compliance CSS variables are namespaced with `--internal-*`:
+- `--internal-status-good/warning/critical/neutral` + `-bg` variants
+- `--internal-bg`, `--internal-surface`, `--internal-border`, `--internal-text`, `--internal-text-muted`
+- Both light and dark mode defined in `src/index.css`
+
+### Security Constraints (HSC-01 through HSC-10)
+- HSC-01: Access token in JS memory only (never localStorage/sessionStorage)
+- HSC-03: No third-party scripts (GTM, Clickio) on `/internal/*`
+- HSC-10: Service worker never caches `/internal/*`
+
+### Test Users (Mock API)
+| Phone | PIN | Name | Role |
+|---|---|---|---|
+| `5191234567` | `1234` | Test Staff | staff |
+| `5199876543` | `0000` | Test Manager | manager |
 
 ---
 
@@ -304,6 +343,14 @@ Sprint templates are defined in `docs/archive/ROADMAP.md` under Sprint Plan.
 | `vite.config.js` | Build config, base path, chunks |
 | `public/sw.js` | Service worker template |
 | `CHANGELOG.md` | Version history |
+| `src/contexts/AuthContext.jsx` | Compliance auth provider (hybrid model) |
+| `src/hooks/useAuth.js` | Auth hook for internal pages |
+| `src/services/api.js` | Compliance API fetch wrapper |
+| `src/services/mockApi.js` | Mock backend for frontend development |
+| `src/services/submitQueue.js` | IndexedDB connectivity-gap queue |
+| `src/pages/internal/LoginPage.jsx` | Staff login (phone + PIN) |
+| `src/pages/internal/InternalLayout.jsx` | Internal layout shell (sidebar/bottom nav) |
+| `docs/COMPLIANCE_SYSTEM_PLAN.md` | Compliance system architecture and sprint plan |
 
 ---
 

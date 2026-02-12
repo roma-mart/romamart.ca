@@ -10,8 +10,10 @@ import './index.css';
 import App from './App.jsx';
 
 // Initialize Google Tag Manager if VITE_GTM_ID is provided at build time
+// HSC-03: Block ALL third-party scripts on /internal/* routes (GTM, Clickio, Trustpilot)
 const GTM_ID = import.meta.env.VITE_GTM_ID;
-if (GTM_ID) {
+const isInternalRoute = window.location.pathname.includes('/internal');
+if (GTM_ID && !isInternalRoute) {
   // Initialize dataLayer and push gtm.start event
   window.dataLayer = window.dataLayer || [];
 

@@ -11,7 +11,7 @@
   app-region: drag;
   z-index: 1050;
   background: var(--color-bg, #fff);
-  transition: all 0.2s cubic-bezier(.4,0,.2,1);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .navbar-wco .no-drag {
@@ -33,63 +33,85 @@
   }
 }
 
-
-
 /* Universal Button Variant Fallback Animations (matches Framer Motion intent) */
 .button.order:hover,
 .button.order:focus-visible {
   transform: scale(1.05) translateZ(0);
-  box-shadow: 0 0 20px rgb(228 179 64 / 40%), 0 10px 32px rgb(228 179 64 / 22%);
-  transition: transform 0.18s, box-shadow 0.18s;
+  box-shadow:
+    0 0 20px rgb(228 179 64 / 40%),
+    0 10px 32px rgb(228 179 64 / 22%);
+  transition:
+    transform 0.18s,
+    box-shadow 0.18s;
 }
 
 .button.nav:hover,
 .button.nav:focus-visible {
   transform: scale(1.03) translateZ(0);
   box-shadow: 0 0 12px rgb(228 179 64 / 20%);
-  transition: transform 0.15s, box-shadow 0.15s;
+  transition:
+    transform 0.15s,
+    box-shadow 0.15s;
 }
 
 .button.navlink:hover,
 .button.navlink:focus-visible {
   transform: scale(1.03) translateZ(0);
   box-shadow: 0 0 12px rgb(228 179 64 / 20%);
-  transition: transform 0.15s, box-shadow 0.15s;
+  transition:
+    transform 0.15s,
+    box-shadow 0.15s;
 }
 
 .button.action:hover,
 .button.action:focus-visible {
   transform: scale(1.03) translateZ(0);
-  box-shadow: 0 0 20px rgb(228 179 64 / 35%), 0 8px 28px rgb(228 179 64 / 22%);
-  transition: transform 0.18s, box-shadow 0.18s;
+  box-shadow:
+    0 0 20px rgb(228 179 64 / 35%),
+    0 8px 28px rgb(228 179 64 / 22%);
+  transition:
+    transform 0.18s,
+    box-shadow 0.18s;
 }
 
 .button.secondary:hover,
 .button.secondary:focus-visible {
   transform: scale(1.03) translateZ(0);
   box-shadow: 0 0 16px rgb(228 179 64 / 25%);
-  transition: transform 0.13s, box-shadow 0.13s;
+  transition:
+    transform 0.13s,
+    box-shadow 0.13s;
 }
 
 .button.icon:hover,
 .button.icon:focus-visible {
   transform: scale(1.1) translateZ(0);
   box-shadow: 0 0 12px rgb(228 179 64 / 25%);
-  transition: transform 0.12s, box-shadow 0.12s;
+  transition:
+    transform 0.12s,
+    box-shadow 0.12s;
 }
 
 .button.inverted:hover,
 .button.inverted:focus-visible {
   transform: scale(1.05) translateZ(0);
-  box-shadow: 0 0 20px rgb(228 179 64 / 35%), 0 8px 28px rgb(2 1 120 / 22%);
-  transition: transform 0.18s, box-shadow 0.18s;
+  box-shadow:
+    0 0 20px rgb(228 179 64 / 35%),
+    0 8px 28px rgb(2 1 120 / 22%);
+  transition:
+    transform 0.18s,
+    box-shadow 0.18s;
 }
 
 .button.location:hover,
 .button.location:focus-visible {
   transform: scale(1.05) translateZ(0);
-  box-shadow: 0 0 20px rgb(228 179 64 / 35%), 0 8px 24px rgb(64 179 228 / 18%);
-  transition: transform 0.18s, box-shadow 0.18s;
+  box-shadow:
+    0 0 20px rgb(228 179 64 / 35%),
+    0 8px 24px rgb(64 179 228 / 18%);
+  transition:
+    transform 0.18s,
+    box-shadow 0.18s;
 }
 
 /* WCAG 2.2 AA: Keyboard Focus Visible (Operable 2.4.7) */
@@ -152,12 +174,12 @@
     --color-text: #000;
     --color-text-muted: #333;
     --color-primary: #000080; /* Navy blue with high contrast */
-    --color-accent: #B8860B; /* Dark goldenrod - more contrast than yellow */
+    --color-accent: #b8860b; /* Dark goldenrod - more contrast than yellow */
     --color-on-accent: #000; /* Black on dark goldenrod for max contrast */
     --color-heading: #000080;
     --color-icon: #000080;
   }
-  
+
   * {
     border-width: 2px !important;
     outline-width: 3px !important;
@@ -190,8 +212,6 @@
   --color-border-high-contrast: #000;
   --color-footer: #151515;
 
-
-
   /* Text */
   --color-text: #151515;
   --color-text-muted: #5a5a5a;
@@ -203,17 +223,17 @@
 
   /* Brand colors - semantic usage */
   --color-primary: #020178; /* Navy - headings, primary elements */
-  --color-accent: #E4B340; /* Yellow - CTAs, highlights */
+  --color-accent: #e4b340; /* Yellow - CTAs, highlights */
   --color-on-accent: #151515; /* Dark text on yellow accent backgrounds */
-  --color-accent-bg: color-mix(in srgb, #E4B340 12%, transparent); /* Accent background for icons/cards */
-  --color-accent-hover: #C99A2B; /* Slightly darker accent for hover */
+  --color-accent-bg: color-mix(in srgb, #e4b340 12%, transparent); /* Accent background for icons/cards */
+  --color-accent-hover: #c99a2b; /* Slightly darker accent for hover */
 
   /* Shadows and focus rings */
   --shadow-soft: 0 4px 6px -1px rgb(0 0 0 / 10%), 0 2px 4px -1px rgb(0 0 0 / 6%);
   --focus-ring: 0 0 0 3px color-mix(in srgb, var(--color-accent) 20%, transparent);
 
   /* Location button colors */
-  --color-location-bg: #E4F1FB; /* Soft blue, map/location theme */
+  --color-location-bg: #e4f1fb; /* Soft blue, map/location theme */
   --color-location-text: #001540; /* Dark navy, matches brand primary */
 
   /* Specific use cases */
@@ -221,16 +241,16 @@
   --color-icon: #020178; /* Navy for icons in light mode */
 
   /* Semantic state colors - functional not brand */
-  --color-error: #DC2626;
-  --color-error-light: #FEE2E2;
-  --color-error-bg: #FEF2F2;
-  --color-error-dark: #991B1B;
-  --color-error-darker: #7F1D1D;
-  --color-warning: #78350F;
-  --color-warning-bg: #FFFBEB;
-  --color-warning-border: #F59E0B;
+  --color-error: #dc2626;
+  --color-error-light: #fee2e2;
+  --color-error-bg: #fef2f2;
+  --color-error-dark: #991b1b;
+  --color-error-darker: #7f1d1d;
+  --color-warning: #78350f;
+  --color-warning-bg: #fffbeb;
+  --color-warning-border: #f59e0b;
   --color-success: #059669;
-  --color-success-bg: #ECFDF5;
+  --color-success-bg: #ecfdf5;
 
   /* Typography tokens */
   --font-heading: 'Outfit', system-ui, sans-serif;
@@ -241,7 +261,7 @@
   --font-size-lg: 1.125rem;
   --font-size-xl: 1.25rem;
   --font-size-2xl: 1.5rem;
-  --font-size-3xl: 1.875rem; 
+  --font-size-3xl: 1.875rem;
   --font-weight-normal: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
@@ -251,13 +271,30 @@
   --line-height-tight: 1.25;
 
   /* Border-radius tokens — single source of truth for rounding scale */
-  --radius-sm: 0.25rem;   /* 4px  — subtle rounding: badges, chips */
-  --radius-md: 0.375rem;  /* 6px  — inputs, small cards */
-  --radius-lg: 0.5rem;    /* 8px  — cards, panels, dropdowns */
-  --radius-xl: 0.75rem;   /* 12px — featured cards, modals */
-  --radius-2xl: 1rem;     /* 16px — large cards, sections */
-  --radius-3xl: 1.5rem;   /* 24px — hero panels, CTA blocks */
-  --radius-full: 9999px;  /* pill buttons, avatars, badges */
+  --radius-sm: 0.25rem; /* 4px  — subtle rounding: badges, chips */
+  --radius-md: 0.375rem; /* 6px  — inputs, small cards */
+  --radius-lg: 0.5rem; /* 8px  — cards, panels, dropdowns */
+  --radius-xl: 0.75rem; /* 12px — featured cards, modals */
+  --radius-2xl: 1rem; /* 16px — large cards, sections */
+  --radius-3xl: 1.5rem; /* 24px — hero panels, CTA blocks */
+  --radius-full: 9999px; /* pill buttons, avatars, badges */
+
+  /* Internal compliance status colors (namespaced --internal-*) */
+  --internal-status-good: #059669;
+  --internal-status-good-bg: #ecfdf5;
+  --internal-status-warning: #d97706;
+  --internal-status-warning-bg: #fffbeb;
+  --internal-status-critical: #dc2626;
+  --internal-status-critical-bg: #fef2f2;
+  --internal-status-neutral: #6b7280;
+  --internal-status-neutral-bg: #f3f4f6;
+  --internal-status-on-warning: #451a03;
+  --internal-status-on-critical: #fef2f2;
+  --internal-bg: #f9fafb;
+  --internal-surface: #fff;
+  --internal-border: #e5e7eb;
+  --internal-text: #111827;
+  --internal-text-muted: #6b7280;
 }
 
 /* Dark mode overrides */
@@ -269,27 +306,44 @@
     --color-text: #f4f4f4;
     --color-text-muted: #a8a8a8;
     --color-primary: #001540; /* Dark Navy - headings, primary elements */
-    --color-accent: #E4B340; /* Yellow - CTAs, highlights */
+    --color-accent: #e4b340; /* Yellow - CTAs, highlights */
     --color-on-accent: #151515; /* Dark text on yellow accent backgrounds */
-    --color-heading: #E4B340;
-    --color-icon: #E4B340;
-    --color-location-bg: #093A5E; /* Deep blue for location button */
-    --color-location-text: #E4F1FB; /* Light blue for location text */
-    --color-error: #F87171;
-    --color-error-light: #7F1D1D;
-    --color-error-bg: #450A0A;
-    --color-error-dark: #FCA5A5;
-    --color-error-darker: #FEE2E2;
-    --color-warning: #FCD34D;
-    --color-warning-bg: #451A03;
-    --color-warning-border: #F59E0B;
-    --color-success: #34D399;
-    --color-success-bg: #064E3B;
+    --color-heading: #e4b340;
+    --color-icon: #e4b340;
+    --color-location-bg: #093a5e; /* Deep blue for location button */
+    --color-location-text: #e4f1fb; /* Light blue for location text */
+    --color-error: #f87171;
+    --color-error-light: #7f1d1d;
+    --color-error-bg: #450a0a;
+    --color-error-dark: #fca5a5;
+    --color-error-darker: #fee2e2;
+    --color-warning: #fcd34d;
+    --color-warning-bg: #451a03;
+    --color-warning-border: #f59e0b;
+    --color-success: #34d399;
+    --color-success-bg: #064e3b;
     --color-footer: #151515;
     --color-on-footer: #f4f4f4;
     --color-on-footer-muted: #bdbdbd;
     --color-on-footer-subtle: #888;
     --color-text-on-primary: #fff;
+
+    /* Internal compliance status colors — dark mode */
+    --internal-status-good: #34d399;
+    --internal-status-good-bg: #064e3b;
+    --internal-status-warning: #fbbf24;
+    --internal-status-warning-bg: #451a03;
+    --internal-status-critical: #f87171;
+    --internal-status-critical-bg: #450a0a;
+    --internal-status-neutral: #9ca3af;
+    --internal-status-neutral-bg: #1f2937;
+    --internal-status-on-warning: #451a03;
+    --internal-status-on-critical: #450a0a;
+    --internal-bg: #111827;
+    --internal-surface: #1f2937;
+    --internal-border: #374151;
+    --internal-text: #f9fafb;
+    --internal-text-muted: #9ca3af;
   }
 }
 
@@ -306,24 +360,32 @@ body {
 }
 
 /* Accent utility for consistent brand-yellow */
-.text-accent { color: var(--color-accent); }
-.bg-primary { background-color: var(--color-primary); }
-.text-primary { color: var(--color-primary); }
+.text-accent {
+  color: var(--color-accent);
+}
+
+.bg-primary {
+  background-color: var(--color-primary);
+}
+
+.text-primary {
+  color: var(--color-primary);
+}
 
 /* Custom utility to hide scrollbars for the Services reel */
 .scrollbar-hide {
-  -ms-overflow-style: none;  /* IE and Edge */
+  -ms-overflow-style: none; /* IE and Edge */
 }
 
 /* Only apply Firefox-only property when supported */
 @supports (scrollbar-width: none) {
   .scrollbar-hide {
-    scrollbar-width: none;  /* Firefox */
+    scrollbar-width: none; /* Firefox */
   }
 }
 
 .scrollbar-hide::-webkit-scrollbar {
-  display: none;  /* Chrome, Safari, and Opera */
+  display: none; /* Chrome, Safari, and Opera */
 }
 
 /* Fade-in animation for Order CTA button */
@@ -346,32 +408,97 @@ body {
 
 /* FAB animations */
 @keyframes fab-in {
-  0% { opacity: 0; transform: translate3d(0, 20px, 0) scale(0.9); }
-  100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 20px, 0) scale(0.9);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
 }
 
 @keyframes fab-out {
-  0% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
-  100% { opacity: 0; transform: translate3d(0, 20px, 0) scale(0.9); }
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(0, 20px, 0) scale(0.9);
+  }
 }
-.animate-fab-in { animation: fab-in 0.4s cubic-bezier(.4,0,.2,1) backwards; }
-.animate-fab-out { animation: fab-out 0.3s cubic-bezier(.4,0,.2,1) both; }
+
+.animate-fab-in {
+  animation: fab-in 0.4s cubic-bezier(0.4, 0, 0.2, 1) backwards;
+}
+
+.animate-fab-out {
+  animation: fab-out 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
 
 /* Typography utilities */
-.h1, h1 { font-family: var(--font-heading); font-weight: 700; }
-.h2, h2 { font-family: var(--font-heading); font-weight: 600; }
-.h3, h3 { font-family: var(--font-heading); font-weight: 600; }
-.text-body { font-family: var(--font-body); }
-.text-heading { font-family: var(--font-heading); }
+.h1,
+h1 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+}
+
+.h2,
+h2 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+}
+
+.h3,
+h3 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+}
+
+.text-body {
+  font-family: var(--font-body);
+}
+
+.text-heading {
+  font-family: var(--font-heading);
+}
 
 /* Role badge helpers */
-.badge { display:inline-flex; align-items:center; gap:6px; padding:4px 8px; border-radius:999px; font-weight:600; font-size:0.75rem; }
-.badge-icon { width:14px; height:14px; }
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.badge-icon {
+  width: 14px;
+  height: 14px;
+}
 
 /* Placeholder image frame for content phase */
-.placeholder-frame { background: var(--color-surface); border: 1px dashed var(--color-border); color: var(--color-text-muted); display:flex; align-items:center; justify-content:center; }
-.placeholder-frame.square { aspect-ratio: 1 / 1; }
-.placeholder-frame.rect { aspect-ratio: 4 / 3; }
+.placeholder-frame {
+  background: var(--color-surface);
+  border: 1px dashed var(--color-border);
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.placeholder-frame.square {
+  aspect-ratio: 1 / 1;
+}
+
+.placeholder-frame.rect {
+  aspect-ratio: 4 / 3;
+}
 
 /* Restore Tailwind directives with stylelint comment */
 /* stylelint-disable-next-line at-rule-no-unknown */
@@ -409,5 +536,7 @@ body {
 .button.order:focus-visible {
   transform: scale(1.05);
   box-shadow: 0 8px 24px rgb(228 179 64 / 18%);
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
 }

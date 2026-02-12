@@ -166,6 +166,19 @@ npm run preview                # Preview production build
 - Trustpilot widget loaded conditionally
 - Bitcoin ATM integration (future)
 
+### Internal Compliance System
+Staff-only food safety and compliance management system at `/internal/*` routes.
+
+- **Routes:** `/internal/*` paths in `App.jsx` render a separate UI tree (no Navbar, Footer, or SEO)
+- **Auth:** `AuthProvider` wraps only internal routes. Hybrid model: httpOnly cookie + in-memory access token
+- **API:** `src/services/api.js` (fetch wrapper) + `src/services/mockApi.js` (mock backend when `VITE_API_URL` absent)
+- **Queue:** `src/services/submitQueue.js` -- IndexedDB via `idb`, separate `RomaMartComplianceDB`
+- **Hook:** `useAuth()` from `src/hooks/useAuth.js` -- returns `{ user, login, logout, loading, isAuthenticated, role }`
+- **CSS:** All compliance variables namespaced `--internal-*` (both light and dark mode in `src/index.css`)
+- **Security:** Access token in JS memory only (HSC-01), no GTM on `/internal/*` (HSC-03), SW never caches `/internal/*` (HSC-10)
+- **Test users:** Staff `5191234567`/`1234`, Manager `5199876543`/`0000`
+- **Docs:** `docs/COMPLIANCE_SYSTEM_PLAN.md`
+
 ## Quality System Architecture
 
 ### Automated Checks (`scripts/check-quality.js`)
@@ -328,6 +341,14 @@ Before going live on custom domain:
 | `public/sw.js` | Service worker source template (precache placeholder, caching strategies) |
 | `src/components/PWAUpdatePrompt.jsx` | SW update notification card |
 | `.github/dependabot.yml` | Automated dependency updates (npm weekly, GitHub Actions weekly) |
+| `src/contexts/AuthContext.jsx` | Compliance auth provider (hybrid model) |
+| `src/hooks/useAuth.js` | Auth hook for internal pages |
+| `src/services/api.js` | Compliance API fetch wrapper |
+| `src/services/mockApi.js` | Mock backend for frontend development |
+| `src/services/submitQueue.js` | IndexedDB connectivity-gap queue |
+| `src/pages/internal/LoginPage.jsx` | Staff login (phone + PIN) |
+| `src/pages/internal/InternalLayout.jsx` | Internal layout shell (sidebar/bottom nav) |
+| `docs/COMPLIANCE_SYSTEM_PLAN.md` | Compliance system architecture and sprint plan |
 
 ## Additional Resources
 

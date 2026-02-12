@@ -28,7 +28,7 @@ const CACHEABLE_ROUTES = [
   `${BASE_URL}contact`,
   `${BASE_URL}services`,
   `${BASE_URL}rocafe`,
-  `${BASE_URL}about`
+  `${BASE_URL}about`,
 ];
 
 // Cache size limit to prevent unbounded growth
@@ -50,25 +50,21 @@ async function trimCache(cacheName, maxEntries) {
 
 // Install event - cache essential assets
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_VERSION)
-      .then((cache) => cache.addAll(PRECACHE_ASSETS))
-  );
+  event.waitUntil(caches.open(CACHE_VERSION).then((cache) => cache.addAll(PRECACHE_ASSETS)));
 });
 
 // Activate event - clean up old caches, enable navigation preload
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     Promise.all([
-      caches.keys()
-        .then((cacheNames) => Promise.all(
-          cacheNames
-            .filter((cacheName) => cacheName !== CACHE_VERSION)
-            .map((cacheName) => caches.delete(cacheName))
-        )),
-      self.registration.navigationPreload
-        ? self.registration.navigationPreload.enable()
-        : Promise.resolve()
+      caches
+        .keys()
+        .then((cacheNames) =>
+          Promise.all(
+            cacheNames.filter((cacheName) => cacheName !== CACHE_VERSION).map((cacheName) => caches.delete(cacheName))
+          )
+        ),
+      self.registration.navigationPreload ? self.registration.navigationPreload.enable() : Promise.resolve(),
     ]).then(() => self.clients.claim())
   );
 });
@@ -80,6 +76,12 @@ self.addEventListener('fetch', (event) => {
 
   // Only handle same-origin requests
   if (url.origin !== location.origin) {
+    return;
+  }
+
+  // HSC-10: Never cache /internal/* compliance routes
+  // Handles both production (/) and GitHub Pages (/romamart.ca/) base paths
+  if (url.pathname.includes('/internal')) {
     return;
   }
 
@@ -105,7 +107,7 @@ self.addEventListener('fetch', (event) => {
  */
 async function networkFirstStrategy(request, preloadResponse) {
   try {
-    const networkResponse = (preloadResponse && await preloadResponse) || await fetch(request);
+    const networkResponse = (preloadResponse && (await preloadResponse)) || (await fetch(request));
 
     // Cache successful responses
     if (networkResponse.ok) {
@@ -131,7 +133,7 @@ async function networkFirstStrategy(request, preloadResponse) {
     // For other resources, return error
     return new Response('Network error', {
       status: 408,
-      headers: { 'Content-Type': 'text/plain' }
+      headers: { 'Content-Type': 'text/plain' },
     });
   }
 }
@@ -160,7 +162,7 @@ async function cacheFirstStrategy(request) {
   } catch {
     return new Response('Network error', {
       status: 408,
-      headers: { 'Content-Type': 'text/plain' }
+      headers: { 'Content-Type': 'text/plain' },
     });
   }
 }
