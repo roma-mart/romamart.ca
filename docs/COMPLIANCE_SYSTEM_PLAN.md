@@ -6,7 +6,7 @@
 >
 > **Created:** 2026-02-12
 > **Last updated:** 2026-02-12
-> **Status:** Plan approved. Sprints not started. GitHub issues pending.
+> **Status:** Plan approved. Sprint 0 hardened (Phase 4 architectural review complete). Issues #150-#158 synced.
 
 ---
 
@@ -29,6 +29,10 @@
 - [Backend Team API Contract](#backend-team-api-contract-handoff-document)
 - [Dependencies](#new-dependencies-to-add-to-packagejson)
 - [Files to Create/Modify](#files-to-createmodify-right-sized)
+- [Hard Security Constraints](#hard-security-constraints)
+- [Auth Lifecycle Model](#auth-lifecycle-model)
+- [Queue Lifecycle Model](#queue-lifecycle-model)
+- [RBAC Permission Table](#rbac-permission-table)
 - [Verification](#verification)
 
 ---
@@ -76,27 +80,27 @@
 ## CONFIRMED ARCHITECTURE (Post Q&A)
 
 ```
-+-----------------+     API calls      +----------------------+
-|  GitHub Pages    | <----------------->|  Netlify             |
-|  romamart.ca     |                    |  romamart.netlify.app|
-|                  |                    |                      |
-|  Vite + React    |  Public APIs:      |  Next.js backend     |
-|  SPA (our repo)  |  /api/public-menu  |  Admin dashboard     |
-|                  |  /api/public-svc   |  (backend team repo) |
-|  + NEW: internal |  /api/public-loc   |                      |
-|  compliance      |                    |  + NEW: internal     |
-|  pages/routes    |  NEW Auth APIs:    |  compliance API      |
-|                  |  /api/auth/*       |  endpoints           |
-|                  |  /api/log-entry    |                      |
-|                  |  /api/signoff      |  PostgreSQL on DO    |
-|                  |  /api/alerts       |                      |
-+-----------------+                    +----------------------+
++------------------+     API calls      +--------------------------+
+|  GitHub Pages     | <----------------->|  Digital Ocean            |
+|  romamart.ca      |                    |  (compliance backend)     |
+|                   |                    |                           |
+|  Vite + React     |  Public APIs:      |  Next.js + PostgreSQL     |
+|  SPA (our repo)   |  (remain on        |  Custom server.js         |
+|                   |   Netlify)         |  (persistent process)     |
+|  + NEW: internal  |  /api/public-menu  |                           |
+|  compliance       |  /api/public-svc   |  NEW Compliance APIs:     |
+|  pages/routes     |  /api/public-loc   |  /api/compliance/auth/*   |
+|                   |                    |  /api/compliance/log-entry|
+|                   | Compliance APIs:   |  /api/compliance/signoff  |
+|                   | /api/compliance/*  |  /api/compliance/alerts   |
+|                   |                    |  /api/compliance/stats    |
++------------------+                    +--------------------------+
 ```
 
 ### Architecture Decision: Unified SPA + Existing Backend
 - **Frontend**: Add internal routes to existing Vite SPA (client-side routing)
 - **Backend**: Backend team adds authenticated endpoints to existing Netlify/Next.js API
-- **Auth**: API-level JWT (backend validates, frontend stores token in httpOnly cookie)
+- **Auth**: Hybrid model -- httpOnly Secure SameSite=None session cookie (backend-set) for session persistence + short-lived access token in memory (frontend) for API requests. No token in localStorage or sessionStorage (D18).
 - **Security**: All sensitive data is API-gated; SPA never contains secrets
 - **No framework migration required**: Vite + React stays as-is
 
@@ -113,12 +117,11 @@ Socket.io connections won't work. Backend team will deploy custom server.js (Nod
 Next.js + Socket.io) as persistent process, likely on Digital Ocean. Socket.io is viable.
 Frontend needs socket.io-client integration.
 
-**Auth on static hosting**: httpOnly cookies require the API domain to set them.
-Cross-origin cookie handling (GitHub Pages <-> backend server) needs:
-- CORS configuration with credentials on backend
-- SameSite=None; Secure on cookies
-- Backend team must configure Access-Control-Allow-Origin to romamart.ca
-- Alternative: Authorization header with token in memory (more secure than localStorage)
+**RESOLVED -- Auth on static hosting**: Hybrid model adopted (D18). Backend sets httpOnly Secure
+SameSite=None cookie for session persistence. Frontend stores short-lived access token in JS
+memory only. Session restored on page refresh via GET /api/compliance/auth/me (cookie auto-attached).
+CORS requirements documented in Backend API Contract section. Safari ITP risk acknowledged --
+testing required in Sprint 4.
 
 **STANDING -- No CSP/HSTS**: Still missing from deployment. Compliance system
 makes this more urgent (internal data needs stronger security headers).
@@ -184,9 +187,11 @@ makes this more urgent (internal data needs stronger security headers).
 ## RISK HEATMAP (Post-Interview, Right-Sized)
 
 ### CRITICAL (Block launch if unresolved)
-- **R2: Cross-origin auth** -- GitHub Pages (romamart.ca) calling backend API
-  requires careful CORS + cookie/token handling. Wrong implementation =
-  security vulnerability or broken auth.
+- **R2: Cross-origin auth** -- GitHub Pages (romamart.ca) calling compliance backend on
+  Digital Ocean requires CORS with credentials:true, exact origin (no wildcard), and
+  SameSite=None; Secure cookies. Hybrid model adopted (D18). CORS configuration requirements
+  documented in Backend API Contract section. Safari ITP may block third-party cookies --
+  testing required in Sprint 4. Wrong implementation = security vulnerability or broken auth.
 - **R4: Backend team coordination** -- Part-time family team. All API endpoints,
   DB schema, auth depend on them. No backend = no compliance system.
   Mock API essential for independent frontend progress.
@@ -267,7 +272,7 @@ Maps each compliance requirement (Artifact #6) to system capability and implemen
 | C09 | Server-side timestamps only | ISO 9001 7.5 | Backend responsibility | Backend team | S0 |
 | C10 | User ID + GPS on every entry | ISO 22000 8.5.1 | GPS capture component | Not started | S0 |
 | C11 | Non-conformance engine (auto CAPA) | ISO 9001 10.2, ISO 22000 8.9 | Non-conformance service | Not started | S2 |
-| C12 | Connectivity-gap queue (basic offline) | Compliance doc | IndexedDB basic queue | Not started | S0 |
+| C12 | Connectivity-gap queue (basic offline) | Compliance doc | IndexedDB queue (RomaMartComplianceDB via idb, idempotency keys, processing lock, eviction monitoring) | Not started | S0 |
 | C12b | Full offline functionality | Compliance doc mandate | IndexedDB + full sync | DEFERRED | Phase 2 |
 | C13 | 3-year retention, no deletion | ISO 9001 7.5.3, O.Reg 493/17 | Backend retention policy | Backend team | S0 |
 | C14 | PDF/A export, inspection-ready | ISO 9001 7.5, O.Reg 493/17 | Export endpoint + trigger UI | DEFERRED | Phase 2 |
@@ -275,7 +280,7 @@ Maps each compliance requirement (Artifact #6) to system capability and implemen
 | C15b | Web Push alerts | ISO 22000 8.4 | Push subscription UI | DEFERRED | Phase 2 |
 | C15c | SMS alerts | ISO 22000 8.4 | Backend Twilio integration | DEFERRED | Phase 3 |
 | C16 | Daily manager signoff | ISO 9001 9.3 | Signoff page | Not started | S2 |
-| C17 | RBAC (staff/manager) | ISO 9001 7.1.6 | Auth context + role guards | Not started | S0 |
+| C17 | RBAC (staff/manager) | ISO 9001 7.1.6 | Auth context + role guards (frontend UX) + backend role validation (security) + mock enforcement (specification) | Not started | S0 |
 | C18 | QR codes on equipment | Operational efficiency | QR scanner + labels | DEFERRED | Phase 2 |
 | C19 | 100% task completion, zero gap days | O.Reg 493/17, ISO 22000 | Dashboard tracking + alerts | Not started | S2 |
 | C20 | Corrective action closure 95% <7 days | ISO 9001 10.2 | CAPA tracking in dashboard | Not started | S2 |
@@ -334,7 +339,7 @@ Maps ISO clause requirements to system capabilities.
 | D01 | Unified SPA (not separate app) | User preference, shared design system | 2026-02-12 |
 | D02 | Frontend stays Vite, backend stays Next.js | No migration needed, separate repos | 2026-02-12 |
 | D03 | Socket.io viable (backend uses custom server.js) | Persistent process on DO, not serverless | 2026-02-12 |
-| D04 | Full offline-first (not deferred) | Compliance docs mandate, zero gap days | 2026-02-12 |
+| D04 | ~~Full offline-first~~ **SUPERSEDED by D11** | Originally per compliance docs; user excluded from Day 1 scope | 2026-02-12 |
 | D05 | 7 log types (not 6) | Calibration, training, receiving added per compliance | 2026-02-12 |
 | D06 | GPS mandatory on all entries | Compliance requirement, not optional | 2026-02-12 |
 | D07 | Mock API for frontend development | No backend API contract exists yet | 2026-02-12 |
@@ -348,6 +353,35 @@ Maps ISO clause requirements to system capabilities.
 | D15 | Simple RBAC (staff + manager only) | 2-5 users. No admin superuser needed. | 2026-02-12 |
 | D16 | Cross-platform required (Android + iOS) | Staff uses mixed devices. Must test Chrome + Safari. | 2026-02-12 |
 | D17 | Compliance doc is aspirational, right-size pragmatically | AI-generated requirements may exceed small-store needs | 2026-02-12 |
+| D18 | Hybrid auth: httpOnly cookie + in-memory access token | Session persistence across reload; XSS-resistant; resolves plan contradiction | 2026-02-12 |
+| D19 | API prefix: /api/compliance/* for all compliance endpoints | Route-based proxy separation from existing /api/public-*; clean dev proxy config | 2026-02-12 |
+| D20 | Separate IndexedDB: RomaMartComplianceDB via idb | No version upgrade conflict with existing contactForms DB in RomaMartDB | 2026-02-12 |
+| D21 | Dual timestamps: clientCreatedAt + serverReceivedAt (authoritative) | Queue entries capture creation time; server time governs compliance ordering (C09) | 2026-02-12 |
+| D22 | Block third-party scripts on /internal/* routes | GTM, Clickio, Trustpilot are XSS vectors that can read in-memory tokens | 2026-02-12 |
+| D23 | Multiple managers supported, no dynamic role elevation | Covers manager absence; avoids temporary elevation complexity | 2026-02-12 |
+| D24 | 4-digit numeric PIN + rate limiting (5 attempts, lockout) | Mobile convenience for 2-5 users; brute force mitigated by server-side rate limiting | 2026-02-12 |
+| D25 | Route-based proxy separation (Vite dev) | /api/public-* to Netlify, /api/compliance/* to compliance backend; mirrors production | 2026-02-12 |
+| D26 | Per-log-type backend schema validation | No generic JSON blob; backend enforces required fields per log type (audit defensibility) | 2026-02-12 |
+| D27 | Minimal dependency surface | crypto.randomUUID() native; no JWT decode library unless required; no BroadcastChannel polyfill | 2026-02-12 |
+
+---
+
+## HARD SECURITY CONSTRAINTS
+
+These constraints are non-negotiable across all sprints. Violation of any HSC is a blocking defect.
+
+| ID | Constraint |
+|---|---|
+| HSC-01 | Access token stored in JavaScript variable only. Never localStorage, sessionStorage, cookie, or DOM attribute. |
+| HSC-02 | Session persistence via httpOnly Secure SameSite=None cookie set by backend. Frontend never reads, writes, or accesses this cookie directly. |
+| HSC-03 | No third-party scripts on /internal/* routes. GTM, Clickio CMP, Trustpilot must not load when pathname starts with /internal/. |
+| HSC-04 | All role-restricted operations validated server-side. Frontend role checks are UX only. Mock API returns 403 for role violations. |
+| HSC-05 | Login rate limiting enforced server-side. 5 failed attempts per phone per 15 minutes = temporary lockout. Mock simulates this. |
+| HSC-06 | Phone numbers are unique identifiers. No shared accounts. Identity anchor for C10. |
+| HSC-07 | Queue entries are append-only once created. Idempotency key (crypto.randomUUID()) prevents duplicate replay. |
+| HSC-08 | Logout invalidates server session + clears in-memory token + broadcasts to all tabs via BroadcastChannel. All three required. |
+| HSC-09 | API service layer uses URL constructor for all URL building. No string concatenation with user input. Parameters via URLSearchParams. |
+| HSC-10 | Service worker must never cache /internal/* HTML responses. Explicit exclusion in fetch handler. |
 
 ---
 
@@ -451,16 +485,16 @@ Maps ISO clause requirements to system capabilities.
 |                           |        |  +- Socket.io (WebSocket)   |
 |  Public pages:            |  WS    |  +- PostgreSQL              |
 |  +- Home, About, etc.    |<------>|                              |
-|  +- (existing 14 pages)  |        |  Endpoints:                  |
-|                           |        |  +- /api/auth/*             |
-|  NEW Internal pages:      |        |  +- /api/log-entry          |
-|  +- /internal/login       |        |  +- /api/logs               |
-|  +- /internal/dashboard   |        |  +- /api/stats              |
-|  +- /internal/logs/*      |        |  +- /api/assets             |
-|  +- /internal/signoff     |        |  +- /api/employees          |
-|  +- /internal/alerts      |        |  +- /api/signoff            |
-|  +- /internal/training    |        |  +- /api/alerts             |
-|  +- /internal/settings    |        |  +- /api/push-subscribe     |
+|  +- (existing 14 pages)  |        |  Endpoints (D19):            |
+|                           |        |  +- /api/compliance/auth/* |
+|  NEW Internal pages:      |        |  +- /api/compliance/log-*  |
+|  +- /internal/login       |        |  +- /api/compliance/logs   |
+|  +- /internal/dashboard   |        |  +- /api/compliance/stats  |
+|  +- /internal/logs/*      |        |  +- /api/compliance/assets |
+|  +- /internal/signoff     |        |  +- /api/compliance/employees|
+|  +- /internal/alerts      |        |  +- /api/compliance/signoff|
+|  +- /internal/training    |        |  +- /api/compliance/alerts |
+|  +- /internal/settings    |        |  +- /api/compliance/push-* |
 |                           |        |                              |
 |  Basic queue: IndexedDB   |        |  Alert channels:             |
 |  retry for connectivity   |        |  +- Email (Zoho SMTP) MVP   |
@@ -487,7 +521,7 @@ system is an ADDITION to the existing public site, sharing the same design syste
 
 ### Sprint 0: Foundation & Scaffolding
 
-**Objectives:** Establish the /internal route structure, auth layer, basic connectivity-gap
+**Objectives:** Establish the /internal route structure, hybrid auth layer, basic connectivity-gap
 queue, and API service layer -- all with mock data so development proceeds independently.
 
 **Deliverables:**
@@ -496,44 +530,313 @@ queue, and API service layer -- all with mock data so development proceeds indep
    - Files: `src/App.jsx` (modify), `src/pages/internal/` (new directory)
    - Add pathname matching for `/internal/*` routes
    - Lazy-load all internal pages (same pattern as existing public pages)
-   - Guard: redirect to `/internal/login` if no auth token
+   - Auth guard: render loading spinner while AuthContext hydrates, redirect
+     to `/internal/login` if unauthenticated. No content flash on protected routes.
+   - All 14 existing public routes must remain unaffected (regression verified)
 
-2. **Auth context + service layer**
+2. **Auth context + service layer (Hybrid Model, D18)**
    - Files: `src/contexts/AuthContext.jsx` (new), `src/hooks/useAuth.js` (new)
    - `useAuth()` returns `{ user, login, logout, loading, isAuthenticated, role }`
-   - Token stored in memory (not localStorage -- XSS risk)
-   - 2 roles: `staff`, `manager` (simple RBAC, D15)
-   - Mock auth service (hardcoded test users)
-   - Backend team responsibility: CORS, httpOnly cookies, JWT validation
+   - **Hybrid auth**: httpOnly Secure SameSite=None session cookie (backend-set) for
+     session persistence + short-lived access token in JS memory for API requests (HSC-01, HSC-02)
+   - Silent refresh on page reload via `GET /api/compliance/auth/me` (cookie auto-attached)
+   - BroadcastChannel for multi-tab logout propagation (HSC-08)
+   - 2 roles: `staff`, `manager` -- multiple managers supported (D15, D23)
+   - Mock auth service with hardcoded test users (both roles)
 
 3. **API service abstraction**
    - Files: `src/services/api.js` (new), `src/services/mockApi.js` (new)
-   - Centralized fetch wrapper with auth headers, error handling
-   - `VITE_API_URL` env variable for backend URL (unknown yet, D16)
-   - When `VITE_API_URL` is not set, use mock API (returns realistic test data)
-   - Existing circuit breaker pattern reused for error resilience
+   - All endpoints prefixed `/api/compliance/*` (D19)
+   - Centralized fetch wrapper: auth headers, `credentials: 'include'`, error normalization
+   - AbortController timeout: 15s mutations, 10s reads
+   - Circuit breaker instance for compliance API (separate from existing public API breakers)
+   - `VITE_API_URL` env variable: absent = mock API automatically (no crash, console.info message)
+   - Response envelope: `{ success: boolean, data?: T, error?: { code, message, field? } }`
+   - URL construction via URL constructor (HSC-09)
+   - Mock API enforces RBAC: returns 403 for role violations (HSC-04)
+   - Mock API validates login payload and simulates rate limiting (HSC-05)
 
 4. **Basic connectivity-gap queue** (NOT full offline-first)
    - Files: `src/services/submitQueue.js` (new)
-   - Simple: if network request fails, store in IndexedDB, retry on `navigator.onLine`
+   - Separate database: `RomaMartComplianceDB` via `idb` package (D20) -- no conflict
+     with existing `RomaMartDB` / `contactForms` store
+   - Idempotency key per entry: `crypto.randomUUID()` (HSC-07)
+   - Dual timestamps: `clientCreatedAt` (frontend, ISO 8601 UTC) stored with entry;
+     `serverReceivedAt` returned by backend as authoritative (D21)
+   - Processing lock in IndexedDB meta store (prevent multi-tab drain race)
+   - `navigator.storage.persist()` request on first internal login (Safari eviction protection)
+   - Eviction monitoring via `visibilitychange` event (warn if queue count drops unexpectedly)
+   - Queue drain handles: 401 (prompt re-login, preserve entries), 409 (idempotency duplicate,
+     treat as success), 422 (mark as failed with error details), 5xx (retry later)
    - No complex conflict resolution (server always wins)
-   - Visual indicator: "Saved locally -- will sync when connected"
    - Scope: handles brief WiFi drops, not extended offline periods
 
 5. **Internal login page**
    - File: `src/pages/internal/LoginPage.jsx` (new)
-   - Phone + PIN form (mobile-first, >=44px touch targets for mixed devices)
+   - Phone + 4-digit numeric PIN (D24), mobile-first, >=44px touch targets
+   - Rate limiting display: 5 failed attempts = lockout with countdown timer
    - Error states, loading states, ARIA-compliant
    - Works on both Chrome (Android) and Safari (iOS)
 
 6. **Design system extensions**
    - Files: `src/index.css` (modify), `src/design/tokens.js` (modify)
-   - Status palette: good (green), warning (amber), critical (red), neutral (gray)
-   - Internal-specific CSS variables
+   - Status palette: `--internal-status-good` (green), `--internal-status-warning` (amber),
+     `--internal-status-critical` (red), `--internal-status-neutral` (gray)
+   - All internal CSS variables namespaced with `--internal-*` prefix (prevent collision)
    - Must work in dark mode (existing system)
 
-**Compliance touchpoints:** Auth security (ISO 9001 7.1.6), access control (ISO 22000 7.1.2)
-**Rollback:** All new files, no existing files broken. Remove `/internal` routes to rollback.
+7. **Internal layout shell**
+   - File: `src/pages/internal/InternalLayout.jsx` (new)
+   - Mobile-first: sidebar (desktop) / bottom nav (mobile)
+   - Queue badge: persistent count indicator (0=hidden, N pending=amber, failed=red)
+   - Safe-area inset handling: `env(safe-area-inset-bottom)` on bottom nav for iPhone
+   - `history.pushState` management for back button correctness within /internal/* scope
+   - Third-party script blocking: GTM, Clickio, Trustpilot do NOT load on /internal/* (D22, HSC-03)
+
+8. **Service worker exclusion**
+   - File: `public/sw.js` (modify)
+   - `/internal/*` excluded from SW cache in fetch handler (HSC-10)
+   - Implemented in Sprint 0 (moved forward from Sprint 4 to prevent accidental caching)
+
+**Compliance touchpoints:**
+- Auth + RBAC (C17, ISO 9001 7.1.6, ISO 22000 7.1.2)
+- User identity (C10 partial -- employeeId on every request; GPS deferred to Sprint 1)
+- Connectivity-gap queue (C12)
+- Dual timestamp architecture (C09)
+- Immutability contract (C08 -- no DELETE endpoints in API contract)
+- Auth event logging (ISO 9001 7.5 -- login/logout events recorded server-side)
+
+**Rollback:** All new files additive. Remove `/internal` routes from App.jsx to rollback.
+
+#### Sprint 0 Definition of Done
+
+**Functional:**
+- [ ] /internal/login renders with phone + PIN form
+- [ ] Login success: access token in memory, redirect to /internal/dashboard stub
+- [ ] Login failure: error message displayed, no token stored
+- [ ] Login lockout: 5 failed attempts, lockout message with timer, retries blocked
+- [ ] Page refresh: session restored from cookie via GET /auth/me, no re-login required
+- [ ] Logout: server session invalidated, token cleared, all tabs redirected to login
+- [ ] Route guard: unauthenticated /internal/* access redirects to login (loading spinner, no content flash)
+- [ ] Route guard: staff on manager-only route redirects to dashboard with toast
+- [ ] Mock API: staff token on manager endpoint returns 403
+- [ ] Mock API: correct status codes (200, 401, 403, 422, 429) and correct error schema
+- [ ] Queue: simulated network failure stores entry in RomaMartComplianceDB
+- [ ] Queue: simulated connectivity restored drains entry to API, badge updates
+- [ ] Queue: idempotency key on duplicate returns 409, treated as success
+- [ ] Queue: auth expired during drain shows re-login banner, drain paused, entries preserved
+- [ ] Queue: persistent storage requested (navigator.storage.persist)
+- [ ] InternalLayout: mobile-first, bottom nav, queue badge, functional at 375px
+
+**Security:**
+- [ ] Access token not in localStorage, sessionStorage, cookies, or DOM
+- [ ] GTM, Clickio, Trustpilot confirmed NOT loading on /internal/*
+- [ ] BroadcastChannel propagates logout to sibling tabs
+- [ ] api.js uses URL constructor, not string concatenation
+- [ ] Service worker excludes /internal/* from caching
+
+**Quality:**
+- [ ] `npm run check:all` passes
+- [ ] `npm run build` succeeds (no bundle size regression >5% on public chunks)
+- [ ] Existing 260 tests pass with zero regressions
+- [ ] New tests cover: auth lifecycle, route guard, mock RBAC, queue lifecycle
+- [ ] All 14 public routes render correctly (regression verified)
+- [ ] Dark mode works on all internal pages
+- [ ] Touch targets >=44px on all interactive elements
+- [ ] Keyboard navigation: tab order correct in login form and internal nav
+- [ ] Safe-area insets respected on bottom nav
+
+**Documentation:**
+- [ ] CORS requirements documented (headers, origin allowlist, cookie config)
+- [ ] API contract documented (Sprint 0 endpoints: login, me, logout)
+- [ ] Sprint 1 endpoint shapes documented (log-entry with per-type validation)
+- [ ] Error schema documented and enforced in mock
+- [ ] Queue lifecycle documented (create, store, drain, cleanup)
+- [ ] Auth lifecycle documented (login, request, refresh, logout, multi-tab)
+
+---
+
+## AUTH LIFECYCLE MODEL
+
+### Login Flow
+
+1. User navigates to /internal/login
+2. User enters phone (10 digits) + PIN (4 digits)
+3. Frontend validates format client-side (10-digit phone, 4-digit numeric PIN)
+4. Frontend sends `POST /api/compliance/auth/login { phone, pin }` with `credentials: 'include'`
+5. Backend validates credentials against DB
+6. If rate limited (>=5 failures): returns 429 `{ error: { code: "RATE_LIMITED", retryAfter: <seconds> } }`
+7. If invalid: returns 401 `{ error: { code: "INVALID_CREDENTIALS" } }`, increments failure count
+8. If valid: backend sets httpOnly cookie: `session=<token>; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=28800`
+9. Backend returns 200 `{ success: true, data: { accessToken: "<jwt>", employee: { id, name, role, locationId } } }`
+10. Backend logs auth event: `{ type: "login", employeeId, timestamp, ip, userAgent }`
+11. Frontend stores accessToken in AuthContext memory variable (HSC-01)
+12. Frontend stores employee in AuthContext state
+13. Frontend calls `navigator.storage.persist()` (first login only)
+14. Frontend redirects to /internal/dashboard (or originally-intended deep link)
+
+### Authenticated API Request
+
+1. Component calls `api.post('/compliance/log-entry', payload)`
+2. api.js reads accessToken from AuthContext
+3. api.js attaches header: `Authorization: Bearer <accessToken>`
+4. api.js sets fetch option: `credentials: 'include'` (sends httpOnly cookie)
+5. api.js wraps fetch with AbortController timeout (15s mutations, 10s reads)
+6. api.js checks circuit breaker: `circuitBreakers.compliance.shouldAttemptCall()`
+7. If circuit open: reject immediately, queue if submittable
+8. Request sent
+9. If 2xx: record circuit breaker success, return data
+10. If 401: attempt silent refresh (see below)
+11. If 403: propagate to caller (RBAC violation -- do not retry)
+12. If 422: propagate to caller (validation error -- display field errors)
+13. If 429: propagate to caller (rate limited -- display retry timer)
+14. If 5xx: record circuit breaker failure, queue if submittable
+15. If network error: queue if submittable, show offline indicator
+
+### Silent Token Refresh (Page Reload / Token Expiry)
+
+1. AuthContext initializes with `loading=true`, `user=null`
+2. AuthContext sends `GET /api/compliance/auth/me` with `credentials: 'include'`
+3. Cookie auto-attached by browser
+4. If 200: backend returns `{ data: { accessToken, employee } }`
+5. Frontend stores new accessToken in memory, employee in state
+6. AuthContext sets `loading=false` -- app renders authenticated UI
+7. If 401: cookie expired/invalid
+8. AuthContext sets `loading=false`, `user=null` -- route guard redirects to login
+9. Queue entries are NOT cleared -- they persist until re-login + drain
+
+### Logout
+
+1. User taps logout
+2. Frontend sends `POST /api/compliance/auth/logout` with `credentials: 'include'`
+3. Backend invalidates session in DB, clears cookie (Max-Age=0)
+4. Backend logs auth event: `{ type: "logout", employeeId, timestamp }`
+5. Frontend clears in-memory accessToken
+6. Frontend clears AuthContext state (user=null)
+7. Frontend broadcasts via BroadcastChannel: `{ type: 'auth:logout' }`
+8. All other tabs receive broadcast, clear their state, redirect to /internal/login
+9. Frontend redirects current tab to /internal/login
+10. If POST logout fails (network): clear local state anyway (best-effort server notification)
+
+### Multi-Tab Sync
+
+1. On AuthContext mount: create `BroadcastChannel('roma-mart-internal-auth')`
+2. Listen for messages: `{ type: 'auth:logout' }` and `{ type: 'auth:login' }`
+3. On `auth:logout` received: clear state, redirect to /internal/login
+4. On `auth:login` received: refresh state via `GET /api/compliance/auth/me`
+5. On AuthContext unmount: close BroadcastChannel
+
+---
+
+## QUEUE LIFECYCLE MODEL
+
+### Entry Creation (Submit Attempt)
+
+1. User completes form, taps submit
+2. Disable submit button immediately (prevent double-tap)
+3. Generate `idempotencyKey = crypto.randomUUID()`
+4. Capture `clientCreatedAt = new Date().toISOString()`
+5. Assemble payload: `{ ...formData, clientCreatedAt, idempotencyKey, employeeId, locationId }`
+6. Attempt `POST /api/compliance/log-entry` with payload
+7. If 2xx: show "Submitted" confirmation, navigate away
+8. If 409 (idempotency duplicate): treat as success, navigate away
+9. If 422 (validation error): re-enable form, show field errors, do NOT queue
+10. If 401 (auth expired): attempt silent refresh, retry once, if still 401 prompt re-login, do NOT queue
+11. If network error / timeout / 5xx: proceed to Queue Storage
+
+### Queue Storage
+
+12. Open `RomaMartComplianceDB` via idb
+13. Write to `pendingEntries` store: `{ ...payload, status: 'pending', queuedAt: Date.now(), attempts: 0 }`
+14. Show toast: "Saved locally -- will sync when connected"
+15. Update InternalLayout queue badge (count of status='pending' entries)
+16. Navigate away from form (data is safe in IndexedDB)
+
+### Queue Drain (Connectivity Restored)
+
+17. Trigger: `online` event on window OR `visibilitychange` (document.visibilityState === 'visible')
+18. Check `navigator.onLine` -- if false, abort
+19. Read processing lock from `meta` store in RomaMartComplianceDB
+20. If lock exists and `lock.timestamp > (Date.now() - 30000)`: abort (another tab is draining)
+21. Acquire lock: write `{ key: 'drainLock', timestamp: Date.now(), tabId: <random> }` to meta store
+22. Read all entries with status='pending' ordered by queuedAt ASC
+23. For each entry:
+    - Check AuthContext -- if no accessToken, attempt silent refresh via GET /auth/me
+    - If no auth after refresh: show banner "Login required to sync N pending entries", STOP
+    - POST entry to /api/compliance/log-entry with Authorization header
+    - If 2xx: set `entry.status='synced'`, `entry.syncedAt=Date.now()`, update in DB, decrement badge
+    - If 409: set `entry.status='synced'` (server already has it), update in DB, decrement badge
+    - If 401: attempt token refresh, retry once, if still 401 STOP drain, show re-login banner
+    - If 422: set `entry.status='failed'`, `entry.error=response.error`, update in DB, badge turns red
+    - If 5xx/network: increment `entry.attempts`, STOP drain, retry on next trigger
+24. Release lock: delete drainLock from meta store
+25. Update badge count
+
+### Queue Monitoring
+
+26. On every `visibilitychange` (tab visible): read queue count from DB
+27. Compare with last known count -- if decreased unexpectedly and no drain ran: warn "Queue entries may have been removed by browser"
+28. Badge states: 0=hidden, N pending=amber with count, any failed=red with count
+29. Badge is clickable: shows "Pending Sync" panel listing entries with timestamps and status
+
+### Queue Cleanup
+
+30. On drain completion: scan for entries where `status='synced'` AND `syncedAt < (Date.now() - 7 days)`
+31. Delete expired synced entries
+32. Entries with `status='failed'` are never auto-deleted (require manual review or re-submission)
+
+---
+
+## RBAC PERMISSION TABLE
+
+### Frontend Enforcement (UX Only -- Not Security)
+
+AuthContext exposes `user.role` (`"staff"` or `"manager"`).
+
+Route guards:
+- `/internal/login` -- public (no auth required)
+- `/internal/dashboard` -- any authenticated user
+- `/internal/logs/*` -- any authenticated user
+- `/internal/signoff` -- manager only (staff redirected to dashboard with toast)
+- `/internal/employees` -- GET: any; POST/PATCH: manager only (UI disables form for staff)
+- `/internal/assets` -- GET: any; mutations: manager only
+- `/internal/alerts` -- GET: any; resolve: manager only
+- `/internal/training` -- any authenticated user
+- `/internal/history` -- any authenticated user
+
+Guard behavior:
+1. `AuthContext.loading === true` -- render loading spinner (not null, not redirect)
+2. `AuthContext.user === null` -- redirect to /internal/login
+3. `AuthContext.user.role` insufficient -- redirect to /internal/dashboard with toast
+
+### Backend Enforcement (Security -- Required)
+
+| Method | Endpoint | staff | manager |
+|--------|--------------------------------------|-------|---------|
+| POST | /api/compliance/auth/login | any | any |
+| GET | /api/compliance/auth/me | yes | yes |
+| POST | /api/compliance/auth/logout | yes | yes |
+| POST | /api/compliance/log-entry | yes | yes |
+| GET | /api/compliance/logs | yes | yes |
+| GET | /api/compliance/stats | yes | yes |
+| GET | /api/compliance/alerts | yes | yes |
+| PATCH | /api/compliance/alerts/:id/resolve | no | yes |
+| POST | /api/compliance/signoff | no | yes |
+| GET | /api/compliance/signoff-status | yes | yes |
+| GET | /api/compliance/employees | own | all |
+| POST | /api/compliance/employees | no | yes |
+| PATCH | /api/compliance/employees/:id | no | yes |
+| GET | /api/compliance/assets | yes | yes |
+
+Enforcement: backend reads role from JWT/session, NOT from request body.
+Unauthorized: `403 { success: false, error: { code: "FORBIDDEN", message: "Manager role required" } }`
+
+### Mock API Enforcement (Specification)
+
+Mock MUST implement the full permission table above. Mock extracts role from mock session
+state (simulated JWT). Mock returns 403 with exact error shape for unauthorized access.
+This ensures: (1) frontend handles 403 correctly during development, (2) backend team has
+executable specification to implement against, (3) no false confidence from permissive mock.
 
 ---
 
@@ -541,6 +844,11 @@ queue, and API service layer -- all with mock data so development proceeds indep
 
 **Objectives:** Build all 7 log type forms with signature blocks, GPS capture,
 and equipment selection. Forms work against mock API + basic queue.
+
+**API:** All log submissions via `POST /api/compliance/log-entry` (D19). Each payload
+includes `clientCreatedAt`, `idempotencyKey`, `gpsCoords`, `signatureData` (D21, HSC-07).
+Backend validates per-log-type data schemas (D26). GPSCapture.jsx is the first
+deliverable in Sprint 1 -- all forms depend on it.
 
 **Deliverables:**
 
@@ -615,6 +923,9 @@ and equipment selection. Forms work against mock API + basic queue.
 
 **Objectives:** Build management dashboard, email alert system, daily signoff, non-conformance engine.
 
+**API:** All endpoints under `/api/compliance/*` (D19). SignoffPage and alert resolution are
+manager-only -- backend enforces via RBAC permission table. Multiple managers can sign off (D23).
+
 **Deliverables:**
 
 15. **Main dashboard**
@@ -627,7 +938,7 @@ and equipment selection. Forms work against mock API + basic queue.
 
 16. **Polling-based real-time updates** (Socket.io prep)
     - File: `src/hooks/usePollingUpdates.js` (new)
-    - Poll `/api/stats` and `/api/alerts` every 30 seconds
+    - Poll `/api/compliance/stats` and `/api/compliance/alerts` every 30 seconds
     - Architecture: easy to swap to Socket.io when backend supports it
     - Socket.io client integration deferred until backend deploys custom server.js
     - `src/services/socket.js` (new) -- stub with connection config, activates when
@@ -670,6 +981,9 @@ and equipment selection. Forms work against mock API + basic queue.
 ### Sprint 3: Training + Equipment + History
 
 **Objectives:** Admin panels for certifications, asset management, log history.
+
+**API:** All endpoints under `/api/compliance/*` (D19). Employee mutations (POST, PATCH) are
+manager-only -- backend enforces via RBAC permission table.
 
 **Deliverables:**
 
@@ -714,29 +1028,29 @@ and equipment selection. Forms work against mock API + basic queue.
 
 25. **Backend API integration**
     - Switch `VITE_API_URL` from mock to production backend
-    - Verify all endpoint integrations
+    - Verify all `/api/compliance/*` endpoint integrations
     - Handle API errors gracefully (existing circuit breaker pattern)
     - Validate response schemas match frontend expectations
 
 26. **Security hardening**
     - CSP header configuration (coordinate with deployment)
     - CSRF token handling on state-changing requests
-    - Rate limiting awareness on login (show cooldown UI)
     - Sanitize all user inputs before display (XSS prevention)
-    - Token in memory only (not localStorage)
+    - NOTE: Token-in-memory (HSC-01), third-party script blocking (HSC-03), and
+      SW exclusion (HSC-10) already implemented in Sprint 0
 
 27. **Cross-platform testing + mobile UX**
     - iOS Safari (14+) + Android Chrome -- primary targets
+    - **CORS + cookie integration testing** -- verify cross-origin auth works on real devices
+    - **Safari ITP testing** -- verify httpOnly cookies not blocked by Intelligent Tracking Prevention
     - Touch target sizes >=44px (WCAG 2.5.5)
     - Camera permissions for photo capture
     - GPS permissions (graceful degradation if denied)
     - Loading states, skeleton screens
     - Test on actual staff devices when possible
 
-28. **Service worker updates for internal routes**
-    - File: `public/sw.js` (modify)
-    - Network-first for all `/internal/*` routes (no aggressive caching)
-    - Exclude internal data from precache
+28. **Service worker verification for internal routes**
+    - Verify `/internal/*` exclusion from Sprint 0 is working correctly (HSC-10)
     - Keep existing public site caching unchanged
 
 **Compliance touchpoints:** Security (ISO 27001 alignment), accessibility (WCAG 2.2 AA)
@@ -828,50 +1142,167 @@ Delivered incrementally after core system is operational.
 ## BACKEND TEAM API CONTRACT (Handoff Document)
 
 The frontend will be built against these endpoints. Backend team should implement
-them in this priority order (matching frontend sprint dependencies):
+them in this priority order (matching frontend sprint dependencies).
+
+**All compliance endpoints use the `/api/compliance/*` prefix (D19).**
+Existing public endpoints (`/api/public-menu`, `/api/public-services`, `/api/public-locations`)
+remain on Netlify and are unchanged.
+
+### Response Envelope (All Endpoints)
+
+```
+Success: { success: true, data: <T> }
+Error:   { success: false, error: { code: string, message: string, field?: string } }
+```
+
+### Standard Error Codes
+
+| Code | HTTP Status | Meaning |
+|---|---|---|
+| INVALID_CREDENTIALS | 401 | Login failed (wrong phone or PIN) |
+| SESSION_EXPIRED | 401 | Cookie/token expired |
+| FORBIDDEN | 403 | Role insufficient for this operation |
+| RATE_LIMITED | 429 | Too many attempts (include `retryAfter` seconds in error) |
+| VALIDATION_ERROR | 422 | Payload validation failed (include `field` in error) |
+| CONFLICT | 409 | Idempotency key already processed |
+| NOT_FOUND | 404 | Resource not found |
+| INTERNAL_ERROR | 500 | Server error |
+
+### Conventions
+
+- **Timestamps:** ISO 8601 UTC -- `"2026-02-12T14:30:00.000Z"`
+- **Field naming:** camelCase throughout all JSON payloads
+- **Auth events:** All login/logout events logged server-side with employeeId, timestamp, IP
 
 ### Sprint 0 Dependencies (Auth)
+
 ```
-POST /api/auth/login      { phone, pin, rememberMe } -> { success, employee }
-GET  /api/auth/me          (from cookie/token) -> { employee }
-POST /api/auth/logout      -> clears auth
+POST /api/compliance/auth/login
+  Request:  { phone: string (10 digits), pin: string (4 digits) }
+  Validate: phone = 10 digits, pin = 4 digits numeric
+  Rate limit: 5 failures per phone per 15 minutes
+  Success 200: {
+    success: true,
+    data: {
+      accessToken: string (JWT, 15-min expiry, contains employeeId + role + locationId),
+      employee: { id: string, name: string, role: "staff"|"manager", locationId: string }
+    }
+  }
+  Set-Cookie: session=<token>; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=28800
+  Error 401: { success: false, error: { code: "INVALID_CREDENTIALS", message: "Invalid phone or PIN" } }
+  Error 429: { success: false, error: { code: "RATE_LIMITED", message: "...", retryAfter: 900 } }
+  Side effect: log auth event { type: "login", employeeId, timestamp, ip, userAgent }
+
+GET /api/compliance/auth/me
+  Request:  Cookie auto-attached (no body)
+  Success 200: {
+    success: true,
+    data: { accessToken: string (new JWT), employee: { id, name, role, locationId } }
+  }
+  Error 401: { success: false, error: { code: "SESSION_EXPIRED" } }
+
+POST /api/compliance/auth/logout
+  Request:  Cookie auto-attached (no body)
+  Success 200: { success: true }
+  Set-Cookie: session=; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=0
+  Side effect: invalidate session in DB, log auth event { type: "logout" }
 ```
-CORS: Allow-Origin romamart.ca, credentials: true
 
 ### Sprint 1 Dependencies (Logging)
+
 ```
-POST /api/log-entry        { location_id, employee_id, log_type, asset_id, data,
-                             gps_coords, signature_data } -> { success, entry }
-GET  /api/logs             ?location&type&from&to&limit -> { logs }
-GET  /api/assets           ?location -> { assets }
+POST /api/compliance/log-entry
+  Request: {
+    locationId: string,
+    employeeId: string,
+    logType: "temperature"|"food_safety"|"cleaning"|"receiving"|"temp_verification"|"pest"|"safety_incident",
+    data: <per-type validated object -- see schemas below>,
+    gpsCoords: { latitude: number, longitude: number, accuracy: number },
+    clientCreatedAt: string (ISO 8601 UTC),
+    idempotencyKey: string (UUID v4),
+    signatureData: { name: string, confirmed: boolean }
+  }
+  Success 201: { success: true, data: { id: string, serverReceivedAt: string } }
+  Error 409: { success: false, error: { code: "CONFLICT", message: "Entry already processed" } }
+  Error 422: { success: false, error: { code: "VALIDATION_ERROR", message: "...", field: "..." } }
+
+  Per-type data schemas (D26 -- backend validates, no generic blob):
+    temperature:        { assetId: string, reading: number, unit: "C", notes?: string }
+    food_safety:        { tasks: [{ id: string, label: string, completed: boolean }], notes?: string }
+    cleaning:           { tasks: [{ id: string, label: string, completed: boolean }], area?: string, notes?: string }
+    receiving:          { supplierName?: string, temperature?: number, condition: "good"|"damaged"|"reject", accepted: boolean, notes?: string }
+    temp_verification:  { assetId: string, irReading: number, displayReading: number, variance: number, pass: boolean, notes?: string }
+    pest:               { pestType: string, location: string, severity: string, actionTaken: string, followUpRequired: boolean, notes?: string }
+    safety_incident:    { incidentType: string, description: string, injuryOccurred: boolean, firstAidGiven: boolean, correctiveAction: string, authorityReported: boolean }
+
+GET /api/compliance/logs       ?location&type&from&to&limit -> { logs: [...] }
+GET /api/compliance/assets     ?location -> { assets: [...] }
 ```
-Log types: temperature, food_safety, cleaning, receiving, calibration, pest, safety_incident
 
 ### Sprint 2 Dependencies (Dashboard + Alerts)
+
 ```
-GET  /api/stats            ?location -> { temps_logged_today, cleaning_complete, ... }
-GET  /api/alerts           ?location&status -> { alerts }
-PATCH /api/alerts/:id/resolve  { resolution_notes } -> { success }
-POST /api/signoff          { location_id, date, manager_id, ... } -> { success }
-GET  /api/signoff-status   ?location&date -> { signed_off, signoff }
+GET  /api/compliance/stats             ?location -> { data: { tempsLoggedToday, cleaningComplete, ... } }
+GET  /api/compliance/alerts            ?location&status -> { data: { alerts: [...] } }
+PATCH /api/compliance/alerts/:id/resolve  { resolutionNotes } -> { success: true }      (manager only)
+POST /api/compliance/signoff           { locationId, date, managerId, ... } -> { success: true }  (manager only)
+GET  /api/compliance/signoff-status    ?location&date -> { data: { signedOff, signoff } }
 ```
-WebSocket: Socket.io rooms for `location:{id}` and `managers`
+
+WebSocket (when backend deploys custom server.js):
+Socket.io rooms for `location:{id}` and `managers`
 Events: `new_log_entry`, `alert`
 
 ### Sprint 3 Dependencies (Management)
+
 ```
-GET  /api/employees        ?location -> { employees }
-POST /api/employees        { name, phone, pin, role, ... } -> { success, employee }
-PATCH /api/employees/:id   { field updates } -> { success }
-POST /api/push-subscribe   { employee_id, subscription } -> { success }
-DELETE /api/push-unsubscribe { employee_id } -> { success }
+GET  /api/compliance/employees        ?location -> { data: { employees: [...] } }    (staff: own record; manager: all)
+POST /api/compliance/employees        { name, phone, pin, role, ... } -> { success: true, data: { employee } }   (manager only)
+PATCH /api/compliance/employees/:id   { field updates } -> { success: true }          (manager only)
+POST /api/compliance/push-subscribe   { employeeId, subscription } -> { success: true }
+DELETE /api/compliance/push-unsubscribe { employeeId } -> { success: true }
 ```
 
-### Sprint 5 Dependencies (Export + SMS)
+### Sprint 5 Dependencies (Export)
+
 ```
-GET  /api/logs/export      ?location&from&to&format=pdfa -> PDF/A binary
+GET /api/compliance/logs/export       ?location&from&to&format=pdfa -> PDF/A binary
 ```
 SMS: Twilio integration for critical alerts (>10C for >1hr, pest sighting, safety incident)
+
+### CORS + Cookie Configuration
+
+Backend MUST configure these headers on all `/api/compliance/*` responses:
+
+```
+Access-Control-Allow-Origin: <exact origin from allowlist>
+Access-Control-Allow-Methods: GET, POST, PATCH, DELETE, OPTIONS
+Access-Control-Allow-Headers: Content-Type, Authorization
+Access-Control-Allow-Credentials: true
+Access-Control-Max-Age: 86400
+```
+
+**Origin allowlist:**
+- Production: `https://romamart.ca`
+- Staging: `https://roma-mart.github.io`
+- Development: `http://localhost:5173`
+
+Backend must validate `Origin` header against allowlist and respond with matching origin.
+Must NOT echo arbitrary origins. Must NOT use wildcard (`*`) -- incompatible with `credentials: true`.
+
+**Cookie requirements:**
+- `session=<token>; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=28800`
+- HttpOnly: JS cannot read (HSC-02)
+- Secure: HTTPS only (required for SameSite=None)
+- SameSite=None: required for cross-origin cookie attachment
+- Max-Age=28800: 8 hours (one shift)
+- Domain: backend domain (NOT frontend domain)
+
+**Preflight:** Backend must respond to `OPTIONS` on all `/api/compliance/*` with CORS headers and `204 No Content`.
+
+**Safari ITP warning:** Intelligent Tracking Prevention may classify the backend as a
+"tracker" and block cookies. Monitor during Sprint 4 testing. Fallback options:
+(a) Storage Access API, (b) same-origin deployment (frontend on backend subdomain).
 
 ---
 
@@ -913,10 +1344,10 @@ src/services/          (may already exist partially)
 ### Modified files (existing)
 - `src/App.jsx` -- add /internal/* route matching + lazy imports
 - `src/main.jsx` -- add AuthProvider to provider chain
-- `src/index.css` -- add internal status color variables
+- `src/index.css` -- add internal status color variables (namespaced --internal-*)
 - `src/design/tokens.js` -- add compliance status tokens
 - `src/config/navigation.js` -- add internal nav items (hidden from public nav)
-- `public/sw.js` -- add /internal/* network-first caching (Sprint 4)
+- `public/sw.js` -- add /internal/* cache exclusion (Sprint 0, HSC-10)
 - `package.json` -- add `idb` dependency
 
 ### New files -- Sprint 0 (~8 files)
@@ -926,7 +1357,7 @@ src/services/          (may already exist partially)
 - `src/services/mockApi.js`
 - `src/services/submitQueue.js`
 - `src/pages/internal/LoginPage.jsx`
-- `src/pages/internal/InternalLayout.jsx` (shared nav/layout for internal pages)
+- `src/pages/internal/InternalLayout.jsx`
 
 ### New files -- Sprint 1 (~13 files)
 - `src/components/internal/SignatureBlock.jsx`
