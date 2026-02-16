@@ -2,23 +2,25 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Home, ExternalLink } from 'lucide-react';
 import Button from './Button';
-import COMPANY_DATA from '../config/company_data';
+import { useCompanyData } from '../contexts/CompanyDataContext';
 import { Logo } from './Logo';
 import { NAVIGATION_LINKS } from '../config/navigation';
 import { useFocusTrap } from '../hooks/useFocusTrap';
 
 export default function Navbar({ currentPage = 'home' }) {
+  const { companyData } = useCompanyData();
   const [wcoActive, setWcoActive] = useState(false);
-    // Window Controls Overlay detection
-    useEffect(() => {
-      if ('windowControlsOverlay' in navigator) {
-        const updateWco = () => setWcoActive(navigator.windowControlsOverlay.visible);
-        navigator.windowControlsOverlay.addEventListener('geometrychange', updateWco);
-        updateWco();
-        return () => navigator.windowControlsOverlay.removeEventListener('geometrychange', updateWco);
-      }
-    }, []);
-  const BASE_URL = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
+  // Window Controls Overlay detection
+  useEffect(() => {
+    if ('windowControlsOverlay' in navigator) {
+      const updateWco = () => setWcoActive(navigator.windowControlsOverlay.visible);
+      navigator.windowControlsOverlay.addEventListener('geometrychange', updateWco);
+      updateWco();
+      return () => navigator.windowControlsOverlay.removeEventListener('geometrychange', updateWco);
+    }
+  }, []);
+  const BASE_URL =
+    typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isHomePage, setIsHomePage] = useState(currentPage === 'home');
@@ -103,12 +105,12 @@ export default function Navbar({ currentPage = 'home' }) {
       window.dataLayer.push({
         event: 'order_cta_click',
         cta_location: location,
-        cta_text: 'Order Online'
+        cta_text: 'Order Online',
       });
     }
   }, []);
 
-  const toggleMenu = useCallback(() => setIsOpen(prev => !prev), []);
+  const toggleMenu = useCallback(() => setIsOpen((prev) => !prev), []);
   const handleMenuClose = useCallback(() => setIsOpen(false), []);
   const handleOrderClick = useCallback(() => trackOrderClick('header_mobile'), [trackOrderClick]);
   const mobileMenuRef = useRef(null);
@@ -123,7 +125,15 @@ export default function Navbar({ currentPage = 'home' }) {
   return (
     <nav
       className={`fixed w-full z-50 transition-all duration-300 ${wcoActive ? 'navbar-wco' : ''} ${scrolled ? 'shadow-md py-2' : 'py-4'}`}
-      style={{ backgroundColor: isOpen ? (isHomePage && !scrolled ? 'var(--color-primary)' : 'var(--color-bg)') : (scrolled ? 'var(--color-bg)' : 'transparent') }}
+      style={{
+        backgroundColor: isOpen
+          ? isHomePage && !scrolled
+            ? 'var(--color-primary)'
+            : 'var(--color-bg)'
+          : scrolled
+            ? 'var(--color-bg)'
+            : 'transparent',
+      }}
       data-wco={wcoActive ? 'active' : undefined}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -141,10 +151,12 @@ export default function Navbar({ currentPage = 'home' }) {
                 size={40}
                 layout="vertical"
                 variant={
-                  (colorScheme === 'dark' || highContrast)
+                  colorScheme === 'dark' || highContrast
                     ? 'white'
                     : isHomePage
-                      ? (scrolled ? 'brand' : 'white')
+                      ? scrolled
+                        ? 'brand'
+                        : 'white'
                       : 'brand'
                 }
               />
@@ -155,10 +167,12 @@ export default function Navbar({ currentPage = 'home' }) {
                 size={40}
                 layout="horizontal"
                 variant={
-                  (colorScheme === 'dark' || highContrast)
+                  colorScheme === 'dark' || highContrast
                     ? 'white'
                     : isHomePage
-                      ? (scrolled ? 'brand' : 'white')
+                      ? scrolled
+                        ? 'brand'
+                        : 'white'
                       : 'brand'
                 }
               />
@@ -180,13 +194,26 @@ export default function Navbar({ currentPage = 'home' }) {
                 <Home size={20} />
               </a>
             )}
-            {NAVIGATION_LINKS.filter(link => link.showIn.navbar && link.href !== '/').map(link => (
+            {NAVIGATION_LINKS.filter((link) => link.showIn.navbar && link.href !== '/').map((link) => (
               <a
                 key={link.href}
-                href={isHomePage && link.href.startsWith('/') ? `${BASE_URL}#${link.href.replace('/', '')}` : `${BASE_URL}${link.href.replace('/', '')}`}
-                onClick={e => handleNavClick(e, link.href !== '/' ? link.href.replace('/', '') : null, `${BASE_URL}${link.href.replace('/', '')}`)}
+                href={
+                  isHomePage && link.href.startsWith('/')
+                    ? `${BASE_URL}#${link.href.replace('/', '')}`
+                    : `${BASE_URL}${link.href.replace('/', '')}`
+                }
+                onClick={(e) =>
+                  handleNavClick(
+                    e,
+                    link.href !== '/' ? link.href.replace('/', '') : null,
+                    `${BASE_URL}${link.href.replace('/', '')}`
+                  )
+                }
                 className="font-inter font-medium transition-opacity no-drag hover:opacity-80 focus-visible:opacity-80"
-                style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-text)', WebkitTapHighlightColor: 'transparent' }}
+                style={{
+                  color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-text)',
+                  WebkitTapHighlightColor: 'transparent',
+                }}
                 aria-label={link.ariaLabel || link.label}
                 title={link.label}
               >
@@ -196,7 +223,7 @@ export default function Navbar({ currentPage = 'home' }) {
             <Button
               variant="order"
               size="sm"
-              href={COMPANY_DATA.onlineStoreUrl}
+              href={companyData.onlineStoreUrl}
               target="_blank"
               rel="noopener noreferrer"
               icon={<ExternalLink size={14} />}
@@ -215,7 +242,7 @@ export default function Navbar({ currentPage = 'home' }) {
             type="button"
             ref={hamburgerRef}
             onClick={toggleMenu}
-            onKeyDown={e => {
+            onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
                 toggleMenu();
@@ -223,7 +250,7 @@ export default function Navbar({ currentPage = 'home' }) {
             }}
             className={`md:hidden p-2 min-w-[44px] min-h-[44px] rounded-md no-drag focus-visible:ring-2 focus-visible:ring-accent${isOpen ? ' invisible' : ''}`}
             style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-heading)' }}
-            aria-label={isOpen ? "Close menu" : "Open menu"}
+            aria-label={isOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={isOpen}
           >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
@@ -240,7 +267,11 @@ export default function Navbar({ currentPage = 'home' }) {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             className="md:hidden border-t absolute w-full shadow-2xl"
-            style={{ backgroundColor: isHomePage && !scrolled ? 'var(--color-primary)' : 'var(--color-bg)', borderColor: 'var(--color-surface)', paddingTop: 0 }}
+            style={{
+              backgroundColor: isHomePage && !scrolled ? 'var(--color-primary)' : 'var(--color-bg)',
+              borderColor: 'var(--color-surface)',
+              paddingTop: 0,
+            }}
             role="dialog"
             aria-modal="true"
             aria-label="Mobile navigation menu"
@@ -250,7 +281,12 @@ export default function Navbar({ currentPage = 'home' }) {
               type="button"
               onClick={handleMenuClose}
               className="absolute p-2 rounded-md md:hidden focus-visible:ring-2 focus-visible:ring-accent min-w-[44px] min-h-[44px] flex items-center justify-center"
-              style={{ top: 16, right: 16, zIndex: 10, color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-heading)' }}
+              style={{
+                top: 16,
+                right: 16,
+                zIndex: 10,
+                color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-heading)',
+              }}
               aria-label="Close menu"
             >
               <X size={24} />
@@ -261,10 +297,12 @@ export default function Navbar({ currentPage = 'home' }) {
                 size={40}
                 layout="horizontal"
                 variant={
-                  (colorScheme === 'dark' || highContrast)
+                  colorScheme === 'dark' || highContrast
                     ? 'white'
                     : isHomePage
-                      ? (scrolled ? 'brand' : 'white')
+                      ? scrolled
+                        ? 'brand'
+                        : 'white'
                       : 'brand'
                 }
                 style={{ maxWidth: 120, height: 'auto' }}
@@ -285,19 +323,33 @@ export default function Navbar({ currentPage = 'home' }) {
                   <Home size={20} />
                 </a>
               )}
-              {NAVIGATION_LINKS.filter(link => link.showIn.navbar && link.href !== '/').map(link => (
+              {NAVIGATION_LINKS.filter((link) => link.showIn.navbar && link.href !== '/').map((link) => (
                 <a
                   key={link.href}
-                  href={isHomePage && link.href.startsWith('/') ? `${BASE_URL}#${link.href.replace('/', '')}` : `${BASE_URL}${link.href.replace('/', '')}`}
-                  onClick={e => { handleNavClick(e, link.href !== '/' ? link.href.replace('/', '') : null, `${BASE_URL}${link.href.replace('/', '')}`); handleMenuClose(); }}
-                  onKeyDown={e => {
+                  href={
+                    isHomePage && link.href.startsWith('/')
+                      ? `${BASE_URL}#${link.href.replace('/', '')}`
+                      : `${BASE_URL}${link.href.replace('/', '')}`
+                  }
+                  onClick={(e) => {
+                    handleNavClick(
+                      e,
+                      link.href !== '/' ? link.href.replace('/', '') : null,
+                      `${BASE_URL}${link.href.replace('/', '')}`
+                    );
+                    handleMenuClose();
+                  }}
+                  onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
                       e.preventDefault();
                       handleMenuClose();
                     }
                   }}
                   className="block px-3 py-4 text-lg font-bold text-heading uppercase border-b"
-                  style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-heading)', borderColor: 'var(--color-surface)' }}
+                  style={{
+                    color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-heading)',
+                    borderColor: 'var(--color-surface)',
+                  }}
                   aria-label={link.ariaLabel || link.label}
                   title={link.label}
                 >
@@ -305,11 +357,11 @@ export default function Navbar({ currentPage = 'home' }) {
                 </a>
               ))}
               <a
-                href={COMPANY_DATA.onlineStoreUrl}
+                href={companyData.onlineStoreUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={handleOrderClick}
-                onKeyDown={e => {
+                onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
                     handleOrderClick();

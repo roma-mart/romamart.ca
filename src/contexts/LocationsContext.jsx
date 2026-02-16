@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { LOCATIONS } from '../data/locations';
+import { normalizeLocation } from '../utils/normalize';
 
 /**
  * LocationsContext - Single source of truth for locations data and selection
@@ -80,9 +81,9 @@ export function LocationsProvider({ children }) {
           return;
         }
 
-        // API success - use API data
+        // API success - use API data (normalized)
         if (!cancelled) {
-          setLocations(data.locations);
+          setLocations(data.locations.map((loc) => normalizeLocation(loc, 'api')));
           setSource('api');
           setError('');
         }

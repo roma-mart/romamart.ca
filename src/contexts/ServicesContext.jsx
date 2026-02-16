@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { SERVICES } from '../data/services';
+import { normalizeService } from '../utils/normalize';
 
 /**
  * ServicesContext - Single source of truth for services data
@@ -57,9 +58,9 @@ export function ServicesProvider({ children }) {
           return;
         }
 
-        // API success - use API data
+        // API success - use API data (normalized)
         if (!cancelled) {
-          setServices(data.services);
+          setServices(data.services.map((s) => normalizeService(s, 'api')));
           setSource('api');
           setError('');
         }

@@ -8,7 +8,7 @@ import StandardizedItem from '../components/StandardizedItem';
 import { useLocationAware } from '../hooks/useLocationContext';
 import { ROCAFE_FULL_MENU, ALLERGEN_WARNING } from '../data/rocafe-menu';
 import { useMenu } from '../contexts/MenuContext';
-import { groupExcelItemsByCategory } from '../utils/excelMenuTransform';
+import { groupMenuItemsByCategory } from '../utils/menuCategoryMap';
 import StructuredData from '../components/StructuredData';
 import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 
@@ -32,7 +32,7 @@ const RoCafePage = () => {
     // Location stored and available for StandardizedItem availability states
   });
   const menuCategories = useMemo(() => {
-    return groupExcelItemsByCategory(menuItems);
+    return groupMenuItemsByCategory(menuItems);
   }, [menuItems]);
 
   // No fallback for schemas - API-only (ensures accuracy)

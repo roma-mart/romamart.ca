@@ -20,12 +20,12 @@ export function getServiceStatusAtLocation(serviceId, location, servicesData) {
   const override = location.serviceOverrides?.[serviceId];
   if (override) return { ...override };
   // Fallback to global service data
-  const service = servicesData.find(s => s.id === serviceId);
+  const service = servicesData.find((s) => s.id === serviceId);
   if (!service) return { status: 'unavailable' };
   return {
     status: service.status,
     availableAt: service.availableAt,
-    availability: service.availability
+    availability: service.availability,
   };
 }
 
@@ -42,36 +42,49 @@ export function getMenuItemStatusAtLocation(menuItemId, location, menuData, menu
   // If not, skip this check
   const override = location.menuOverrides?.[menuItemId];
   if (override) return { ...override };
-  
+
   // Use provided menuItem or look it up in menuData
-  const item = menuItem || (menuData && menuData.find(i => i.id === menuItemId));
+  const item = menuItem || (menuData && menuData.find((i) => i.id === menuItemId));
   if (!item) return { status: 'unavailable' };
-  
-  // Check if item has locations array from API (for items loaded from public-menu API)
-  // Map location.shortName to API's locations[].name field
-  if (Array.isArray(item.locations) && item.locations.length > 0) {
-    const isAvailableAtLocation = item.locations.some(apiLocation => {
-      // API location can be a string (location name) or object with name property
-      const locationName = typeof apiLocation === 'string' ? apiLocation : apiLocation.name;
-      return locationName === location.shortName;
-    });
-    
+
+  // Check availableAt first — works for both new API and static data.
+  // After normalization, items have availableAt as an array of location IDs.
+  if (Array.isArray(item.availableAt) && item.availableAt.length > 0) {
+    const isAvailableAtLocation = item.availableAt.includes(location.id);
     if (isAvailableAtLocation) {
       return {
         status: item.status || 'available',
-        availableAt: [location.id],
-        availability: item.availability || 'store_hours'
+        availableAt: item.availableAt,
+        availability: item.availability || 'store_hours',
       };
     } else {
       return { status: 'unavailable' };
     }
   }
-  
-  // Fallback to legacy availableAt check for static menu items
+
+  // Legacy: Check old API locations array (shortName matching) — kept as fallback
+  if (Array.isArray(item.locations) && item.locations.length > 0) {
+    const isAvailableAtLocation = item.locations.some((apiLocation) => {
+      const locationName = typeof apiLocation === 'string' ? apiLocation : apiLocation.name;
+      return locationName === location.shortName;
+    });
+
+    if (isAvailableAtLocation) {
+      return {
+        status: item.status || 'available',
+        availableAt: [location.id],
+        availability: item.availability || 'store_hours',
+      };
+    } else {
+      return { status: 'unavailable' };
+    }
+  }
+
+  // No location data — return item's own status
   return {
     status: item.status,
     availableAt: item.availableAt,
-    availability: item.availability
+    availability: item.availability,
   };
 }
 

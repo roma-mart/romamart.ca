@@ -43,8 +43,46 @@ describe('MenuContext', () => {
       expect(result.current.loading).toBe(false);
     });
 
-    expect(result.current.menuItems).toEqual(mockMenu);
+    // Items are normalized — check they exist and have expected names
+    expect(result.current.menuItems).toHaveLength(2);
+    expect(result.current.menuItems[0].name).toBe('Latte');
     expect(result.current.error).toBe('');
+  });
+
+  it('should normalize API menu items with cents prices to dollars', async () => {
+    const mockMenu = [
+      {
+        id: 'cof-latte-001',
+        name: 'Latte',
+        featured: true,
+        category: 'Hot Coffee',
+        sizes: [
+          { name: 'Medium', price: 449 },
+          { name: 'Large', price: 549 },
+        ],
+        addOns: [{ id: 1, name: 'Extra Shot', price: 100 }],
+        availableAt: ['loc-wellington-001'],
+      },
+    ];
+    global.fetch = vi.fn(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({ menu: mockMenu }),
+      })
+    );
+
+    const { result } = renderHook(() => useMenu(), { wrapper });
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+
+    // Prices should be converted from cents to dollars
+    expect(result.current.menuItems[0].sizes[0].price).toBe(4.49);
+    expect(result.current.menuItems[0].sizes[1].price).toBe(5.49);
+    expect(result.current.menuItems[0].addOns[0].price).toBe(1.0);
+    // availableAt should be preserved
+    expect(result.current.menuItems[0].availableAt).toEqual(['loc-wellington-001']);
   });
 
   it('should set error on non-ok response', async () => {
@@ -116,9 +154,7 @@ describe('MenuContext', () => {
   it('should throw when useMenu is used outside MenuProvider', () => {
     // Suppress React error boundary console noise
     const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    expect(() => renderHook(() => useMenu())).toThrow(
-      'useMenu must be used within MenuProvider'
-    );
+    expect(() => renderHook(() => useMenu())).toThrow('useMenu must be used within MenuProvider');
     spy.mockRestore();
   });
 

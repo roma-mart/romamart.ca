@@ -6,6 +6,7 @@ import CopyButton from '../components/CopyButton';
 import Button from '../components/Button';
 import { formatDistance, getPreferredLocations } from '../data/locations';
 import { useLocations } from '../contexts/LocationsContext';
+import { useServices } from '../contexts/ServicesContext';
 import ImageCarousel from '../components/ImageCarousel';
 import LiveHoursDisplay from '../components/LiveHoursDisplay';
 import { useAutoLocation } from '../hooks/useAutoLocation';
@@ -35,6 +36,8 @@ const getLocationImages = (photos, locationName) => {
 const LocationsPage = () => {
   // Fetch locations from API with fallback to static data
   const { locations: allLocations } = useLocations();
+  // Fetch services for cross-referencing service names
+  const { services: allServices } = useServices();
 
   // Filter to only active locations (status === 'open')
   const activeLocations = allLocations.filter((loc) => loc.status === 'open');
@@ -79,7 +82,10 @@ const LocationsPage = () => {
     hours: loc.hours,
     isOpen: loc.status === 'open',
     mapUrl: loc.google.embedUrl,
-    features: loc.services.map((s) => s.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())),
+    features: loc.services.map((serviceId) => {
+      const svc = allServices.find((s) => s.id === serviceId);
+      return svc?.name || serviceId.replace(/[-_]/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+    }),
     distanceText: Number.isFinite(loc.distance) ? formatDistance(loc.distance) : null,
   }));
 

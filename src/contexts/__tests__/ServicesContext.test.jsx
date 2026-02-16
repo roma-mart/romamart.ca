@@ -53,15 +53,45 @@ describe('ServicesContext', () => {
       expect(result.current.loading).toBe(false);
     });
 
-    expect(result.current.services).toEqual(apiServices);
+    // Normalized services should have availableAt and features arrays
+    expect(result.current.services).toHaveLength(2);
+    expect(result.current.services[0].id).toBe('api-1');
+    expect(result.current.services[0].availableAt).toEqual([]);
+    expect(result.current.services[0].features).toEqual([]);
     expect(result.current.source).toBe('api');
     expect(result.current.error).toBe('');
   });
 
-  it('should fall back to static data on non-ok response', async () => {
+  it('should normalize API services with availableAt and features', async () => {
+    const apiServices = [
+      {
+        id: 'svc-atm-001',
+        name: 'ATM',
+        category: 'financial_services',
+        availableAt: ['loc-wellington-001'],
+        features: ['Cash withdrawal', 'Balance check'],
+      },
+    ];
     global.fetch = vi.fn(() =>
-      Promise.resolve({ ok: false, status: 500 })
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({ success: true, services: apiServices }),
+      })
     );
+
+    const { result } = renderHook(() => useServices(), { wrapper });
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+
+    expect(result.current.services[0].availableAt).toEqual(['loc-wellington-001']);
+    expect(result.current.services[0].features).toEqual(['Cash withdrawal', 'Balance check']);
+    expect(result.current.services[0].category).toBe('financial_services');
+  });
+
+  it('should fall back to static data on non-ok response', async () => {
+    global.fetch = vi.fn(() => Promise.resolve({ ok: false, status: 500 }));
 
     const { result } = renderHook(() => useServices(), { wrapper });
 
@@ -114,9 +144,7 @@ describe('ServicesContext', () => {
 
   it('should throw when useServices is used outside ServicesProvider', () => {
     const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    expect(() => renderHook(() => useServices())).toThrow(
-      'useServices must be used within ServicesProvider'
-    );
+    expect(() => renderHook(() => useServices())).toThrow('useServices must be used within ServicesProvider');
     spy.mockRestore();
   });
 });

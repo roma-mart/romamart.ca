@@ -20,7 +20,6 @@ import Clock from 'lucide-react/dist/esm/icons/clock.js';
 import { useMenu } from './contexts/MenuContext';
 import { useServices } from './contexts/ServicesContext';
 import { useLocations } from './contexts/LocationsContext';
-import { transformExcelToMenuItem } from './utils/excelMenuTransform';
 import ContactForm from './components/ContactForm';
 import StructuredData from './components/StructuredData';
 import { useAutoLocation } from './hooks/useAutoLocation';
@@ -205,10 +204,8 @@ const RoCafeSection = ({ menuItems, loading }) => {
       return ROCAFE_FEATURED;
     }
 
-    // Filter API items for featured=true and transform to StandardizedItem format
-    const apiFeaturedItems = menuItems
-      .filter((item) => item.featured)
-      .map((item, index) => transformExcelToMenuItem(item, index));
+    // Filter API items for featured=true (already normalized by MenuContext)
+    const apiFeaturedItems = menuItems.filter((item) => item.featured);
 
     // Use API items if available, otherwise fallback to static
     return apiFeaturedItems.length > 0 ? apiFeaturedItems : ROCAFE_FEATURED;

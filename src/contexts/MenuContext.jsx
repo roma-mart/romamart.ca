@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { normalizeMenuItem } from '../utils/normalize';
 
 /**
  * MenuContext - Single source of truth for menu data
@@ -34,7 +35,7 @@ export function MenuProvider({ children }) {
       if (!res.ok) throw new Error('Failed to fetch menu data');
       const data = await res.json();
 
-      const menu = data.menu || [];
+      const menu = (data.menu || []).map((item) => normalizeMenuItem(item, 'api'));
       const featuredCount = menu.filter((item) => item.featured).length;
 
       if (import.meta.env.DEV) {

@@ -26,22 +26,7 @@ npm run test:ui
 
 ## Test Structure
 
-### useExcelMenu.test.jsx
-
-Tests for the `useExcelMenu` hook that fetches and parses Excel menu data.
-
-**Test Coverage:**
-- ✅ Successfully fetches and parses Excel data
-- ✅ Handles fetch errors gracefully (404, network errors)
-- ✅ Cleanup on unmount to prevent memory leaks
-- ✅ Re-fetches when path changes
-- ✅ Validates menu item structure
-
-**Key Features:**
-- Mocks `fetch` API for predictable testing
-- Creates Excel data in memory using XLSX library
-- Tests async behavior with proper waiting
-- Verifies error handling and loading states
+Tests for custom hooks follow the patterns described below.
 
 ## Writing New Tests
 

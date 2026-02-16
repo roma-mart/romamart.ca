@@ -9,7 +9,7 @@ import Button from './Button';
 import HCaptchaWidget from './HCaptchaWidget';
 import { useToast } from './ToastContainer';
 import { useColorScheme } from '../hooks/useColorScheme';
-import COMPANY_DATA from '../config/company_data';
+import { useCompanyData } from '../contexts/CompanyDataContext';
 
 const ContactForm = ({
   formSubject = 'New Contact Form Submission from romamart.ca',
@@ -22,7 +22,8 @@ const ContactForm = ({
   const captchaRef = useRef(null);
   const { showSuccess, showError } = useToast();
   const colorScheme = useColorScheme();
-  const formAccessKey = COMPANY_DATA.contact.web3FormsAccessKey || '';
+  const { companyData } = useCompanyData();
+  const formAccessKey = companyData.contact.web3FormsAccessKey || '';
 
   const handleCaptchaExpire = useCallback(() => {
     setCaptchaToken('');
@@ -33,66 +34,69 @@ const ContactForm = ({
     showError('Captcha failed to load. Please try again.');
   }, [showError]);
 
-  const handleSubmit = useCallback(async (e) => {
-    e.preventDefault();
-    if (submitting) return;
+  const handleSubmit = useCallback(
+    async (e) => {
+      e.preventDefault();
+      if (submitting) return;
 
-    const form = e.target;
-    const name = form.elements.name?.value?.trim();
-    const email = form.elements.email?.value?.trim();
-    const message = form.elements.message?.value?.trim();
+      const form = e.target;
+      const name = form.elements.name?.value?.trim();
+      const email = form.elements.email?.value?.trim();
+      const message = form.elements.message?.value?.trim();
 
-    const errors = {};
-    if (!name) errors.name = 'Name is required.';
-    if (!email) {
-      errors.email = 'Email is required.';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      errors.email = 'Please enter a valid email address (e.g., name@example.com).';
-    }
-    if (!message) errors.message = 'Message is required.';
-
-    if (Object.keys(errors).length > 0) {
-      setFieldErrors(errors);
-      return;
-    }
-    setFieldErrors({});
-
-    if (!captchaToken) {
-      showError('Please complete the captcha.');
-      return;
-    }
-
-    setSubmitting(true);
-    const formData = new FormData(form);
-    formData.set('h-captcha-response', captchaToken);
-
-    try {
-      const response = await fetch('https://api.web3forms.com/submit', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        showSuccess('Message sent successfully!');
-        setFieldErrors({});
-        form.reset();
-        window.dataLayer?.push({
-          event: 'contact_form_submit',
-          form_location: idPrefix,
-        });
-      } else {
-        showError(data.message || 'Failed to send message. Please try again.');
+      const errors = {};
+      if (!name) errors.name = 'Name is required.';
+      if (!email) {
+        errors.email = 'Email is required.';
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        errors.email = 'Please enter a valid email address (e.g., name@example.com).';
       }
-    } catch {
-      showError('Failed to send message. Please try again.');
-    } finally {
-      setCaptchaToken('');
-      captchaRef.current?.resetCaptcha();
-      setSubmitting(false);
-    }
-  }, [captchaToken, submitting, showSuccess, showError, idPrefix]);
+      if (!message) errors.message = 'Message is required.';
+
+      if (Object.keys(errors).length > 0) {
+        setFieldErrors(errors);
+        return;
+      }
+      setFieldErrors({});
+
+      if (!captchaToken) {
+        showError('Please complete the captcha.');
+        return;
+      }
+
+      setSubmitting(true);
+      const formData = new FormData(form);
+      formData.set('h-captcha-response', captchaToken);
+
+      try {
+        const response = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          showSuccess('Message sent successfully!');
+          setFieldErrors({});
+          form.reset();
+          window.dataLayer?.push({
+            event: 'contact_form_submit',
+            form_location: idPrefix,
+          });
+        } else {
+          showError(data.message || 'Failed to send message. Please try again.');
+        }
+      } catch {
+        showError('Failed to send message. Please try again.');
+      } finally {
+        setCaptchaToken('');
+        captchaRef.current?.resetCaptcha();
+        setSubmitting(false);
+      }
+    },
+    [captchaToken, submitting, showSuccess, showError, idPrefix]
+  );
 
   const inputStyle = (hasError) => ({
     backgroundColor: 'var(--color-surface)',
@@ -107,7 +111,11 @@ const ContactForm = ({
       <input type="hidden" name="from_name" value="Roma Mart Website" />
 
       <div>
-        <label htmlFor={`${idPrefix}-name`} className="block font-inter font-semibold mb-2" style={{ color: 'var(--color-text)' }}>
+        <label
+          htmlFor={`${idPrefix}-name`}
+          className="block font-inter font-semibold mb-2"
+          style={{ color: 'var(--color-text)' }}
+        >
           Name *
         </label>
         <input
@@ -130,7 +138,11 @@ const ContactForm = ({
       </div>
 
       <div>
-        <label htmlFor={`${idPrefix}-email`} className="block font-inter font-semibold mb-2" style={{ color: 'var(--color-text)' }}>
+        <label
+          htmlFor={`${idPrefix}-email`}
+          className="block font-inter font-semibold mb-2"
+          style={{ color: 'var(--color-text)' }}
+        >
           Email *
         </label>
         <input
@@ -153,7 +165,11 @@ const ContactForm = ({
       </div>
 
       <div>
-        <label htmlFor={`${idPrefix}-phone`} className="block font-inter font-semibold mb-2" style={{ color: 'var(--color-text)' }}>
+        <label
+          htmlFor={`${idPrefix}-phone`}
+          className="block font-inter font-semibold mb-2"
+          style={{ color: 'var(--color-text)' }}
+        >
           Phone
         </label>
         <input
@@ -168,7 +184,11 @@ const ContactForm = ({
       </div>
 
       <div>
-        <label htmlFor={`${idPrefix}-message`} className="block font-inter font-semibold mb-2" style={{ color: 'var(--color-text)' }}>
+        <label
+          htmlFor={`${idPrefix}-message`}
+          className="block font-inter font-semibold mb-2"
+          style={{ color: 'var(--color-text)' }}
+        >
           Message *
         </label>
         <textarea

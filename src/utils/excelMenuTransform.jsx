@@ -1,10 +1,11 @@
 /**
+ * @deprecated Use menuCategoryMap.jsx instead.
+ * This file is kept for backward compatibility with existing tests.
+ * No production code imports this module as of February 2026.
+ *
  * API Menu Transformation Utilities
  * Converts API menu data to StandardizedItem-compatible format
- * 
- * Used by:
- * - pages/RoCafePage.jsx
- * 
+ *
  * @since December 15, 2025
  */
 
@@ -20,79 +21,77 @@ export const EXCEL_CATEGORY_MAP = {
   'RoCafe Hot Coffee': {
     icon: <Coffee size={24} />,
     name: 'Hot Coffee',
-    description: 'Freshly brewed coffee made to perfection'
+    description: 'Freshly brewed coffee made to perfection',
   },
   'RoCafe Iced Coffee': {
     icon: <Coffee size={24} />,
     name: 'Iced Coffee',
-    description: 'Refreshing cold coffee beverages'
+    description: 'Refreshing cold coffee beverages',
   },
   'RoCafe Tea': {
     icon: <Wine size={24} />, // Wine glass icon used for tea/beverage consistency with bubble tea
     name: 'Tea & Matcha',
-    description: 'Premium tea selections and matcha lattes'
+    description: 'Premium tea selections and matcha lattes',
   },
   'RoCafe Fresh Juice': {
     icon: <IceCream size={24} />,
     name: 'Fresh Juice',
-    description: 'Healthy fruit beverages made fresh'
+    description: 'Healthy fruit beverages made fresh',
   },
   'RoCafe Smoothies': {
     icon: <IceCream size={24} />,
     name: 'Smoothies',
-    description: 'Blended fruit smoothies with fresh ingredients'
+    description: 'Blended fruit smoothies with fresh ingredients',
   },
   'RoCafe Frappe': {
     icon: <Sparkles size={24} />,
     name: 'Frappés',
-    description: 'Blended iced coffee drinks'
+    description: 'Blended iced coffee drinks',
   },
   'RoCafe Food': {
     icon: <UtensilsCrossed size={24} />,
     name: 'Food',
-    description: 'Fresh food options and snacks'
+    description: 'Fresh food options and snacks',
   },
   'RoCafe Ready2Eat': {
     icon: <Beef size={24} />,
     name: 'Ready to Eat',
-    description: 'Pre-prepared meals ready to enjoy'
-  }
+    description: 'Pre-prepared meals ready to enjoy',
+  },
 };
 
 /**
  * Transform API menu item to StandardizedItem format
  * Converts API fields to menu item object compatible with StandardizedItem component
- * 
+ *
  * API format:
  * {
  *   id, name, tagline, description, badge, featured, calories,
  *   categories: ["RoCafe Iced Coffee"],
  *   sizes: [{ name: "S", size: "12 oz", price: 599 }]
  * }
- * 
+ *
  * @param {Object} apiItem - Menu item from API
  * @param {number} index - Item index (for fallback IDs)
  * @returns {Object} Menu item in StandardizedItem format
  */
 export const transformExcelToMenuItem = (apiItem, index) => {
   // Extract category from categories array (use first category)
-  const category = Array.isArray(apiItem.categories) && apiItem.categories.length > 0
-    ? apiItem.categories[0]
-    : 'Other';
-  
+  const category = Array.isArray(apiItem.categories) && apiItem.categories.length > 0 ? apiItem.categories[0] : 'Other';
+
   // Convert sizes array - prices are in cents, convert to dollars
   const sizes = Array.isArray(apiItem.sizes)
-    ? apiItem.sizes.map(size => ({
+    ? apiItem.sizes.map((size) => ({
         name: size.name || size.size,
         size: size.size,
         price: (size.price || 0) / 100, // Convert cents to dollars
-        calories: size.calories || null
+        calories: size.calories || null,
       }))
     : [];
-  
+
   // Sort sizes to ensure S, M, L order
   const sortedSizes = sortSizes(sizes);
-  
+
   return {
     id: apiItem.id ? `api-${apiItem.id}` : `item-${index}`,
     name: apiItem.name || 'Unnamed Item',
@@ -117,14 +116,14 @@ export const transformExcelToMenuItem = (apiItem, index) => {
     // Preserve API locations array for availability mapping
     locations: apiItem.locations || [],
     status: 'available', // Default status for API items
-    itemType: 'menu' // Mark as menu item for StandardizedItem
+    itemType: 'menu', // Mark as menu item for StandardizedItem
   };
 };
 
 /**
  * Group menu items by category
  * Returns array of category objects with items
- * 
+ *
  * @param {Array} menuItems - Array of menu item objects from API
  * @returns {Array} Array of category objects
  */
@@ -132,39 +131,39 @@ export const groupExcelItemsByCategory = (menuItems) => {
   if (!Array.isArray(menuItems) || menuItems.length === 0) {
     return [];
   }
-  
+
   // Transform API items to StandardizedItem format
   const transformedItems = menuItems.map((item, index) => transformExcelToMenuItem(item, index));
-  
+
   // Group by category
   const categoryMap = {};
-  
-  transformedItems.forEach(item => {
+
+  transformedItems.forEach((item) => {
     const category = item.category || 'Other';
     if (!categoryMap[category]) {
       categoryMap[category] = [];
     }
     categoryMap[category].push(item);
   });
-  
+
   // Convert to array format with metadata
   const categories = Object.entries(categoryMap).map(([categoryKey, items]) => {
     const metadata = EXCEL_CATEGORY_MAP[categoryKey] || {
       icon: UtensilsCrossed,
       name: categoryKey,
-      description: `${categoryKey} items`
+      description: `${categoryKey} items`,
     };
-    
+
     return {
       id: categoryKey.toLowerCase().replace(/\s+/g, '-'),
       name: metadata.name,
-      icon: typeof metadata.icon === "function" ? React.createElement(metadata.icon, { size: 24 }) : metadata.icon,
+      icon: typeof metadata.icon === 'function' ? React.createElement(metadata.icon, { size: 24 }) : metadata.icon,
       description: metadata.description,
       items: items,
-      _excelCategory: categoryKey
+      _excelCategory: categoryKey,
     };
   });
-  
+
   // Sort categories by custom order if needed
   const categoryOrder = [
     'RoCafe Hot Coffee',
@@ -174,13 +173,13 @@ export const groupExcelItemsByCategory = (menuItems) => {
     'RoCafe Fresh Juice',
     'RoCafe Smoothies',
     'RoCafe Food',
-    'RoCafe Ready2Eat'
+    'RoCafe Ready2Eat',
   ];
-  
+
   categories.sort((a, b) => {
     const indexA = categoryOrder.indexOf(a._excelCategory);
     const indexB = categoryOrder.indexOf(b._excelCategory);
-    
+
     // If both in order list, sort by order
     if (indexA !== -1 && indexB !== -1) {
       return indexA - indexB;
@@ -192,15 +191,15 @@ export const groupExcelItemsByCategory = (menuItems) => {
     // Neither in list, sort alphabetically
     return a.name.localeCompare(b.name);
   });
-  
+
   // Filter out categories with no items
-  return categories.filter(cat => cat.items.length > 0);
+  return categories.filter((cat) => cat.items.length > 0);
 };
 
 /**
  * Merge API categories with static menu categories
  * Allows fallback to static menu while preferring API data
- * 
+ *
  * @param {Array} apiCategories - Categories from API data
  * @param {Array} staticCategories - Static fallback categories
  * @returns {Array} Merged category array
@@ -210,7 +209,7 @@ export const mergeCategoriesWithFallback = (apiCategories, staticCategories) => 
   if (apiCategories && apiCategories.length > 0) {
     return apiCategories;
   }
-  
+
   // Otherwise fallback to static
   return staticCategories;
 };

@@ -7,10 +7,11 @@ import StructuredData from '../components/StructuredData';
 import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 import LiveHoursDisplay from '../components/LiveHoursDisplay';
 import ContactForm from '../components/ContactForm';
-import COMPANY_DATA from '../config/company_data';
+import { useCompanyData } from '../contexts/CompanyDataContext';
 import { normalizePhoneForTel } from '../utils/phone';
 
 const ContactPage = () => {
+  const { companyData } = useCompanyData();
   const textColor = { color: 'var(--color-text)' };
   const mutedTextColor = { color: 'var(--color-text-muted)' };
   const BASE_URL = import.meta.env.BASE_URL || '/';
@@ -86,9 +87,9 @@ const ContactPage = () => {
                   <h3 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>
                     Visit Us
                   </h3>
-                  <p style={textColor}>{COMPANY_DATA.location.address.formatted}</p>
+                  <p style={textColor}>{companyData.location.address.formatted}</p>
                   <a
-                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(COMPANY_DATA.location.address.formatted)}`}
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(companyData.location.address.formatted)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Get directions to Roma Mart"
@@ -113,14 +114,14 @@ const ContactPage = () => {
                   </h3>
                   <div className="flex items-center gap-2 flex-wrap">
                     <a
-                      href={`tel:${normalizePhoneForTel(COMPANY_DATA.location.contact.phone)}`}
+                      href={`tel:${normalizePhoneForTel(companyData.location.contact.phone)}`}
                       className="hover:underline"
                       style={{ color: 'var(--color-accent)' }}
                     >
-                      {COMPANY_DATA.location.contact.phone}
+                      {companyData.location.contact.phone}
                     </a>
                     <CopyButton
-                      text={COMPANY_DATA.location.contact.phone}
+                      text={companyData.location.contact.phone}
                       label="Phone number"
                       style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)' }}
                     />
@@ -141,14 +142,14 @@ const ContactPage = () => {
                   </h3>
                   <div className="flex items-center gap-2 flex-wrap">
                     <a
-                      href={`mailto:${COMPANY_DATA.location.contact.email}`}
+                      href={`mailto:${companyData.location.contact.email}`}
                       className="hover:underline"
                       style={{ color: 'var(--color-accent)' }}
                     >
-                      {COMPANY_DATA.location.contact.email}
+                      {companyData.location.contact.email}
                     </a>
                     <CopyButton
-                      text={COMPANY_DATA.location.contact.email}
+                      text={companyData.location.contact.email}
                       label="Email address"
                       style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)' }}
                     />
@@ -168,10 +169,10 @@ const ContactPage = () => {
                     Hours
                   </h3>
                   <LiveHoursDisplay
-                    placeId={COMPANY_DATA.location.google.placeId}
+                    placeId={companyData.location.google.placeId}
                     fallbackHours={{
-                      daily: COMPANY_DATA.location.hours.daily,
-                      exceptions: COMPANY_DATA.location.hours.exceptions,
+                      daily: companyData.location.hours.daily,
+                      exceptions: companyData.location.hours.exceptions,
                     }}
                     showStatus={true}
                     compact={true}
