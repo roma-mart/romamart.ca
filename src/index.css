@@ -65,8 +65,8 @@
 .button.order:focus-visible {
   transform: scale(1.05) translateZ(0);
   box-shadow:
-    0 0 20px rgb(228 179 64 / 40%),
-    0 10px 32px rgb(228 179 64 / 22%);
+    0 0 20px var(--shadow-glow-strong),
+    0 10px 32px var(--shadow-glow-soft);
   transition:
     transform 0.18s,
     box-shadow 0.18s;
@@ -75,7 +75,7 @@
 .button.nav:hover,
 .button.nav:focus-visible {
   transform: scale(1.03) translateZ(0);
-  box-shadow: 0 0 12px rgb(228 179 64 / 20%);
+  box-shadow: 0 0 12px var(--shadow-glow-subtle);
   transition:
     transform 0.15s,
     box-shadow 0.15s;
@@ -84,7 +84,7 @@
 .button.navlink:hover,
 .button.navlink:focus-visible {
   transform: scale(1.03) translateZ(0);
-  box-shadow: 0 0 12px rgb(228 179 64 / 20%);
+  box-shadow: 0 0 12px var(--shadow-glow-subtle);
   transition:
     transform 0.15s,
     box-shadow 0.15s;
@@ -94,8 +94,8 @@
 .button.action:focus-visible {
   transform: scale(1.03) translateZ(0);
   box-shadow:
-    0 0 20px rgb(228 179 64 / 35%),
-    0 8px 28px rgb(228 179 64 / 22%);
+    0 0 20px var(--shadow-glow-medium),
+    0 8px 28px var(--shadow-glow-soft);
   transition:
     transform 0.18s,
     box-shadow 0.18s;
@@ -104,7 +104,7 @@
 .button.secondary:hover,
 .button.secondary:focus-visible {
   transform: scale(1.03) translateZ(0);
-  box-shadow: 0 0 16px rgb(228 179 64 / 25%);
+  box-shadow: 0 0 16px var(--shadow-glow-light);
   transition:
     transform 0.13s,
     box-shadow 0.13s;
@@ -113,7 +113,7 @@
 .button.icon:hover,
 .button.icon:focus-visible {
   transform: scale(1.1) translateZ(0);
-  box-shadow: 0 0 12px rgb(228 179 64 / 25%);
+  box-shadow: 0 0 12px var(--shadow-glow-light);
   transition:
     transform 0.12s,
     box-shadow 0.12s;
@@ -123,8 +123,8 @@
 .button.inverted:focus-visible {
   transform: scale(1.05) translateZ(0);
   box-shadow:
-    0 0 20px rgb(228 179 64 / 35%),
-    0 8px 28px rgb(2 1 120 / 22%);
+    0 0 20px var(--shadow-glow-medium),
+    0 8px 28px var(--shadow-glow-primary);
   transition:
     transform 0.18s,
     box-shadow 0.18s;
@@ -134,8 +134,8 @@
 .button.location:focus-visible {
   transform: scale(1.05) translateZ(0);
   box-shadow:
-    0 0 20px rgb(228 179 64 / 35%),
-    0 8px 24px rgb(64 179 228 / 18%);
+    0 0 20px var(--shadow-glow-medium),
+    0 8px 24px var(--shadow-glow-location);
   transition:
     transform 0.18s,
     box-shadow 0.18s;
@@ -252,7 +252,7 @@
   --color-primary: #020178; /* Navy - headings, primary elements */
   --color-accent: #e4b340; /* Yellow - CTAs, highlights */
   --color-on-accent: #151515; /* Dark text on yellow accent backgrounds */
-  --color-accent-bg: color-mix(in srgb, #e4b340 12%, transparent); /* Accent background for icons/cards */
+  --color-accent-bg: color-mix(in srgb, var(--color-accent) 12%, transparent); /* Accent background for icons/cards */
   --color-accent-hover: #c99a2b; /* Slightly darker accent for hover */
 
   /* Shadows and focus rings */
@@ -262,6 +262,16 @@
   /* Location button colors */
   --color-location-bg: #e4f1fb; /* Soft blue, map/location theme */
   --color-location-text: #001540; /* Dark navy, matches brand primary */
+  --color-location-accent: #40b3e4; /* Blue accent for location glow */
+
+  /* Button glow shadow colors (derived from brand) */
+  --shadow-glow-strong: color-mix(in srgb, var(--color-accent) 40%, transparent);
+  --shadow-glow-medium: color-mix(in srgb, var(--color-accent) 35%, transparent);
+  --shadow-glow-light: color-mix(in srgb, var(--color-accent) 25%, transparent);
+  --shadow-glow-soft: color-mix(in srgb, var(--color-accent) 22%, transparent);
+  --shadow-glow-subtle: color-mix(in srgb, var(--color-accent) 20%, transparent);
+  --shadow-glow-primary: color-mix(in srgb, var(--color-primary) 22%, transparent);
+  --shadow-glow-location: color-mix(in srgb, var(--color-location-accent) 18%, transparent);
 
   /* Specific use cases */
   --color-heading: #020178; /* Navy for headings in light mode */
@@ -524,12 +534,9 @@ h3 {
   text-decoration: none;
 }
 
-/* Order button animations */
-.button.order:hover,
-.button.order:focus-visible {
-  transform: scale(1.05);
-  box-shadow: 0 8px 24px rgb(228 179 64 / 18%);
-  transition:
-    transform 0.2s,
-    box-shadow 0.2s;
+/* Order Now mobile menu button: distinct focus ring (accent bg needs non-accent outline) */
+.order-now-mobile:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 6px var(--shadow-glow-subtle);
 }

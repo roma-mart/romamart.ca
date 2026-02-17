@@ -56,6 +56,8 @@ export function buildBreadcrumbSchema(breadcrumbs = []) {
  * @param {string} currentPageName - Current page name
  * @param {string} currentPageUrl - Current page URL (absolute)
  * @param {Array<Object>} [parentPages] - Optional parent page(s)
+ * @param {Object} [options] - Optional overrides
+ * @param {Object} [options.companyData] - Company data object (defaults to COMPANY_DATA)
  * @returns {Array<Object>} Breadcrumb items array
  *
  * @example
@@ -90,6 +92,8 @@ export function buildBreadcrumbArray(currentPageName, currentPageUrl, parentPage
  *
  * @param {string} pageName - Page name
  * @param {string} pageSlug - Page slug (e.g., 'services')
+ * @param {Object} [options] - Optional overrides
+ * @param {Object} [options.companyData] - Company data object (defaults to COMPANY_DATA)
  * @returns {Object} BreadcrumbList schema
  *
  * @example

@@ -23,7 +23,7 @@ const ContactForm = ({
   const { showSuccess, showError } = useToast();
   const colorScheme = useColorScheme();
   const { companyData } = useCompanyData();
-  const formAccessKey = companyData.contact.web3FormsAccessKey || '';
+  const formAccessKey = companyData?.contact?.web3FormsAccessKey || '';
 
   const handleCaptchaExpire = useCallback(() => {
     setCaptchaToken('');

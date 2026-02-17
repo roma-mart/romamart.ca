@@ -76,12 +76,14 @@ export const normalizeMenuItem = (item, source) => {
 
   // Sort sizes to consistent S → M → L order and remap defaultSize to match
   const sizes = sortSizes(rawSizes) || rawSizes;
-  let defaultSize = item.defaultSize ?? 0;
+  let defaultSize = Number(item.defaultSize) || 0;
+  if (defaultSize < 0 || defaultSize >= rawSizes.length) defaultSize = 0;
   if (sizes.length > 0 && rawSizes.length > 0 && rawSizes[defaultSize]) {
     const defaultName = rawSizes[defaultSize].name;
     const newIndex = sizes.findIndex((s) => s.name === defaultName);
     if (newIndex !== -1) defaultSize = newIndex;
   }
+  if (defaultSize < 0 || defaultSize >= sizes.length) defaultSize = 0;
 
   const addOns = Array.isArray(item.addOns)
     ? item.addOns.map((addon) => ({

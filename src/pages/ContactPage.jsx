@@ -169,10 +169,10 @@ const ContactPage = () => {
                     Hours
                   </h3>
                   <LiveHoursDisplay
-                    placeId={companyData.location.google.placeId}
+                    placeId={companyData?.location?.google?.placeId || null}
                     fallbackHours={{
-                      daily: companyData.location.hours.daily,
-                      exceptions: companyData.location.hours.exceptions,
+                      daily: companyData?.location?.hours?.daily,
+                      exceptions: companyData?.location?.hours?.exceptions,
                     }}
                     showStatus={true}
                     compact={true}

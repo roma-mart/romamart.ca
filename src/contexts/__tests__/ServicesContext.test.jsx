@@ -62,6 +62,32 @@ describe('ServicesContext', () => {
     expect(result.current.error).toBe('');
   });
 
+  it('should handle backend envelope shape { data: { services: [...] } }', async () => {
+    const apiServices = [
+      { id: 'api-1', name: 'API Service X' },
+      { id: 'api-2', name: 'API Service Y' },
+    ];
+    global.fetch = vi.fn(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({ data: { services: apiServices } }),
+      })
+    );
+
+    const { result } = renderHook(() => useServices(), { wrapper });
+
+    await waitFor(() => {
+      expect(result.current.source).toBe('api');
+    });
+
+    expect(result.current.services).toHaveLength(2);
+    expect(result.current.services[0].id).toBe('api-1');
+    expect(result.current.services[0].availableAt).toEqual([]);
+    expect(result.current.services[0].features).toEqual([]);
+    expect(result.current.loading).toBe(false);
+    expect(result.current.error).toBe('');
+  });
+
   it('should normalize API services with availableAt and features', async () => {
     const apiServices = [
       {

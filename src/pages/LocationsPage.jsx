@@ -389,7 +389,7 @@ const LocationsPage = () => {
                               href={location.google.mapLink}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="absolute bottom-4 right-4 px-4 py-2 rounded-full text-xs font-semibold shadow-lg"
+                              className="absolute bottom-4 right-4 px-4 py-2 rounded-full text-xs font-semibold shadow-lg focus-visible:ring-2 focus-visible:ring-offset-2"
                               style={{ backgroundColor: 'var(--color-primary)', color: 'var(--color-text-on-primary)' }}
                               aria-label={`Open ${location.name} in Google Maps`}
                             >
@@ -422,7 +422,7 @@ const LocationsPage = () => {
                               href={location.google.mapLink}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-xs font-semibold hover:underline"
+                              className="text-xs font-semibold hover:underline focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:rounded"
                               style={{ color: 'var(--color-accent)' }}
                               aria-label={`Open ${location.name} in Google Maps`}
                             >
@@ -442,7 +442,7 @@ const LocationsPage = () => {
                             href={location.google.mapLink}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="px-4 py-2 rounded-full text-sm font-semibold"
+                            className="px-4 py-2 rounded-full text-sm font-semibold focus-visible:ring-2 focus-visible:ring-offset-2"
                             style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)' }}
                           >
                             Open Map

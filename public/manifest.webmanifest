@@ -17,15 +17,6 @@
     "client_mode": "navigate-existing"
   },
   "handle_links": "preferred",
-  "share_target": {
-    "action": "/",
-    "method": "GET",
-    "params": {
-      "title": "title",
-      "text": "text",
-      "url": "url"
-    }
-  },
   "screenshots": [
     {
       "src": "screenshots/mobile-home.png",

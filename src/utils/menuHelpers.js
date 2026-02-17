@@ -50,11 +50,16 @@ export const calculateItemPrice = (item, selectedSizeIndex = 0, selectedOptions 
             totalPrice += option.price;
           }
         });
-      } else if (customization.quantity && typeof selectedValue === 'object') {
+      } else if (
+        customization.quantity &&
+        selectedValue &&
+        typeof selectedValue === 'object' &&
+        !Array.isArray(selectedValue)
+      ) {
         // Quantity: multiply option price by quantity
         Object.entries(selectedValue).forEach(([optionName, quantity]) => {
           const option = customization.options.find((opt) => opt.name === optionName);
-          if (option && option.price && quantity > 0) {
+          if (option && option.price && Number.isFinite(quantity) && quantity > 0) {
             totalPrice += option.price * quantity;
           }
         });
@@ -161,7 +166,9 @@ export const validateSelections = (customizations = [], selectedOptions = {}) =>
  * Sort menu item sizes to standardized order
  * Supports both abbreviated (S, M, L) and full names (Small, Medium, Large).
  * Recognized sizes sort small-to-large first, followed by non-standard sizes
- * in their original order.
+ * sorted numerically by leading number (e.g., "250ml" before "500ml").
+ * Non-numeric non-standard sizes are placed after numeric ones in their
+ * original relative order.
  *
  * @param {Array} sizes - Array of size objects [{name, price, calories}]
  * @returns {Array} Sorted sizes array

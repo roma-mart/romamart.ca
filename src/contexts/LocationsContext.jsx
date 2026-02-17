@@ -1,6 +1,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { LOCATIONS } from '../data/locations';
 import { normalizeLocation } from '../utils/normalize';
+import { circuitBreakers } from '../utils/apiCircuitBreaker';
 
 /**
  * LocationsContext - Single source of truth for locations data and selection
@@ -56,9 +57,21 @@ export function LocationsProvider({ children }) {
     try {
       if (showSpinner) setLoading(true);
       setError('');
+
+      if (!circuitBreakers.locations.shouldAttemptCall()) {
+        if (import.meta.env.DEV) console.warn('Locations circuit breaker open, using static data');
+        if (!cancelledRef.current) {
+          setLocations(LOCATIONS);
+          setSource('static');
+          setError('API circuit breaker open, using static data');
+        }
+        return;
+      }
+
       const res = await fetch(API_URL);
 
       if (!res.ok) {
+        circuitBreakers.locations.recordFailure(res.status);
         // API failed, use static fallback
         if (import.meta.env.DEV) console.warn('Locations API unavailable, using static data');
         if (!cancelledRef.current) {
@@ -71,8 +84,11 @@ export function LocationsProvider({ children }) {
 
       const data = await res.json();
 
+      // Accept both shapes: { locations: [...] } or { data: { locations: [...] } } or top-level array
+      const locationsPayload = Array.isArray(data) ? data : (data.locations ?? data.data?.locations);
+
       // Validate API response structure
-      if (!Array.isArray(data.locations)) {
+      if (!Array.isArray(locationsPayload)) {
         if (import.meta.env.DEV) console.warn('Invalid locations API response, using static data');
         if (!cancelledRef.current) {
           setLocations(LOCATIONS);
@@ -83,14 +99,16 @@ export function LocationsProvider({ children }) {
       }
 
       // API success - use API data (normalized)
+      circuitBreakers.locations.recordSuccess();
       if (!cancelledRef.current) {
-        setLocations(data.locations.map((loc) => normalizeLocation(loc, 'api')));
+        setLocations(locationsPayload.map((loc) => normalizeLocation(loc, 'api')));
         setSource('api');
         setError('');
       }
     } catch (err) {
       // Network error or other exception - use static fallback
       if (import.meta.env.DEV) console.warn('Locations API error, using static data:', err.message);
+      circuitBreakers.locations.recordFailure(err);
       if (!cancelledRef.current) {
         setLocations(LOCATIONS);
         setSource('static');

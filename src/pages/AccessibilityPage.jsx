@@ -6,6 +6,8 @@ import { useCompanyData } from '../contexts/CompanyDataContext';
 import StructuredData from '../components/StructuredData';
 import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 
+import { normalizePhoneForTel } from '../utils/phone';
+
 const AccessibilityPage = () => {
   const { companyData, getContextualEmail } = useCompanyData();
   const BASE_URL =
@@ -230,7 +232,7 @@ const AccessibilityPage = () => {
               Phone
             </h3>
             <a
-              href={`tel:${companyData.location?.contact?.phone}`}
+              href={`tel:${normalizePhoneForTel(companyData.location?.contact?.phone)}`}
               className="hover:underline"
               style={{ color: 'var(--color-accent)' }}
             >

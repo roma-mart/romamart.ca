@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import COMPANY_DATA from '../config/company_data';
+import { circuitBreakers } from '../utils/apiCircuitBreaker';
 
 /**
  * CompanyDataContext - Single source of truth for company data
@@ -32,9 +33,21 @@ export function CompanyDataProvider({ children }) {
     const fetchCompanyData = async () => {
       try {
         if (!cancelled) setLoading(true);
+
+        if (!circuitBreakers.companyData.shouldAttemptCall()) {
+          if (import.meta.env.DEV) console.warn('Company data circuit breaker open, using static data');
+          if (!cancelled) {
+            setCompanyData(COMPANY_DATA);
+            setSource('static');
+            setError('API circuit breaker open, using static data');
+          }
+          return;
+        }
+
         const res = await fetch(API_URL);
 
         if (!res.ok) {
+          circuitBreakers.companyData.recordFailure(res.status);
           // API failed, use static fallback
           if (import.meta.env.DEV) console.warn('Company data API unavailable, using static data');
           if (!cancelled) {
@@ -89,6 +102,14 @@ export function CompanyDataProvider({ children }) {
             location: {
               ...COMPANY_DATA.location,
               ...(apiData.location || {}),
+              address: {
+                ...COMPANY_DATA.location.address,
+                ...(apiData.location?.address || {}),
+              },
+              contact: {
+                ...COMPANY_DATA.location.contact,
+                ...(apiData.location?.contact || {}),
+              },
             },
             address: {
               ...COMPANY_DATA.address,
@@ -107,11 +128,13 @@ export function CompanyDataProvider({ children }) {
               },
             },
           });
+          circuitBreakers.companyData.recordSuccess();
           setSource('api');
           setError('');
         }
       } catch (err) {
         // Network error or other exception - use static fallback
+        circuitBreakers.companyData.recordFailure(err);
         if (import.meta.env.DEV) console.warn('Company data API error, using static data:', err.message);
         if (!cancelled) {
           setCompanyData(COMPANY_DATA);

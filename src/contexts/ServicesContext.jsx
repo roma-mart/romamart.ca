@@ -1,6 +1,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { SERVICES } from '../data/services';
 import { normalizeService } from '../utils/normalize';
+import { circuitBreakers } from '../utils/apiCircuitBreaker';
 
 /**
  * ServicesContext - Single source of truth for services data
@@ -33,9 +34,21 @@ export function ServicesProvider({ children }) {
     try {
       if (showSpinner) setLoading(true);
       setError('');
+
+      if (!circuitBreakers.services.shouldAttemptCall()) {
+        if (import.meta.env.DEV) console.warn('Services circuit breaker open, using static data');
+        if (!cancelledRef.current) {
+          setServices(SERVICES);
+          setSource('static');
+          setError('API circuit breaker open, using static data');
+        }
+        return;
+      }
+
       const res = await fetch(API_URL);
 
       if (!res.ok) {
+        circuitBreakers.services.recordFailure(res.status);
         // API failed, use static fallback
         if (import.meta.env.DEV) console.warn('Services API unavailable, using static data');
         if (!cancelledRef.current) {
@@ -48,8 +61,11 @@ export function ServicesProvider({ children }) {
 
       const data = await res.json();
 
+      // Accept both shapes: { services: [...] } or { data: { services: [...] } } or top-level array
+      const servicesPayload = Array.isArray(data) ? data : (data.services ?? data.data?.services);
+
       // Validate API response structure
-      if (!Array.isArray(data.services)) {
+      if (!Array.isArray(servicesPayload)) {
         if (import.meta.env.DEV) console.warn('Invalid services API response, using static data');
         if (!cancelledRef.current) {
           setServices(SERVICES);
@@ -60,14 +76,16 @@ export function ServicesProvider({ children }) {
       }
 
       // API success - use API data (normalized)
+      circuitBreakers.services.recordSuccess();
       if (!cancelledRef.current) {
-        setServices(data.services.map((s) => normalizeService(s, 'api')));
+        setServices(servicesPayload.map((s) => normalizeService(s, 'api')));
         setSource('api');
         setError('');
       }
     } catch (err) {
       // Network error or other exception - use static fallback
       if (import.meta.env.DEV) console.warn('Services API error, using static data:', err.message);
+      circuitBreakers.services.recordFailure(err);
       if (!cancelledRef.current) {
         setServices(SERVICES);
         setSource('static');

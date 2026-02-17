@@ -404,7 +404,7 @@ export default function Navbar({ currentPage = 'home' }) {
                       handleOrderClick();
                     }
                   }}
-                  className="block px-3 py-4 text-center rounded-lg font-bold text-heading uppercase mt-4"
+                  className="block px-3 py-4 text-center rounded-lg font-bold text-heading uppercase mt-4 order-now-mobile"
                   style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)' }}
                 >
                   ORDER NOW

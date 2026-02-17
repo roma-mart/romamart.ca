@@ -60,6 +60,31 @@ describe('MenuContext', () => {
     expect(result.current.error).toBe('');
   });
 
+  it('should handle backend envelope shape { data: { menu: [...] } }', async () => {
+    const mockMenu = [
+      { name: 'Latte', featured: true },
+      { name: 'Espresso', featured: false },
+    ];
+    global.fetch = vi.fn(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({ data: { menu: mockMenu } }),
+      })
+    );
+
+    const { result } = renderHook(() => useMenu(), { wrapper });
+
+    await waitFor(() => {
+      expect(result.current.source).toBe('api');
+    });
+
+    expect(result.current.menuItems).toHaveLength(2);
+    expect(result.current.menuItems[0].name).toBe('Latte');
+    expect(result.current.menuItems[1].name).toBe('Espresso');
+    expect(result.current.loading).toBe(false);
+    expect(result.current.error).toBe('');
+  });
+
   it('should normalize API menu items with cents prices to dollars', async () => {
     const mockMenu = [
       {

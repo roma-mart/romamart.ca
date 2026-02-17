@@ -1,6 +1,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { normalizeMenuItem } from '../utils/normalize';
 import { ROCAFE_FULL_MENU } from '../data/rocafe-menu';
+import { circuitBreakers } from '../utils/apiCircuitBreaker';
 
 /**
  * MenuContext - Single source of truth for menu data
@@ -32,6 +33,17 @@ export function MenuProvider({ children }) {
     try {
       if (showSpinner) setLoading(true);
       setError('');
+
+      if (!circuitBreakers.menu.shouldAttemptCall()) {
+        if (import.meta.env.DEV) console.warn('[MenuContext] Circuit breaker open, using static data');
+        if (!cancelledRef.current) {
+          setMenuItems(STATIC_FALLBACK);
+          setSource('static');
+          setError('API circuit breaker open, using static data');
+        }
+        return;
+      }
+
       if (import.meta.env.DEV) {
         // eslint-disable-next-line no-console
         console.log('[MenuContext] Fetching menu data from API:', API_URL);
@@ -40,6 +52,7 @@ export function MenuProvider({ children }) {
       const res = await fetch(API_URL);
 
       if (!res.ok) {
+        circuitBreakers.menu.recordFailure(res.status);
         // API failed, use static fallback
         if (import.meta.env.DEV) console.warn('[MenuContext] Menu API unavailable, using static data');
         if (!cancelledRef.current) {
@@ -52,14 +65,17 @@ export function MenuProvider({ children }) {
 
       const data = await res.json();
 
+      // Resolve menu array from either data.menu or data.data.menu (envelope)
+      const menuArray = data.menu ?? data.data?.menu;
+
       // Validate API response structure
-      if (!data.menu || !Array.isArray(data.menu) || data.menu.length === 0) {
+      if (!Array.isArray(menuArray) || menuArray.length === 0) {
         if (import.meta.env.DEV) console.warn('[MenuContext] Invalid or empty menu API response, using static data');
         if (!cancelledRef.current) {
           setMenuItems(STATIC_FALLBACK);
           setSource('static');
           setError(
-            data.menu?.length === 0
+            Array.isArray(menuArray) && menuArray.length === 0
               ? 'Empty menu from API, using static data'
               : 'Invalid API response, using static data'
           );
@@ -67,7 +83,8 @@ export function MenuProvider({ children }) {
         return;
       }
 
-      const menu = data.menu.map((item) => normalizeMenuItem(item, 'api'));
+      circuitBreakers.menu.recordSuccess();
+      const menu = menuArray.map((item) => normalizeMenuItem(item, 'api'));
       const featuredCount = menu.filter((item) => item.featured).length;
 
       if (import.meta.env.DEV) {
@@ -87,6 +104,7 @@ export function MenuProvider({ children }) {
     } catch (err) {
       // Network error or other exception - use static fallback
       console.error('[MenuContext] Failed to fetch menu data:', err);
+      circuitBreakers.menu.recordFailure(err);
       if (!cancelledRef.current) {
         setMenuItems(STATIC_FALLBACK);
         setSource('static');

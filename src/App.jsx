@@ -50,6 +50,7 @@ const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 // component imports
 import NetworkStatus from './components/NetworkStatus';
 import CopyButton from './components/CopyButton';
+import { normalizePhoneForTel } from './utils/phone';
 
 const BASE_URL =
   typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
@@ -492,7 +493,7 @@ const Locations = () => {
                       href={displayLocation.mapLink}
                       target="_blank"
                       rel="noreferrer"
-                      className="px-4 py-2 rounded-full text-sm font-semibold"
+                      className="px-4 py-2 rounded-full text-sm font-semibold focus-visible:ring-2 focus-visible:ring-offset-2"
                       style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)' }}
                     >
                       Open Map
@@ -504,7 +505,7 @@ const Locations = () => {
                     href={activeLoc.mapLink}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex items-center gap-2 px-6 py-3 rounded-full font-bold shadow-xl hover:scale-105 transition-transform"
+                    className="flex items-center gap-2 px-6 py-3 rounded-full font-bold shadow-xl hover:scale-105 transition-transform focus-visible:ring-2 focus-visible:ring-offset-2"
                     style={{ backgroundColor: 'var(--color-primary)', color: 'var(--color-text-on-primary)' }}
                   >
                     <MapPin size={18} /> Open in Maps
@@ -592,14 +593,14 @@ const ContactSection = () => {
                   </h3>
                   <div className="flex items-center gap-2 flex-wrap">
                     <a
-                      href={`tel:${companyData.location.contact.phone}`}
+                      href={`tel:${normalizePhoneForTel(companyData?.location?.contact?.phone)}`}
                       className="hover:underline"
                       style={{ color: 'var(--color-accent)' }}
                     >
-                      {companyData.location.contact.phone}
+                      {companyData?.location?.contact?.phone}
                     </a>
                     <CopyButton
-                      text={companyData.location.contact.phone}
+                      text={companyData?.location?.contact?.phone}
                       label="Phone number"
                       style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)' }}
                     />
@@ -687,8 +688,8 @@ function App() {
     return services.filter((service) => service.featured);
   }, [services]);
 
-  // Prices in API are always in cents
-  const schemaPriceInCents = true;
+  // Prices are already normalized to dollars by MenuContext
+  const schemaPriceInCents = false;
   useEffect(() => {
     if (!isVisible && import.meta.env.DEV) {
       console.warn('[Performance] Tab hidden - pausing heavy operations');
