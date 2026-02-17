@@ -19,18 +19,18 @@ import { Logo } from './Logo';
 import { NAVIGATION_LINKS } from '../config/navigation';
 import { useFocusTrap } from '../hooks/useFocusTrap';
 
-// WCO icon mapping for nav links (icon-only mode at narrow titlebar widths)
+// WCO icon mapping for nav links (keyed by href for stability)
 const WCO_LINK_ICONS = {
-  Services: Store,
-  RoCafé: Coffee,
-  Locations: MapPin,
-  Contact: Mail,
-  About: Info,
+  '/services': Store,
+  '/rocafe': Coffee,
+  '/locations': MapPin,
+  '/contact': Mail,
+  '/about': Info,
 };
 
 // WCO progressive collapse: priority links shown inline, overflow links in dropdown
-const WCO_PRIORITY_LABELS = ['Services', 'RoCafé', 'Locations'];
-const WCO_OVERFLOW_LABELS = ['Contact', 'About'];
+const WCO_PRIORITY_HREFS = ['/services', '/rocafe', '/locations'];
+const WCO_OVERFLOW_HREFS = ['/contact', '/about'];
 
 export default function Navbar({ currentPage = 'home' }) {
   const { companyData } = useCompanyData();
@@ -183,14 +183,17 @@ export default function Navbar({ currentPage = 'home' }) {
   useEffect(() => {
     if (!wcoOverflowOpen) return;
     const handleClickOutside = (e) => {
-      if (
-        overflowRef.current &&
-        !overflowRef.current.contains(e.target) &&
-        overflowButtonRef.current &&
-        !overflowButtonRef.current.contains(e.target)
-      ) {
+      const overflowEl = overflowRef.current;
+      const buttonEl = overflowButtonRef.current;
+      // If both elements are gone (WCO deactivated), close defensively
+      if (!overflowEl && !buttonEl) {
         setWcoOverflowOpen(false);
+        return;
       }
+      if ((overflowEl && overflowEl.contains(e.target)) || (buttonEl && buttonEl.contains(e.target))) {
+        return;
+      }
+      setWcoOverflowOpen(false);
     };
     const handleEscape = (e) => {
       if (e.key === 'Escape') {
@@ -205,6 +208,11 @@ export default function Navbar({ currentPage = 'home' }) {
       document.removeEventListener('keydown', handleEscape);
     };
   }, [wcoOverflowOpen]);
+
+  // Close overflow if WCO deactivates while dropdown is open
+  useEffect(() => {
+    if (!wcoActive && wcoOverflowOpen) setWcoOverflowOpen(false);
+  }, [wcoActive, wcoOverflowOpen]);
 
   return (
     <nav
@@ -315,9 +323,9 @@ export default function Navbar({ currentPage = 'home' }) {
             {wcoActive &&
               wcoShowIcons &&
               NAVIGATION_LINKS.filter(
-                (link) => link.showIn.navbar && link.href !== '/' && WCO_PRIORITY_LABELS.includes(link.label)
+                (link) => link.showIn.navbar && link.href !== '/' && WCO_PRIORITY_HREFS.includes(link.href)
               ).map((link) => {
-                const WcoIcon = WCO_LINK_ICONS[link.label] || Info;
+                const WcoIcon = WCO_LINK_ICONS[link.href] || Info;
                 return (
                   <a
                     key={link.href}
@@ -354,8 +362,8 @@ export default function Navbar({ currentPage = 'home' }) {
               (() => {
                 const overflowLinks = NAVIGATION_LINKS.filter((link) => {
                   if (!link.showIn.navbar || link.href === '/') return false;
-                  if (WCO_OVERFLOW_LABELS.includes(link.label)) return true;
-                  if (!wcoShowIcons && WCO_PRIORITY_LABELS.includes(link.label)) return true;
+                  if (WCO_OVERFLOW_HREFS.includes(link.href)) return true;
+                  if (!wcoShowIcons && WCO_PRIORITY_HREFS.includes(link.href)) return true;
                   return false;
                 });
                 if (overflowLinks.length === 0) return null;
@@ -376,7 +384,7 @@ export default function Navbar({ currentPage = 'home' }) {
                       }}
                       aria-label="More navigation options"
                       aria-expanded={wcoOverflowOpen}
-                      aria-haspopup="true"
+                      aria-controls="wco-overflow-nav"
                     >
                       <EllipsisVertical size={16} />
                     </button>
@@ -388,7 +396,7 @@ export default function Navbar({ currentPage = 'home' }) {
                           animate={{ opacity: 1, y: 0, scale: 1 }}
                           exit={{ opacity: 0, y: -4, scale: 0.95 }}
                           transition={{ duration: 0.15 }}
-                          role="menu"
+                          id="wco-overflow-nav"
                           aria-label="Additional navigation"
                           className="no-drag"
                           style={{
@@ -406,7 +414,7 @@ export default function Navbar({ currentPage = 'home' }) {
                           }}
                         >
                           {overflowLinks.map((link) => {
-                            const WcoIcon = WCO_LINK_ICONS[link.label] || Info;
+                            const WcoIcon = WCO_LINK_ICONS[link.href] || Info;
                             return (
                               <a
                                 key={link.href}
@@ -423,7 +431,6 @@ export default function Navbar({ currentPage = 'home' }) {
                                   );
                                   handleOverflowClose();
                                 }}
-                                role="menuitem"
                                 className="wco-overflow-item no-drag"
                                 style={{
                                   display: 'flex',
