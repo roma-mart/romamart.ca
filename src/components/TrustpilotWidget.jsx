@@ -1,5 +1,5 @@
 import React from 'react';
-import COMPANY_DATA from '../config/company_data';
+import { useCompanyData } from '../contexts/CompanyDataContext';
 
 /**
  * TrustpilotWidget
@@ -12,14 +12,10 @@ import COMPANY_DATA from '../config/company_data';
  */
 
 const TRUSTBOX_SCRIPT_ID = 'trustbox-script';
-const TRUSTBOX_SCRIPT_SRC =
-  'https://widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js';
+const TRUSTBOX_SCRIPT_SRC = 'https://widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js';
 
 const FallbackLink = ({ reviewUrl }) => (
-  <div
-    className="text-center text-base font-inter"
-    style={{ color: 'var(--color-on-footer-muted)' }}
-  >
+  <div className="text-center text-base font-inter" style={{ color: 'var(--color-on-footer-muted)' }}>
     <span>Review us on&nbsp;</span>
     <a
       href={reviewUrl}
@@ -34,11 +30,12 @@ const FallbackLink = ({ reviewUrl }) => (
 );
 
 const TrustpilotWidget = () => {
+  const { companyData } = useCompanyData();
   const widgetRef = React.useRef(null);
   const businessUnitId = import.meta.env.VITE_TRUSTPILOT_BUSINESSUNIT_ID;
   const templateId = import.meta.env.VITE_TRUSTPILOT_TEMPLATE_ID;
   const token = import.meta.env.VITE_TRUSTPILOT_TOKEN;
-  const reviewUrl = COMPANY_DATA.trustpilotReviewUrl;
+  const reviewUrl = companyData.trustpilotReviewUrl;
 
   React.useEffect(() => {
     if (!businessUnitId || !templateId || !token) return;

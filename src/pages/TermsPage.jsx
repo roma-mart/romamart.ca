@@ -2,12 +2,13 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ChevronRight } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
-import COMPANY_DATA, { getContextualEmail } from '../config/company_data';
+import { useCompanyData } from '../contexts/CompanyDataContext';
 import { normalizePhoneForTel } from '../utils/phone';
 import StructuredData from '../components/StructuredData';
 import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 
 const TermsPage = () => {
+  const { companyData, getContextualEmail } = useCompanyData();
   const textColor = { color: 'var(--color-text)' };
   const mutedTextColor = { color: 'var(--color-text-muted)' };
 
@@ -149,12 +150,12 @@ const TermsPage = () => {
             </p>
             <div className="p-6 rounded-lg" style={{ backgroundColor: 'var(--color-surface)' }}>
               <p style={textColor}>
-                <strong>{COMPANY_DATA.legalName}</strong>
+                <strong>{companyData.legalName}</strong>
               </p>
-              <p style={textColor}>{COMPANY_DATA.location.address.street}</p>
+              <p style={textColor}>{companyData.location?.address?.street}</p>
               <p style={textColor}>
-                {COMPANY_DATA.location.address.city}, {COMPANY_DATA.location.address.province}{' '}
-                {COMPANY_DATA.location.address.postalCode}
+                {companyData.location?.address?.city}, {companyData.location?.address?.province}{' '}
+                {companyData.location?.address?.postalCode}
               </p>
               <p style={textColor}>
                 Email:{' '}
@@ -165,14 +166,14 @@ const TermsPage = () => {
               <p style={textColor}>
                 Phone:{' '}
                 <a
-                  href={`tel:${normalizePhoneForTel(COMPANY_DATA.location.contact.phone)}`}
+                  href={`tel:${normalizePhoneForTel(companyData.location?.contact?.phone)}`}
                   style={{ color: 'var(--color-accent)' }}
                 >
-                  {COMPANY_DATA.location.contact.phone}
+                  {companyData.location?.contact?.phone}
                 </a>
               </p>
               <p className="text-sm mt-4" style={mutedTextColor}>
-                GST/HST#: {COMPANY_DATA.gstNumber}
+                GST/HST#: {companyData.gstNumber}
               </p>
             </div>
           </section>

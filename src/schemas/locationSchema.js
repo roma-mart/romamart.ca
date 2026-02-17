@@ -30,7 +30,7 @@ const buildOpeningHours = (hours) => {
         return;
       }
 
-      const parts = timeRange.split('-').map(t => t.trim());
+      const parts = timeRange.split('-').map((t) => t.trim());
       if (parts.length !== 2) return;
 
       const opens = parse12hTo24h(parts[0]);
@@ -41,7 +41,7 @@ const buildOpeningHours = (hours) => {
           '@type': 'OpeningHoursSpecification',
           dayOfWeek: [day],
           opens,
-          closes
+          closes,
         });
       }
     });
@@ -49,8 +49,8 @@ const buildOpeningHours = (hours) => {
 
   // Handle weekdays/weekends format
   if (hours.weekdays && hours.weekends) {
-    const weekdaysParts = hours.weekdays.split('-').map(t => t.trim());
-    const weekendsParts = hours.weekends.split('-').map(t => t.trim());
+    const weekdaysParts = hours.weekdays.split('-').map((t) => t.trim());
+    const weekendsParts = hours.weekends.split('-').map((t) => t.trim());
 
     if (weekdaysParts.length === 2) {
       const opens = parse12hTo24h(weekdaysParts[0]);
@@ -60,7 +60,7 @@ const buildOpeningHours = (hours) => {
           '@type': 'OpeningHoursSpecification',
           dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
           opens,
-          closes
+          closes,
         });
       }
     }
@@ -73,7 +73,7 @@ const buildOpeningHours = (hours) => {
           '@type': 'OpeningHoursSpecification',
           dayOfWeek: ['Saturday', 'Sunday'],
           opens,
-          closes
+          closes,
         });
       }
     }
@@ -102,6 +102,7 @@ export const buildLocationSchema = (location, _options = {}) => {
     return null;
   }
 
+  const cd = _options.companyData || COMPANY_DATA;
   const name = safeString(location.name);
   if (!name) {
     return null;
@@ -116,21 +117,21 @@ export const buildLocationSchema = (location, _options = {}) => {
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
-    ...(id ? { '@id': `${COMPANY_DATA.baseUrl}/#location-${id}` } : {}),
+    ...(id ? { '@id': `${cd.baseUrl}/#location-${id}` } : {}),
     name,
     ...(location.shortName ? { alternateName: safeString(location.shortName) } : {}),
     ...(location.description ? { description: safeString(location.description) } : {}),
-    url: `${COMPANY_DATA.baseUrl}${COMPANY_DATA.endpoints.locations}`,
-    telephone: safeString(contact.phone || COMPANY_DATA.contact.phone),
-    email: safeString(contact.email || COMPANY_DATA.contact.email),
+    url: `${cd.baseUrl}${cd.endpoints.locations}`,
+    telephone: safeString(contact.phone || cd.contact.phone),
+    email: safeString(contact.email || cd.contact.email),
     address: {
       '@type': 'PostalAddress',
       streetAddress: safeString(address.street),
       addressLocality: safeString(address.city),
       addressRegion: safeString(address.province),
       postalCode: safeString(address.postalCode),
-      addressCountry: address.country || COMPANY_DATA.defaults.country
-    }
+      addressCountry: address.country || cd.defaults.country,
+    },
   };
 
   // Add geo coordinates if available
@@ -138,7 +139,7 @@ export const buildLocationSchema = (location, _options = {}) => {
     schema.geo = {
       '@type': 'GeoCoordinates',
       latitude: coords.lat,
-      longitude: coords.lng
+      longitude: coords.lng,
     };
   }
 
@@ -159,14 +160,14 @@ export const buildLocationSchema = (location, _options = {}) => {
   }
 
   // Add logo
-  schema.logo = COMPANY_DATA.logoUrl;
+  schema.logo = cd.logoUrl;
 
   // Add amenities from location data (Google-recognized names, API-ready structure)
   if (location.amenities && Array.isArray(location.amenities) && location.amenities.length > 0) {
-    schema.amenityFeature = location.amenities.map(amenity => ({
+    schema.amenityFeature = location.amenities.map((amenity) => ({
       '@type': 'LocationFeatureSpecification',
       name: safeString(amenity.name),
-      value: amenity.value
+      value: amenity.value,
     }));
   }
 
@@ -176,35 +177,35 @@ export const buildLocationSchema = (location, _options = {}) => {
       '@type': 'PropertyValue',
       name: 'Available Service',
       value: safeString(serviceId),
-      propertyID: `service-${index + 1}`
+      propertyID: `service-${index + 1}`,
     }));
   }
 
   // Add price range if this is headquarters (primary location)
   if (location.isPrimary || location.metadata?.isHeadquarters) {
-    schema.priceRange = COMPANY_DATA.defaults.priceRange;
+    schema.priceRange = cd.defaults.priceRange;
   }
 
   // Add currencies accepted
-  schema.currenciesAccepted = COMPANY_DATA.defaults.currency;
+  schema.currenciesAccepted = cd.defaults.currency;
 
   // Add area served (city/region where location operates)
   if (address.city) {
     schema.areaServed = {
       '@type': 'City',
-      name: safeString(address.city)
+      name: safeString(address.city),
     };
   }
 
   // Add brand
   schema.brand = {
     '@type': 'Brand',
-    name: COMPANY_DATA.dba
+    name: cd.dba,
   };
 
   // Link to parent organization
   schema.parentOrganization = {
-    '@id': `${COMPANY_DATA.baseUrl}/#organization`
+    '@id': `${cd.baseUrl}/#organization`,
   };
 
   return schema;
@@ -221,9 +222,7 @@ export const buildLocationListSchema = (locations, _options = {}) => {
     return null;
   }
 
-  const locationSchemas = locations
-    .map(location => buildLocationSchema(location, _options))
-    .filter(Boolean);
+  const locationSchemas = locations.map((location) => buildLocationSchema(location, _options)).filter(Boolean);
 
   if (locationSchemas.length === 0) {
     return null;
@@ -236,7 +235,7 @@ export const buildLocationListSchema = (locations, _options = {}) => {
     itemListElement: locationSchemas.map((location, index) => ({
       '@type': 'ListItem',
       position: index + 1,
-      item: location
-    }))
+      item: location,
+    })),
   };
 };

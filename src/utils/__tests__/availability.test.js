@@ -3,12 +3,74 @@ import { getMenuItemStatusAtLocation, isLocationOpen } from '../availability';
 
 describe('availability utilities', () => {
   describe('getMenuItemStatusAtLocation', () => {
+    it('should match availableAt array with location.id (new API format)', () => {
+      const location = {
+        id: 'loc-wellington-001',
+        shortName: 'Roma Mart 001',
+        status: 'open',
+      };
+
+      const apiMenuItem = {
+        id: 'cof-latte-001',
+        name: 'Latte',
+        status: 'available',
+        availableAt: ['loc-wellington-001', 'loc-lakeshore-002'],
+        availability: 'store_hours',
+      };
+
+      const result = getMenuItemStatusAtLocation(apiMenuItem.id, location, null, apiMenuItem);
+
+      expect(result.status).toBe('available');
+      expect(result.availableAt).toContain('loc-wellington-001');
+      expect(result.availability).toBe('store_hours');
+    });
+
+    it('should return unavailable when location.id not in availableAt', () => {
+      const location = {
+        id: 'loc-lakeshore-003',
+        shortName: 'Roma Mart 003',
+        status: 'open',
+      };
+
+      const apiMenuItem = {
+        id: 'cof-latte-001',
+        name: 'Latte',
+        status: 'available',
+        availableAt: ['loc-wellington-001', 'loc-lakeshore-002'],
+      };
+
+      const result = getMenuItemStatusAtLocation(apiMenuItem.id, location, null, apiMenuItem);
+
+      expect(result.status).toBe('unavailable');
+    });
+
+    it('should prefer availableAt over legacy locations array', () => {
+      const location = {
+        id: 'loc-wellington-001',
+        shortName: 'Roma Mart 001',
+        status: 'open',
+      };
+
+      // Item has both availableAt AND locations — availableAt should take precedence
+      const apiMenuItem = {
+        id: 'cof-latte-001',
+        name: 'Latte',
+        status: 'available',
+        availableAt: ['loc-wellington-001'],
+        locations: [{ name: 'Roma Mart 999', id: 999 }], // Would fail if locations were checked
+      };
+
+      const result = getMenuItemStatusAtLocation(apiMenuItem.id, location, null, apiMenuItem);
+
+      expect(result.status).toBe('available');
+    });
+
     it('should map API locations array to location shortName correctly', () => {
       // Mock location with shortName
       const location = {
         id: 'loc-wellington-001',
         shortName: 'Roma Mart 001',
-        status: 'open'
+        status: 'open',
       };
 
       // Mock menu item from API with locations array
@@ -18,8 +80,8 @@ describe('availability utilities', () => {
         status: 'available',
         locations: [
           { name: 'Roma Mart 001', id: 1 },
-          { name: 'Roma Mart 002', id: 2 }
-        ]
+          { name: 'Roma Mart 002', id: 2 },
+        ],
       };
 
       const result = getMenuItemStatusAtLocation(
@@ -37,7 +99,7 @@ describe('availability utilities', () => {
       const location = {
         id: 'loc-lakeshore-003',
         shortName: 'Roma Mart 003',
-        status: 'open'
+        status: 'open',
       };
 
       const apiMenuItem = {
@@ -46,16 +108,11 @@ describe('availability utilities', () => {
         status: 'available',
         locations: [
           { name: 'Roma Mart 001', id: 1 },
-          { name: 'Roma Mart 002', id: 2 }
-        ]
+          { name: 'Roma Mart 002', id: 2 },
+        ],
       };
 
-      const result = getMenuItemStatusAtLocation(
-        apiMenuItem.id,
-        location,
-        null,
-        apiMenuItem
-      );
+      const result = getMenuItemStatusAtLocation(apiMenuItem.id, location, null, apiMenuItem);
 
       expect(result.status).toBe('unavailable');
     });
@@ -64,22 +121,17 @@ describe('availability utilities', () => {
       const location = {
         id: 'loc-wellington-001',
         shortName: 'Roma Mart 001',
-        status: 'open'
+        status: 'open',
       };
 
       const apiMenuItem = {
         id: 'api-2',
         name: 'Cappuccino',
         status: 'available',
-        locations: ['Roma Mart 001', 'Roma Mart 002'] // String array
+        locations: ['Roma Mart 001', 'Roma Mart 002'], // String array
       };
 
-      const result = getMenuItemStatusAtLocation(
-        apiMenuItem.id,
-        location,
-        null,
-        apiMenuItem
-      );
+      const result = getMenuItemStatusAtLocation(apiMenuItem.id, location, null, apiMenuItem);
 
       expect(result.status).toBe('available');
       expect(result.availableAt).toContain(location.id);
@@ -93,24 +145,19 @@ describe('availability utilities', () => {
         menuOverrides: {
           'api-1': {
             status: 'temporarily_unavailable',
-            reason: 'Equipment maintenance'
-          }
-        }
+            reason: 'Equipment maintenance',
+          },
+        },
       };
 
       const apiMenuItem = {
         id: 'api-1',
         name: 'Espresso',
         status: 'available',
-        locations: ['Roma Mart 001']
+        locations: ['Roma Mart 001'],
       };
 
-      const result = getMenuItemStatusAtLocation(
-        apiMenuItem.id,
-        location,
-        null,
-        apiMenuItem
-      );
+      const result = getMenuItemStatusAtLocation(apiMenuItem.id, location, null, apiMenuItem);
 
       expect(result.status).toBe('temporarily_unavailable');
     });
@@ -119,7 +166,7 @@ describe('availability utilities', () => {
       const location = {
         id: 'loc-wellington-001',
         shortName: 'Roma Mart 001',
-        status: 'open'
+        status: 'open',
       };
 
       const staticMenuItem = {
@@ -127,16 +174,11 @@ describe('availability utilities', () => {
         name: 'Signature Bubble Tea',
         status: 'available',
         availableAt: ['loc-wellington-001'],
-        availability: 'store_hours'
+        availability: 'store_hours',
         // No locations array - uses legacy format
       };
 
-      const result = getMenuItemStatusAtLocation(
-        staticMenuItem.id,
-        location,
-        null,
-        staticMenuItem
-      );
+      const result = getMenuItemStatusAtLocation(staticMenuItem.id, location, null, staticMenuItem);
 
       expect(result.status).toBe('available');
       expect(result.availableAt).toContain('loc-wellington-001');
@@ -146,15 +188,10 @@ describe('availability utilities', () => {
       const location = {
         id: 'loc-wellington-001',
         shortName: 'Roma Mart 001',
-        status: 'open'
+        status: 'open',
       };
 
-      const result = getMenuItemStatusAtLocation(
-        'non-existent-item',
-        location,
-        [],
-        null
-      );
+      const result = getMenuItemStatusAtLocation('non-existent-item', location, [], null);
 
       expect(result.status).toBe('unavailable');
     });
@@ -163,25 +200,40 @@ describe('availability utilities', () => {
       const location = {
         id: 'loc-wellington-001',
         shortName: 'Roma Mart 001',
-        status: 'open'
+        status: 'open',
       };
 
       const apiMenuItem = {
         id: 'api-3',
         name: 'Test Item',
         status: 'available',
-        locations: [] // Empty array
+        locations: [], // Empty array
       };
 
-      const result = getMenuItemStatusAtLocation(
-        apiMenuItem.id,
-        location,
-        null,
-        apiMenuItem
-      );
+      const result = getMenuItemStatusAtLocation(apiMenuItem.id, location, null, apiMenuItem);
 
       // Should fallback to legacy behavior when locations array is empty
       expect(result.status).toBe('available');
+    });
+
+    it('should default to available status when item has no status field', () => {
+      const location = {
+        id: 'loc-wellington-001',
+        shortName: 'Roma Mart 001',
+        status: 'open',
+      };
+
+      const apiMenuItem = {
+        id: 'api-4',
+        name: 'No Status Item',
+        // No status field
+      };
+
+      const result = getMenuItemStatusAtLocation(apiMenuItem.id, location, null, apiMenuItem);
+
+      // Should default to 'available' when status is missing
+      expect(result.status).toBe('available');
+      expect(result.availability).toBe('store_hours');
     });
   });
 
@@ -189,7 +241,7 @@ describe('availability utilities', () => {
     it('should return true when location status is open', () => {
       const location = {
         id: 'loc-wellington-001',
-        status: 'open'
+        status: 'open',
       };
 
       expect(isLocationOpen(location)).toBe(true);
@@ -198,7 +250,7 @@ describe('availability utilities', () => {
     it('should return false when location status is closed', () => {
       const location = {
         id: 'loc-wellington-001',
-        status: 'closed'
+        status: 'closed',
       };
 
       expect(isLocationOpen(location)).toBe(false);
@@ -207,7 +259,7 @@ describe('availability utilities', () => {
     it('should return false when location status is coming_soon', () => {
       const location = {
         id: 'loc-lakeshore-002',
-        status: 'coming_soon'
+        status: 'coming_soon',
       };
 
       expect(isLocationOpen(location)).toBe(false);

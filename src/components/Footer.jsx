@@ -3,7 +3,7 @@
  * Main footer component — orchestrates sub-components and renders brand/social/copyright sections.
  */
 import React, { useCallback, useMemo } from 'react';
-import COMPANY_DATA from '../config/company_data';
+import { useCompanyData } from '../contexts/CompanyDataContext';
 import { Logo } from './Logo';
 import TrustpilotWidget from './TrustpilotWidget';
 import { useLocationContext } from '../hooks/useLocationContext';
@@ -56,6 +56,7 @@ export default function Footer() {
     typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
   const { userLocation } = useLocationContext();
   const { locations, selectedLocationId, selectLocation } = useLocations();
+  const { companyData } = useCompanyData();
 
   // Nearest open location (delegates to shared utility)
   const nearestLocationId = useMemo(() => {
@@ -68,21 +69,21 @@ export default function Footer() {
   const currentLocation = useMemo(() => {
     let location;
     if (selectedLocationId === 'auto') {
-      location = nearestLocationId ? locations.find((l) => l.id === nearestLocationId) : COMPANY_DATA.location;
+      location = nearestLocationId ? locations.find((l) => l.id === nearestLocationId) : companyData.location;
     } else {
       location = locations.find((l) => l.id === selectedLocationId);
     }
-    if (!location) location = COMPANY_DATA.location;
+    if (!location) location = companyData.location;
     if (location) {
       return {
         ...location,
-        address: location.address || COMPANY_DATA.location?.address,
-        contact: location.contact || COMPANY_DATA.location?.contact,
-        hours: location.hours || COMPANY_DATA.location?.hours,
+        address: location.address || companyData.location?.address,
+        contact: location.contact || companyData.location?.contact,
+        hours: location.hours || companyData.location?.hours,
       };
     }
-    return COMPANY_DATA.location;
-  }, [selectedLocationId, nearestLocationId, locations]);
+    return companyData.location;
+  }, [selectedLocationId, nearestLocationId, locations, companyData.location]);
 
   const socialHandlers = useMemo(() => {
     const handlers = {};
@@ -124,7 +125,7 @@ export default function Footer() {
             </p>
             <div className="flex gap-4 p-1">
               {SOCIAL_LINKS.map((link) => {
-                const url = COMPANY_DATA.socialLinks[link.label.toLowerCase()];
+                const url = companyData.socialLinks[link.label.toLowerCase()];
                 if (!url) return null;
                 return (
                   <a
@@ -165,9 +166,9 @@ export default function Footer() {
 
           <div className="text-center font-inter text-sm" style={{ color: 'var(--color-on-footer-subtle)' }}>
             <p>
-              &copy; {new Date().getFullYear()} {COMPANY_DATA.legalName} All rights reserved.
+              &copy; {new Date().getFullYear()} {companyData.legalName} All rights reserved.
             </p>
-            <p>GST#: {COMPANY_DATA.gstNumber}</p>
+            <p>GST#: {companyData.gstNumber}</p>
             <p>{'\uD83C\uDF41'}</p>
           </div>
         </div>

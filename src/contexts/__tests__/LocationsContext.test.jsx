@@ -50,8 +50,8 @@ describe('LocationsContext', () => {
 
   it('should replace locations with API data on success', async () => {
     const apiLocations = [
-      { id: 'api-1', name: 'API Location A' },
-      { id: 'api-2', name: 'API Location B' },
+      { id: 'api-1', name: 'API Location A', services: [], amenities: [] },
+      { id: 'api-2', name: 'API Location B', services: [], amenities: [] },
     ];
     global.fetch = vi.fn(() =>
       Promise.resolve({
@@ -63,23 +63,56 @@ describe('LocationsContext', () => {
     const { result } = renderHook(() => useLocations(), { wrapper });
 
     await waitFor(() => {
-      expect(result.current.loading).toBe(false);
+      expect(result.current.source).toBe('api');
     });
 
-    expect(result.current.locations).toEqual(apiLocations);
-    expect(result.current.source).toBe('api');
+    expect(result.current.locations).toHaveLength(2);
+    expect(result.current.locations[0].id).toBe('api-1');
+    expect(result.current.locations[0].services).toEqual([]);
+    expect(result.current.loading).toBe(false);
     expect(result.current.error).toBe('');
   });
 
-  it('should fall back to static data on non-ok response', async () => {
+  it('should normalize API locations with images to photos format', async () => {
+    const apiLocations = [
+      {
+        id: 'loc-wellington-001',
+        name: 'Wellington',
+        services: ['svc-atm-001'],
+        amenities: [{ name: 'Wi-Fi', value: true }],
+        images: {
+          storefront: 'https://cdn.example.com/storefront.jpg',
+          interior: 'https://cdn.example.com/interior.jpg',
+        },
+      },
+    ];
     global.fetch = vi.fn(() =>
-      Promise.resolve({ ok: false, status: 500 })
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({ success: true, locations: apiLocations }),
+      })
     );
 
     const { result } = renderHook(() => useLocations(), { wrapper });
 
     await waitFor(() => {
-      expect(result.current.loading).toBe(false);
+      expect(result.current.source).toBe('api');
+    });
+
+    const loc = result.current.locations[0];
+    expect(loc.photos).toBeDefined();
+    expect(loc.photos.primary).toBe('https://cdn.example.com/storefront.jpg');
+    expect(loc.photos.interior).toEqual(['https://cdn.example.com/interior.jpg']);
+    expect(loc.photos.exterior).toEqual(['https://cdn.example.com/storefront.jpg']);
+  });
+
+  it('should fall back to static data on non-ok response', async () => {
+    global.fetch = vi.fn(() => Promise.resolve({ ok: false, status: 500 }));
+
+    const { result } = renderHook(() => useLocations(), { wrapper });
+
+    await waitFor(() => {
+      expect(result.current.error).toBeTruthy();
     });
 
     expect(result.current.locations).toEqual([
@@ -87,7 +120,6 @@ describe('LocationsContext', () => {
       { id: 'loc-2', name: 'Uptown' },
     ]);
     expect(result.current.source).toBe('static');
-    expect(result.current.error).toBeTruthy();
   });
 
   it('should fall back to static data on invalid API response', async () => {
@@ -101,11 +133,10 @@ describe('LocationsContext', () => {
     const { result } = renderHook(() => useLocations(), { wrapper });
 
     await waitFor(() => {
-      expect(result.current.loading).toBe(false);
+      expect(result.current.error).toBeTruthy();
     });
 
     expect(result.current.source).toBe('static');
-    expect(result.current.error).toBeTruthy();
   });
 
   it('should fall back to static data on network error', async () => {
@@ -114,7 +145,7 @@ describe('LocationsContext', () => {
     const { result } = renderHook(() => useLocations(), { wrapper });
 
     await waitFor(() => {
-      expect(result.current.loading).toBe(false);
+      expect(result.current.error).toBeTruthy();
     });
 
     expect(result.current.source).toBe('static');
@@ -125,17 +156,21 @@ describe('LocationsContext', () => {
     global.fetch = vi.fn(() =>
       Promise.resolve({
         ok: true,
-        json: () => Promise.resolve({
-          success: true,
-          locations: [{ id: 'loc-1', name: 'Downtown' }, { id: 'loc-2', name: 'Uptown' }],
-        }),
+        json: () =>
+          Promise.resolve({
+            success: true,
+            locations: [
+              { id: 'loc-1', name: 'Downtown' },
+              { id: 'loc-2', name: 'Uptown' },
+            ],
+          }),
       })
     );
 
     const { result } = renderHook(() => useLocations(), { wrapper });
 
     await waitFor(() => {
-      expect(result.current.loading).toBe(false);
+      expect(result.current.source).toBe('api');
     });
 
     act(() => {
@@ -151,17 +186,18 @@ describe('LocationsContext', () => {
     global.fetch = vi.fn(() =>
       Promise.resolve({
         ok: true,
-        json: () => Promise.resolve({
-          success: true,
-          locations: [{ id: 'loc-1', name: 'Downtown' }],
-        }),
+        json: () =>
+          Promise.resolve({
+            success: true,
+            locations: [{ id: 'loc-1', name: 'Downtown' }],
+          }),
       })
     );
 
     const { result } = renderHook(() => useLocations(), { wrapper });
 
     await waitFor(() => {
-      expect(result.current.loading).toBe(false);
+      expect(result.current.source).toBe('api');
     });
 
     act(() => {
@@ -179,18 +215,15 @@ describe('LocationsContext', () => {
     global.fetch = vi.fn(() =>
       Promise.resolve({
         ok: true,
-        json: () => Promise.resolve({
-          success: true,
-          locations: [{ id: 'loc-1', name: 'Downtown' }],
-        }),
+        json: () =>
+          Promise.resolve({
+            success: true,
+            locations: [{ id: 'loc-1', name: 'Downtown' }],
+          }),
       })
     );
 
     const { result } = renderHook(() => useLocations(), { wrapper });
-
-    await waitFor(() => {
-      expect(result.current.loading).toBe(false);
-    });
 
     await waitFor(() => {
       expect(result.current.selectedLocationId).toBe('auto');
@@ -199,9 +232,7 @@ describe('LocationsContext', () => {
 
   it('should throw when useLocations is used outside LocationsProvider', () => {
     const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    expect(() => renderHook(() => useLocations())).toThrow(
-      'useLocations must be used within LocationsProvider'
-    );
+    expect(() => renderHook(() => useLocations())).toThrow('useLocations must be used within LocationsProvider');
     spy.mockRestore();
   });
 

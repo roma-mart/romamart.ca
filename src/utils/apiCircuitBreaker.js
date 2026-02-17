@@ -1,16 +1,16 @@
 /**
  * API Circuit Breaker Utility
- * 
+ *
  * Implements the Circuit Breaker pattern for protecting against API quota exhaustion.
  * Detects repeated failures (429, 403, 402 errors) and stops API calls to prevent
  * wasting quota when the service is down or quota is exceeded.
- * 
+ *
  * ARCHITECTURE:
  * - Reusable across any API integration (Google Places, Web3Forms, etc.)
  * - Fail-fast pattern: stops retrying after threshold reached
  * - Auto-resets after timeout to attempt recovery
  * - Integrates with fallback/offline strategies
- * 
+ *
  * USAGE:
  *   const breaker = new ApiCircuitBreaker({ failureThreshold: 5, resetAfterMs: 3600000 });
  *   if (breaker.shouldAttemptCall()) {
@@ -22,13 +22,13 @@
  *     }
  *   }
  *   breaker.getStatus();
- * 
+ *
  * @module utils/apiCircuitBreaker
  */
 
 /**
  * Circuit Breaker for API resilience
- * 
+ *
  * States:
  * - CLOSED: Normal operation, API calls allowed
  * - OPEN: Too many failures detected, API calls blocked
@@ -37,9 +37,9 @@
 export class ApiCircuitBreaker {
   constructor(options = {}) {
     const {
-      failureThreshold = 5,        // Number of failures before opening
+      failureThreshold = 5, // Number of failures before opening
       resetAfterMs = 60 * 60 * 1000, // 1 hour default
-      apiName = 'API'               // For logging/identification
+      apiName = 'API', // For logging/identification
     } = options;
 
     this.failureThreshold = failureThreshold;
@@ -54,7 +54,7 @@ export class ApiCircuitBreaker {
   /**
    * Record a failed API call
    * Only counts quota-related errors: 429 (rate limit), 403/402 (forbidden/quota)
-   * 
+   *
    * @param {number|Error} statusOrError - HTTP status code or Error object
    * @returns {boolean} True if circuit just opened due to this failure
    */
@@ -80,8 +80,8 @@ export class ApiCircuitBreaker {
       if (import.meta.env.DEV) {
         console.error(
           `🚨 CIRCUIT BREAKER OPEN [${this.apiName}]: ` +
-          `${this.failureCount} failures detected. API quota likely exceeded. ` +
-          `Falling back to static data. Will retry in ${Math.round(this.resetAfterMs / 1000 / 60)} minutes.`
+            `${this.failureCount} failures detected. API quota likely exceeded. ` +
+            `Falling back to static data. Will retry in ${Math.round(this.resetAfterMs / 1000 / 60)} minutes.`
         );
       }
     }
@@ -91,7 +91,7 @@ export class ApiCircuitBreaker {
 
   /**
    * Check if an API call should be attempted
-   * 
+   *
    * @returns {boolean} True if circuit is closed (call allowed), false if open (blocked)
    */
   shouldAttemptCall() {
@@ -105,10 +105,7 @@ export class ApiCircuitBreaker {
       this.isOpen = false;
       this.failureCount = 0;
       if (import.meta.env.DEV) {
-        console.warn(
-          `🔄 CIRCUIT BREAKER RESET [${this.apiName}]: ` +
-          `Timeout expired. Attempting API calls again.`
-        );
+        console.warn(`🔄 CIRCUIT BREAKER RESET [${this.apiName}]: ` + `Timeout expired. Attempting API calls again.`);
       }
       return true; // Try again
     }
@@ -119,7 +116,7 @@ export class ApiCircuitBreaker {
 
   /**
    * Get current circuit breaker status
-   * 
+   *
    * @returns {Object} Status object
    *   - isOpen: boolean - Is circuit currently blocking calls?
    *   - failureCount: number - Total failures recorded
@@ -127,16 +124,14 @@ export class ApiCircuitBreaker {
    *   - timeUntilReset: number - Milliseconds until auto-reset (if open)
    */
   getStatus() {
-    const timeUntilReset = this.isOpen 
-      ? Math.max(0, this.resetAfterMs - (Date.now() - this.lastFailureTime))
-      : 0;
+    const timeUntilReset = this.isOpen ? Math.max(0, this.resetAfterMs - (Date.now() - this.lastFailureTime)) : 0;
 
     return {
       isOpen: this.isOpen,
       failureCount: this.failureCount,
       quotaExceeded: this.failureCount >= this.failureThreshold,
       timeUntilReset,
-      apiName: this.apiName
+      apiName: this.apiName,
     };
   }
 
@@ -154,7 +149,7 @@ export class ApiCircuitBreaker {
 
   /**
    * Manually reset circuit breaker (dev/testing only)
-   * 
+   *
    * @internal
    */
   reset() {
@@ -169,7 +164,7 @@ export class ApiCircuitBreaker {
 
 /**
  * Factory function for creating circuit breakers with sensible defaults
- * 
+ *
  * @param {string} apiName - Name of the API (for logging)
  * @param {Object} options - Override options
  * @returns {ApiCircuitBreaker}
@@ -179,7 +174,7 @@ export function createApiCircuitBreaker(apiName, options = {}) {
     failureThreshold: 5,
     resetAfterMs: 60 * 60 * 1000, // 1 hour
     apiName,
-    ...options
+    ...options,
   });
 }
 
@@ -187,7 +182,11 @@ export function createApiCircuitBreaker(apiName, options = {}) {
 export const circuitBreakers = {
   googlePlaces: createApiCircuitBreaker('Google Places API'),
   web3Forms: createApiCircuitBreaker('Web3Forms API'),
-  reviews: createApiCircuitBreaker('Reviews API')
+  reviews: createApiCircuitBreaker('Reviews API'),
+  menu: createApiCircuitBreaker('Menu API'),
+  services: createApiCircuitBreaker('Services API'),
+  locations: createApiCircuitBreaker('Locations API'),
+  companyData: createApiCircuitBreaker('Company Data API'),
 };
 
 export default ApiCircuitBreaker;

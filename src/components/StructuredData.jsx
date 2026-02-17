@@ -5,7 +5,7 @@
 
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
-import COMPANY_DATA from '../config/company_data';
+import { useCompanyData } from '../contexts/CompanyDataContext';
 import { buildMenuItemSchema } from '../schemas/menuItemSchema';
 import { buildReturnPolicySchema } from '../schemas/returnPolicySchema';
 import { buildBreadcrumbSchema } from '../schemas/breadcrumbSchema';
@@ -14,6 +14,9 @@ import { buildServiceListSchema } from '../schemas/serviceSchema';
 import { buildLocationListSchema } from '../schemas/locationSchema';
 
 const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
+  const { companyData } = useCompanyData();
+  const schemaOptions = { companyData };
+
   const generateSchema = () => {
     switch (type) {
       case 'ProductList': {
@@ -24,7 +27,7 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
           console.log('[StructuredData] ProductList rendering - Input:', {
             hasProducts: !!data.products,
             isArray: Array.isArray(data.products),
-            productCount: data.products?.length || 0
+            productCount: data.products?.length || 0,
           });
         }
 
@@ -34,14 +37,13 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
         }
 
         const productSchemas = data.products
-          .map(productData => buildMenuItemSchema(
-            productData.menuItem,
-            productData.itemUrl,
-            {
+          .map((productData) =>
+            buildMenuItemSchema(productData.menuItem, productData.itemUrl, {
               currency: productData.currency || 'CAD',
-              priceInCents: productData.priceInCents
-            }
-          ))
+              priceInCents: productData.priceInCents,
+              companyData,
+            })
+          )
           .filter(Boolean); // Remove null schemas
 
         if (import.meta.env.DEV) {
@@ -49,7 +51,7 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
           console.log('[StructuredData] ProductList - Generated schemas:', {
             inputCount: data.products.length,
             outputCount: productSchemas.length,
-            sampleProduct: productSchemas[0] ? productSchemas[0].name : 'N/A'
+            sampleProduct: productSchemas[0] ? productSchemas[0].name : 'N/A',
           });
         }
 
@@ -64,15 +66,15 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
           itemListElement: productSchemas.map((product, index) => ({
             '@type': 'ListItem',
             position: index + 1,
-            item: product
-          }))
+            item: product,
+          })),
         };
 
         if (import.meta.env.DEV) {
           // eslint-disable-next-line no-console
           console.log('[StructuredData] ProductList - Final schema:', {
             type: schema['@type'],
-            itemCount: schema.itemListElement.length
+            itemCount: schema.itemListElement.length,
           });
         }
 
@@ -85,8 +87,8 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
           return null;
         }
 
-        // Use the centralized schema builder
-        return buildServiceListSchema(data.services, data.options || {});
+        // Merge page-specific options with schemaOptions (companyData)
+        return buildServiceListSchema(data.services, { ...schemaOptions, ...(data.options || {}) });
       }
 
       case 'LocationList': {
@@ -95,8 +97,8 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
           return null;
         }
 
-        // Use the centralized schema builder
-        return buildLocationListSchema(data.locations, data.options || {});
+        // Merge page-specific options with schemaOptions (companyData)
+        return buildLocationListSchema(data.locations, { ...schemaOptions, ...(data.options || {}) });
       }
 
       case 'BreadcrumbList':
@@ -104,7 +106,7 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
         return buildBreadcrumbSchema(data.breadcrumbs || data.items);
 
       case 'LocalBusiness': {
-        // Dynamic LocalBusiness pulled from COMPANY_DATA (SSOT)
+        // Dynamic LocalBusiness pulled from companyData (SSOT)
         // Helper to parse 12h time to 24h format
         const parse12hTo24h = (time) => {
           if (!time || typeof time !== 'string') return null;
@@ -121,93 +123,103 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
         return {
           '@context': 'https://schema.org',
           '@type': 'LocalBusiness',
-          '@id': `${COMPANY_DATA.baseUrl}/#business`,
-          name: data.name || COMPANY_DATA.dba || COMPANY_DATA.legalName,
-          legalName: COMPANY_DATA.legalName || undefined,
-          alternateName: data.alternateName || COMPANY_DATA.dba,
-          description: data.description || 'Your daily stop & go convenience store. Fresh RoCafé beverages, ATM, Bitcoin ATM, printing, and more.',
-          url: COMPANY_DATA.baseUrl,
-          telephone: data.telephone || COMPANY_DATA.contact.phone || COMPANY_DATA.location.contact.phone,
-          email: data.email || COMPANY_DATA.contact.email || COMPANY_DATA.location.contact.email,
-          priceRange: COMPANY_DATA.defaults.priceRange,
-          image: data.image || `${COMPANY_DATA.baseUrl}/images/store-front.jpg`,
-          logo: COMPANY_DATA.logoUrl,
+          '@id': `${companyData.baseUrl}/#business`,
+          name: data.name || companyData.dba || companyData.legalName,
+          legalName: companyData.legalName || undefined,
+          alternateName: data.alternateName || companyData.dba,
+          description:
+            data.description ||
+            'Your daily stop & go convenience store. Fresh RoCafé beverages, ATM, Bitcoin ATM, printing, and more.',
+          url: companyData.baseUrl,
+          telephone: data.telephone || companyData.contact.phone || companyData.location.contact.phone,
+          email: data.email || companyData.contact.email || companyData.location.contact.email,
+          priceRange: companyData.defaults.priceRange,
+          image: data.image || `${companyData.baseUrl}/images/store-front.jpg`,
+          logo: companyData.logoUrl,
           brand: {
             '@type': 'Brand',
-            name: COMPANY_DATA.dba
+            name: companyData.dba,
           },
           address: {
             '@type': 'PostalAddress',
-            streetAddress: data.address?.street || COMPANY_DATA.address.street || COMPANY_DATA.location.address.street,
-            addressLocality: data.address?.city || COMPANY_DATA.address.city || COMPANY_DATA.location.address.city,
-            addressRegion: data.address?.province || COMPANY_DATA.address.province || COMPANY_DATA.location.address.province,
-            postalCode: data.address?.postalCode || COMPANY_DATA.address.postalCode || COMPANY_DATA.location.address.postalCode,
-            addressCountry: COMPANY_DATA.defaults.country
+            streetAddress: data.address?.street || companyData.address.street || companyData.location.address.street,
+            addressLocality: data.address?.city || companyData.address.city || companyData.location.address.city,
+            addressRegion:
+              data.address?.province || companyData.address.province || companyData.location.address.province,
+            postalCode:
+              data.address?.postalCode || companyData.address.postalCode || companyData.location.address.postalCode,
+            addressCountry: companyData.defaults.country,
           },
           geo: {
             '@type': 'GeoCoordinates',
-            latitude: data.geo?.latitude || COMPANY_DATA.location.google.coordinates.lat,
-            longitude: data.geo?.longitude || COMPANY_DATA.location.google.coordinates.lng
+            latitude: data.geo?.latitude || companyData.location.google.coordinates.lat,
+            longitude: data.geo?.longitude || companyData.location.google.coordinates.lng,
           },
-          hasMap: COMPANY_DATA.location?.google?.mapLink || undefined,
-          currenciesAccepted: COMPANY_DATA.defaults.currency,
+          hasMap: companyData.location?.google?.mapLink || undefined,
+          currenciesAccepted: companyData.defaults.currency,
           areaServed: {
             '@type': 'City',
-            name: data.address?.city || COMPANY_DATA.address?.city || COMPANY_DATA.location.address.city
+            name: data.address?.city || companyData.address?.city || companyData.location.address.city,
           },
-          openingHoursSpecification: data.hours || (
-            COMPANY_DATA.location?.hours?.daily
+          openingHoursSpecification:
+            data.hours ||
+            (companyData.location?.hours?.daily
               ? [
                   // Convert daily hours to Schema.org format (24-hour times)
-                  ...Object.entries(COMPANY_DATA.location.hours.daily)
+                  ...Object.entries(companyData.location.hours.daily)
                     .filter(([, hours]) => hours && hours !== 'Closed' && hours.includes('-'))
                     .map(([day, hours]) => {
-                      const parts = hours.split('-').map(t => t.trim());
+                      const parts = hours.split('-').map((t) => t.trim());
                       if (parts.length !== 2) return null;
                       const opens = parse12hTo24h(parts[0]);
                       const closes = parse12hTo24h(parts[1]);
-                      return opens && closes ? {
-                        '@type': 'OpeningHoursSpecification',
-                        dayOfWeek: [day],
-                        opens,
-                        closes
-                      } : null;
+                      return opens && closes
+                        ? {
+                            '@type': 'OpeningHoursSpecification',
+                            dayOfWeek: [day],
+                            opens,
+                            closes,
+                          }
+                        : null;
                     })
                     .filter(Boolean),
                   // Add exceptions if present
-                  ...(COMPANY_DATA.location.hours.exceptions?.map(ex => {
-                    if (!ex.hours || ex.hours === 'Closed' || !ex.hours.includes('-')) return null;
-                    const parts = ex.hours.split('-').map(t => t.trim());
-                    if (parts.length !== 2) return null;
-                    const opens = parse12hTo24h(parts[0]);
-                    const closes = parse12hTo24h(parts[1]);
-                    return opens && closes ? {
-                      '@type': 'OpeningHoursSpecification',
-                      opens,
-                      closes,
-                      validFrom: ex.date,
-                      validThrough: ex.date,
-                      description: ex.reason || undefined
-                    } : null;
-                  }).filter(Boolean) || [])
+                  ...(companyData.location.hours.exceptions
+                    ?.map((ex) => {
+                      if (!ex.hours || ex.hours === 'Closed' || !ex.hours.includes('-')) return null;
+                      const parts = ex.hours.split('-').map((t) => t.trim());
+                      if (parts.length !== 2) return null;
+                      const opens = parse12hTo24h(parts[0]);
+                      const closes = parse12hTo24h(parts[1]);
+                      return opens && closes
+                        ? {
+                            '@type': 'OpeningHoursSpecification',
+                            opens,
+                            closes,
+                            validFrom: ex.date,
+                            validThrough: ex.date,
+                            description: ex.reason || undefined,
+                          }
+                        : null;
+                    })
+                    .filter(Boolean) || []),
                 ]
-              : []
-          ),
-          sameAs: data.socialLinks || Object.values(COMPANY_DATA.socialLinks),
+              : []),
+          sameAs: data.socialLinks || Object.values(companyData.socialLinks),
           contactPoint: {
             '@type': 'ContactPoint',
             contactType: 'customer service',
-            telephone: COMPANY_DATA.contact.phone || COMPANY_DATA.location.contact.phone,
-            email: COMPANY_DATA.contact.email || COMPANY_DATA.location.contact.email
+            telephone: companyData.contact.phone || companyData.location.contact.phone,
+            email: companyData.contact.email || companyData.location.contact.email,
           },
           // Amenities from location data (Google-recognized names, API-ready structure)
-          amenityFeature: (COMPANY_DATA.location.amenities || []).map(amenity => ({
+          amenityFeature: (companyData.location.amenities || []).map((amenity) => ({
             '@type': 'LocationFeatureSpecification',
             name: amenity.name,
-            value: amenity.value
+            value: amenity.value,
           })),
-          // Payment methods from COMPANY_DATA (business-wide)
-          paymentAccepted: COMPANY_DATA.paymentMethods
+          // Payment methods from companyData (business-wide)
+          paymentAccepted: companyData.paymentMethods,
         };
       }
 
@@ -215,26 +227,27 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
         return {
           '@context': 'https://schema.org',
           '@type': 'WebSite',
-          '@id': `${COMPANY_DATA.baseUrl}/#website`,
-          url: COMPANY_DATA.baseUrl,
-          name: COMPANY_DATA.dba,
+          '@id': `${companyData.baseUrl}/#website`,
+          url: companyData.baseUrl,
+          name: companyData.dba,
           description: data.description || 'Your daily stop & go convenience store',
           inLanguage: 'en-CA',
           copyrightYear: new Date().getFullYear(),
           copyrightHolder: {
-            '@id': `${COMPANY_DATA.baseUrl}/#organization`
+            '@id': `${companyData.baseUrl}/#organization`,
           },
           publisher: {
-            '@id': `${COMPANY_DATA.baseUrl}/#business`
-          }
+            '@id': `${companyData.baseUrl}/#business`,
+          },
         };
 
       case 'Product': {
         const menuItem = data.menuItem || data.item || data;
-        const itemUrl = data.itemUrl || data.url || COMPANY_DATA.baseUrl;
+        const itemUrl = data.itemUrl || data.url || companyData.baseUrl;
         const options = {
           priceInCents: data.priceInCents,
-          currency: data.currency
+          currency: data.currency,
+          companyData,
         };
 
         return buildMenuItemSchema(menuItem, itemUrl, options);
@@ -244,51 +257,50 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
         return {
           '@context': 'https://schema.org',
           '@type': 'Organization',
-          '@id': `${COMPANY_DATA.baseUrl}/#organization`,
-          name: COMPANY_DATA.legalName,
-          alternateName: COMPANY_DATA.dba,
-          url: COMPANY_DATA.baseUrl,
-          logo: COMPANY_DATA.logoUrl,
-          description: `${COMPANY_DATA.legalName} is a community-first convenience store offering essentials, RoCafé beverages, and local services.`,
-          email: COMPANY_DATA.contact.email,
-          telephone: COMPANY_DATA.contact.phone,
+          '@id': `${companyData.baseUrl}/#organization`,
+          name: companyData.legalName,
+          alternateName: companyData.dba,
+          url: companyData.baseUrl,
+          logo: companyData.logoUrl,
+          description: `${companyData.legalName} is a community-first convenience store offering essentials, RoCafé beverages, and local services.`,
+          email: companyData.contact.email,
+          telephone: companyData.contact.phone,
           address: {
             '@type': 'PostalAddress',
-            streetAddress: COMPANY_DATA.address.street || COMPANY_DATA.location.address.street,
-            addressLocality: COMPANY_DATA.address.city || COMPANY_DATA.location.address.city,
-            addressRegion: COMPANY_DATA.address.province || COMPANY_DATA.location.address.province,
-            postalCode: COMPANY_DATA.address.postalCode || COMPANY_DATA.location.address.postalCode,
-            addressCountry: COMPANY_DATA.defaults.country
+            streetAddress: companyData.address.street || companyData.location.address.street,
+            addressLocality: companyData.address.city || companyData.location.address.city,
+            addressRegion: companyData.address.province || companyData.location.address.province,
+            postalCode: companyData.address.postalCode || companyData.location.address.postalCode,
+            addressCountry: companyData.defaults.country,
           },
           contactPoint: {
             '@type': 'ContactPoint',
             contactType: 'customer service',
-            telephone: COMPANY_DATA.contact.phone,
-            email: COMPANY_DATA.contact.email
+            telephone: companyData.contact.phone,
+            email: companyData.contact.email,
           },
-          sameAs: Object.values(COMPANY_DATA.socialLinks || {}),
-          taxID: COMPANY_DATA.gstNumber || undefined,
+          sameAs: Object.values(companyData.socialLinks || {}),
+          taxID: companyData.gstNumber || undefined,
           areaServed: {
             '@type': 'City',
-            name: COMPANY_DATA.address?.city || COMPANY_DATA.location.address.city
+            name: companyData.address?.city || companyData.location.address.city,
           },
-          numberOfEmployees: COMPANY_DATA.location?.metadata?.employeeCount
+          numberOfEmployees: companyData.location?.metadata?.employeeCount
             ? {
                 '@type': 'QuantitativeValue',
-                value: COMPANY_DATA.location.metadata.employeeCount
+                value: companyData.location.metadata.employeeCount,
               }
             : undefined,
           // Link to main LocalBusiness location
           location: {
-            '@id': `${COMPANY_DATA.baseUrl}/#business`
-          }
+            '@id': `${companyData.baseUrl}/#business`,
+          },
         };
 
       case 'ReturnPolicy':
-        return buildReturnPolicySchema(data);
+        return buildReturnPolicySchema(data, schemaOptions);
       case 'WebApplication':
-        return buildWebApplicationSchema(data);
-
+        return buildWebApplicationSchema(data, schemaOptions);
 
       default:
         return data;
@@ -303,9 +315,7 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
 
   return (
     <Helmet>
-      <script type="application/ld+json">
-        {JSON.stringify(schema)}
-      </script>
+      <script type="application/ld+json">{JSON.stringify(schema)}</script>
     </Helmet>
   );
 };

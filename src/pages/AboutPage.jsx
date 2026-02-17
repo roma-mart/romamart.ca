@@ -5,7 +5,6 @@ import ShareButton from '../components/ShareButton';
 import Button from '../components/Button';
 import ImageCarousel from '../components/ImageCarousel';
 import StructuredData from '../components/StructuredData';
-import COMPANY_DATA from '../config/company_data';
 import { getAssetUrl } from '../utils/getAssetUrl';
 import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 

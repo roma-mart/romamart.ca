@@ -31,6 +31,7 @@ export const buildServiceSchema = (service, options = {}) => {
     return null;
   }
 
+  const cd = options.companyData || COMPANY_DATA;
   const name = safeString(service.name);
   if (!name) {
     return null;
@@ -38,14 +39,14 @@ export const buildServiceSchema = (service, options = {}) => {
 
   const description = safeString(service.description || service.tagline || '');
   const serviceType = safeString(service.category || 'Service');
-  const serviceUrl = options.serviceUrl || `${COMPANY_DATA.baseUrl}${COMPANY_DATA.endpoints.services}`;
-  const providerUrl = options.providerUrl || COMPANY_DATA.baseUrl;
+  const serviceUrl = options.serviceUrl || `${cd.baseUrl}${cd.endpoints.services}`;
+  const providerUrl = options.providerUrl || cd.baseUrl;
   const id = service.id ? safeString(service.id) : '';
 
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'Service',
-    ...(id ? { '@id': `${COMPANY_DATA.baseUrl}${COMPANY_DATA.endpoints.services}#${id}` } : {}),
+    ...(id ? { '@id': `${cd.baseUrl}${cd.endpoints.services}#${id}` } : {}),
     name,
     ...(description ? { description } : {}),
     ...(serviceType ? { serviceType } : {}),
@@ -54,31 +55,29 @@ export const buildServiceSchema = (service, options = {}) => {
     provider: {
       '@type': 'LocalBusiness',
       '@id': `${providerUrl}/#business`,
-      name: COMPANY_DATA.dba,
-      url: providerUrl
+      name: cd.dba,
+      url: providerUrl,
     },
     areaServed: {
       '@type': 'City',
-      name: COMPANY_DATA.location.address.city
+      name: cd.location.address.city,
     },
     brand: {
       '@type': 'Brand',
-      name: COMPANY_DATA.dba
-    }
+      name: cd.dba,
+    },
   };
 
   // Add service features as aggregateRating-like structure if available
   if (service.features && Array.isArray(service.features) && service.features.length > 0) {
-    const features = service.features
-      .map(feature => safeString(feature))
-      .filter(Boolean);
+    const features = service.features.map((feature) => safeString(feature)).filter(Boolean);
 
     if (features.length > 0) {
       schema.additionalProperty = features.map((feature, index) => ({
         '@type': 'PropertyValue',
         name: 'Feature',
         value: feature,
-        propertyID: `feature-${index + 1}`
+        propertyID: `feature-${index + 1}`,
       }));
     }
   }
@@ -87,7 +86,7 @@ export const buildServiceSchema = (service, options = {}) => {
   if (service.availability) {
     schema.hoursAvailable = {
       '@type': 'OpeningHoursSpecification',
-      name: safeString(service.availability)
+      name: safeString(service.availability),
     };
   }
 
@@ -95,7 +94,7 @@ export const buildServiceSchema = (service, options = {}) => {
   if (service.broker) {
     schema.broker = {
       '@type': 'Organization',
-      name: safeString(service.broker)
+      name: safeString(service.broker),
     };
   }
 
@@ -113,9 +112,7 @@ export const buildServiceListSchema = (services, options = {}) => {
     return null;
   }
 
-  const serviceSchemas = services
-    .map(service => buildServiceSchema(service, options))
-    .filter(Boolean);
+  const serviceSchemas = services.map((service) => buildServiceSchema(service, options)).filter(Boolean);
 
   if (serviceSchemas.length === 0) {
     return null;
@@ -128,7 +125,7 @@ export const buildServiceListSchema = (services, options = {}) => {
     itemListElement: serviceSchemas.map((service, index) => ({
       '@type': 'ListItem',
       position: index + 1,
-      item: service
-    }))
+      item: service,
+    })),
   };
 };

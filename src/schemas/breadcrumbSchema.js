@@ -56,17 +56,20 @@ export function buildBreadcrumbSchema(breadcrumbs = []) {
  * @param {string} currentPageName - Current page name
  * @param {string} currentPageUrl - Current page URL (absolute)
  * @param {Array<Object>} [parentPages] - Optional parent page(s)
+ * @param {Object} [options] - Optional overrides
+ * @param {Object} [options.companyData] - Company data object (defaults to COMPANY_DATA)
  * @returns {Array<Object>} Breadcrumb items array
  *
  * @example
  * buildBreadcrumbArray('Services', 'https://romamart.ca/services/')
  * // Returns: [{ name: 'Home', url: '...' }, { name: 'Services', url: '...' }]
  */
-export function buildBreadcrumbArray(currentPageName, currentPageUrl, parentPages = []) {
+export function buildBreadcrumbArray(currentPageName, currentPageUrl, parentPages = [], options = {}) {
+  const cd = options.companyData || COMPANY_DATA;
   const breadcrumbs = [
     {
       name: 'Home',
-      url: `${COMPANY_DATA.baseUrl}/`,
+      url: `${cd.baseUrl}/`,
     },
   ];
 
@@ -89,13 +92,16 @@ export function buildBreadcrumbArray(currentPageName, currentPageUrl, parentPage
  *
  * @param {string} pageName - Page name
  * @param {string} pageSlug - Page slug (e.g., 'services')
+ * @param {Object} [options] - Optional overrides
+ * @param {Object} [options.companyData] - Company data object (defaults to COMPANY_DATA)
  * @returns {Object} BreadcrumbList schema
  *
  * @example
  * quickBreadcrumb('Services', 'services')
  */
-export function quickBreadcrumb(pageName, pageSlug) {
-  const breadcrumbs = buildBreadcrumbArray(pageName, `${COMPANY_DATA.baseUrl}/${pageSlug}/`);
+export function quickBreadcrumb(pageName, pageSlug, options = {}) {
+  const baseUrl = (options.companyData || COMPANY_DATA).baseUrl;
+  const breadcrumbs = buildBreadcrumbArray(pageName, `${baseUrl}/${pageSlug}/`, [], options);
 
   return buildBreadcrumbSchema(breadcrumbs);
 }

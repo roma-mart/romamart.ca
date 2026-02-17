@@ -29,9 +29,10 @@ import { safeString } from '../utils/schemaHelpers';
  * buildWebApplicationSchema() // Uses COMPANY_DATA.pwa.webApplication
  * buildWebApplicationSchema({ name: 'Custom Name' }) // Override specific fields
  */
-export function buildWebApplicationSchema(data = {}) {
+export function buildWebApplicationSchema(data = {}, options = {}) {
+  const cd = options.companyData || COMPANY_DATA;
   // Merge with COMPANY_DATA.pwa.webApplication as defaults (SSOT)
-  const pwaData = COMPANY_DATA.pwa.webApplication;
+  const pwaData = cd.pwa.webApplication;
   const mergedData = {
     name: data.name || pwaData.name,
     url: data.url || pwaData.url,
@@ -40,7 +41,7 @@ export function buildWebApplicationSchema(data = {}) {
     operatingSystem: data.operatingSystem || pwaData.operatingSystem,
     offers: data.offers || pwaData.offers,
     browserRequirements: data.browserRequirements || pwaData.browserRequirements,
-    permissions: data.permissions || pwaData.permissions
+    permissions: data.permissions || pwaData.permissions,
   };
 
   // Validate required fields
@@ -51,7 +52,7 @@ export function buildWebApplicationSchema(data = {}) {
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
-    '@id': `${COMPANY_DATA.baseUrl}/#webapp`,
+    '@id': `${cd.baseUrl}/#webapp`,
     name: safeString(mergedData.name),
     url: safeString(mergedData.url),
   };
@@ -74,7 +75,7 @@ export function buildWebApplicationSchema(data = {}) {
     schema.offers = {
       '@type': 'Offer',
       price: mergedData.offers.price || '0',
-      priceCurrency: mergedData.offers.priceCurrency || COMPANY_DATA.defaults.currency
+      priceCurrency: mergedData.offers.priceCurrency || cd.defaults.currency,
     };
   }
 
@@ -83,25 +84,25 @@ export function buildWebApplicationSchema(data = {}) {
   }
 
   if (mergedData.permissions && Array.isArray(mergedData.permissions) && mergedData.permissions.length > 0) {
-    schema.permissions = mergedData.permissions.map(p => safeString(p));
+    schema.permissions = mergedData.permissions.map((p) => safeString(p));
   }
 
   // Screenshots (optional, for rich results)
   if (data.screenshots && Array.isArray(data.screenshots) && data.screenshots.length > 0) {
     schema.screenshot = data.screenshots
-      .filter(s => s && s.url)
-      .map(screenshot => ({
+      .filter((s) => s && s.url)
+      .map((screenshot) => ({
         '@type': 'ImageObject',
         url: safeString(screenshot.url),
-        caption: screenshot.caption ? safeString(screenshot.caption) : undefined
+        caption: screenshot.caption ? safeString(screenshot.caption) : undefined,
       }));
   }
 
   // Author/Publisher (organization)
   schema.author = {
     '@type': 'Organization',
-    name: COMPANY_DATA.legalName,
-    url: COMPANY_DATA.baseUrl
+    name: cd.legalName,
+    url: cd.baseUrl,
   };
 
   return schema;

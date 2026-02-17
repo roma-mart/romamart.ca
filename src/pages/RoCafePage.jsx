@@ -6,9 +6,9 @@ import ShareButton from '../components/ShareButton';
 import CategoryAccordionHeader from '../components/CategoryAccordionHeader';
 import StandardizedItem from '../components/StandardizedItem';
 import { useLocationAware } from '../hooks/useLocationContext';
-import { ROCAFE_FULL_MENU, ALLERGEN_WARNING } from '../data/rocafe-menu';
+import { ALLERGEN_WARNING } from '../data/rocafe-menu';
 import { useMenu } from '../contexts/MenuContext';
-import { groupExcelItemsByCategory } from '../utils/excelMenuTransform';
+import { groupMenuItemsByCategory } from '../utils/menuCategoryMap';
 import StructuredData from '../components/StructuredData';
 import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 
@@ -32,7 +32,7 @@ const RoCafePage = () => {
     // Location stored and available for StandardizedItem availability states
   });
   const menuCategories = useMemo(() => {
-    return groupExcelItemsByCategory(menuItems);
+    return groupMenuItemsByCategory(menuItems);
   }, [menuItems]);
 
   // No fallback for schemas - API-only (ensures accuracy)
@@ -118,7 +118,7 @@ const RoCafePage = () => {
           <div className="flex flex-wrap justify-center gap-8 mt-12">
             <div className="text-center">
               <div className="text-4xl text-heading mb-2" style={{ color: 'var(--color-accent)' }}>
-                {menuItems.length || ROCAFE_FULL_MENU.length}+
+                {menuItems.length}+
               </div>
               <div className="text-sm font-inter uppercase tracking-wider" style={mutedTextColor}>
                 Menu Items
@@ -147,7 +147,7 @@ const RoCafePage = () => {
       {/* Menu Categories */}
       <section className="max-w-5xl mx-auto px-4">
         {loading ? (
-          <div className="text-center py-16" role="status" aria-live="polite">
+          <output className="block text-center py-16" aria-live="polite">
             <div
               className="inline-block animate-spin rounded-full h-10 w-10 border-b-2 mb-4"
               aria-hidden="true"
@@ -156,67 +156,72 @@ const RoCafePage = () => {
             <p className="font-inter" style={textColor}>
               Loading menu...
             </p>
-          </div>
-        ) : error ? (
-          <div className="text-center py-16" role="alert">
-            <p className="font-inter text-lg mb-4" style={textColor}>
-              Unable to load menu. Please try again.
-            </p>
-            <button
-              type="button"
-              onClick={refetch}
-              className="px-6 py-3 rounded-lg font-bold font-inter transition-colors"
-              style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)' }}
-            >
-              Try Again
-            </button>
-          </div>
+          </output>
         ) : (
-          <div className="space-y-4">
-            {menuCategories.map((category) => (
+          <>
+            {error && (
               <div
-                key={category.id}
-                className="rounded-2xl overflow-hidden border transition-all"
-                style={{
-                  backgroundColor: 'var(--color-surface)',
-                  borderColor: expandedCategory === category.id ? 'var(--color-accent)' : 'var(--color-border)',
-                  borderWidth: expandedCategory === category.id ? '2px' : '1px',
-                }}
+                className="flex items-center justify-center gap-3 py-3 px-4 rounded-lg mb-6 text-sm font-inter"
+                style={{ backgroundColor: 'var(--color-warning-bg)', color: 'var(--color-warning)' }}
+                role="alert"
               >
-                {/* Category Header */}
-                <CategoryAccordionHeader
-                  icon={category.icon}
-                  title={category.name}
-                  description={category.description}
-                  expanded={expandedCategory === category.id}
-                  onToggle={() => toggleCategory(category.id)}
-                  id={`category-header-${category.id}`}
-                  ariaControls={`category-panel-${category.id}`}
-                />
-
-                {/* Category Items (Expandable) */}
-                {expandedCategory === category.id && (
-                  <div
-                    id={`category-panel-${category.id}`}
-                    className="px-6 pb-6 pt-6 border-t"
-                    style={{ borderColor: 'var(--color-border)' }}
-                  >
-                    {category.items.length > 0 ? (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                        {category.items.map((item) => (
-                          <StandardizedItem key={item.id} item={item} itemType="menu" defaultExpanded={false} />
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-center py-8" style={mutedTextColor}>
-                        <p className="font-inter">Menu items coming soon! Check back for updates.</p>
-                      </div>
-                    )}
-                  </div>
-                )}
+                <span>Using cached data. Couldn't reach server.</span>
+                <button
+                  type="button"
+                  onClick={refetch}
+                  className="underline font-semibold hover:no-underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 rounded"
+                  style={{ '--tw-ring-color': 'var(--color-accent)' }}
+                >
+                  Update
+                </button>
               </div>
-            ))}
-          </div>
+            )}
+            <div className="space-y-4">
+              {menuCategories.map((category) => (
+                <div
+                  key={category.id}
+                  className="rounded-2xl overflow-hidden border transition-all"
+                  style={{
+                    backgroundColor: 'var(--color-surface)',
+                    borderColor: expandedCategory === category.id ? 'var(--color-accent)' : 'var(--color-border)',
+                    borderWidth: expandedCategory === category.id ? '2px' : '1px',
+                  }}
+                >
+                  {/* Category Header */}
+                  <CategoryAccordionHeader
+                    icon={category.icon}
+                    title={category.name}
+                    description={category.description}
+                    expanded={expandedCategory === category.id}
+                    onToggle={() => toggleCategory(category.id)}
+                    id={`category-header-${category.id}`}
+                    ariaControls={`category-panel-${category.id}`}
+                  />
+
+                  {/* Category Items (Expandable) */}
+                  {expandedCategory === category.id && (
+                    <div
+                      id={`category-panel-${category.id}`}
+                      className="px-6 pb-6 pt-6 border-t"
+                      style={{ borderColor: 'var(--color-border)' }}
+                    >
+                      {category.items.length > 0 ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                          {category.items.map((item) => (
+                            <StandardizedItem key={item.id} item={item} itemType="menu" defaultExpanded={false} />
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="text-center py-8" style={mutedTextColor}>
+                          <p className="font-inter">Menu items coming soon! Check back for updates.</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </>
         )}
       </section>
 

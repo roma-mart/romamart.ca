@@ -8,6 +8,7 @@
 import {
   Banknote,
   Bitcoin,
+  Coffee,
   Printer,
   Package,
   UtensilsCrossed,
@@ -22,9 +23,9 @@ import {
   Candy,
 } from 'lucide-react';
 
-// Service categories
+// Service categories (match API snake_case format via toSnakeCase)
 export const SERVICE_CATEGORIES = {
-  FINANCIAL: 'financial',
+  FINANCIAL: 'financial_services',
   FOOD: 'food',
   RETAIL: 'retail',
   CONVENIENCE: 'convenience',
@@ -35,7 +36,8 @@ export const SERVICE_CATEGORIES = {
 export const SERVICES = [
   {
     itemType: 'service',
-    id: 'atm',
+    id: 'svc-atm-001',
+    slug: 'svc-atm-001',
     name: 'ATM',
     tagline: 'Cash when you need it',
     description:
@@ -59,7 +61,8 @@ export const SERVICES = [
 
   {
     itemType: 'service',
-    id: 'bitcoin_atm',
+    id: 'svc-bitcoin-atm-001',
+    slug: 'svc-bitcoin-atm-001',
     name: 'Bitcoin ATM',
     tagline: 'Buy & sell crypto instantly',
     description:
@@ -92,7 +95,8 @@ export const SERVICES = [
 
   {
     itemType: 'service',
-    id: 'gift_cards',
+    id: 'svc-gift-cards-001',
+    slug: 'svc-gift-cards-001',
     name: 'Gift Cards',
     tagline: 'Perfect for any occasion',
     description:
@@ -121,7 +125,8 @@ export const SERVICES = [
 
   {
     itemType: 'service',
-    id: 'printing',
+    id: 'svc-printing-services-001',
+    slug: 'svc-printing-services-001',
     name: 'Printing Services',
     tagline: 'Black & white printing on demand',
     description:
@@ -150,7 +155,8 @@ export const SERVICES = [
 
   {
     itemType: 'service',
-    id: 'halal_meat',
+    id: 'svc-halal-meat-001',
+    slug: 'svc-halal-meat-001',
     name: 'Halal Meat',
     tagline: '100% certified halal',
     description:
@@ -174,7 +180,33 @@ export const SERVICES = [
 
   {
     itemType: 'service',
-    id: 'perfumes',
+    id: 'svc-rocafe-001',
+    slug: 'svc-rocafe-001',
+    name: 'RoCaf\u00e9',
+    tagline: 'Fresh coffee & beverages',
+    description:
+      'In-store caf\u00e9 serving freshly brewed coffee, espresso drinks, iced beverages, and more. Crafted with care using quality ingredients.',
+    icon: <Coffee size={20} />,
+    category: SERVICE_CATEGORIES.FOOD,
+    availableAt: ['loc-wellington-001'],
+    availability: 'store_hours',
+    features: [
+      'Freshly brewed coffee',
+      'Espresso-based drinks',
+      'Iced & blended beverages',
+      'Hot chocolate & tea',
+      'Seasonal specials',
+    ],
+    badge: null,
+    ageRestricted: false,
+    status: 'available',
+    featured: false,
+  },
+
+  {
+    itemType: 'service',
+    id: 'svc-perfumes-fragrances-001',
+    slug: 'svc-perfumes-fragrances-001',
     name: 'Perfumes & Fragrances',
     tagline: 'Find your signature scent',
     description:
@@ -192,7 +224,8 @@ export const SERVICES = [
 
   {
     itemType: 'service',
-    id: 'canadian_products',
+    id: 'svc-canadian-products-001',
+    slug: 'svc-canadian-products-001',
     name: 'Canadian Products',
     tagline: 'Support Local 🍁',
     description:
@@ -210,7 +243,8 @@ export const SERVICES = [
 
   {
     itemType: 'service',
-    id: 'international_products',
+    id: 'svc-international-products-001',
+    slug: 'svc-international-products-001',
     name: 'International Products',
     tagline: 'Global flavors at home',
     description:
@@ -228,7 +262,8 @@ export const SERVICES = [
 
   {
     itemType: 'service',
-    id: 'groceries',
+    id: 'svc-pantry-essentials-groceries-001',
+    slug: 'svc-pantry-essentials-groceries-001',
     name: 'Pantry Essentials & Groceries',
     tagline: 'Your daily essentials',
     description:
@@ -246,7 +281,8 @@ export const SERVICES = [
 
   {
     itemType: 'service',
-    id: 'snacks',
+    id: 'svc-snacks-confectionery-001',
+    slug: 'svc-snacks-confectionery-001',
     name: 'Snacks & Confectionery',
     tagline: 'Sweet & savory treats',
     description: 'Wide variety of snacks and candy for every craving. Chips, chocolate bars, gummies, nuts, and more.',
@@ -263,7 +299,8 @@ export const SERVICES = [
 
   {
     itemType: 'service',
-    id: 'package_services',
+    id: 'svc-package-pickup-dropoff-001',
+    slug: 'svc-package-pickup-dropoff-001',
     name: 'Package Pickup & Dropoff',
     tagline: 'Your package hub',
     description:
@@ -292,7 +329,8 @@ export const SERVICES = [
 
   {
     itemType: 'service',
-    id: 'money_transfer',
+    id: 'svc-money-transfer-001',
+    slug: 'svc-money-transfer-001',
     name: 'Money Transfer',
     tagline: 'Send money anywhere',
     description:
@@ -321,7 +359,8 @@ export const SERVICES = [
 
   {
     itemType: 'service',
-    id: 'tobacco',
+    id: 'svc-tobacco-vape-001',
+    slug: 'svc-tobacco-vape-001',
     name: 'Tobacco & Vape',
     tagline: '19+ Only - ID Required',
     description:
@@ -344,7 +383,8 @@ export const SERVICES = [
 
   {
     itemType: 'service',
-    id: 'lottery',
+    id: 'svc-lottery-001',
+    slug: 'svc-lottery-001',
     name: 'Lottery',
     tagline: 'Play your favorite games!',
     description:
