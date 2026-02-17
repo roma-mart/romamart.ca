@@ -334,5 +334,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Google Tag Manager, GA4, Consent Mode, Trustpilot, Snap Pixel
 - LocalBusiness structured data, meta tags, sitemap, robots.txt
 
-[1.x]: https://github.com/roma-mart/romamart.ca/releases/tag/v1.0.0
+[Unreleased]: https://github.com/roma-mart/romamart.ca/compare/v2.7.1...HEAD
+[2.7.1]: https://github.com/roma-mart/romamart.ca/compare/v2.7.0...v2.7.1
+[2.7.0]: https://github.com/roma-mart/romamart.ca/compare/v2.6.7...v2.7.0
+[2.6.7]: https://github.com/roma-mart/romamart.ca/compare/v2.6.6...v2.6.7
+[2.6.6]: https://github.com/roma-mart/romamart.ca/compare/v2.6.5...v2.6.6
+[2.6.5]: https://github.com/roma-mart/romamart.ca/compare/v2.6.4...v2.6.5
+[2.6.4]: https://github.com/roma-mart/romamart.ca/compare/v2.6.3...v2.6.4
+[2.6.3]: https://github.com/roma-mart/romamart.ca/compare/v2.6.2...v2.6.3
+[2.6.2]: https://github.com/roma-mart/romamart.ca/compare/v2.6.1...v2.6.2
+[2.6.1]: https://github.com/roma-mart/romamart.ca/compare/v2.6.0...v2.6.1
+[2.6.0]: https://github.com/roma-mart/romamart.ca/compare/v2.5.0...v2.6.0
+[2.5.0]: https://github.com/roma-mart/romamart.ca/compare/v2.4.1...v2.5.0
+[2.4.1]: https://github.com/roma-mart/romamart.ca/compare/v2.4.0...v2.4.1
+[2.4.0]: https://github.com/roma-mart/romamart.ca/compare/v2.3.3...v2.4.0
+[2.3.3]: https://github.com/roma-mart/romamart.ca/compare/v2.3.1...v2.3.3
+[2.3.1]: https://github.com/roma-mart/romamart.ca/compare/v2.3.0...v2.3.1
+[2.3.0]: https://github.com/roma-mart/romamart.ca/compare/v2.2.0...v2.3.0
+[2.2.0]: https://github.com/roma-mart/romamart.ca/compare/v2.1.0...v2.2.0
+[2.1.0]: https://github.com/roma-mart/romamart.ca/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/roma-mart/romamart.ca/releases/tag/v2.0.0
+[1.x]: https://github.com/roma-mart/romamart.ca/releases/tag/v1.0.0
