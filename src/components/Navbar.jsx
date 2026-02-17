@@ -216,7 +216,7 @@ export default function Navbar({ currentPage = 'home' }) {
 
   return (
     <nav
-      className={`fixed w-full z-50 ${wcoActive ? 'navbar-wco' : `transition-all duration-300 ${scrolled ? 'shadow-md py-2' : 'py-4'}`}`}
+      className={`fixed top-0 inset-x-0 z-50 ${wcoActive ? 'navbar-wco' : `transition-all duration-300 ${scrolled ? 'shadow-md py-2' : 'py-4'}`}`}
       style={{
         backgroundColor: wcoActive
           ? isHomePage && !scrolled
@@ -234,7 +234,7 @@ export default function Navbar({ currentPage = 'home' }) {
       data-wco={wcoActive ? 'active' : undefined}
     >
       <div className={`max-w-7xl mx-auto ${wcoActive ? 'px-2' : 'px-4 sm:px-6 lg:px-8'}`}>
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center gap-4">
           {/* Logo Area */}
           <a
             href={`${BASE_URL}`}
@@ -277,14 +277,20 @@ export default function Navbar({ currentPage = 'home' }) {
           </a>
 
           {/* Desktop Menu */}
-          <div className={`hidden md:flex items-center ${wcoActive ? 'space-x-2' : 'space-x-8'}`}>
+          <div
+            className={`${wcoActive ? 'flex' : 'hidden md:flex'} items-center ${wcoActive ? 'space-x-3' : 'space-x-8'}`}
+          >
             {/* Only show Home button if NOT on homepage */}
             {!isHomePage && (
               <a
                 key="home"
                 href={BASE_URL}
                 className={`font-inter font-medium transition-opacity flex items-center gap-2 no-drag hover:opacity-80 focus-visible:opacity-80${wcoActive ? ' wco-nav-link' : ''}`}
-                style={{ color: 'var(--color-text)', WebkitTapHighlightColor: 'transparent' }}
+                style={{
+                  color: 'var(--color-text)',
+                  WebkitTapHighlightColor: 'transparent',
+                  ...(wcoActive ? { padding: '2px 6px', borderRadius: 'var(--radius-sm, 4px)' } : {}),
+                }}
                 aria-label="Go to homepage"
                 title="Home"
               >
@@ -347,7 +353,9 @@ export default function Navbar({ currentPage = 'home' }) {
                       WebkitTapHighlightColor: 'transparent',
                       display: 'inline-flex',
                       alignItems: 'center',
-                      gap: 4,
+                      gap: 6,
+                      padding: '2px 6px',
+                      borderRadius: 'var(--radius-sm, 4px)',
                     }}
                     aria-label={link.ariaLabel || link.label}
                     title={link.label}
@@ -486,7 +494,7 @@ export default function Navbar({ currentPage = 'home' }) {
                 toggleMenu();
               }
             }}
-            className={`md:hidden p-2 min-w-[44px] min-h-[44px] rounded-md no-drag focus-visible:ring-2 focus-visible:ring-accent${isOpen ? ' invisible' : ''}`}
+            className={`${wcoActive ? 'hidden' : 'md:hidden'} p-2 min-w-[44px] min-h-[44px] rounded-md no-drag focus-visible:ring-2 focus-visible:ring-accent${isOpen ? ' invisible' : ''}`}
             style={{ color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-heading)' }}
             aria-label={isOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={isOpen}
@@ -496,9 +504,9 @@ export default function Navbar({ currentPage = 'home' }) {
         </div>
       </div>
 
-      {/* Mobile Menu Overlay */}
+      {/* Mobile Menu Overlay (never shown in WCO — overflow dropdown handles nav) */}
       <AnimatePresence>
-        {isOpen && (
+        {isOpen && !wcoActive && (
           <motion.div
             ref={mobileMenuRef}
             initial={{ opacity: 0, height: 0 }}
