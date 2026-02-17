@@ -7,6 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.7.1] - 2026-02-17
+
+### Fixed
+- iOS PWA safe-area: pinned navbar to `top-0 inset-x-0` and removed redundant body `padding-top` that created a transparent gap above the navbar
+- WCO: hid mobile hamburger in WCO mode (overflow dropdown handles all widths), preventing overlap with Windows minimize/maximize/close buttons
+- WCO: increased button spacing from 8px to 12px gap and added link padding for the 600px+ tier
+- Navbar: added 16px minimum gap between logo wordmark and navigation links at ~768px
+
+### Changed
+- Bumped `stylelint` 17.2.0 → 17.3.0 (17 bug fixes, 3x perf)
+- Bumped `lucide-react` 0.563.0 → 0.564.0 (new icons, icon shape fixes)
+- Bumped `jsdom` 28.0.0 → 28.1.0 (getComputedStyle specificity fix, perf)
+
+## [2.7.0] - 2026-02-15
+
+### Added
+- WCO progressive collapse with 3-tier breakpoints (wide ≥600px, medium ≥450px, narrow <450px)
+- WCO overflow dropdown for secondary nav links (Contact, About) with Framer Motion animation
+- iOS standalone PWA safe-area support via `paddingTop: env(safe-area-inset-top)`
+- `--shadow-lg` CSS variable for navbar overflow dropdown shadow
+- `accent` color in Tailwind config mapped to `var(--color-accent)` for `ring-accent` utility
+
+### Fixed
+- WCO nav links: switched from label-based to href-based constants for stability
+- WCO overflow: replaced `role="menu"` with disclosure pattern (`aria-expanded` + `aria-controls`)
+- WCO click-outside handler: defensive null ref handling + auto-close when WCO deactivates
+- Overflow items: added `focus-visible` outline ring
+- Tailwind config: replaced hardcoded hex brand colors with CSS variable references
+
 ## [2.6.7] - 2026-02-12
 
 ### Changed
