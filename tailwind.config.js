@@ -5,12 +5,12 @@ export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
-      // Brand colors and fonts
+      // Brand colors (theme-aware via CSS variables)
       colors: {
-        'brand-navy': '#020178',
-        'brand-yellow': '#E4B340',
-        'brand-darkgrey': '#242424',
-        'brand-black': '#151515',
+        'brand-navy': 'var(--color-primary)',
+        'brand-yellow': 'var(--color-accent)',
+        'brand-darkgrey': 'var(--color-text-muted)',
+        'brand-black': 'var(--color-text)',
         accent: 'var(--color-accent)',
       },
       fontFamily: {
