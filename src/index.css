@@ -64,12 +64,8 @@
   }
 }
 
-/* Standalone (non-WCO) mode: offset body for navbar safe-area growth on iOS */
-@media (display-mode: standalone) {
-  body {
-    padding-top: env(safe-area-inset-top, 0);
-  }
-}
+/* Standalone (non-WCO) mode: navbar handles its own safe-area with paddingTop.
+   No body offset needed — pages already use pt-32 to clear the fixed navbar. */
 
 /* WCO mode: offset body so content doesn't render under the titlebar */
 @media (display-mode: window-controls-overlay) {
