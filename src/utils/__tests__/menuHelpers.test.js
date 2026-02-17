@@ -15,11 +15,11 @@ describe('menuHelpers', () => {
       const sizes = [
         { name: 'L', price: 7.49 },
         { name: 'S', price: 5.99 },
-        { name: 'M', price: 6.99 }
+        { name: 'M', price: 6.99 },
       ];
-      
+
       const sorted = sortSizes(sizes);
-      
+
       expect(sorted[0].name).toBe('S');
       expect(sorted[1].name).toBe('M');
       expect(sorted[2].name).toBe('L');
@@ -29,11 +29,11 @@ describe('menuHelpers', () => {
       const sizes = [
         { name: 'l', price: 7.49 },
         { name: 's', price: 5.99 },
-        { name: 'M', price: 6.99 }
+        { name: 'M', price: 6.99 },
       ];
-      
+
       const sorted = sortSizes(sizes);
-      
+
       expect(sorted[0].name).toBe('s');
       expect(sorted[1].name).toBe('M');
       expect(sorted[2].name).toBe('l');
@@ -45,11 +45,11 @@ describe('menuHelpers', () => {
         { name: 'M', price: 6.99 },
         { name: '20 oz', price: 4.49 },
         { name: 'S', price: 5.99 },
-        { name: 'L', price: 7.49 }
+        { name: 'L', price: 7.49 },
       ];
-      
+
       const sorted = sortSizes(sizes);
-      
+
       expect(sorted[0].name).toBe('S');
       expect(sorted[1].name).toBe('M');
       expect(sorted[2].name).toBe('L');
@@ -57,39 +57,37 @@ describe('menuHelpers', () => {
       expect(sorted[4].name).toBe('20 oz');
     });
 
-    it('should preserve original order for non-SML sizes', () => {
+    it('should sort non-SML sizes numerically', () => {
       const sizes = [
         { name: '20 oz', price: 4.49 },
         { name: '16 oz', price: 3.99 },
-        { name: 'Regular', price: 4.99 }
+        { name: 'Regular', price: 4.99 },
       ];
-      
+
       const sorted = sortSizes(sizes);
-      
-      expect(sorted[0].name).toBe('20 oz');
-      expect(sorted[1].name).toBe('16 oz');
+
+      expect(sorted[0].name).toBe('16 oz');
+      expect(sorted[1].name).toBe('20 oz');
       expect(sorted[2].name).toBe('Regular');
     });
 
     it('should handle incomplete S, M, L sets', () => {
       const sizes = [
         { name: 'L', price: 7.49 },
-        { name: 'S', price: 5.99 }
+        { name: 'S', price: 5.99 },
       ];
-      
+
       const sorted = sortSizes(sizes);
-      
+
       expect(sorted[0].name).toBe('S');
       expect(sorted[1].name).toBe('L');
     });
 
     it('should handle only M size', () => {
-      const sizes = [
-        { name: 'M', price: 6.99 }
-      ];
-      
+      const sizes = [{ name: 'M', price: 6.99 }];
+
       const sorted = sortSizes(sizes);
-      
+
       expect(sorted[0].name).toBe('M');
     });
 
@@ -108,32 +106,114 @@ describe('menuHelpers', () => {
       const sizes = [
         { name: 'L', size: '20 oz', price: 7.49, calories: 410 },
         { name: 'S', size: '12 oz', price: 5.99, calories: 320 },
-        { name: 'M', size: '16 oz', price: 6.99, calories: 360 }
+        { name: 'M', size: '16 oz', price: 6.99, calories: 360 },
       ];
-      
+
       const sorted = sortSizes(sizes);
-      
+
       expect(sorted[0]).toEqual({ name: 'S', size: '12 oz', price: 5.99, calories: 320 });
       expect(sorted[1]).toEqual({ name: 'M', size: '16 oz', price: 6.99, calories: 360 });
       expect(sorted[2]).toEqual({ name: 'L', size: '20 oz', price: 7.49, calories: 410 });
     });
 
-    it('should handle mixed S/M/L and descriptive names', () => {
+    it('should handle mixed abbreviated and full names', () => {
       const sizes = [
         { name: 'Regular', price: 4.99 },
         { name: 'L', price: 7.49 },
         { name: 'Small', price: 3.99 },
-        { name: 'S', price: 5.99 }
+        { name: 'S', price: 5.99 },
       ];
-      
+
       const sorted = sortSizes(sizes);
-      
-      // S and L should come first
-      expect(sorted[0].name).toBe('S');
-      expect(sorted[1].name).toBe('L');
-      // Non-SML should maintain original order
-      expect(sorted[2].name).toBe('Regular');
-      expect(sorted[3].name).toBe('Small');
+
+      // Both S and Small are recognized as "small" priority, then L
+      expect(sorted[0].name).toBe('Small');
+      expect(sorted[1].name).toBe('S');
+      expect(sorted[2].name).toBe('L');
+      // Non-standard should maintain original order
+      expect(sorted[3].name).toBe('Regular');
+    });
+
+    it('should sort API full names (Small, Medium, Large)', () => {
+      const sizes = [
+        { name: 'Large', price: 549 },
+        { name: 'Medium', price: 449 },
+      ];
+
+      const sorted = sortSizes(sizes);
+
+      expect(sorted[0].name).toBe('Medium');
+      expect(sorted[1].name).toBe('Large');
+    });
+
+    it('should sort API full names with all three sizes', () => {
+      const sizes = [
+        { name: 'Large', price: 549 },
+        { name: 'Small', price: 349 },
+        { name: 'Medium', price: 449 },
+      ];
+
+      const sorted = sortSizes(sizes);
+
+      expect(sorted[0].name).toBe('Small');
+      expect(sorted[1].name).toBe('Medium');
+      expect(sorted[2].name).toBe('Large');
+    });
+
+    it('should sort numeric sizes like ml and oz in ascending order', () => {
+      const sizes = [
+        { name: '500ml', price: 4.99 },
+        { name: '250ml', price: 2.99 },
+        { name: '750ml', price: 6.99 },
+      ];
+
+      const sorted = sortSizes(sizes);
+
+      expect(sorted[0].name).toBe('250ml');
+      expect(sorted[1].name).toBe('500ml');
+      expect(sorted[2].name).toBe('750ml');
+    });
+
+    it('should sort numeric sizes with spaces and units', () => {
+      const sizes = [
+        { name: '2 pcs', price: 3.99 },
+        { name: '6 pcs', price: 8.99 },
+        { name: '1 pc', price: 1.99 },
+      ];
+
+      const sorted = sortSizes(sizes);
+
+      expect(sorted[0].name).toBe('1 pc');
+      expect(sorted[1].name).toBe('2 pcs');
+      expect(sorted[2].name).toBe('6 pcs');
+    });
+
+    it('should sort oz sizes numerically', () => {
+      const sizes = [
+        { name: '16oz', price: 4.99 },
+        { name: '8oz', price: 2.99 },
+        { name: '12oz', price: 3.99 },
+      ];
+
+      const sorted = sortSizes(sizes);
+
+      expect(sorted[0].name).toBe('8oz');
+      expect(sorted[1].name).toBe('12oz');
+      expect(sorted[2].name).toBe('16oz');
+    });
+
+    it('should place standard sizes before numeric sizes', () => {
+      const sizes = [
+        { name: '500ml', price: 4.99 },
+        { name: 'Small', price: 2.99 },
+        { name: '250ml', price: 1.99 },
+      ];
+
+      const sorted = sortSizes(sizes);
+
+      expect(sorted[0].name).toBe('Small');
+      expect(sorted[1].name).toBe('250ml');
+      expect(sorted[2].name).toBe('500ml');
     });
   });
 
@@ -155,8 +235,8 @@ describe('menuHelpers', () => {
         sizes: [
           { name: 'S', price: 5.99 },
           { name: 'M', price: 6.99 },
-          { name: 'L', price: 7.49 }
-        ]
+          { name: 'L', price: 7.49 },
+        ],
       };
 
       expect(getLowestPrice(item)).toBe(5.99);
@@ -274,8 +354,7 @@ describe('menuHelpers', () => {
           },
         ],
       };
-      expect(calculateItemPrice(item, 0, { extras: { 'Espresso Shot': 2, 'Syrup Pump': 3 } }))
-        .toBe(5.99 + 2.0 + 1.5);
+      expect(calculateItemPrice(item, 0, { extras: { 'Espresso Shot': 2, 'Syrup Pump': 3 } })).toBe(5.99 + 2.0 + 1.5);
     });
 
     it('should ignore quantity-based options with quantity 0', () => {
@@ -312,11 +391,13 @@ describe('menuHelpers', () => {
           },
         ],
       };
-      expect(calculateItemPrice(item, 0, {
-        milk: 'Oat',
-        toppings: ['Whip'],
-        extras: { Shot: 2 },
-      })).toBe(5.99 + 0.75 + 0.5 + 2.0);
+      expect(
+        calculateItemPrice(item, 0, {
+          milk: 'Oat',
+          toppings: ['Whip'],
+          extras: { Shot: 2 },
+        })
+      ).toBe(5.99 + 0.75 + 0.5 + 2.0);
     });
 
     it('should ignore unknown option names', () => {
@@ -356,10 +437,7 @@ describe('menuHelpers', () => {
       const customizations = [
         {
           type: 'milk',
-          options: [
-            { name: 'Whole', default: true },
-            { name: 'Oat' },
-          ],
+          options: [{ name: 'Whole', default: true }, { name: 'Oat' }],
         },
       ];
       expect(getDefaultSelections(customizations)).toEqual({ milk: 'Whole' });
@@ -380,11 +458,7 @@ describe('menuHelpers', () => {
         {
           type: 'toppings',
           multiple: true,
-          options: [
-            { name: 'Whip', default: true },
-            { name: 'Caramel' },
-            { name: 'Mocha', default: true },
-          ],
+          options: [{ name: 'Whip', default: true }, { name: 'Caramel' }, { name: 'Mocha', default: true }],
         },
       ];
       expect(getDefaultSelections(customizations)).toEqual({ toppings: ['Whip', 'Mocha'] });
@@ -406,10 +480,7 @@ describe('menuHelpers', () => {
         {
           type: 'extras',
           quantity: true,
-          options: [
-            { name: 'Shot', default: true },
-            { name: 'Pump' },
-          ],
+          options: [{ name: 'Shot', default: true }, { name: 'Pump' }],
         },
       ];
       expect(getDefaultSelections(customizations)).toEqual({ extras: { Shot: 1 } });

@@ -96,8 +96,8 @@ export function buildBreadcrumbArray(currentPageName, currentPageUrl, parentPage
  * quickBreadcrumb('Services', 'services')
  */
 export function quickBreadcrumb(pageName, pageSlug, options = {}) {
-  const cd = options.companyData || COMPANY_DATA;
-  const breadcrumbs = buildBreadcrumbArray(pageName, `${cd.baseUrl}/${pageSlug}/`, [], options);
+  const baseUrl = (options.companyData || COMPANY_DATA).baseUrl;
+  const breadcrumbs = buildBreadcrumbArray(pageName, `${baseUrl}/${pageSlug}/`, [], options);
 
   return buildBreadcrumbSchema(breadcrumbs);
 }

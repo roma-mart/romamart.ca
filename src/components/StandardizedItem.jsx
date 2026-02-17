@@ -83,13 +83,16 @@ const StandardizedItem = ({ item, itemType, defaultExpanded = false }) => {
   const {
     description, // Full description (detailed view)
     defaultSize = 0, // Index of default selected size
-    customizations = [], // [{type: 'Milk Choice', options: [{name: 'Whole Milk', price: 0}]}]
+    customizations: rawCustomizations, // [{type: 'Milk Choice', options: [{name: 'Whole Milk', price: 0}]}]
     ingredients, // Optional: ingredient list
     action, // Optional: CTA button config {text, email, url, subject, body}
     features = [], // Optional: List of features (for services)
     legalNotice, // Optional: {text, law, url} for age-restricted items
     partner, // Optional: {name, url, logo} for partner services
   } = item;
+
+  // Coerce null to [] — API normalizer sets customizations to null for items without them
+  const customizations = rawCustomizations || [];
 
   // State for size selection and customization options
   const [selectedSize, setSelectedSize] = useState(defaultSize);

@@ -53,7 +53,12 @@ export function findNearestLocation(userLocation, locations) {
 export function getPreferredLocations({ userCoords, locations }) {
   if (!Array.isArray(locations) || locations.length === 0) return [];
 
-  if (!userCoords?.latitude || !userCoords?.longitude) {
+  if (
+    userCoords?.latitude === null ||
+    userCoords?.latitude === undefined ||
+    userCoords?.longitude === null ||
+    userCoords?.longitude === undefined
+  ) {
     return [...locations].sort((a, b) => {
       if (a.isPrimary) return -1;
       if (b.isPrimary) return 1;

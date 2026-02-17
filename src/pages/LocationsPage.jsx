@@ -167,7 +167,7 @@ const LocationsPage = () => {
 
       <section className="max-w-7xl mx-auto px-4">
         {loading ? (
-          <div className="text-center py-16" role="status" aria-live="polite">
+          <output className="block text-center py-16" aria-live="polite">
             <div
               className="inline-block animate-spin rounded-full h-10 w-10 border-b-2 mb-4"
               aria-hidden="true"
@@ -176,7 +176,7 @@ const LocationsPage = () => {
             <p className="font-inter" style={textColor}>
               Loading locations...
             </p>
-          </div>
+          </output>
         ) : (
           <>
             {error && (
@@ -186,8 +186,13 @@ const LocationsPage = () => {
                 role="alert"
               >
                 <span>Using cached data. Couldn't reach server.</span>
-                <button type="button" onClick={refetch} className="underline font-semibold hover:no-underline">
-                  Try Again
+                <button
+                  type="button"
+                  onClick={refetch}
+                  className="underline font-semibold hover:no-underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 rounded"
+                  style={{ '--tw-ring-color': 'var(--color-accent)' }}
+                >
+                  Update
                 </button>
               </div>
             )}

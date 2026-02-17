@@ -5,11 +5,14 @@
  *
  * Key responsibilities:
  * - Menu prices: cents (API) → dollars (internal)
+ * - Size ordering: standardized S → M → L display order
  * - Location images: { storefront, interior } (API) → photos format (internal)
  * - Defense-in-depth enum normalization
  *
  * @since February 2026
  */
+
+import { sortSizes } from './menuHelpers';
 
 /**
  * Normalizes any enum string to lowercase snake_case.
@@ -62,14 +65,23 @@ const extractCategory = (categories) => {
 export const normalizeMenuItem = (item, source) => {
   if (!item) return item;
 
-  const needsPriceConversion = source === 'api' && isLikelyCents(item.sizes);
+  const needsPriceConversion = source === 'api' && (isLikelyCents(item.sizes) || isLikelyCents(item.addOns));
 
-  const sizes = Array.isArray(item.sizes)
+  const rawSizes = Array.isArray(item.sizes)
     ? item.sizes.map((size) => ({
         ...size,
         price: needsPriceConversion ? centsToDollars(size.price) : size.price,
       }))
     : [];
+
+  // Sort sizes to consistent S → M → L order and remap defaultSize to match
+  const sizes = sortSizes(rawSizes) || rawSizes;
+  let defaultSize = item.defaultSize ?? 0;
+  if (sizes.length > 0 && rawSizes.length > 0 && rawSizes[defaultSize]) {
+    const defaultName = rawSizes[defaultSize].name;
+    const newIndex = sizes.findIndex((s) => s.name === defaultName);
+    if (newIndex !== -1) defaultSize = newIndex;
+  }
 
   const addOns = Array.isArray(item.addOns)
     ? item.addOns.map((addon) => ({
@@ -85,7 +97,7 @@ export const normalizeMenuItem = (item, source) => {
     slug: item.slug || item.id || null,
     status: normalizeEnum(item.status) || 'available',
     availability: normalizeEnum(item.availability) || 'store_hours',
-    defaultSize: item.defaultSize ?? 0,
+    defaultSize,
     // Complex domain-specific fields: null = "data not available" (food safety)
     customizations: item.customizations ?? null,
     allergens: item.allergens ?? null,
@@ -136,6 +148,8 @@ export const normalizeLocation = (loc, source) => {
   // Ensure amenities is always an array of { name, value } objects
   if (Array.isArray(normalized.amenities)) {
     normalized.amenities = normalized.amenities.map((a) => (typeof a === 'string' ? { name: a, value: true } : a));
+  } else {
+    normalized.amenities = [];
   }
 
   // Ensure services is always an array

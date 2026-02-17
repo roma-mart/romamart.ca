@@ -215,6 +215,26 @@ describe('availability utilities', () => {
       // Should fallback to legacy behavior when locations array is empty
       expect(result.status).toBe('available');
     });
+
+    it('should default to available status when item has no status field', () => {
+      const location = {
+        id: 'loc-wellington-001',
+        shortName: 'Roma Mart 001',
+        status: 'open',
+      };
+
+      const apiMenuItem = {
+        id: 'api-4',
+        name: 'No Status Item',
+        // No status field
+      };
+
+      const result = getMenuItemStatusAtLocation(apiMenuItem.id, location, null, apiMenuItem);
+
+      // Should default to 'available' when status is missing
+      expect(result.status).toBe('available');
+      expect(result.availability).toBe('store_hours');
+    });
   });
 
   describe('isLocationOpen', () => {

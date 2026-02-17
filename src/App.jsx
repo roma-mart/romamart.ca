@@ -175,7 +175,7 @@ const ServicesSection = ({ featuredServices = [], loading, error, refetch }) => 
         </h2>
 
         {loading ? (
-          <div className="text-center py-8" role="status" aria-live="polite">
+          <output className="block text-center py-8" aria-live="polite">
             <div
               className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 mb-3"
               aria-hidden="true"
@@ -184,7 +184,7 @@ const ServicesSection = ({ featuredServices = [], loading, error, refetch }) => 
             <p className="text-sm font-inter" style={{ color: 'var(--color-text)' }}>
               Loading services...
             </p>
-          </div>
+          </output>
         ) : (
           <>
             {error && (
@@ -194,8 +194,13 @@ const ServicesSection = ({ featuredServices = [], loading, error, refetch }) => 
                 role="alert"
               >
                 <span>Using cached data.</span>
-                <button type="button" onClick={refetch} className="underline font-semibold hover:no-underline">
-                  Try Again
+                <button
+                  type="button"
+                  onClick={refetch}
+                  className="underline font-semibold hover:no-underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 rounded"
+                  style={{ '--tw-ring-color': 'var(--color-accent)' }}
+                >
+                  Update
                 </button>
               </div>
             )}
@@ -274,9 +279,8 @@ const RoCafeSection = ({ menuItems, loading, error, refetch }) => {
             {/* Featured Menu Items with StandardizedItem */}
             <div className="space-y-3 mb-8">
               {loading ? (
-                <div
-                  className="text-center py-4"
-                  role="status"
+                <output
+                  className="block text-center py-4"
                   aria-live="polite"
                   style={{ color: 'var(--color-text-on-primary)' }}
                 >
@@ -286,7 +290,7 @@ const RoCafeSection = ({ menuItems, loading, error, refetch }) => {
                     style={{ borderColor: 'var(--color-accent)' }}
                   ></div>
                   <p className="mt-2 text-sm font-inter">Loading menu...</p>
-                </div>
+                </output>
               ) : (
                 <>
                   {error && (
@@ -296,8 +300,13 @@ const RoCafeSection = ({ menuItems, loading, error, refetch }) => {
                       role="alert"
                     >
                       <span>Using cached data.</span>
-                      <button type="button" onClick={refetch} className="underline font-semibold hover:no-underline">
-                        Try Again
+                      <button
+                        type="button"
+                        onClick={refetch}
+                        className="underline font-semibold hover:no-underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 rounded"
+                        style={{ '--tw-ring-color': 'var(--color-accent)' }}
+                      >
+                        Update
                       </button>
                     </div>
                   )}
@@ -387,7 +396,7 @@ const Locations = () => {
         </div>
 
         {locLoading ? (
-          <div className="text-center py-8" role="status" aria-live="polite">
+          <output className="block text-center py-8" aria-live="polite">
             <div
               className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 mb-3"
               aria-hidden="true"
@@ -396,7 +405,7 @@ const Locations = () => {
             <p className="text-sm font-inter" style={{ color: 'var(--color-text)' }}>
               Loading locations...
             </p>
-          </div>
+          </output>
         ) : (
           <>
             {locError && (
@@ -406,8 +415,13 @@ const Locations = () => {
                 role="alert"
               >
                 <span>Using cached data.</span>
-                <button type="button" onClick={locRefetch} className="underline font-semibold hover:no-underline">
-                  Try Again
+                <button
+                  type="button"
+                  onClick={locRefetch}
+                  className="underline font-semibold hover:no-underline focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 rounded"
+                  style={{ '--tw-ring-color': 'var(--color-accent)' }}
+                >
+                  Update
                 </button>
               </div>
             )}
@@ -497,17 +511,17 @@ const Locations = () => {
                   </a>
                 </div>
               </div>
-              <div className="text-center mt-12">
-                <Button
-                  href={`${BASE_URL}locations`}
-                  variant="navlink"
-                  size="lg"
-                  icon={<ArrowRight size={20} />}
-                  aria-label="View all locations"
-                >
-                  View All Locations
-                </Button>
-              </div>
+            </div>
+            <div className="text-center mt-12">
+              <Button
+                href={`${BASE_URL}locations`}
+                variant="navlink"
+                size="lg"
+                icon={<ArrowRight size={20} />}
+                aria-label="View all locations"
+              >
+                View All Locations
+              </Button>
             </div>
           </>
         )}

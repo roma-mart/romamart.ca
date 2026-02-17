@@ -41,17 +41,19 @@ export default function FooterLinks() {
               </a>
             </li>
           ))}
-          <li>
-            <a
-              href={companyData.onlineStoreUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-bold transition-colors"
-              style={{ color: 'var(--color-accent)' }}
-            >
-              Order Online
-            </a>
-          </li>
+          {companyData.onlineStoreUrl && (
+            <li>
+              <a
+                href={companyData.onlineStoreUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-bold transition-colors"
+                style={{ color: 'var(--color-accent)' }}
+              >
+                Order Online
+              </a>
+            </li>
+          )}
         </ul>
       </div>
       <div className="p-1">

@@ -152,10 +152,10 @@ const TermsPage = () => {
               <p style={textColor}>
                 <strong>{companyData.legalName}</strong>
               </p>
-              <p style={textColor}>{companyData.location.address.street}</p>
+              <p style={textColor}>{companyData.location?.address?.street}</p>
               <p style={textColor}>
-                {companyData.location.address.city}, {companyData.location.address.province}{' '}
-                {companyData.location.address.postalCode}
+                {companyData.location?.address?.city}, {companyData.location?.address?.province}{' '}
+                {companyData.location?.address?.postalCode}
               </p>
               <p style={textColor}>
                 Email:{' '}
@@ -166,10 +166,10 @@ const TermsPage = () => {
               <p style={textColor}>
                 Phone:{' '}
                 <a
-                  href={`tel:${normalizePhoneForTel(companyData.location.contact.phone)}`}
+                  href={`tel:${normalizePhoneForTel(companyData.location?.contact?.phone)}`}
                   style={{ color: 'var(--color-accent)' }}
                 >
-                  {companyData.location.contact.phone}
+                  {companyData.location?.contact?.phone}
                 </a>
               </p>
               <p className="text-sm mt-4" style={mutedTextColor}>

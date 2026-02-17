@@ -86,6 +86,26 @@ export function CompanyDataProvider({ children }) {
               ...COMPANY_DATA.contextualEmails,
               ...(apiData.contextualEmails || {}),
             },
+            location: {
+              ...COMPANY_DATA.location,
+              ...(apiData.location || {}),
+            },
+            address: {
+              ...COMPANY_DATA.address,
+              ...(apiData.address || {}),
+            },
+            endpoints: {
+              ...COMPANY_DATA.endpoints,
+              ...(apiData.endpoints || {}),
+            },
+            pwa: {
+              ...COMPANY_DATA.pwa,
+              ...(apiData.pwa || {}),
+              webApplication: {
+                ...COMPANY_DATA.pwa?.webApplication,
+                ...(apiData.pwa?.webApplication || {}),
+              },
+            },
           });
           setSource('api');
           setError('');

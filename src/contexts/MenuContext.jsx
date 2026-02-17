@@ -28,9 +28,9 @@ export function MenuProvider({ children }) {
   const [source, setSource] = useState('static');
   const cancelledRef = useRef(false);
 
-  const fetchMenuData = useCallback(async () => {
+  const fetchMenuData = useCallback(async (showSpinner = true) => {
     try {
-      setLoading(true);
+      if (showSpinner) setLoading(true);
       setError('');
       if (import.meta.env.DEV) {
         // eslint-disable-next-line no-console
@@ -38,10 +38,36 @@ export function MenuProvider({ children }) {
       }
 
       const res = await fetch(API_URL);
-      if (!res.ok) throw new Error('Failed to fetch menu data');
+
+      if (!res.ok) {
+        // API failed, use static fallback
+        if (import.meta.env.DEV) console.warn('[MenuContext] Menu API unavailable, using static data');
+        if (!cancelledRef.current) {
+          setMenuItems(STATIC_FALLBACK);
+          setSource('static');
+          setError('API unavailable, using static data');
+        }
+        return;
+      }
+
       const data = await res.json();
 
-      const menu = (data.menu || []).map((item) => normalizeMenuItem(item, 'api'));
+      // Validate API response structure
+      if (!data.menu || !Array.isArray(data.menu) || data.menu.length === 0) {
+        if (import.meta.env.DEV) console.warn('[MenuContext] Invalid or empty menu API response, using static data');
+        if (!cancelledRef.current) {
+          setMenuItems(STATIC_FALLBACK);
+          setSource('static');
+          setError(
+            data.menu?.length === 0
+              ? 'Empty menu from API, using static data'
+              : 'Invalid API response, using static data'
+          );
+        }
+        return;
+      }
+
+      const menu = data.menu.map((item) => normalizeMenuItem(item, 'api'));
       const featuredCount = menu.filter((item) => item.featured).length;
 
       if (import.meta.env.DEV) {
@@ -56,9 +82,10 @@ export function MenuProvider({ children }) {
       if (!cancelledRef.current) {
         setMenuItems(menu);
         setSource('api');
+        setError('');
       }
     } catch (err) {
-      // Error logging is permanent (not temporary debug logs) for production diagnostics
+      // Network error or other exception - use static fallback
       console.error('[MenuContext] Failed to fetch menu data:', err);
       if (!cancelledRef.current) {
         setMenuItems(STATIC_FALLBACK);
@@ -72,14 +99,17 @@ export function MenuProvider({ children }) {
 
   useEffect(() => {
     cancelledRef.current = false;
-    fetchMenuData();
+    fetchMenuData(); // Initial load: spinner hides stale static data
 
     return () => {
       cancelledRef.current = true;
     };
   }, [fetchMenuData]);
 
-  const value = { menuItems, loading, error, source, refetch: fetchMenuData };
+  // refetch exposed to consumers is always silent (no spinner) — content stays visible during retry
+  const refetch = useCallback(() => fetchMenuData(false), [fetchMenuData]);
+
+  const value = { menuItems, loading, error, source, refetch };
 
   return <MenuContext.Provider value={value}>{children}</MenuContext.Provider>;
 }

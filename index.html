@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <!-- <meta http-equiv="X-Content-Type-Options" content="nosniff" /> -->
     <!-- only available for server headers - cannot apply in static sites -->
     <meta name="description" content="Roma Mart Convenience - Groceries, Global Snacks, Halal Meat, Coffee & More in Sarnia, ON. ATM, Bitcoin, Lottery, and Tobacco services available." />
@@ -16,7 +16,10 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <!-- Apple touch icon (PNG, 180x180) -->
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <!-- Apple PWA meta tags (iOS does not read manifest.webmanifest for these) -->
+    <!-- PWA capable meta tags -->
+    <!-- Standard (Chrome/Edge): silences the apple-mobile-web-app-capable deprecation warning -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <!-- Apple (iOS Safari): still required — Safari ignores the unprefixed version -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Roma Mart" />

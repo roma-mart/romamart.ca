@@ -29,9 +29,9 @@ export function ServicesProvider({ children }) {
   const [source, setSource] = useState('static'); // Track data source: 'api' or 'static'
   const cancelledRef = useRef(false);
 
-  const fetchServicesData = useCallback(async () => {
+  const fetchServicesData = useCallback(async (showSpinner = true) => {
     try {
-      setLoading(true);
+      if (showSpinner) setLoading(true);
       setError('');
       const res = await fetch(API_URL);
 
@@ -80,14 +80,17 @@ export function ServicesProvider({ children }) {
 
   useEffect(() => {
     cancelledRef.current = false;
-    fetchServicesData();
+    fetchServicesData(); // Initial load: spinner hides stale static data
 
     return () => {
       cancelledRef.current = true;
     };
   }, [fetchServicesData]);
 
-  const value = { services, loading, error, source, refetch: fetchServicesData };
+  // refetch exposed to consumers is always silent (no spinner) — content stays visible during retry
+  const refetch = useCallback(() => fetchServicesData(false), [fetchServicesData]);
+
+  const value = { services, loading, error, source, refetch };
 
   return <ServicesContext.Provider value={value}>{children}</ServicesContext.Provider>;
 }

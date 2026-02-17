@@ -8,6 +8,7 @@
 import {
   Banknote,
   Bitcoin,
+  Coffee,
   Printer,
   Package,
   UtensilsCrossed,
@@ -175,6 +176,31 @@ export const SERVICES = [
     ageRestricted: false,
     status: 'available',
     featured: true,
+  },
+
+  {
+    itemType: 'service',
+    id: 'svc-rocafe-001',
+    slug: 'svc-rocafe-001',
+    name: 'RoCaf\u00e9',
+    tagline: 'Fresh coffee & beverages',
+    description:
+      'In-store caf\u00e9 serving freshly brewed coffee, espresso drinks, iced beverages, and more. Crafted with care using quality ingredients.',
+    icon: <Coffee size={20} />,
+    category: SERVICE_CATEGORIES.FOOD,
+    availableAt: ['loc-wellington-001'],
+    availability: 'store_hours',
+    features: [
+      'Freshly brewed coffee',
+      'Espresso-based drinks',
+      'Iced & blended beverages',
+      'Hot chocolate & tea',
+      'Seasonal specials',
+    ],
+    badge: null,
+    ageRestricted: false,
+    status: 'available',
+    featured: false,
   },
 
   {

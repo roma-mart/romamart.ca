@@ -80,11 +80,11 @@ export function getMenuItemStatusAtLocation(menuItemId, location, menuData, menu
     }
   }
 
-  // No location data — return item's own status
+  // No location data — return item's own status with safe defaults
   return {
-    status: item.status,
+    status: item.status || 'available',
     availableAt: item.availableAt,
-    availability: item.availability,
+    availability: item.availability || 'store_hours',
   };
 }
 

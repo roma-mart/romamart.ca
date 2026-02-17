@@ -3,7 +3,6 @@
  * Google Reviews rating display for the Footer.
  */
 import useGooglePlaceHours from '../hooks/useGooglePlaceHours';
-import { useCompanyData } from '../contexts/CompanyDataContext';
 
 const renderStars = (ratingValue) => {
   if (!ratingValue) return '\u2B50\u2B50\u2B50\u2B50\u2B50';
@@ -16,14 +15,16 @@ const renderStars = (ratingValue) => {
 };
 
 export default function FooterReviews({ currentLocation, locations }) {
-  const { companyData } = useCompanyData();
   const { rating, userRatingCount } = useGooglePlaceHours(currentLocation?.google?.placeId || null);
 
   const ratingDisplay = rating ? Number(rating).toFixed(1) : null;
   const reviewCountDisplay = userRatingCount ? userRatingCount.toLocaleString() : null;
 
-  const mapLink =
-    currentLocation?.google?.mapLink || companyData.location?.google?.mapLink || locations[0]?.google?.mapLink;
+  const primaryLocation = locations?.find((loc) => loc.isPrimary) || locations?.[0];
+  const mapLink = currentLocation?.google?.mapLink || primaryLocation?.google?.mapLink || '';
+
+  // Don't render the review link if there's no valid map URL
+  if (!mapLink) return null;
 
   return (
     <div className="mb-16 flex justify-center">

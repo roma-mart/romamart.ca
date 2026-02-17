@@ -52,9 +52,9 @@ export function LocationsProvider({ children }) {
     }
   }, []);
 
-  const fetchLocationsData = useCallback(async () => {
+  const fetchLocationsData = useCallback(async (showSpinner = true) => {
     try {
-      setLoading(true);
+      if (showSpinner) setLoading(true);
       setError('');
       const res = await fetch(API_URL);
 
@@ -103,7 +103,7 @@ export function LocationsProvider({ children }) {
 
   useEffect(() => {
     cancelledRef.current = false;
-    fetchLocationsData();
+    fetchLocationsData(); // Initial load: spinner hides stale static data
 
     return () => {
       cancelledRef.current = true;
@@ -119,7 +119,10 @@ export function LocationsProvider({ children }) {
     }
   }, [locations, loading, selectedLocationId, selectLocation]);
 
-  const value = { locations, loading, error, source, selectedLocationId, selectLocation, refetch: fetchLocationsData };
+  // refetch exposed to consumers is always silent (no spinner) — content stays visible during retry
+  const refetch = useCallback(() => fetchLocationsData(false), [fetchLocationsData]);
+
+  const value = { locations, loading, error, source, selectedLocationId, selectLocation, refetch };
 
   return <LocationsContext.Provider value={value}>{children}</LocationsContext.Provider>;
 }

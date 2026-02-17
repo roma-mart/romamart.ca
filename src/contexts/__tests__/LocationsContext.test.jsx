@@ -63,13 +63,13 @@ describe('LocationsContext', () => {
     const { result } = renderHook(() => useLocations(), { wrapper });
 
     await waitFor(() => {
-      expect(result.current.loading).toBe(false);
+      expect(result.current.source).toBe('api');
     });
 
     expect(result.current.locations).toHaveLength(2);
     expect(result.current.locations[0].id).toBe('api-1');
     expect(result.current.locations[0].services).toEqual([]);
-    expect(result.current.source).toBe('api');
+    expect(result.current.loading).toBe(false);
     expect(result.current.error).toBe('');
   });
 
@@ -96,7 +96,7 @@ describe('LocationsContext', () => {
     const { result } = renderHook(() => useLocations(), { wrapper });
 
     await waitFor(() => {
-      expect(result.current.loading).toBe(false);
+      expect(result.current.source).toBe('api');
     });
 
     const loc = result.current.locations[0];
@@ -112,7 +112,7 @@ describe('LocationsContext', () => {
     const { result } = renderHook(() => useLocations(), { wrapper });
 
     await waitFor(() => {
-      expect(result.current.loading).toBe(false);
+      expect(result.current.error).toBeTruthy();
     });
 
     expect(result.current.locations).toEqual([
@@ -120,7 +120,6 @@ describe('LocationsContext', () => {
       { id: 'loc-2', name: 'Uptown' },
     ]);
     expect(result.current.source).toBe('static');
-    expect(result.current.error).toBeTruthy();
   });
 
   it('should fall back to static data on invalid API response', async () => {
@@ -134,11 +133,10 @@ describe('LocationsContext', () => {
     const { result } = renderHook(() => useLocations(), { wrapper });
 
     await waitFor(() => {
-      expect(result.current.loading).toBe(false);
+      expect(result.current.error).toBeTruthy();
     });
 
     expect(result.current.source).toBe('static');
-    expect(result.current.error).toBeTruthy();
   });
 
   it('should fall back to static data on network error', async () => {
@@ -147,7 +145,7 @@ describe('LocationsContext', () => {
     const { result } = renderHook(() => useLocations(), { wrapper });
 
     await waitFor(() => {
-      expect(result.current.loading).toBe(false);
+      expect(result.current.error).toBeTruthy();
     });
 
     expect(result.current.source).toBe('static');
@@ -172,7 +170,7 @@ describe('LocationsContext', () => {
     const { result } = renderHook(() => useLocations(), { wrapper });
 
     await waitFor(() => {
-      expect(result.current.loading).toBe(false);
+      expect(result.current.source).toBe('api');
     });
 
     act(() => {
@@ -199,7 +197,7 @@ describe('LocationsContext', () => {
     const { result } = renderHook(() => useLocations(), { wrapper });
 
     await waitFor(() => {
-      expect(result.current.loading).toBe(false);
+      expect(result.current.source).toBe('api');
     });
 
     act(() => {
@@ -226,10 +224,6 @@ describe('LocationsContext', () => {
     );
 
     const { result } = renderHook(() => useLocations(), { wrapper });
-
-    await waitFor(() => {
-      expect(result.current.loading).toBe(false);
-    });
 
     await waitFor(() => {
       expect(result.current.selectedLocationId).toBe('auto');

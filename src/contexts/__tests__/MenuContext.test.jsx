@@ -50,13 +50,13 @@ describe('MenuContext', () => {
     const { result } = renderHook(() => useMenu(), { wrapper });
 
     await waitFor(() => {
-      expect(result.current.loading).toBe(false);
+      expect(result.current.source).toBe('api');
     });
 
     // Items are normalized — check they exist and have expected names
     expect(result.current.menuItems).toHaveLength(2);
     expect(result.current.menuItems[0].name).toBe('Latte');
-    expect(result.current.source).toBe('api');
+    expect(result.current.loading).toBe(false);
     expect(result.current.error).toBe('');
   });
 
@@ -85,7 +85,7 @@ describe('MenuContext', () => {
     const { result } = renderHook(() => useMenu(), { wrapper });
 
     await waitFor(() => {
-      expect(result.current.loading).toBe(false);
+      expect(result.current.source).toBe('api');
     });
 
     // Prices should be converted from cents to dollars
@@ -107,10 +107,10 @@ describe('MenuContext', () => {
     const { result } = renderHook(() => useMenu(), { wrapper });
 
     await waitFor(() => {
-      expect(result.current.loading).toBe(false);
+      expect(result.current.error).toBeTruthy();
     });
 
-    expect(result.current.error).toBe('Failed to fetch menu data');
+    expect(result.current.error).toBe('API unavailable, using static data');
     // Should fall back to static data
     expect(result.current.menuItems).toHaveLength(2);
     expect(result.current.menuItems[0].name).toBe('Static Latte');
@@ -123,7 +123,7 @@ describe('MenuContext', () => {
     const { result } = renderHook(() => useMenu(), { wrapper });
 
     await waitFor(() => {
-      expect(result.current.loading).toBe(false);
+      expect(result.current.error).toBeTruthy();
     });
 
     expect(result.current.error).toBe('Network error');
@@ -133,7 +133,7 @@ describe('MenuContext', () => {
     expect(result.current.source).toBe('static');
   });
 
-  it('should handle empty menu array from API', async () => {
+  it('should fall back to static data on empty menu array from API', async () => {
     global.fetch = vi.fn(() =>
       Promise.resolve({
         ok: true,
@@ -144,16 +144,17 @@ describe('MenuContext', () => {
     const { result } = renderHook(() => useMenu(), { wrapper });
 
     await waitFor(() => {
-      expect(result.current.loading).toBe(false);
+      expect(result.current.error).toBeTruthy();
     });
 
-    // Empty API response is valid — overrides static fallback
-    expect(result.current.menuItems).toEqual([]);
-    expect(result.current.source).toBe('api');
-    expect(result.current.error).toBe('');
+    // Empty API menu is treated as suspect — falls back to static data
+    expect(result.current.menuItems).toHaveLength(2);
+    expect(result.current.menuItems[0].name).toBe('Static Latte');
+    expect(result.current.source).toBe('static');
+    expect(result.current.error).toBe('Empty menu from API, using static data');
   });
 
-  it('should handle missing menu key in API response', async () => {
+  it('should fall back to static data on missing menu key in API response', async () => {
     global.fetch = vi.fn(() =>
       Promise.resolve({
         ok: true,
@@ -164,12 +165,14 @@ describe('MenuContext', () => {
     const { result } = renderHook(() => useMenu(), { wrapper });
 
     await waitFor(() => {
-      expect(result.current.loading).toBe(false);
+      expect(result.current.error).toBeTruthy();
     });
 
-    // Missing menu key treated as empty valid response
-    expect(result.current.menuItems).toEqual([]);
-    expect(result.current.source).toBe('api');
+    // Missing menu key is invalid — falls back to static data
+    expect(result.current.menuItems).toHaveLength(2);
+    expect(result.current.menuItems[0].name).toBe('Static Latte');
+    expect(result.current.source).toBe('static');
+    expect(result.current.error).toBe('Invalid API response, using static data');
   });
 
   it('should throw when useMenu is used outside MenuProvider', () => {

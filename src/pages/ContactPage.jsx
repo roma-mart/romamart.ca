@@ -87,9 +87,9 @@ const ContactPage = () => {
                   <h3 className="font-bold text-lg mb-1" style={{ color: 'var(--color-heading)' }}>
                     Visit Us
                   </h3>
-                  <p style={textColor}>{companyData.location.address.formatted}</p>
+                  <p style={textColor}>{companyData.location?.address?.formatted}</p>
                   <a
-                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(companyData.location.address.formatted)}`}
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(companyData.location?.address?.formatted)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Get directions to Roma Mart"
@@ -114,14 +114,14 @@ const ContactPage = () => {
                   </h3>
                   <div className="flex items-center gap-2 flex-wrap">
                     <a
-                      href={`tel:${normalizePhoneForTel(companyData.location.contact.phone)}`}
+                      href={`tel:${normalizePhoneForTel(companyData.location?.contact?.phone)}`}
                       className="hover:underline"
                       style={{ color: 'var(--color-accent)' }}
                     >
-                      {companyData.location.contact.phone}
+                      {companyData.location?.contact?.phone}
                     </a>
                     <CopyButton
-                      text={companyData.location.contact.phone}
+                      text={companyData.location?.contact?.phone}
                       label="Phone number"
                       style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)' }}
                     />
@@ -142,14 +142,14 @@ const ContactPage = () => {
                   </h3>
                   <div className="flex items-center gap-2 flex-wrap">
                     <a
-                      href={`mailto:${companyData.location.contact.email}`}
+                      href={`mailto:${companyData.location?.contact?.email}`}
                       className="hover:underline"
                       style={{ color: 'var(--color-accent)' }}
                     >
-                      {companyData.location.contact.email}
+                      {companyData.location?.contact?.email}
                     </a>
                     <CopyButton
-                      text={companyData.location.contact.email}
+                      text={companyData.location?.contact?.email}
                       label="Email address"
                       style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)' }}
                     />

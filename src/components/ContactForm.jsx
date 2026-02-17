@@ -64,6 +64,12 @@ const ContactForm = ({
         return;
       }
 
+      if (!formAccessKey) {
+        showError('Contact form is not configured. Please try again later.');
+        if (import.meta.env.DEV) console.warn('[ContactForm] Missing web3FormsAccessKey in companyData');
+        return;
+      }
+
       setSubmitting(true);
       const formData = new FormData(form);
       formData.set('h-captcha-response', captchaToken);
@@ -95,7 +101,7 @@ const ContactForm = ({
         setSubmitting(false);
       }
     },
-    [captchaToken, submitting, showSuccess, showError, idPrefix]
+    [captchaToken, submitting, showSuccess, showError, idPrefix, formAccessKey]
   );
 
   const inputStyle = (hasError) => ({

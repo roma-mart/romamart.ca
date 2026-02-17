@@ -50,7 +50,7 @@ describe('ServicesContext', () => {
     const { result } = renderHook(() => useServices(), { wrapper });
 
     await waitFor(() => {
-      expect(result.current.loading).toBe(false);
+      expect(result.current.source).toBe('api');
     });
 
     // Normalized services should have availableAt and features arrays
@@ -58,7 +58,7 @@ describe('ServicesContext', () => {
     expect(result.current.services[0].id).toBe('api-1');
     expect(result.current.services[0].availableAt).toEqual([]);
     expect(result.current.services[0].features).toEqual([]);
-    expect(result.current.source).toBe('api');
+    expect(result.current.loading).toBe(false);
     expect(result.current.error).toBe('');
   });
 
@@ -82,7 +82,7 @@ describe('ServicesContext', () => {
     const { result } = renderHook(() => useServices(), { wrapper });
 
     await waitFor(() => {
-      expect(result.current.loading).toBe(false);
+      expect(result.current.source).toBe('api');
     });
 
     expect(result.current.services[0].availableAt).toEqual(['loc-wellington-001']);
@@ -96,7 +96,7 @@ describe('ServicesContext', () => {
     const { result } = renderHook(() => useServices(), { wrapper });
 
     await waitFor(() => {
-      expect(result.current.loading).toBe(false);
+      expect(result.current.error).toBeTruthy();
     });
 
     expect(result.current.services).toEqual([
@@ -104,7 +104,6 @@ describe('ServicesContext', () => {
       { id: 'static-2', name: 'Static Service B' },
     ]);
     expect(result.current.source).toBe('static');
-    expect(result.current.error).toBeTruthy();
   });
 
   it('should fall back to static data on invalid API response structure', async () => {
@@ -118,11 +117,10 @@ describe('ServicesContext', () => {
     const { result } = renderHook(() => useServices(), { wrapper });
 
     await waitFor(() => {
-      expect(result.current.loading).toBe(false);
+      expect(result.current.error).toBeTruthy();
     });
 
     expect(result.current.source).toBe('static');
-    expect(result.current.error).toBeTruthy();
   });
 
   it('should fall back to static data on network error', async () => {
@@ -131,7 +129,7 @@ describe('ServicesContext', () => {
     const { result } = renderHook(() => useServices(), { wrapper });
 
     await waitFor(() => {
-      expect(result.current.loading).toBe(false);
+      expect(result.current.error).toBeTruthy();
     });
 
     expect(result.current.services).toEqual([

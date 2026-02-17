@@ -230,11 +230,11 @@ const AccessibilityPage = () => {
               Phone
             </h3>
             <a
-              href={`tel:${companyData.location.contact.phone}`}
+              href={`tel:${companyData.location?.contact?.phone}`}
               className="hover:underline"
               style={{ color: 'var(--color-accent)' }}
             >
-              {companyData.location.contact.phone}
+              {companyData.location?.contact?.phone}
             </a>
           </div>
           <div
@@ -246,7 +246,7 @@ const AccessibilityPage = () => {
               Visit Us
             </h3>
             <p className="text-sm" style={textColor}>
-              {companyData.location.address.formatted}
+              {companyData.location?.address?.formatted}
             </p>
           </div>
         </div>
