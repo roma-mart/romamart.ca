@@ -1,20 +1,36 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Home, ExternalLink, Store, Coffee, MapPin, Mail, Info, ShoppingCart } from 'lucide-react';
+import {
+  Menu,
+  X,
+  Home,
+  ExternalLink,
+  Store,
+  Coffee,
+  MapPin,
+  Mail,
+  Info,
+  ShoppingCart,
+  EllipsisVertical,
+} from 'lucide-react';
 import Button from './Button';
 import { useCompanyData } from '../contexts/CompanyDataContext';
 import { Logo } from './Logo';
 import { NAVIGATION_LINKS } from '../config/navigation';
 import { useFocusTrap } from '../hooks/useFocusTrap';
 
-// WCO icon mapping for nav links (icon-only mode at narrow titlebar widths)
+// WCO icon mapping for nav links (keyed by href for stability)
 const WCO_LINK_ICONS = {
-  Services: Store,
-  RoCafé: Coffee,
-  Locations: MapPin,
-  Contact: Mail,
-  About: Info,
+  '/services': Store,
+  '/rocafe': Coffee,
+  '/locations': MapPin,
+  '/contact': Mail,
+  '/about': Info,
 };
+
+// WCO progressive collapse: priority links shown inline, overflow links in dropdown
+const WCO_PRIORITY_HREFS = ['/services', '/rocafe', '/locations'];
+const WCO_OVERFLOW_HREFS = ['/contact', '/about'];
 
 export default function Navbar({ currentPage = 'home' }) {
   const { companyData } = useCompanyData();
@@ -43,8 +59,10 @@ export default function Navbar({ currentPage = 'home' }) {
       };
     }
   }, []);
-  // WCO responsive breakpoints: text links → icon links, text ORDER → icon ORDER
-  const wcoTextNav = wcoActive && wcoWidth >= 700;
+  // WCO progressive collapse breakpoints
+  const wcoShowIconLabels = wcoActive && wcoWidth >= 600; // Wide: priority icons + text labels
+  const wcoShowIcons = wcoActive && wcoWidth >= 450; // Medium: priority icons only
+  // Narrow (<450px): all nav links collapse into overflow dropdown
   const wcoOrderText = !wcoActive || wcoWidth >= 450;
   const BASE_URL =
     typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
@@ -53,6 +71,8 @@ export default function Navbar({ currentPage = 'home' }) {
   const [isHomePage, setIsHomePage] = useState(currentPage === 'home');
   const [colorScheme, setColorScheme] = useState('light');
   const [highContrast, setHighContrast] = useState(false);
+  const [wcoOverflowOpen, setWcoOverflowOpen] = useState(false);
+  const [isStandalone, setIsStandalone] = useState(false);
 
   useEffect(() => {
     const mqDark = window.matchMedia('(prefers-color-scheme: dark)');
@@ -92,6 +112,12 @@ export default function Navbar({ currentPage = 'home' }) {
     // Update isHomePage when currentPage changes
     setIsHomePage(currentPage === 'home');
   }, [currentPage]);
+
+  // Detect standalone PWA mode (iOS + Android/desktop without WCO)
+  useEffect(() => {
+    const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    setIsStandalone(standalone);
+  }, []);
 
   const scrollToSection = (sectionId) => {
     if (!sectionId) return false;
@@ -140,14 +166,53 @@ export default function Navbar({ currentPage = 'home' }) {
   const toggleMenu = useCallback(() => setIsOpen((prev) => !prev), []);
   const handleMenuClose = useCallback(() => setIsOpen(false), []);
   const handleOrderClick = useCallback(() => trackOrderClick('header_mobile'), [trackOrderClick]);
+  const toggleOverflow = useCallback(() => setWcoOverflowOpen((prev) => !prev), []);
+  const handleOverflowClose = useCallback(() => setWcoOverflowOpen(false), []);
   const mobileMenuRef = useRef(null);
   const hamburgerRef = useRef(null);
+  const overflowRef = useRef(null);
+  const overflowButtonRef = useRef(null);
 
   useFocusTrap(mobileMenuRef, isOpen, {
     onEscape: handleMenuClose,
     returnFocusRef: hamburgerRef,
     initialFocusDelay: 150,
   });
+
+  // Close WCO overflow dropdown on outside click or Escape
+  useEffect(() => {
+    if (!wcoOverflowOpen) return;
+    const handleClickOutside = (e) => {
+      const overflowEl = overflowRef.current;
+      const buttonEl = overflowButtonRef.current;
+      // If both elements are gone (WCO deactivated), close defensively
+      if (!overflowEl && !buttonEl) {
+        setWcoOverflowOpen(false);
+        return;
+      }
+      if ((overflowEl && overflowEl.contains(e.target)) || (buttonEl && buttonEl.contains(e.target))) {
+        return;
+      }
+      setWcoOverflowOpen(false);
+    };
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') {
+        setWcoOverflowOpen(false);
+        overflowButtonRef.current?.focus();
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [wcoOverflowOpen]);
+
+  // Close overflow if WCO deactivates while dropdown is open
+  useEffect(() => {
+    if (!wcoActive && wcoOverflowOpen) setWcoOverflowOpen(false);
+  }, [wcoActive, wcoOverflowOpen]);
 
   return (
     <nav
@@ -164,6 +229,7 @@ export default function Navbar({ currentPage = 'home' }) {
             : scrolled
               ? 'var(--color-bg)'
               : 'transparent',
+        ...(isStandalone && !wcoActive ? { paddingTop: 'env(safe-area-inset-top, 0)' } : {}),
       }}
       data-wco={wcoActive ? 'active' : undefined}
     >
@@ -225,9 +291,9 @@ export default function Navbar({ currentPage = 'home' }) {
                 <Home size={wcoActive ? 16 : 20} />
               </a>
             )}
-            {NAVIGATION_LINKS.filter((link) => link.showIn.navbar && link.href !== '/').map((link) => {
-              const WcoIcon = WCO_LINK_ICONS[link.label] || Info;
-              return (
+            {/* Non-WCO: render all nav links as text */}
+            {!wcoActive &&
+              NAVIGATION_LINKS.filter((link) => link.showIn.navbar && link.href !== '/').map((link) => (
                 <a
                   key={link.href}
                   href={
@@ -242,7 +308,7 @@ export default function Navbar({ currentPage = 'home' }) {
                       `${BASE_URL}${link.href.replace('/', '')}`
                     )
                   }
-                  className={`font-inter font-medium transition-opacity no-drag hover:opacity-80 focus-visible:opacity-80${wcoActive ? ' wco-nav-link' : ''}`}
+                  className="font-inter font-medium transition-opacity no-drag hover:opacity-80 focus-visible:opacity-80"
                   style={{
                     color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-text)',
                     WebkitTapHighlightColor: 'transparent',
@@ -250,10 +316,146 @@ export default function Navbar({ currentPage = 'home' }) {
                   aria-label={link.ariaLabel || link.label}
                   title={link.label}
                 >
-                  {wcoActive && !wcoTextNav ? <WcoIcon size={16} /> : link.label}
+                  {link.label}
                 </a>
-              );
-            })}
+              ))}
+            {/* WCO: render priority links inline (hide at narrow widths) */}
+            {wcoActive &&
+              wcoShowIcons &&
+              NAVIGATION_LINKS.filter(
+                (link) => link.showIn.navbar && link.href !== '/' && WCO_PRIORITY_HREFS.includes(link.href)
+              ).map((link) => {
+                const WcoIcon = WCO_LINK_ICONS[link.href] || Info;
+                return (
+                  <a
+                    key={link.href}
+                    href={
+                      isHomePage && link.href.startsWith('/')
+                        ? `${BASE_URL}#${link.href.replace('/', '')}`
+                        : `${BASE_URL}${link.href.replace('/', '')}`
+                    }
+                    onClick={(e) =>
+                      handleNavClick(
+                        e,
+                        link.href !== '/' ? link.href.replace('/', '') : null,
+                        `${BASE_URL}${link.href.replace('/', '')}`
+                      )
+                    }
+                    className="font-inter font-medium transition-opacity no-drag hover:opacity-80 focus-visible:opacity-80 wco-nav-link"
+                    style={{
+                      color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-text)',
+                      WebkitTapHighlightColor: 'transparent',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 4,
+                    }}
+                    aria-label={link.ariaLabel || link.label}
+                    title={link.label}
+                  >
+                    <WcoIcon size={16} />
+                    {wcoShowIconLabels && <span>{link.label}</span>}
+                  </a>
+                );
+              })}
+            {/* WCO overflow dropdown: secondary links (+ all links at narrow widths) */}
+            {wcoActive &&
+              (() => {
+                const overflowLinks = NAVIGATION_LINKS.filter((link) => {
+                  if (!link.showIn.navbar || link.href === '/') return false;
+                  if (WCO_OVERFLOW_HREFS.includes(link.href)) return true;
+                  if (!wcoShowIcons && WCO_PRIORITY_HREFS.includes(link.href)) return true;
+                  return false;
+                });
+                if (overflowLinks.length === 0) return null;
+                return (
+                  <div style={{ position: 'relative' }}>
+                    <button
+                      type="button"
+                      ref={overflowButtonRef}
+                      onClick={toggleOverflow}
+                      className="no-drag p-1 rounded-md transition-opacity hover:opacity-80 focus-visible:ring-2 focus-visible:ring-accent"
+                      style={{
+                        color: isHomePage && !scrolled ? 'var(--color-text-on-primary)' : 'var(--color-text)',
+                        minWidth: 32,
+                        minHeight: 32,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                      aria-label="More navigation options"
+                      aria-expanded={wcoOverflowOpen}
+                      aria-controls="wco-overflow-nav"
+                    >
+                      <EllipsisVertical size={16} />
+                    </button>
+                    <AnimatePresence>
+                      {wcoOverflowOpen && (
+                        <motion.div
+                          ref={overflowRef}
+                          initial={{ opacity: 0, y: -4, scale: 0.95 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: -4, scale: 0.95 }}
+                          transition={{ duration: 0.15 }}
+                          id="wco-overflow-nav"
+                          aria-label="Additional navigation"
+                          className="no-drag"
+                          style={{
+                            position: 'absolute',
+                            top: '100%',
+                            right: 0,
+                            marginTop: 4,
+                            minWidth: 160,
+                            backgroundColor: 'var(--color-bg)',
+                            border: '1px solid var(--color-border)',
+                            borderRadius: 'var(--radius-lg, 8px)',
+                            boxShadow: 'var(--shadow-lg)',
+                            zIndex: 1060,
+                            overflow: 'hidden',
+                          }}
+                        >
+                          {overflowLinks.map((link) => {
+                            const WcoIcon = WCO_LINK_ICONS[link.href] || Info;
+                            return (
+                              <a
+                                key={link.href}
+                                href={
+                                  isHomePage && link.href.startsWith('/')
+                                    ? `${BASE_URL}#${link.href.replace('/', '')}`
+                                    : `${BASE_URL}${link.href.replace('/', '')}`
+                                }
+                                onClick={(e) => {
+                                  handleNavClick(
+                                    e,
+                                    link.href !== '/' ? link.href.replace('/', '') : null,
+                                    `${BASE_URL}${link.href.replace('/', '')}`
+                                  );
+                                  handleOverflowClose();
+                                }}
+                                className="wco-overflow-item no-drag"
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: 8,
+                                  padding: '10px 14px',
+                                  color: 'var(--color-text)',
+                                  fontSize: '0.875rem',
+                                  fontFamily: 'var(--font-body)',
+                                  textDecoration: 'none',
+                                  transition: 'background-color 0.15s',
+                                }}
+                                aria-label={link.ariaLabel || link.label}
+                              >
+                                <WcoIcon size={16} />
+                                {link.label}
+                              </a>
+                            );
+                          })}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                );
+              })()}
             {companyData.onlineStoreUrl && (
               <Button
                 variant="order"
