@@ -4,7 +4,9 @@ import LoadingFallback from './components/LoadingFallback';
 import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, ExternalLink, MapPin } from 'lucide-react';
 // ...existing code...
-import { getPreferredLocation, isLocationOpenNow } from './data/locations';
+import { getPreferredLocation } from './utils/locationMath';
+import { isLocationOpen } from './utils/availability';
+import { useCompanyData } from './contexts/CompanyDataContext';
 import { Logo } from './components/Logo';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -14,7 +16,6 @@ import Button from './components/Button';
 import StandardizedItem from './components/StandardizedItem';
 import LiveHoursDisplay from './components/LiveHoursDisplay';
 import { useLocationAware } from './hooks/useLocationContext';
-import { ROCAFE_FEATURED } from './data/rocafe-menu';
 import Phone from 'lucide-react/dist/esm/icons/phone.js';
 import Clock from 'lucide-react/dist/esm/icons/clock.js';
 import { useMenu } from './contexts/MenuContext';
@@ -49,7 +50,6 @@ const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 // component imports
 import NetworkStatus from './components/NetworkStatus';
 import CopyButton from './components/CopyButton';
-import COMPANY_DATA from './config/company_data';
 
 const BASE_URL =
   typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
@@ -57,6 +57,7 @@ const BASE_URL =
 // --- CUSTOM COMPONENTS ---
 
 function Hero({ onTrackOrder }) {
+  const { companyData } = useCompanyData();
   const shouldReduceMotion = useReducedMotion();
   const handleOrderClick = useCallback(() => {
     if (onTrackOrder) onTrackOrder('hero_section');
@@ -94,7 +95,7 @@ function Hero({ onTrackOrder }) {
                 className="text-sm font-inter font-semibold tracking-widest uppercase"
                 style={{ color: 'var(--color-accent)' }}
               >
-                {COMPANY_DATA.heroBadge}
+                {companyData.heroBadge}
               </span>
             </div>
             <h1
@@ -120,7 +121,7 @@ function Hero({ onTrackOrder }) {
             </div>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button
-                href={COMPANY_DATA.onlineStoreUrl}
+                href={companyData.onlineStoreUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 variant="order"
@@ -164,7 +165,7 @@ function Hero({ onTrackOrder }) {
   );
 }
 
-const ServicesSection = ({ featuredServices = [] }) => {
+const ServicesSection = ({ featuredServices = [], loading, error, refetch }) => {
   useLocationAware();
   return (
     <section id="services" className="py-20" style={{ backgroundColor: 'var(--color-surface)' }}>
@@ -173,12 +174,39 @@ const ServicesSection = ({ featuredServices = [] }) => {
           Our <span style={{ color: 'var(--color-accent)' }}>Services</span>
         </h2>
 
-        {/* Featured Services with StandardizedItem */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          {featuredServices.map((service) => (
-            <StandardizedItem key={service.id} item={service} itemType="service" defaultExpanded={false} />
-          ))}
-        </div>
+        {loading ? (
+          <div className="text-center py-8" role="status" aria-live="polite">
+            <div
+              className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 mb-3"
+              aria-hidden="true"
+              style={{ borderColor: 'var(--color-accent)' }}
+            ></div>
+            <p className="text-sm font-inter" style={{ color: 'var(--color-text)' }}>
+              Loading services...
+            </p>
+          </div>
+        ) : (
+          <>
+            {error && (
+              <div
+                className="flex items-center justify-center gap-3 py-2 px-4 rounded-lg mb-6 text-sm font-inter"
+                style={{ backgroundColor: 'var(--color-warning-bg)', color: 'var(--color-warning)' }}
+                role="alert"
+              >
+                <span>Using cached data.</span>
+                <button type="button" onClick={refetch} className="underline font-semibold hover:no-underline">
+                  Try Again
+                </button>
+              </div>
+            )}
+            {/* Featured Services with StandardizedItem */}
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+              {featuredServices.map((service) => (
+                <StandardizedItem key={service.id} item={service} itemType="service" defaultExpanded={false} />
+              ))}
+            </div>
+          </>
+        )}
 
         <div className="text-center">
           <Button
@@ -196,19 +224,11 @@ const ServicesSection = ({ featuredServices = [] }) => {
   );
 };
 
-const RoCafeSection = ({ menuItems, loading }) => {
-  // Filter for featured items and transform them
+const RoCafeSection = ({ menuItems, loading, error, refetch }) => {
+  // Filter for featured items (context already handles API-first with static fallback)
   const featuredItems = useMemo(() => {
-    if (!menuItems || menuItems.length === 0) {
-      // Fallback to static featured items if API fails
-      return ROCAFE_FEATURED;
-    }
-
-    // Filter API items for featured=true (already normalized by MenuContext)
-    const apiFeaturedItems = menuItems.filter((item) => item.featured);
-
-    // Use API items if available, otherwise fallback to static
-    return apiFeaturedItems.length > 0 ? apiFeaturedItems : ROCAFE_FEATURED;
+    if (!menuItems || menuItems.length === 0) return [];
+    return menuItems.filter((item) => item.featured);
   }, [menuItems]);
 
   return (
@@ -268,9 +288,23 @@ const RoCafeSection = ({ menuItems, loading }) => {
                   <p className="mt-2 text-sm font-inter">Loading menu...</p>
                 </div>
               ) : (
-                featuredItems.map((item) => (
-                  <StandardizedItem key={item.id} item={item} itemType="menu" defaultExpanded={false} />
-                ))
+                <>
+                  {error && (
+                    <div
+                      className="flex items-center justify-center gap-3 py-2 px-4 rounded-lg mb-3 text-sm font-inter"
+                      style={{ backgroundColor: 'rgba(255,255,255,0.15)', color: 'var(--color-accent)' }}
+                      role="alert"
+                    >
+                      <span>Using cached data.</span>
+                      <button type="button" onClick={refetch} className="underline font-semibold hover:no-underline">
+                        Try Again
+                      </button>
+                    </div>
+                  )}
+                  {featuredItems.map((item) => (
+                    <StandardizedItem key={item.id} item={item} itemType="menu" defaultExpanded={false} />
+                  ))}
+                </>
               )}
             </div>
 
@@ -304,7 +338,7 @@ const RoCafeSection = ({ menuItems, loading }) => {
 
 const Locations = () => {
   const [userCoords, setUserCoords] = useState(null);
-  const { locations } = useLocations();
+  const { locations, loading: locLoading, error: locError, refetch: locRefetch } = useLocations();
 
   const primaryLocation = useMemo(() => locations.find((loc) => loc.isPrimary) || locations[0], [locations]);
 
@@ -331,7 +365,7 @@ const Locations = () => {
       address: preferredLocation.address.formatted,
       mapLink: preferredLocation.google.mapLink,
       embedUrl: preferredLocation.google.embedUrl,
-      isOpen: isLocationOpenNow(preferredLocation),
+      isOpen: isLocationOpen(preferredLocation),
     }),
     [preferredLocation]
   );
@@ -352,104 +386,131 @@ const Locations = () => {
           </h2>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-1 space-y-4">
-            {[displayLocation].map((loc) => (
-              <div
-                key={loc.id}
-                className="w-full text-left p-6 rounded-xl border-2 flex items-center gap-4"
-                style={{
-                  borderColor: 'var(--color-accent)',
-                  backgroundColor: 'var(--color-surface)',
-                }}
-              >
-                {preferredLocation.photos?.thumbnail && (
-                  <img
-                    src={preferredLocation.photos.thumbnail}
-                    alt={`${loc.name} thumbnail`}
-                    className="w-16 h-16 rounded-lg object-cover border border-[var(--color-accent)] shadow"
-                    loading="lazy"
-                  />
-                )}
-                <div className="flex-1">
-                  <h3 className="text-lg mb-1" style={{ color: 'var(--color-heading)' }}>
-                    {loc.name}
-                  </h3>
-                  <p className="text-sm font-inter mb-4" style={{ color: 'var(--color-text)', opacity: 0.7 }}>
-                    {loc.address}
-                  </p>
-                  <div
-                    className="flex items-center gap-2 text-sm font-semibold"
-                    style={{ color: 'var(--color-accent)' }}
-                  >
-                    <div
-                      className="w-2 h-2 rounded-full"
-                      style={{ backgroundColor: loc.isOpen ? 'var(--color-success)' : 'var(--color-error)' }}
-                    ></div>
-                    {loc.isOpen ? 'Open Now' : 'Closed'}
-                  </div>
-                </div>
-              </div>
-            ))}
+        {locLoading ? (
+          <div className="text-center py-8" role="status" aria-live="polite">
+            <div
+              className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 mb-3"
+              aria-hidden="true"
+              style={{ borderColor: 'var(--color-accent)' }}
+            ></div>
+            <p className="text-sm font-inter" style={{ color: 'var(--color-text)' }}>
+              Loading locations...
+            </p>
           </div>
-          <div
-            className="lg:col-span-2 rounded-3xl overflow-hidden min-h-[400px] relative shadow-inner"
-            style={{ backgroundColor: 'var(--color-surface)' }}
-          >
-            {displayLocation.embedUrl ? (
-              <iframe
-                title={`Google Maps - ${displayLocation.name}`}
-                src={displayLocation.embedUrl}
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                allowFullScreen=""
-                loading="lazy"
-                className="absolute inset-0"
-              ></iframe>
-            ) : (
+        ) : (
+          <>
+            {locError && (
               <div
-                className="absolute inset-0 flex flex-col items-center justify-center gap-4 text-center px-6"
-                style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)' }}
+                className="flex items-center justify-center gap-3 py-2 px-4 rounded-lg mb-6 text-sm font-inter"
+                style={{ backgroundColor: 'var(--color-warning-bg)', color: 'var(--color-warning)' }}
+                role="alert"
               >
-                <p className="font-inter text-sm" style={{ color: 'var(--color-text-muted)' }}>
-                  Open this location in Google Maps for directions.
-                </p>
-                <a
-                  href={displayLocation.mapLink}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="px-4 py-2 rounded-full text-sm font-semibold"
-                  style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)' }}
-                >
-                  Open Map
-                </a>
+                <span>Using cached data.</span>
+                <button type="button" onClick={locRefetch} className="underline font-semibold hover:no-underline">
+                  Try Again
+                </button>
               </div>
             )}
-            <div className="absolute bottom-6 right-6">
-              <a
-                href={activeLoc.mapLink}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-2 px-6 py-3 rounded-full font-bold shadow-xl hover:scale-105 transition-transform"
-                style={{ backgroundColor: 'var(--color-primary)', color: 'var(--color-text-on-primary)' }}
+            <div className="grid lg:grid-cols-3 gap-8">
+              <div className="lg:col-span-1 space-y-4">
+                {[displayLocation].map((loc) => (
+                  <div
+                    key={loc.id}
+                    className="w-full text-left p-6 rounded-xl border-2 flex items-center gap-4"
+                    style={{
+                      borderColor: 'var(--color-accent)',
+                      backgroundColor: 'var(--color-surface)',
+                    }}
+                  >
+                    {preferredLocation.photos?.thumbnail && (
+                      <img
+                        src={preferredLocation.photos.thumbnail}
+                        alt={`${loc.name} thumbnail`}
+                        className="w-16 h-16 rounded-lg object-cover border border-[var(--color-accent)] shadow"
+                        loading="lazy"
+                      />
+                    )}
+                    <div className="flex-1">
+                      <h3 className="text-lg mb-1" style={{ color: 'var(--color-heading)' }}>
+                        {loc.name}
+                      </h3>
+                      <p className="text-sm font-inter mb-4" style={{ color: 'var(--color-text)', opacity: 0.7 }}>
+                        {loc.address}
+                      </p>
+                      <div
+                        className="flex items-center gap-2 text-sm font-semibold"
+                        style={{ color: 'var(--color-accent)' }}
+                      >
+                        <div
+                          className="w-2 h-2 rounded-full"
+                          style={{ backgroundColor: loc.isOpen ? 'var(--color-success)' : 'var(--color-error)' }}
+                        ></div>
+                        {loc.isOpen ? 'Open Now' : 'Closed'}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div
+                className="lg:col-span-2 rounded-3xl overflow-hidden min-h-[400px] relative shadow-inner"
+                style={{ backgroundColor: 'var(--color-surface)' }}
               >
-                <MapPin size={18} /> Open in Maps
-              </a>
+                {displayLocation.embedUrl ? (
+                  <iframe
+                    title={`Google Maps - ${displayLocation.name}`}
+                    src={displayLocation.embedUrl}
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    allowFullScreen=""
+                    loading="lazy"
+                    className="absolute inset-0"
+                  ></iframe>
+                ) : (
+                  <div
+                    className="absolute inset-0 flex flex-col items-center justify-center gap-4 text-center px-6"
+                    style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)' }}
+                  >
+                    <p className="font-inter text-sm" style={{ color: 'var(--color-text-muted)' }}>
+                      Open this location in Google Maps for directions.
+                    </p>
+                    <a
+                      href={displayLocation.mapLink}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="px-4 py-2 rounded-full text-sm font-semibold"
+                      style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)' }}
+                    >
+                      Open Map
+                    </a>
+                  </div>
+                )}
+                <div className="absolute bottom-6 right-6">
+                  <a
+                    href={activeLoc.mapLink}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-2 px-6 py-3 rounded-full font-bold shadow-xl hover:scale-105 transition-transform"
+                    style={{ backgroundColor: 'var(--color-primary)', color: 'var(--color-text-on-primary)' }}
+                  >
+                    <MapPin size={18} /> Open in Maps
+                  </a>
+                </div>
+              </div>
+              <div className="text-center mt-12">
+                <Button
+                  href={`${BASE_URL}locations`}
+                  variant="navlink"
+                  size="lg"
+                  icon={<ArrowRight size={20} />}
+                  aria-label="View all locations"
+                >
+                  View All Locations
+                </Button>
+              </div>
             </div>
-          </div>
-          <div className="text-center mt-12">
-            <Button
-              href={`${BASE_URL}locations`}
-              variant="navlink"
-              size="lg"
-              icon={<ArrowRight size={20} />}
-              aria-label="View all locations"
-            >
-              View All Locations
-            </Button>
-          </div>
-        </div>
+          </>
+        )}
       </div>
     </section>
   );
@@ -457,6 +518,7 @@ const Locations = () => {
 
 // --- CONTACT SECTION ---
 const ContactSection = () => {
+  const { companyData } = useCompanyData();
   const textColor = { color: 'var(--color-text)' };
   const mutedTextColor = { color: 'var(--color-text)', opacity: 0.7 };
   const { locations } = useLocations();
@@ -516,14 +578,14 @@ const ContactSection = () => {
                   </h3>
                   <div className="flex items-center gap-2 flex-wrap">
                     <a
-                      href={`tel:${COMPANY_DATA.location.contact.phone}`}
+                      href={`tel:${companyData.location.contact.phone}`}
                       className="hover:underline"
                       style={{ color: 'var(--color-accent)' }}
                     >
-                      {COMPANY_DATA.location.contact.phone}
+                      {companyData.location.contact.phone}
                     </a>
                     <CopyButton
-                      text={COMPANY_DATA.location.contact.phone}
+                      text={companyData.location.contact.phone}
                       label="Phone number"
                       style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)' }}
                     />
@@ -577,16 +639,17 @@ const ContactSection = () => {
 // --- MAIN APP ---
 function App() {
   const pathname = typeof window !== 'undefined' ? window.location.pathname.replace(BASE_URL, '/') : '/';
+  const { companyData } = useCompanyData();
   const { updateAvailable, skipWaiting } = useServiceWorker();
   const [updateDismissed, setUpdateDismissed] = useState(sessionStorage.getItem('pwa-update-dismissed') === 'true');
   const isVisible = usePageVisibility();
 
   // Fetch menu data from API for homepage featured schemas + RoCafe section
   // Menu is now provided via MenuProvider context to avoid duplicate API calls
-  const { menuItems, loading } = useMenu();
+  const { menuItems, loading, error: menuError, refetch: menuRefetch } = useMenu();
 
   // Fetch services data from API with fallback to static SERVICES
-  const { services } = useServices();
+  const { services, loading: servicesLoading, error: servicesError, refetch: servicesRefetch } = useServices();
 
   // Fetch locations data from API with fallback to static LOCATIONS
   const { locations } = useLocations();
@@ -668,11 +731,11 @@ function App() {
           <StructuredData
             type="WebApplication"
             data={{
-              ...COMPANY_DATA.pwa?.webApplication,
-              name: COMPANY_DATA.pwa?.webApplication?.name || COMPANY_DATA.dba || 'Roma Mart Convenience',
-              url: COMPANY_DATA.pwa?.webApplication?.url || 'https://romamart.ca',
+              ...companyData.pwa?.webApplication,
+              name: companyData.pwa?.webApplication?.name || companyData.dba || 'Roma Mart Convenience',
+              url: companyData.pwa?.webApplication?.url || 'https://romamart.ca',
               author: {
-                name: COMPANY_DATA.legalName || 'Roma Mart Corp.',
+                name: companyData.legalName || 'Roma Mart Corp.',
                 url: 'https://romamart.ca',
               },
             }}
@@ -786,10 +849,15 @@ function App() {
               <Hero onTrackOrder={handleTrackOrderClick} />
               <div id="main-content">
                 <ErrorBoundary>
-                  <ServicesSection featuredServices={featuredServices} />
+                  <ServicesSection
+                    featuredServices={featuredServices}
+                    loading={servicesLoading}
+                    error={servicesError}
+                    refetch={servicesRefetch}
+                  />
                 </ErrorBoundary>
                 <ErrorBoundary>
-                  <RoCafeSection menuItems={menuItems} loading={loading} />
+                  <RoCafeSection menuItems={menuItems} loading={loading} error={menuError} refetch={menuRefetch} />
                 </ErrorBoundary>
                 <ErrorBoundary>
                   <Locations />

@@ -57,10 +57,9 @@ const COMPANY_DATA = {
     snapchat: 'https://www.snapchat.com/@romamartca/',
     x: 'https://www.x.com/romamartca/',
   },
-  // Fallback HQ info for resilience
-  // HQ info is now sourced directly from the (primary) location in LOCATIONS
+  // HQ info — sourced from the primary location in LOCATIONS.
+  // Live data comes from /api/public-company-data via CompanyDataContext.
   address: getPrimaryLocation().address,
-
   hours: getPrimaryLocation().hours,
   contact: {
     phone: getPrimaryLocation().contact.phone,
@@ -76,7 +75,8 @@ const COMPANY_DATA = {
     legal: 'legal@romamart.ca',
     support: 'support@romamart.ca',
   },
-  // Location-dependent info is mapped from the primary location object
+  // HQ location — sourced from the primary location in LOCATIONS.
+  // Live location data comes from /api/public-locations via LocationsContext.
   location: getPrimaryLocation(),
   trustpilotReviewUrl: 'https://www.trustpilot.com/review/romamart.ca',
   // PWA configuration (SSOT for WebApplication schema)

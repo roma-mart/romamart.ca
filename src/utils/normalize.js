@@ -38,6 +38,18 @@ const isLikelyCents = (sizes) => {
 };
 
 /**
+ * Extracts a single category string from the API's `categories` array.
+ * Strips the "RoCafe " prefix to produce canonical names (e.g. "Hot Coffee").
+ * @param {Array<string>|undefined} categories
+ * @returns {string|null}
+ */
+const extractCategory = (categories) => {
+  if (!Array.isArray(categories) || categories.length === 0) return null;
+  const raw = categories[0];
+  return typeof raw === 'string' ? raw.replace(/^RoCafe\s+/i, '') : null;
+};
+
+/**
  * Normalizes a menu item from API or static format to internal format.
  *
  * API source: converts prices from cents to dollars.
@@ -68,12 +80,28 @@ export const normalizeMenuItem = (item, source) => {
 
   return {
     ...item,
+    // Enrichment defaults (hybrid: common defaults in normalizer, complex domain fields null)
+    itemType: item.itemType || 'menu',
+    slug: item.slug || item.id || null,
+    status: normalizeEnum(item.status) || 'available',
+    availability: normalizeEnum(item.availability) || 'store_hours',
+    defaultSize: item.defaultSize ?? 0,
+    // Complex domain-specific fields: null = "data not available" (food safety)
+    customizations: item.customizations ?? null,
+    allergens: item.allergens ?? null,
+    dietary: item.dietary ?? null,
+    temperature: item.temperature ?? null,
+    flavorProfile: item.flavorProfile ?? null,
+    prepTime: item.prepTime ?? null,
+    caffeineLevel: item.caffeineLevel ?? null,
+    image: item.image ?? null,
     sizes,
     addOns,
     // Ensure availableAt is always an array
     availableAt: Array.isArray(item.availableAt) ? item.availableAt : [],
-    // Ensure category is a string (API returns singular, static also singular)
-    category: item.category || null,
+    // API sends `categories` (array), internal format uses `category` (string).
+    // Extract first category from array; strip "RoCafe " prefix for canonical form.
+    category: item.category || extractCategory(item.categories) || null,
   };
 };
 
@@ -91,6 +119,9 @@ export const normalizeLocation = (loc, source) => {
   if (!loc) return loc;
 
   const normalized = { ...loc };
+
+  // Defense-in-depth enum normalization
+  if (loc.status) normalized.status = normalizeEnum(loc.status);
 
   // Map API `images` to internal `photos` format if not already present
   if (source === 'api' && loc.images && !loc.photos) {
@@ -116,7 +147,12 @@ export const normalizeLocation = (loc, source) => {
 /**
  * Normalizes a service from API or static format to internal format.
  *
- * Minimal normalization — ensures arrays are present and enum values are clean.
+ * Ensures arrays are present, enum values are normalized (defense-in-depth),
+ * and slug is populated.
+ *
+ * Note on icons: Static data has JSX elements (e.g., <Banknote />), API returns
+ * string identifiers (e.g., "banknote"). Icon rendering components must handle
+ * both types — check `typeof svc.icon === 'string'` and resolve accordingly.
  *
  * @param {Object} svc - Service object from API or static data
  * @param {'api'|'static'} source - Data source
@@ -127,6 +163,9 @@ export const normalizeService = (svc, _source) => {
 
   return {
     ...svc,
+    slug: svc.slug || svc.id || null,
+    status: normalizeEnum(svc.status) || 'available',
+    availability: normalizeEnum(svc.availability) || 'store_hours',
     availableAt: Array.isArray(svc.availableAt) ? svc.availableAt : [],
     features: Array.isArray(svc.features) ? svc.features : [],
     category: svc.category || null,

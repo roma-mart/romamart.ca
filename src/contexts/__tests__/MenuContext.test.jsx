@@ -3,6 +3,14 @@ import React from 'react';
 import { renderHook, waitFor } from '@testing-library/react';
 import { MenuProvider, useMenu } from '../MenuContext';
 
+// Mock static menu data for fallback testing
+vi.mock('../../data/rocafe-menu', () => ({
+  ROCAFE_FULL_MENU: [
+    { id: 'static-1', name: 'Static Latte', featured: true, sizes: [{ name: 'M', price: 4.49 }] },
+    { id: 'static-2', name: 'Static Espresso', featured: false, sizes: [{ name: 'M', price: 3.49 }] },
+  ],
+}));
+
 describe('MenuContext', () => {
   let originalFetch;
 
@@ -17,11 +25,13 @@ describe('MenuContext', () => {
 
   const wrapper = ({ children }) => <MenuProvider>{children}</MenuProvider>;
 
-  it('should start in loading state', () => {
+  it('should start in loading state with static fallback data', () => {
     global.fetch = vi.fn(() => new Promise(() => {})); // never resolves
     const { result } = renderHook(() => useMenu(), { wrapper });
     expect(result.current.loading).toBe(true);
-    expect(result.current.menuItems).toEqual([]);
+    expect(result.current.menuItems).toHaveLength(2);
+    expect(result.current.menuItems[0].name).toBe('Static Latte');
+    expect(result.current.source).toBe('static');
     expect(result.current.error).toBe('');
   });
 
@@ -46,6 +56,7 @@ describe('MenuContext', () => {
     // Items are normalized — check they exist and have expected names
     expect(result.current.menuItems).toHaveLength(2);
     expect(result.current.menuItems[0].name).toBe('Latte');
+    expect(result.current.source).toBe('api');
     expect(result.current.error).toBe('');
   });
 
@@ -100,10 +111,13 @@ describe('MenuContext', () => {
     });
 
     expect(result.current.error).toBe('Failed to fetch menu data');
-    expect(result.current.menuItems).toEqual([]);
+    // Should fall back to static data
+    expect(result.current.menuItems).toHaveLength(2);
+    expect(result.current.menuItems[0].name).toBe('Static Latte');
+    expect(result.current.source).toBe('static');
   });
 
-  it('should set error on network failure', async () => {
+  it('should fall back to static data on network failure', async () => {
     global.fetch = vi.fn(() => Promise.reject(new Error('Network error')));
 
     const { result } = renderHook(() => useMenu(), { wrapper });
@@ -113,7 +127,10 @@ describe('MenuContext', () => {
     });
 
     expect(result.current.error).toBe('Network error');
-    expect(result.current.menuItems).toEqual([]);
+    // Should fall back to static data
+    expect(result.current.menuItems).toHaveLength(2);
+    expect(result.current.menuItems[0].name).toBe('Static Latte');
+    expect(result.current.source).toBe('static');
   });
 
   it('should handle empty menu array from API', async () => {
@@ -130,7 +147,9 @@ describe('MenuContext', () => {
       expect(result.current.loading).toBe(false);
     });
 
+    // Empty API response is valid — overrides static fallback
     expect(result.current.menuItems).toEqual([]);
+    expect(result.current.source).toBe('api');
     expect(result.current.error).toBe('');
   });
 
@@ -148,7 +167,9 @@ describe('MenuContext', () => {
       expect(result.current.loading).toBe(false);
     });
 
+    // Missing menu key treated as empty valid response
     expect(result.current.menuItems).toEqual([]);
+    expect(result.current.source).toBe('api');
   });
 
   it('should throw when useMenu is used outside MenuProvider', () => {

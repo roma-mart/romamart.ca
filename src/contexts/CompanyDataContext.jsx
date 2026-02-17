@@ -4,7 +4,7 @@ import COMPANY_DATA from '../config/company_data';
 /**
  * CompanyDataContext - Single source of truth for company data
  * Fetches from API with fallback to static COMPANY_DATA config
- * Merges API data with local-only fields (e.g., web3FormsAccessKey)
+ * Static fields serve as defaults; API fields take precedence
  *
  * @since February 2026
  */
@@ -48,7 +48,7 @@ export function CompanyDataProvider({ children }) {
         const data = await res.json();
 
         // Validate API response structure
-        if (!data.success || !data.companyData || typeof data.companyData !== 'object') {
+        if (!data.companyData || typeof data.companyData !== 'object') {
           if (import.meta.env.DEV) console.warn('Invalid company data API response, using static data');
           if (!cancelled) {
             setCompanyData(COMPANY_DATA);
@@ -58,16 +58,33 @@ export function CompanyDataProvider({ children }) {
           return;
         }
 
-        // API success - merge with static config to preserve local-only fields
-        // (e.g., web3FormsAccessKey is intentionally excluded from API for security)
+        // API success - merge with static config as base defaults
+        // Static fields serve as fallback; API fields take precedence
+        // Deep merge nested objects to prevent partial API data from losing static defaults
         if (!cancelled) {
+          const apiData = data.companyData;
           setCompanyData({
             ...COMPANY_DATA,
-            ...data.companyData,
-            // Preserve contact.web3FormsAccessKey from static config
+            ...apiData,
             contact: {
               ...COMPANY_DATA.contact,
-              ...(data.companyData.contact || {}),
+              ...(apiData.contact || {}),
+            },
+            socialLinks: {
+              ...COMPANY_DATA.socialLinks,
+              ...(apiData.socialLinks || {}),
+            },
+            defaults: {
+              ...COMPANY_DATA.defaults,
+              ...(apiData.defaults || {}),
+            },
+            returnPolicy: {
+              ...COMPANY_DATA.returnPolicy,
+              ...(apiData.returnPolicy || {}),
+            },
+            contextualEmails: {
+              ...COMPANY_DATA.contextualEmails,
+              ...(apiData.contextualEmails || {}),
             },
           });
           setSource('api');
@@ -93,7 +110,17 @@ export function CompanyDataProvider({ children }) {
     };
   }, []);
 
-  const value = { companyData, loading, error, source };
+  /**
+   * Get the appropriate email address for a given page context.
+   * Derived from the current companyData (API-first, static fallback).
+   * @param {'general'|'privacy'|'accessibility'|'technology'|'legal'|'support'} context
+   * @returns {string}
+   */
+  const getContextualEmail = (context = 'general') => {
+    return companyData.contextualEmails?.[context] || companyData.contextualEmails?.general || 'contact@romamart.ca';
+  };
+
+  const value = { companyData, loading, error, source, getContextualEmail };
 
   return <CompanyDataContext.Provider value={value}>{children}</CompanyDataContext.Provider>;
 }
@@ -103,7 +130,7 @@ export function CompanyDataProvider({ children }) {
  * Returns the same cached data across all components
  * Eliminates duplicate API calls
  *
- * @returns {Object} { companyData: Object, loading: boolean, error: string, source: 'api'|'static' }
+ * @returns {Object} { companyData: Object, loading: boolean, error: string, source: 'api'|'static', getContextualEmail: Function }
  */
 // eslint-disable-next-line react-refresh/only-export-components
 export function useCompanyData() {

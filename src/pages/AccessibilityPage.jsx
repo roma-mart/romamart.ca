@@ -2,11 +2,12 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ExternalLink, Mail, Phone, MapPin, CheckCircle, ChevronRight } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
-import COMPANY_DATA, { getContextualEmail } from '../config/company_data';
+import { useCompanyData } from '../contexts/CompanyDataContext';
 import StructuredData from '../components/StructuredData';
 import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 
 const AccessibilityPage = () => {
+  const { companyData, getContextualEmail } = useCompanyData();
   const BASE_URL =
     typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
   const textColor = { color: 'var(--color-text)' };
@@ -229,11 +230,11 @@ const AccessibilityPage = () => {
               Phone
             </h3>
             <a
-              href={`tel:${COMPANY_DATA.location.contact.phone}`}
+              href={`tel:${companyData.location.contact.phone}`}
               className="hover:underline"
               style={{ color: 'var(--color-accent)' }}
             >
-              {COMPANY_DATA.location.contact.phone}
+              {companyData.location.contact.phone}
             </a>
           </div>
           <div
@@ -245,7 +246,7 @@ const AccessibilityPage = () => {
               Visit Us
             </h3>
             <p className="text-sm" style={textColor}>
-              {COMPANY_DATA.location.address.formatted}
+              {companyData.location.address.formatted}
             </p>
           </div>
         </div>

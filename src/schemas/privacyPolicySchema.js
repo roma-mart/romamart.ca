@@ -8,17 +8,18 @@
 import COMPANY_DATA from '../config/company_data.js';
 import { safeString } from '../utils/schemaHelpers.js';
 
-export const buildPrivacyPolicySchema = (data = {}) => {
-  const name = safeString(data.name || `${COMPANY_DATA.dba} Privacy Policy`);
-  const url = data.url || `${COMPANY_DATA.baseUrl}${COMPANY_DATA.endpoints.privacy}`;
+export const buildPrivacyPolicySchema = (data = {}, options = {}) => {
+  const cd = options.companyData || COMPANY_DATA;
+  const name = safeString(data.name || `${cd.dba} Privacy Policy`);
+  const url = data.url || `${cd.baseUrl}${cd.endpoints.privacy}`;
   const effectiveDate = data.effectiveDate || '2025-07-28';
   const description = safeString(
     data.description ||
-    `${COMPANY_DATA.legalName} values your privacy and collects personal information in compliance with Canadian privacy laws (PIPEDA).`
+      `${cd.legalName} values your privacy and collects personal information in compliance with Canadian privacy laws (PIPEDA).`
   );
 
-  const contactEmail = data.contactEmail || COMPANY_DATA.contextualEmails.privacy || COMPANY_DATA.contact.email;
-  const contactPhone = data.contactPhone || COMPANY_DATA.contact.phone;
+  const contactEmail = data.contactEmail || cd.contextualEmails?.privacy || cd.contact.email;
+  const contactPhone = data.contactPhone || cd.contact.phone;
 
   return {
     '@context': 'https://schema.org',
@@ -32,14 +33,14 @@ export const buildPrivacyPolicySchema = (data = {}) => {
     description,
     publisher: {
       '@type': 'Organization',
-      name: COMPANY_DATA.legalName,
-      url: COMPANY_DATA.baseUrl,
+      name: cd.legalName,
+      url: cd.baseUrl,
       contactPoint: {
         '@type': 'ContactPoint',
         contactType: 'privacy',
         email: contactEmail,
-        telephone: contactPhone
-      }
-    }
+        telephone: contactPhone,
+      },
+    },
   };
 };

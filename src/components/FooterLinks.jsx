@@ -3,15 +3,14 @@
  * Navigation links grid for the Footer (Pages + Legal columns).
  */
 import { NAVIGATION_LINKS } from '../config/navigation';
-import COMPANY_DATA from '../config/company_data';
+import { useCompanyData } from '../contexts/CompanyDataContext';
 
 const LEGAL_SLUGS = ['privacy', 'terms', 'cookies', 'accessibility', 'return-policy'];
 
 export default function FooterLinks() {
+  const { companyData } = useCompanyData();
   const BASE_URL =
-    typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL
-      ? import.meta.env.BASE_URL
-      : '/';
+    typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
 
   const pageLinks = NAVIGATION_LINKS.filter((link) => {
     if (!link.showIn.footer) return false;
@@ -44,7 +43,7 @@ export default function FooterLinks() {
           ))}
           <li>
             <a
-              href={COMPANY_DATA.onlineStoreUrl}
+              href={companyData.onlineStoreUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="font-bold transition-colors"

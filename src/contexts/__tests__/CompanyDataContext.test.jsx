@@ -54,7 +54,7 @@ describe('CompanyDataContext', () => {
       contact: {
         phone: '555-0200',
         email: 'api@example.com',
-        // Note: web3FormsAccessKey intentionally NOT in API response
+        web3FormsAccessKey: 'api-provided-key',
       },
       socialLinks: { facebook: 'https://facebook.com/api', instagram: 'https://instagram.com/api' },
     };
@@ -74,12 +74,41 @@ describe('CompanyDataContext', () => {
     // API data should override static
     expect(result.current.companyData.legalName).toBe('API Corp Ltd');
     expect(result.current.companyData.gstNumber).toBe('987654321RT0001');
-    // web3FormsAccessKey should be preserved from static config
-    expect(result.current.companyData.contact.web3FormsAccessKey).toBe('secret-local-key');
+    // API-provided web3FormsAccessKey should take precedence
+    expect(result.current.companyData.contact.web3FormsAccessKey).toBe('api-provided-key');
     // API contact fields should override
     expect(result.current.companyData.contact.phone).toBe('555-0200');
     expect(result.current.source).toBe('api');
     expect(result.current.error).toBe('');
+  });
+
+  it('should fall back to static web3FormsAccessKey when API omits it', async () => {
+    const apiCompanyData = {
+      legalName: 'API Corp Ltd',
+      contact: {
+        phone: '555-0200',
+        email: 'api@example.com',
+        // web3FormsAccessKey intentionally omitted
+      },
+    };
+    global.fetch = vi.fn(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({ success: true, companyData: apiCompanyData }),
+      })
+    );
+
+    const { result } = renderHook(() => useCompanyData(), { wrapper });
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+
+    // Static web3FormsAccessKey should be preserved when API doesn't provide one
+    expect(result.current.companyData.contact.web3FormsAccessKey).toBe('secret-local-key');
+    // Other API fields should still override
+    expect(result.current.companyData.contact.phone).toBe('555-0200');
+    expect(result.current.source).toBe('api');
   });
 
   it('should fall back to static data on non-ok response', async () => {
@@ -133,5 +162,14 @@ describe('CompanyDataContext', () => {
     const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
     expect(() => renderHook(() => useCompanyData())).toThrow('useCompanyData must be used within CompanyDataProvider');
     spy.mockRestore();
+  });
+
+  it('should provide getContextualEmail that returns fallback when no contextualEmails configured', () => {
+    global.fetch = vi.fn(() => new Promise(() => {}));
+    const { result } = renderHook(() => useCompanyData(), { wrapper });
+
+    expect(typeof result.current.getContextualEmail).toBe('function');
+    // With no contextualEmails in the mock data, should return the hardcoded fallback
+    expect(result.current.getContextualEmail('privacy')).toBe('contact@romamart.ca');
   });
 });

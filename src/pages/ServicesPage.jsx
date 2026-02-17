@@ -4,13 +4,12 @@ import { ChevronRight } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
 import StandardizedItem from '../components/StandardizedItem';
 import { useServices } from '../contexts/ServicesContext';
-import COMPANY_DATA from '../config/company_data';
 import StructuredData from '../components/StructuredData';
 import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 
 const ServicesPage = () => {
   // Fetch services from API with fallback to static data
-  const { services } = useServices();
+  const { services, loading, error, refetch } = useServices();
 
   const COLORS = {
     navy: 'var(--color-primary)',
@@ -113,30 +112,57 @@ const ServicesPage = () => {
 
       {/* Services Grid */}
       <section className="max-w-7xl mx-auto px-4">
-        <div className="grid md:grid-cols-2 gap-6">
-          {sortedServices.map((service, index) => (
-            <StandardizedItem
-              key={service.id}
-              item={{
-                id: service.id,
-                name: service.name,
-                tagline: service.tagline,
-                description: service.description,
-                icon: service.icon,
-                badge: service.badge,
-                features: service.features,
-                action: service.action,
-                status: service.status,
-                availableAt: service.availableAt,
-                availability: service.availability,
-                ageRestricted: service.ageRestricted,
-                legalNotice: service.legalNotice,
-              }}
-              defaultExpanded={index === 0}
-              variant="service"
-            />
-          ))}
-        </div>
+        {loading ? (
+          <div className="text-center py-16" role="status" aria-live="polite">
+            <div
+              className="inline-block animate-spin rounded-full h-10 w-10 border-b-2 mb-4"
+              aria-hidden="true"
+              style={{ borderColor: 'var(--color-accent)' }}
+            ></div>
+            <p className="font-inter" style={textColor}>
+              Loading services...
+            </p>
+          </div>
+        ) : (
+          <>
+            {error && (
+              <div
+                className="flex items-center justify-center gap-3 py-3 px-4 rounded-lg mb-6 text-sm font-inter"
+                style={{ backgroundColor: 'var(--color-warning-bg)', color: 'var(--color-warning)' }}
+                role="alert"
+              >
+                <span>Using cached data. Couldn't reach server.</span>
+                <button type="button" onClick={refetch} className="underline font-semibold hover:no-underline">
+                  Try Again
+                </button>
+              </div>
+            )}
+            <div className="grid md:grid-cols-2 gap-6">
+              {sortedServices.map((service, index) => (
+                <StandardizedItem
+                  key={service.id}
+                  item={{
+                    id: service.id,
+                    name: service.name,
+                    tagline: service.tagline,
+                    description: service.description,
+                    icon: service.icon,
+                    badge: service.badge,
+                    features: service.features,
+                    action: service.action,
+                    status: service.status,
+                    availableAt: service.availableAt,
+                    availability: service.availability,
+                    ageRestricted: service.ageRestricted,
+                    legalNotice: service.legalNotice,
+                  }}
+                  defaultExpanded={index === 0}
+                  variant="service"
+                />
+              ))}
+            </div>
+          </>
+        )}
       </section>
 
       {/* Compliance Notice with SFOA Signage - Keep existing */}

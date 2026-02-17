@@ -89,6 +89,7 @@ const CATEGORY_ALIASES = {
   frappes: 'Frappe',
   specialty: 'Specialty',
   food: 'Food',
+  ready2eat: 'Ready2Eat',
   seasonal: 'Seasonal',
 };
 

@@ -3,7 +3,7 @@
  * Google Reviews rating display for the Footer.
  */
 import useGooglePlaceHours from '../hooks/useGooglePlaceHours';
-import COMPANY_DATA from '../config/company_data';
+import { useCompanyData } from '../contexts/CompanyDataContext';
 
 const renderStars = (ratingValue) => {
   if (!ratingValue) return '\u2B50\u2B50\u2B50\u2B50\u2B50';
@@ -12,25 +12,18 @@ const renderStars = (ratingValue) => {
   const fullStars = Math.floor(roundedRating);
   const hasHalfStar = roundedRating - fullStars === 0.5;
   const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-  return (
-    '\u2B50'.repeat(fullStars) +
-    (hasHalfStar ? '\u2BE8' : '') +
-    '\u2606'.repeat(Math.max(0, emptyStars))
-  );
+  return '\u2B50'.repeat(fullStars) + (hasHalfStar ? '\u2BE8' : '') + '\u2606'.repeat(Math.max(0, emptyStars));
 };
 
 export default function FooterReviews({ currentLocation, locations }) {
-  const { rating, userRatingCount } = useGooglePlaceHours(
-    currentLocation?.google?.placeId || null
-  );
+  const { companyData } = useCompanyData();
+  const { rating, userRatingCount } = useGooglePlaceHours(currentLocation?.google?.placeId || null);
 
   const ratingDisplay = rating ? Number(rating).toFixed(1) : null;
   const reviewCountDisplay = userRatingCount ? userRatingCount.toLocaleString() : null;
 
   const mapLink =
-    currentLocation?.google?.mapLink ||
-    COMPANY_DATA.location?.google?.mapLink ||
-    locations[0]?.google?.mapLink;
+    currentLocation?.google?.mapLink || companyData.location?.google?.mapLink || locations[0]?.google?.mapLink;
 
   return (
     <div className="mb-16 flex justify-center">
@@ -59,18 +52,12 @@ export default function FooterReviews({ currentLocation, locations }) {
           ) : (
             <div className="text-4xl mb-3">{'\u2B50\u2B50\u2B50\u2B50\u2B50'}</div>
           )}
-          <p
-            className="text-2xl font-bold mb-3 text-heading"
-            style={{ color: 'var(--color-heading)' }}
-          >
+          <p className="text-2xl font-bold mb-3 text-heading" style={{ color: 'var(--color-heading)' }}>
             See What Our Customers Say
           </p>
-          <p
-            className="text-base mb-6 max-w-xl mx-auto leading-relaxed"
-            style={{ color: 'var(--color-text-muted)' }}
-          >
-            Read authentic reviews from our community on Google and discover why Roma Mart is
-            Sarnia's favorite convenience destination.
+          <p className="text-base mb-6 max-w-xl mx-auto leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>
+            Read authentic reviews from our community on Google and discover why Roma Mart is Sarnia's favorite
+            convenience destination.
           </p>
           <a
             href={mapLink}

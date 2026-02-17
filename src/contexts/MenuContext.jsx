@@ -1,15 +1,20 @@
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { normalizeMenuItem } from '../utils/normalize';
+import { ROCAFE_FULL_MENU } from '../data/rocafe-menu';
 
 /**
  * MenuContext - Single source of truth for menu data
  * Prevents duplicate API calls when menu is needed on multiple routes
  * Caches results and shares across components
+ * Falls back to static ROCAFE_FULL_MENU if API is unavailable
  */
 const MenuContext = createContext();
 
 // In dev, use relative URL so Vite's proxy handles the request (avoids CORS issues)
 const API_URL = import.meta.env.DEV ? '/api/public-menu' : 'https://romamart.netlify.app/api/public-menu';
+
+// Pre-normalize static fallback once (not on every render)
+const STATIC_FALLBACK = ROCAFE_FULL_MENU.map((item) => normalizeMenuItem(item, 'static'));
 
 /**
  * MenuProvider - Wraps app to provide shared menu state
@@ -17,9 +22,10 @@ const API_URL = import.meta.env.DEV ? '/api/public-menu' : 'https://romamart.net
  * Exposes refetch() for retry-on-error without full page reload
  */
 export function MenuProvider({ children }) {
-  const [menuItems, setMenuItems] = useState([]);
+  const [menuItems, setMenuItems] = useState(STATIC_FALLBACK);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [source, setSource] = useState('static');
   const cancelledRef = useRef(false);
 
   const fetchMenuData = useCallback(async () => {
@@ -47,11 +53,18 @@ export function MenuProvider({ children }) {
         });
       }
 
-      if (!cancelledRef.current) setMenuItems(menu);
+      if (!cancelledRef.current) {
+        setMenuItems(menu);
+        setSource('api');
+      }
     } catch (err) {
       // Error logging is permanent (not temporary debug logs) for production diagnostics
       console.error('[MenuContext] Failed to fetch menu data:', err);
-      if (!cancelledRef.current) setError(err.message || 'Failed to load menu data');
+      if (!cancelledRef.current) {
+        setMenuItems(STATIC_FALLBACK);
+        setSource('static');
+        setError(err.message || 'Failed to load menu data');
+      }
     } finally {
       if (!cancelledRef.current) setLoading(false);
     }
@@ -66,7 +79,7 @@ export function MenuProvider({ children }) {
     };
   }, [fetchMenuData]);
 
-  const value = { menuItems, loading, error, refetch: fetchMenuData };
+  const value = { menuItems, loading, error, source, refetch: fetchMenuData };
 
   return <MenuContext.Provider value={value}>{children}</MenuContext.Provider>;
 }
@@ -75,6 +88,8 @@ export function MenuProvider({ children }) {
  * useMenu - Access shared menu data from context
  * Returns the same cached data across all components
  * Eliminates duplicate API calls
+ *
+ * @returns {{ menuItems: Array, loading: boolean, error: string, source: 'api'|'static', refetch: Function }}
  */
 // eslint-disable-next-line react-refresh/only-export-components
 export function useMenu() {

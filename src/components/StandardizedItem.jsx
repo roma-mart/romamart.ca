@@ -5,7 +5,7 @@ import { formatPrice, calculateItemPrice, getDefaultSelections, getCaloriesForSi
 import { getOrderingUrl } from '../config/ordering';
 // ...existing imports...
 import { getServiceStatusAtLocation, getMenuItemStatusAtLocation, isLocationOpen } from '../utils/availability';
-import { ROCAFE_FULL_MENU } from '../data/rocafe-menu';
+import { useMenu } from '../contexts/MenuContext';
 import { useLocationContext } from '../hooks/useLocationContext';
 import useGooglePlaceHours from '../hooks/useGooglePlaceHours';
 import { useServices } from '../contexts/ServicesContext';
@@ -46,6 +46,7 @@ const StandardizedItem = ({ item, itemType, defaultExpanded = false }) => {
   // ...existing code...
   const { nearestLocation } = useLocationContext();
   const { services } = useServices();
+  const { menuItems } = useMenu();
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 
   // Get live open/closed status from Google Places API if available
@@ -60,7 +61,7 @@ const StandardizedItem = ({ item, itemType, defaultExpanded = false }) => {
     availabilityState = 'select_location';
   } else {
     if (itemType === 'menu') {
-      const result = getMenuItemStatusAtLocation(item.id, nearestLocation, ROCAFE_FULL_MENU, item);
+      const result = getMenuItemStatusAtLocation(item.id, nearestLocation, menuItems, item);
       effectiveStatus = result.status;
     } else if (itemType === 'service') {
       const result = getServiceStatusAtLocation(item.id, nearestLocation, services);
