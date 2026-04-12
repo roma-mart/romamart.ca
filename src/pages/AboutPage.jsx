@@ -20,7 +20,7 @@ const AboutPage = () => {
     () => [
       { src: getAssetUrl('/images/romamart-opening1.png'), alt: 'Roma Mart store front, opening day' },
       { src: getAssetUrl('/images/romamart-interior1.png'), alt: 'Roma Mart store interior, counter' },
-      { src: getAssetUrl('/images/romamart-interior3.jpg'), alt: 'RoCafe area inside Roma Mart' },
+      { src: getAssetUrl('/images/romamart-interior3.png'), alt: 'RoCafe area inside Roma Mart' },
       { src: getAssetUrl('/images/romamart-opening2.png'), alt: 'Roma Mart opening day celebration' },
       { src: getAssetUrl('/images/romamart-opening3.png'), alt: 'Roma Mart team on opening day' },
     ],

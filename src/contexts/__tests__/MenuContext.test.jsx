@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import React from 'react';
 import { renderHook, waitFor } from '@testing-library/react';
 import { MenuProvider, useMenu } from '../MenuContext';
+import { mockResponse } from './helpers';
 
 // Mock static menu data for fallback testing
 vi.mock('../../data/rocafe-menu', () => ({
@@ -41,10 +42,12 @@ describe('MenuContext', () => {
       { name: 'Espresso', featured: false },
     ];
     global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({ menu: mockMenu }),
-      })
+      Promise.resolve(
+        mockResponse({
+          ok: true,
+          json: () => Promise.resolve({ menu: mockMenu }),
+        })
+      )
     );
 
     const { result } = renderHook(() => useMenu(), { wrapper });
@@ -66,10 +69,12 @@ describe('MenuContext', () => {
       { name: 'Espresso', featured: false },
     ];
     global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({ data: { menu: mockMenu } }),
-      })
+      Promise.resolve(
+        mockResponse({
+          ok: true,
+          json: () => Promise.resolve({ data: { menu: mockMenu } }),
+        })
+      )
     );
 
     const { result } = renderHook(() => useMenu(), { wrapper });
@@ -101,10 +106,12 @@ describe('MenuContext', () => {
       },
     ];
     global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({ menu: mockMenu }),
-      })
+      Promise.resolve(
+        mockResponse({
+          ok: true,
+          json: () => Promise.resolve({ menu: mockMenu }),
+        })
+      )
     );
 
     const { result } = renderHook(() => useMenu(), { wrapper });
@@ -123,10 +130,13 @@ describe('MenuContext', () => {
 
   it('should set error on non-ok response', async () => {
     global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: false,
-        status: 500,
-      })
+      Promise.resolve(
+        mockResponse({
+          ok: false,
+          status: 500,
+          json: () => Promise.resolve({ error: 'Server error', code: 'INTERNAL' }),
+        })
+      )
     );
 
     const { result } = renderHook(() => useMenu(), { wrapper });
@@ -135,7 +145,7 @@ describe('MenuContext', () => {
       expect(result.current.error).toBeTruthy();
     });
 
-    expect(result.current.error).toBe('API unavailable, using static data');
+    expect(result.current.error).toBe('Server error');
     // Should fall back to static data
     expect(result.current.menuItems).toHaveLength(2);
     expect(result.current.menuItems[0].name).toBe('Static Latte');
@@ -160,10 +170,12 @@ describe('MenuContext', () => {
 
   it('should fall back to static data on empty menu array from API', async () => {
     global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({ menu: [] }),
-      })
+      Promise.resolve(
+        mockResponse({
+          ok: true,
+          json: () => Promise.resolve({ menu: [] }),
+        })
+      )
     );
 
     const { result } = renderHook(() => useMenu(), { wrapper });
@@ -181,10 +193,12 @@ describe('MenuContext', () => {
 
   it('should fall back to static data on missing menu key in API response', async () => {
     global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({}),
-      })
+      Promise.resolve(
+        mockResponse({
+          ok: true,
+          json: () => Promise.resolve({}),
+        })
+      )
     );
 
     const { result } = renderHook(() => useMenu(), { wrapper });
@@ -221,10 +235,12 @@ describe('MenuContext', () => {
     unmount();
 
     // Resolve after unmount — should not cause React state update warning
-    resolvePromise({
-      ok: true,
-      json: () => Promise.resolve({ menu: [{ name: 'Late' }] }),
-    });
+    resolvePromise(
+      mockResponse({
+        ok: true,
+        json: () => Promise.resolve({ menu: [{ name: 'Late' }] }),
+      })
+    );
 
     // Flush microtasks from the resolved fetch promise
     await Promise.resolve();

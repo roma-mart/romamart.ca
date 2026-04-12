@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import React from 'react';
 import { renderHook, waitFor, act } from '@testing-library/react';
 import { LocationsProvider, useLocations } from '../LocationsContext';
+import { mockResponse } from './helpers';
 
 // Mock static locations data
 vi.mock('../../data/locations', () => ({
@@ -54,10 +55,12 @@ describe('LocationsContext', () => {
       { id: 'api-2', name: 'API Location B', services: [], amenities: [] },
     ];
     global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({ success: true, locations: apiLocations }),
-      })
+      Promise.resolve(
+        mockResponse({
+          ok: true,
+          json: () => Promise.resolve({ success: true, locations: apiLocations }),
+        })
+      )
     );
 
     const { result } = renderHook(() => useLocations(), { wrapper });
@@ -87,10 +90,12 @@ describe('LocationsContext', () => {
       },
     ];
     global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({ success: true, locations: apiLocations }),
-      })
+      Promise.resolve(
+        mockResponse({
+          ok: true,
+          json: () => Promise.resolve({ success: true, locations: apiLocations }),
+        })
+      )
     );
 
     const { result } = renderHook(() => useLocations(), { wrapper });
@@ -107,7 +112,15 @@ describe('LocationsContext', () => {
   });
 
   it('should fall back to static data on non-ok response', async () => {
-    global.fetch = vi.fn(() => Promise.resolve({ ok: false, status: 500 }));
+    global.fetch = vi.fn(() =>
+      Promise.resolve(
+        mockResponse({
+          ok: false,
+          status: 500,
+          json: () => Promise.resolve({ error: 'Server error', code: 'INTERNAL' }),
+        })
+      )
+    );
 
     const { result } = renderHook(() => useLocations(), { wrapper });
 
@@ -124,10 +137,12 @@ describe('LocationsContext', () => {
 
   it('should fall back to static data on invalid API response', async () => {
     global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({ success: false }),
-      })
+      Promise.resolve(
+        mockResponse({
+          ok: true,
+          json: () => Promise.resolve({ success: false }),
+        })
+      )
     );
 
     const { result } = renderHook(() => useLocations(), { wrapper });
@@ -154,17 +169,19 @@ describe('LocationsContext', () => {
 
   it('should persist selection to localStorage via selectLocation', async () => {
     global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () =>
-          Promise.resolve({
-            success: true,
-            locations: [
-              { id: 'loc-1', name: 'Downtown' },
-              { id: 'loc-2', name: 'Uptown' },
-            ],
-          }),
-      })
+      Promise.resolve(
+        mockResponse({
+          ok: true,
+          json: () =>
+            Promise.resolve({
+              success: true,
+              locations: [
+                { id: 'loc-1', name: 'Downtown' },
+                { id: 'loc-2', name: 'Uptown' },
+              ],
+            }),
+        })
+      )
     );
 
     const { result } = renderHook(() => useLocations(), { wrapper });
@@ -184,14 +201,16 @@ describe('LocationsContext', () => {
   it('should remove localStorage key when selecting "auto"', async () => {
     localStorage.setItem(STORAGE_KEY, 'loc-1');
     global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () =>
-          Promise.resolve({
-            success: true,
-            locations: [{ id: 'loc-1', name: 'Downtown' }],
-          }),
-      })
+      Promise.resolve(
+        mockResponse({
+          ok: true,
+          json: () =>
+            Promise.resolve({
+              success: true,
+              locations: [{ id: 'loc-1', name: 'Downtown' }],
+            }),
+        })
+      )
     );
 
     const { result } = renderHook(() => useLocations(), { wrapper });
@@ -213,14 +232,16 @@ describe('LocationsContext', () => {
     localStorage.setItem(STORAGE_KEY, 'loc-999');
 
     global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () =>
-          Promise.resolve({
-            success: true,
-            locations: [{ id: 'loc-1', name: 'Downtown' }],
-          }),
-      })
+      Promise.resolve(
+        mockResponse({
+          ok: true,
+          json: () =>
+            Promise.resolve({
+              success: true,
+              locations: [{ id: 'loc-1', name: 'Downtown' }],
+            }),
+        })
+      )
     );
 
     const { result } = renderHook(() => useLocations(), { wrapper });
@@ -238,10 +259,12 @@ describe('LocationsContext', () => {
 
   it('should only call fetch once on mount', async () => {
     const fetchSpy = vi.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({ success: true, locations: [] }),
-      })
+      Promise.resolve(
+        mockResponse({
+          ok: true,
+          json: () => Promise.resolve({ success: true, locations: [] }),
+        })
+      )
     );
     global.fetch = fetchSpy;
 

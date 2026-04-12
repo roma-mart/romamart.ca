@@ -210,26 +210,6 @@ const LocationsPage = () => {
                 >
                   {/* Info column (always first on mobile, left on desktop) */}
                   <div className="p-8 rounded-2xl flex flex-col" style={{ backgroundColor: 'var(--color-surface)' }}>
-                    {/* Location Images */}
-                    <div className="flex gap-4 mb-6 items-center">
-                      {location.photos?.primary && (
-                        <img
-                          src={location.photos.primary}
-                          alt={`${location.name} exterior`}
-                          className="rounded-2xl w-40 h-32 object-cover shadow-lg"
-                          loading="lazy"
-                          aria-hidden={location.photos.thumbnail ? 'true' : 'false'}
-                        />
-                      )}
-                      {location.photos?.thumbnail && (
-                        <img
-                          src={location.photos.thumbnail}
-                          alt={`${location.name} thumbnail`}
-                          className="rounded-xl w-20 h-20 object-cover border-2 border-[var(--color-accent)] shadow"
-                          loading="lazy"
-                        />
-                      )}
-                    </div>
                     {/* HQ Badge + Distance */}
                     {(location.isPrimary || location.distanceText) && (
                       <div className="flex items-center gap-2 mb-4 flex-wrap">

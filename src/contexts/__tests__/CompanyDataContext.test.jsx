@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import React from 'react';
 import { renderHook, waitFor } from '@testing-library/react';
 import { CompanyDataProvider, useCompanyData } from '../CompanyDataContext';
+import { mockResponse } from './helpers';
 
 // Mock static company data
 vi.mock('../../config/company_data', () => ({
@@ -59,10 +60,12 @@ describe('CompanyDataContext', () => {
       socialLinks: { facebook: 'https://facebook.com/api', instagram: 'https://instagram.com/api' },
     };
     global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({ success: true, companyData: apiCompanyData }),
-      })
+      Promise.resolve(
+        mockResponse({
+          ok: true,
+          json: () => Promise.resolve({ success: true, companyData: apiCompanyData }),
+        })
+      )
     );
 
     const { result } = renderHook(() => useCompanyData(), { wrapper });
@@ -92,10 +95,12 @@ describe('CompanyDataContext', () => {
       },
     };
     global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({ success: true, companyData: apiCompanyData }),
-      })
+      Promise.resolve(
+        mockResponse({
+          ok: true,
+          json: () => Promise.resolve({ success: true, companyData: apiCompanyData }),
+        })
+      )
     );
 
     const { result } = renderHook(() => useCompanyData(), { wrapper });
@@ -112,7 +117,15 @@ describe('CompanyDataContext', () => {
   });
 
   it('should fall back to static data on non-ok response', async () => {
-    global.fetch = vi.fn(() => Promise.resolve({ ok: false, status: 500 }));
+    global.fetch = vi.fn(() =>
+      Promise.resolve(
+        mockResponse({
+          ok: false,
+          status: 500,
+          json: () => Promise.resolve({ error: 'Internal error', code: 'INTERNAL', requestId: 'req-123' }),
+        })
+      )
+    );
 
     const { result } = renderHook(() => useCompanyData(), { wrapper });
 
@@ -127,10 +140,12 @@ describe('CompanyDataContext', () => {
 
   it('should fall back to static data on invalid API response', async () => {
     global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({ success: false }),
-      })
+      Promise.resolve(
+        mockResponse({
+          ok: true,
+          json: () => Promise.resolve({ success: false }),
+        })
+      )
     );
 
     const { result } = renderHook(() => useCompanyData(), { wrapper });
@@ -171,5 +186,26 @@ describe('CompanyDataContext', () => {
     expect(typeof result.current.getContextualEmail).toBe('function');
     // With no contextualEmails in the mock data, should return the hardcoded fallback
     expect(result.current.getContextualEmail('privacy')).toBe('contact@romamart.ca');
+  });
+
+  it('should use structured error message from API error body', async () => {
+    global.fetch = vi.fn(() =>
+      Promise.resolve(
+        mockResponse({
+          ok: false,
+          status: 429,
+          json: () => Promise.resolve({ error: 'Too many requests', code: 'RATE_LIMITED', requestId: 'req-abc' }),
+        })
+      )
+    );
+
+    const { result } = renderHook(() => useCompanyData(), { wrapper });
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+
+    expect(result.current.source).toBe('static');
+    expect(result.current.error).toBe('Too many requests');
   });
 });

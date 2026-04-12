@@ -2,6 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useRef, useSt
 import { LOCATIONS } from '../data/locations';
 import { normalizeLocation } from '../utils/normalize';
 import { circuitBreakers } from '../utils/apiCircuitBreaker';
+import { fetchWithEtag } from '../utils/api';
 
 /**
  * LocationsContext - Single source of truth for locations data and selection
@@ -14,8 +15,7 @@ import { circuitBreakers } from '../utils/apiCircuitBreaker';
  */
 const LocationsContext = createContext();
 
-// In dev, use relative URL so Vite's proxy handles the request (avoids CORS issues)
-const API_URL = import.meta.env.DEV ? '/api/public-locations' : 'https://romamart.netlify.app/api/public-locations';
+const API_PATH = '/api/v1/public-locations';
 const STORAGE_KEY = 'roma_mart_selected_location';
 
 /**
@@ -68,21 +68,29 @@ export function LocationsProvider({ children }) {
         return;
       }
 
-      const res = await fetch(API_URL);
+      const { data, status, errorBody } = await fetchWithEtag(API_PATH, {
+        circuitBreaker: circuitBreakers.locations,
+      });
 
-      if (!res.ok) {
-        circuitBreakers.locations.recordFailure(res.status);
-        // API failed, use static fallback
-        if (import.meta.env.DEV) console.warn('Locations API unavailable, using static data');
-        if (!cancelledRef.current) {
-          setLocations(LOCATIONS);
-          setSource('static');
-          setError('API unavailable, using static data');
-        }
+      if (status === 304) {
+        if (import.meta.env.DEV) console.warn('[LocationsContext] 304 Not Modified, using cached data');
         return;
       }
 
-      const data = await res.json();
+      if (!data) {
+        circuitBreakers.locations.recordFailure(status);
+        if (import.meta.env.DEV) {
+          console.warn('Locations API unavailable, using static data');
+          if (errorBody?.code === 'RATE_LIMITED') console.warn('[LocationsContext] Rate limited by API');
+          if (errorBody?.code === 'INVALID_API_KEY') console.error('[LocationsContext] Invalid API key configured');
+        }
+        if (!cancelledRef.current) {
+          setLocations(LOCATIONS);
+          setSource('static');
+          setError(errorBody?.error || 'API unavailable, using static data');
+        }
+        return;
+      }
 
       // Accept both shapes: { locations: [...] } or { data: { locations: [...] } } or top-level array
       const locationsPayload = Array.isArray(data) ? data : (data.locations ?? data.data?.locations);

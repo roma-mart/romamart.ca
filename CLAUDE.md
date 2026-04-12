@@ -95,9 +95,9 @@ scripts/
 
 | Context | Hook | API Endpoint | Fallback |
 |---------|------|-------------|----------|
-| MenuContext | `useMenu()` | `https://romamart.netlify.app/api/public-menu` | Empty array |
-| ServicesContext | `useServices()` | `https://romamart.netlify.app/api/public-services` | Static `SERVICES` from `src/data/services.jsx` |
-| LocationsContext | `useLocations()` | `https://romamart.netlify.app/api/public-locations` | Static `LOCATIONS` from `src/data/locations.js` |
+| MenuContext | `useMenu()` | `https://romamart.netlify.app/api/v1/public-menu` | Empty array |
+| ServicesContext | `useServices()` | `https://romamart.netlify.app/api/v1/public-services` | Static `SERVICES` from `src/data/services.jsx` |
+| LocationsContext | `useLocations()` | `https://romamart.netlify.app/api/v1/public-locations` | Static `LOCATIONS` from `src/data/locations.js` |
 | LocationContext | `useLocationContext()` | N/A (client state) | N/A |
 
 Each returns `{ data, loading, error, source }` (source = `'api'` or `'static'`).
@@ -261,14 +261,21 @@ Sprint templates are defined in `docs/archive/ROADMAP.md` under Sprint Plan.
 | Web3Forms | `https://api.web3forms.com/submit` | Contact form | POST, access key from `COMPANY_DATA`, check `data.success` not `response.ok` |
 | Google Places | Via `useGooglePlaceHours` hook | Live hours/ratings | 1hr IndexedDB cache, circuit breaker protection |
 | hCaptcha | `@hcaptcha/react-hcaptcha` | Bot protection | `HCaptchaWidget.jsx` with forwardRef, tokens are single-use, must reset after submit |
-| Menu API | `https://romamart.netlify.app/api/public-menu` | RoCafe menu | Live (200 OK) |
-| Services API | `https://romamart.netlify.app/api/public-services` | Store services | Pending (#107), uses static fallback |
-| Locations API | `https://romamart.netlify.app/api/public-locations` | Store locations | Pending (#107), uses static fallback |
+| Menu API | `https://romamart.netlify.app/api/v1/public-menu` | RoCafe menu | Live (200 OK) |
+| Services API | `https://romamart.netlify.app/api/v1/public-services` | Store services | Pending (#107), uses static fallback |
+| Locations API | `https://romamart.netlify.app/api/v1/public-locations` | Store locations | Pending (#107), uses static fallback |
 
 ### Circuit Breaker (`src/utils/apiCircuitBreaker.js`)
 - Monitors 429/403/402 errors
 - Opens after 5 failures, auto-resets after 1 hour
+- Proactive rate-limit awareness via `X-RateLimit-Remaining` headers
 - `shouldAttemptCall()` / `recordFailure()` / `recordSuccess()` / `getStatus()`
+
+### Centralized API Utility (`src/utils/api.js`)
+- `apiUrl(path)` -- builds dev-relative or prod-absolute URLs via `VITE_API_BASE_URL`
+- `apiHeaders()` -- includes `X-API-Key` when `VITE_API_KEY` is set
+- `fetchWithEtag(path, options)` -- ETag-based conditional requests (304 support), structured error parsing, rate-limit header checking
+- All contexts use this utility; never call `fetch()` for API endpoints directly
 
 ---
 
@@ -298,6 +305,7 @@ Sprint templates are defined in `docs/archive/ROADMAP.md` under Sprint Plan.
 | `src/config/company_data.js` | Company info SSOT |
 | `src/config/navigation.js` | Navigation links SSOT |
 | `src/utils/theme.js` | Theme utilities, CSS variable helpers |
+| `src/utils/api.js` | Centralized API utility (apiUrl, fetchWithEtag, ETag caching) |
 | `src/utils/apiCircuitBreaker.js` | API protection pattern |
 | `scripts/check-quality.js` | Universal quality checker |
 | `scripts/check-checker-integrity.js` | Meta-checker |

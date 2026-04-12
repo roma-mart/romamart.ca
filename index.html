@@ -48,6 +48,7 @@
     <!-- DNS prefetch for APIs used at runtime -->
     <link rel="dns-prefetch" href="https://places.googleapis.com" />
     <link rel="dns-prefetch" href="https://romamart.netlify.app" />
+    <link rel="dns-prefetch" href="https://tcdigital.vip" />
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
     <title>Roma Mart Convenience | Groceries, Coffee & More in Sarnia, ON</title>
@@ -55,5 +56,14 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <!-- Aria AI Agent Widget -->
+    <script src="https://tcdigital.vip/aria.js" data-widget="wgt_roma" defer></script>
+    <script>
+      // Accessibility: inject aria-label on 3rd-party widget button
+      new MutationObserver(function(_, obs) {
+        var btn = document.querySelector('#tcd-widget-container button');
+        if (btn) { btn.setAttribute('aria-label', 'Chat with Aria AI assistant'); obs.disconnect(); }
+      }).observe(document.body, { childList: true, subtree: true });
+    </script>
   </body>
 </html>

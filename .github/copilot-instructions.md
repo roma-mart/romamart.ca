@@ -78,17 +78,17 @@ npm run preview                # Preview production build
 
 #### Context Providers (100% API-Ready)
 - **MenuContext** (`src/contexts/MenuContext.jsx`) - RoCafé menu items
-  - API: `https://romamart.netlify.app/api/public-menu`
+  - API: `https://romamart.netlify.app/api/v1/public-menu`
   - Fallback: Empty array on error
   - Usage: `const { menuItems, loading, error } = useMenu()`
 
 - **ServicesContext** (`src/contexts/ServicesContext.jsx`) - Services offered
-  - API: `https://romamart.netlify.app/api/public-services`
+  - API: `https://romamart.netlify.app/api/v1/public-services`
   - Fallback: Static `SERVICES` from `src/data/services.jsx`
   - Usage: `const { services, loading, error, source } = useServices()`
 
 - **LocationsContext** (`src/contexts/LocationsContext.jsx`) - Store locations
-  - API: `https://romamart.netlify.app/api/public-locations`
+  - API: `https://romamart.netlify.app/api/v1/public-locations`
   - Fallback: Static `LOCATIONS` from `src/data/locations.js`
   - Usage: `const { locations, loading, error, source } = useLocations()`
 
@@ -322,6 +322,8 @@ Before going live on custom domain:
 | `src/design/tokens.js` | Single source of truth for design tokens |
 | `src/data/locations.js` | All store locations data |
 | `src/utils/theme.js` | Theme utilities and CSS variable helpers |
+| `src/utils/api.js` | Centralized API utility (apiUrl, fetchWithEtag, ETag caching) |
+| `src/utils/apiCircuitBreaker.js` | API circuit breaker pattern |
 | `scripts/check-quality.js` | Universal quality checker (1000+ rules) |
 | `scripts/check-checker-integrity.js` | Meta-checker for quality system |
 | `vite.config.js` | Build configuration and base path |
@@ -351,7 +353,7 @@ Before going live on custom domain:
 All data APIs follow the same pattern: API-first with graceful fallback to static data.
 
 #### MenuContext API
-- **Endpoint:** `https://romamart.netlify.app/api/public-menu`
+- **Endpoint:** `https://romamart.netlify.app/api/v1/public-menu`
 - **Method:** GET
 - **Response:** `{ success: boolean, menuItems: Array }`
 - **Fallback:** Empty array on error
@@ -359,7 +361,7 @@ All data APIs follow the same pattern: API-first with graceful fallback to stati
 - **Consumer Components:** App.jsx, RoCafePage.jsx
 
 #### ServicesContext API
-- **Endpoint:** `https://romamart.netlify.app/api/public-services`
+- **Endpoint:** `https://romamart.netlify.app/api/v1/public-services`
 - **Method:** GET
 - **Response:** `{ success: boolean, services: Array }`
 - **Fallback:** Static `SERVICES` from `src/data/services.jsx`
@@ -368,7 +370,7 @@ All data APIs follow the same pattern: API-first with graceful fallback to stati
 - **Required Fields:** `id`, `name`, `featured` (boolean for homepage filtering)
 
 #### LocationsContext API
-- **Endpoint:** `https://romamart.netlify.app/api/public-locations`
+- **Endpoint:** `https://romamart.netlify.app/api/v1/public-locations`
 - **Method:** GET
 - **Response:** `{ success: boolean, locations: Array }`
 - **Fallback:** Static `LOCATIONS` from `src/data/locations.js`

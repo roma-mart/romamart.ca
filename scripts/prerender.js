@@ -10,10 +10,13 @@ import { buildLocationListSchema } from '../src/schemas/locationSchema.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// API endpoints - same as Context providers
-const MENU_API_URL = 'https://romamart.netlify.app/api/public-menu';
-const SERVICES_API_URL = 'https://romamart.netlify.app/api/public-services';
-const LOCATIONS_API_URL = 'https://romamart.netlify.app/api/public-locations';
+// API endpoints — reads from VITE_API_BASE_URL env var, same as runtime contexts
+const API_BASE = (process.env.VITE_API_BASE_URL || 'https://romamart.netlify.app').replace(/\/+$/, '');
+const API_KEY = process.env.VITE_API_KEY;
+const API_HEADERS = API_KEY ? { 'X-API-Key': API_KEY } : {};
+const MENU_API_URL = `${API_BASE}/api/v1/public-menu`;
+const SERVICES_API_URL = `${API_BASE}/api/v1/public-services`;
+const LOCATIONS_API_URL = `${API_BASE}/api/v1/public-locations`;
 
 // Routes to prerender
 const BASE_URL = 'https://romamart.ca';
@@ -406,7 +409,7 @@ const normalizeCountry = (country) => {
 async function fetchMenuData() {
   try {
     console.log('Fetching menu data from API for prerendering...');
-    const response = await fetch(MENU_API_URL);
+    const response = await fetch(MENU_API_URL, { headers: API_HEADERS });
 
     if (!response.ok) {
       console.warn(
@@ -435,7 +438,7 @@ async function fetchMenuData() {
 async function fetchServicesData() {
   try {
     console.log('Fetching services data from API for prerendering...');
-    const response = await fetch(SERVICES_API_URL);
+    const response = await fetch(SERVICES_API_URL, { headers: API_HEADERS });
 
     if (!response.ok) {
       console.warn(
@@ -471,7 +474,7 @@ async function fetchServicesData() {
 async function fetchLocationsData() {
   try {
     console.log('Fetching locations data from API for prerendering...');
-    const response = await fetch(LOCATIONS_API_URL);
+    const response = await fetch(LOCATIONS_API_URL, { headers: API_HEADERS });
 
     if (!response.ok) {
       console.warn(

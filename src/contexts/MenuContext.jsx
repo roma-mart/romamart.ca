@@ -2,6 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useRef, useSt
 import { normalizeMenuItem } from '../utils/normalize';
 import { ROCAFE_FULL_MENU } from '../data/rocafe-menu';
 import { circuitBreakers } from '../utils/apiCircuitBreaker';
+import { fetchWithEtag } from '../utils/api';
 
 /**
  * MenuContext - Single source of truth for menu data
@@ -11,8 +12,7 @@ import { circuitBreakers } from '../utils/apiCircuitBreaker';
  */
 const MenuContext = createContext();
 
-// In dev, use relative URL so Vite's proxy handles the request (avoids CORS issues)
-const API_URL = import.meta.env.DEV ? '/api/public-menu' : 'https://romamart.netlify.app/api/public-menu';
+const API_PATH = '/api/v1/public-menu';
 
 // Pre-normalize static fallback once (not on every render)
 const STATIC_FALLBACK = ROCAFE_FULL_MENU.map((item) => normalizeMenuItem(item, 'static'));
@@ -46,24 +46,33 @@ export function MenuProvider({ children }) {
 
       if (import.meta.env.DEV) {
         // eslint-disable-next-line no-console
-        console.log('[MenuContext] Fetching menu data from API:', API_URL);
+        console.log('[MenuContext] Fetching menu data from API:', API_PATH);
       }
 
-      const res = await fetch(API_URL);
+      const { data, status, errorBody } = await fetchWithEtag(API_PATH, {
+        circuitBreaker: circuitBreakers.menu,
+      });
 
-      if (!res.ok) {
-        circuitBreakers.menu.recordFailure(res.status);
-        // API failed, use static fallback
-        if (import.meta.env.DEV) console.warn('[MenuContext] Menu API unavailable, using static data');
-        if (!cancelledRef.current) {
-          setMenuItems(STATIC_FALLBACK);
-          setSource('static');
-          setError('API unavailable, using static data');
-        }
+      if (status === 304) {
+        // ETag match — data unchanged, keep existing state
+        if (import.meta.env.DEV) console.warn('[MenuContext] 304 Not Modified, using cached data');
         return;
       }
 
-      const data = await res.json();
+      if (!data) {
+        circuitBreakers.menu.recordFailure(status);
+        if (import.meta.env.DEV) {
+          console.warn('[MenuContext] Menu API unavailable, using static data');
+          if (errorBody?.code === 'RATE_LIMITED') console.warn('[MenuContext] Rate limited by API');
+          if (errorBody?.code === 'INVALID_API_KEY') console.error('[MenuContext] Invalid API key configured');
+        }
+        if (!cancelledRef.current) {
+          setMenuItems(STATIC_FALLBACK);
+          setSource('static');
+          setError(errorBody?.error || 'API unavailable, using static data');
+        }
+        return;
+      }
 
       // Resolve menu array from either data.menu or data.data.menu (envelope)
       const menuArray = data.menu ?? data.data?.menu;

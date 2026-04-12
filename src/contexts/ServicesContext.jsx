@@ -2,6 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useRef, useSt
 import { SERVICES } from '../data/services';
 import { normalizeService } from '../utils/normalize';
 import { circuitBreakers } from '../utils/apiCircuitBreaker';
+import { fetchWithEtag } from '../utils/api';
 
 /**
  * ServicesContext - Single source of truth for services data
@@ -14,8 +15,7 @@ import { circuitBreakers } from '../utils/apiCircuitBreaker';
  */
 const ServicesContext = createContext();
 
-// In dev, use relative URL so Vite's proxy handles the request (avoids CORS issues)
-const API_URL = import.meta.env.DEV ? '/api/public-services' : 'https://romamart.netlify.app/api/public-services';
+const API_PATH = '/api/v1/public-services';
 
 /**
  * ServicesProvider - Wraps app to provide shared services state
@@ -45,21 +45,29 @@ export function ServicesProvider({ children }) {
         return;
       }
 
-      const res = await fetch(API_URL);
+      const { data, status, errorBody } = await fetchWithEtag(API_PATH, {
+        circuitBreaker: circuitBreakers.services,
+      });
 
-      if (!res.ok) {
-        circuitBreakers.services.recordFailure(res.status);
-        // API failed, use static fallback
-        if (import.meta.env.DEV) console.warn('Services API unavailable, using static data');
-        if (!cancelledRef.current) {
-          setServices(SERVICES);
-          setSource('static');
-          setError('API unavailable, using static data');
-        }
+      if (status === 304) {
+        if (import.meta.env.DEV) console.warn('[ServicesContext] 304 Not Modified, using cached data');
         return;
       }
 
-      const data = await res.json();
+      if (!data) {
+        circuitBreakers.services.recordFailure(status);
+        if (import.meta.env.DEV) {
+          console.warn('Services API unavailable, using static data');
+          if (errorBody?.code === 'RATE_LIMITED') console.warn('[ServicesContext] Rate limited by API');
+          if (errorBody?.code === 'INVALID_API_KEY') console.error('[ServicesContext] Invalid API key configured');
+        }
+        if (!cancelledRef.current) {
+          setServices(SERVICES);
+          setSource('static');
+          setError(errorBody?.error || 'API unavailable, using static data');
+        }
+        return;
+      }
 
       // Accept both shapes: { services: [...] } or { data: { services: [...] } } or top-level array
       const servicesPayload = Array.isArray(data) ? data : (data.services ?? data.data?.services);
