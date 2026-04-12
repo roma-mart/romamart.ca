@@ -10,10 +10,11 @@ import { buildLocationListSchema } from '../src/schemas/locationSchema.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// API endpoints - same as Context providers
-const MENU_API_URL = 'https://romamart.netlify.app/api/v1/public-menu';
-const SERVICES_API_URL = 'https://romamart.netlify.app/api/v1/public-services';
-const LOCATIONS_API_URL = 'https://romamart.netlify.app/api/v1/public-locations';
+// API endpoints — reads from VITE_API_BASE_URL env var, same as runtime contexts
+const API_BASE = (process.env.VITE_API_BASE_URL || 'https://romamart.netlify.app').replace(/\/+$/, '');
+const MENU_API_URL = `${API_BASE}/api/v1/public-menu`;
+const SERVICES_API_URL = `${API_BASE}/api/v1/public-services`;
+const LOCATIONS_API_URL = `${API_BASE}/api/v1/public-locations`;
 
 // Routes to prerender
 const BASE_URL = 'https://romamart.ca';

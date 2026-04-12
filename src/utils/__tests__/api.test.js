@@ -16,13 +16,24 @@ describe('api utility', () => {
   });
 
   describe('apiUrl', () => {
-    it('should return relative path in dev mode', () => {
+    it('should return the exact path in dev mode', () => {
       vi.stubEnv('DEV', true);
-      // apiUrl reads import.meta.env.DEV which is stubbed
-      // In test env, DEV is typically true
       const result = apiUrl('/api/v1/public-menu');
-      // In test mode DEV is truthy, should return path as-is
-      expect(result).toContain('/api/v1/public-menu');
+      expect(result).toBe('/api/v1/public-menu');
+    });
+
+    it('should return absolute URL with base in prod mode', () => {
+      vi.stubEnv('DEV', false);
+      vi.stubEnv('VITE_API_BASE_URL', 'https://example.com');
+      const result = apiUrl('/api/v1/public-menu');
+      expect(result).toBe('https://example.com/api/v1/public-menu');
+    });
+
+    it('should strip trailing slashes from base URL', () => {
+      vi.stubEnv('DEV', false);
+      vi.stubEnv('VITE_API_BASE_URL', 'https://example.com/');
+      const result = apiUrl('/api/v1/public-menu');
+      expect(result).toBe('https://example.com/api/v1/public-menu');
     });
   });
 
@@ -168,6 +179,14 @@ describe('api utility', () => {
         isOpen: false,
         lastFailureTime: null,
         resetAfterMs: 3600000,
+        _proactivelyOpened: false,
+        openProactively: vi.fn(function (resetMs) {
+          this.failureCount = this.failureThreshold;
+          this.isOpen = true;
+          this.lastFailureTime = Date.now();
+          this._proactivelyOpened = true;
+          if (resetMs && resetMs > 0) this.resetAfterMs = resetMs;
+        }),
       };
 
       global.fetch = vi.fn(() =>
@@ -186,8 +205,27 @@ describe('api utility', () => {
 
       await fetchWithEtag('/api/v1/test-rate-limit', { circuitBreaker: mockBreaker });
 
+      expect(mockBreaker.openProactively).toHaveBeenCalled();
       expect(mockBreaker.isOpen).toBe(true);
       expect(mockBreaker.failureCount).toBe(5);
+    });
+
+    it('should handle Headers instance in fetch options', async () => {
+      const incomingHeaders = new Headers({ 'X-Custom': 'value1' });
+
+      global.fetch = vi.fn(() =>
+        Promise.resolve(
+          mockResponse({
+            ok: true,
+            json: () => Promise.resolve({ data: [] }),
+          })
+        )
+      );
+
+      await fetchWithEtag('/api/v1/public-menu', { headers: incomingHeaders });
+
+      const fetchCall = global.fetch.mock.calls[0];
+      expect(fetchCall[1].headers['X-Custom'] || fetchCall[1].headers['x-custom']).toBe('value1');
     });
   });
 });

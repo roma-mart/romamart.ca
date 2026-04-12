@@ -104,6 +104,7 @@ export class ApiCircuitBreaker {
     if (timeElapsed > this.resetAfterMs) {
       this.isOpen = false;
       this.failureCount = 0;
+      this._proactivelyOpened = false;
       if (import.meta.env.DEV) {
         console.warn(`🔄 CIRCUIT BREAKER RESET [${this.apiName}]: ` + `Timeout expired. Attempting API calls again.`);
       }
@@ -141,9 +142,28 @@ export class ApiCircuitBreaker {
    */
   recordSuccess() {
     if (this.failureCount > 0 || this.isOpen) {
+      // Don't clear proactive opens — rate-limit exhaustion should stay open until reset
+      if (this._proactivelyOpened) return;
       this.failureCount = 0;
       this.lastFailureTime = null;
       this.isOpen = false;
+    }
+  }
+
+  /**
+   * Proactively open the circuit breaker when rate-limit headers indicate
+   * the quota is exhausted. Unlike recordFailure(), this is immune to
+   * recordSuccess() until the reset timeout expires.
+   *
+   * @param {number} [resetAfterMs] - Custom reset duration in ms (from X-RateLimit-Reset)
+   */
+  openProactively(resetAfterMs) {
+    this.failureCount = this.failureThreshold;
+    this.isOpen = true;
+    this.lastFailureTime = Date.now();
+    this._proactivelyOpened = true;
+    if (resetAfterMs && resetAfterMs > 0) {
+      this.resetAfterMs = resetAfterMs;
     }
   }
 
@@ -157,6 +177,7 @@ export class ApiCircuitBreaker {
       this.isOpen = false;
       this.failureCount = 0;
       this.lastFailureTime = null;
+      this._proactivelyOpened = false;
       console.warn(`🔄 CIRCUIT BREAKER MANUALLY RESET [${this.apiName}]`);
     }
   }

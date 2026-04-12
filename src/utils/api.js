@@ -19,8 +19,12 @@
  * @param {string} path - API path, e.g. '/api/v1/public-menu'
  * @returns {string}
  */
-export const apiUrl = (path) =>
-  import.meta.env.DEV ? path : `${import.meta.env.VITE_API_BASE_URL || 'https://romamart.netlify.app'}${path}`;
+export const apiUrl = (path) => {
+  if (import.meta.env.DEV) return path;
+  const baseUrl = (import.meta.env.VITE_API_BASE_URL || 'https://romamart.netlify.app').replace(/\/+$/, '');
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  return `${baseUrl}${normalizedPath}`;
+};
 
 /**
  * Build common headers for API requests.
@@ -82,16 +86,14 @@ function checkRateLimitHeaders(res, path, circuitBreaker) {
 
   if (remainingNum === 0 && circuitBreaker) {
     const resetHeader = res.headers.get('x-ratelimit-reset');
+    let resetAfterMs;
     if (resetHeader) {
       const resetTime = parseInt(resetHeader, 10) * 1000; // seconds → ms
       const now = Date.now();
-      const resetAfterMs = Math.max(resetTime - now, 60_000); // at least 1 minute
-      circuitBreaker.resetAfterMs = resetAfterMs;
+      resetAfterMs = Math.max(resetTime - now, 60_000); // at least 1 minute
     }
     // Proactively open the circuit breaker before a 429 hits
-    circuitBreaker.failureCount = circuitBreaker.failureThreshold;
-    circuitBreaker.isOpen = true;
-    circuitBreaker.lastFailureTime = Date.now();
+    circuitBreaker.openProactively(resetAfterMs);
     if (import.meta.env.DEV) {
       console.warn(`🚨 [API] Rate limit exhausted for ${path}. Circuit breaker opened proactively.`);
     }
@@ -112,10 +114,17 @@ export async function fetchWithEtag(path, options = {}) {
   const url = apiUrl(path);
   const cached = etagCache.get(path);
 
-  const headers = {
-    ...apiHeaders(),
-    ...fetchOptions.headers,
-  };
+  const headers = { ...apiHeaders() };
+  const incomingHeaders = fetchOptions.headers;
+  if (incomingHeaders) {
+    if (incomingHeaders instanceof Headers) {
+      incomingHeaders.forEach((value, key) => {
+        headers[key] = value;
+      });
+    } else {
+      Object.assign(headers, incomingHeaders);
+    }
+  }
   if (cached?.etag) {
     headers['If-None-Match'] = cached.etag;
   }
