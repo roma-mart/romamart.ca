@@ -114,6 +114,16 @@ export async function fetchWithEtag(path, options = {}) {
   const url = apiUrl(path);
   const cached = etagCache.get(path);
 
+  // Check circuit breaker before issuing request
+  if (circuitBreaker && !circuitBreaker.shouldAttemptCall()) {
+    return {
+      data: cached?.data || null,
+      status: null,
+      fromCache: !!cached?.data,
+      errorBody: { error: 'Circuit breaker open', code: 'CIRCUIT_OPEN', requestId: null },
+    };
+  }
+
   const headers = { ...apiHeaders() };
   const incomingHeaders = fetchOptions.headers;
   if (incomingHeaders) {
@@ -129,7 +139,18 @@ export async function fetchWithEtag(path, options = {}) {
     headers['If-None-Match'] = cached.etag;
   }
 
-  const res = await fetch(url, { ...fetchOptions, headers });
+  let res;
+  try {
+    res = await fetch(url, { ...fetchOptions, headers });
+  } catch (err) {
+    // Network/CORS/offline error — return structured failure
+    return {
+      data: cached?.data || null,
+      status: null,
+      fromCache: !!cached?.data,
+      errorBody: { error: err.message || 'Network error', code: 'NETWORK_ERROR', requestId: null },
+    };
+  }
 
   // 304 Not Modified — return cached data
   if (res.status === 304 && cached?.data) {
@@ -154,7 +175,19 @@ export async function fetchWithEtag(path, options = {}) {
   // Success — update ETag cache and check rate limits
   checkRateLimitHeaders(res, path, circuitBreaker);
 
-  const data = await res.json();
+  let data;
+  try {
+    data = await res.json();
+  } catch (err) {
+    // Valid HTTP response but invalid JSON body
+    return {
+      data: null,
+      status: res.status,
+      fromCache: false,
+      errorBody: { error: err.message || 'Invalid JSON response', code: 'PARSE_ERROR', requestId: null },
+    };
+  }
+
   const etag = res.headers.get('etag');
   if (etag) {
     etagCache.set(path, { etag, data });

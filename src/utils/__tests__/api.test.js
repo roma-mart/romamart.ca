@@ -180,6 +180,7 @@ describe('api utility', () => {
         lastFailureTime: null,
         resetAfterMs: 3600000,
         _proactivelyOpened: false,
+        shouldAttemptCall: vi.fn(() => true),
         openProactively: vi.fn(function (resetMs) {
           this.failureCount = this.failureThreshold;
           this.isOpen = true;
@@ -226,6 +227,49 @@ describe('api utility', () => {
 
       const fetchCall = global.fetch.mock.calls[0];
       expect(fetchCall[1].headers['X-Custom'] || fetchCall[1].headers['x-custom']).toBe('value1');
+    });
+
+    it('should return structured error on network failure', async () => {
+      global.fetch = vi.fn(() => Promise.reject(new Error('Failed to fetch')));
+
+      const result = await fetchWithEtag('/api/v1/public-menu');
+
+      expect(result.data).toBeNull();
+      expect(result.status).toBeNull();
+      expect(result.errorBody.code).toBe('NETWORK_ERROR');
+      expect(result.errorBody.error).toBe('Failed to fetch');
+    });
+
+    it('should return structured error on invalid JSON response', async () => {
+      global.fetch = vi.fn(() =>
+        Promise.resolve(
+          mockResponse({
+            ok: true,
+            status: 200,
+            json: () => Promise.reject(new SyntaxError('Unexpected token')),
+          })
+        )
+      );
+
+      const result = await fetchWithEtag('/api/v1/public-menu');
+
+      expect(result.data).toBeNull();
+      expect(result.status).toBe(200);
+      expect(result.errorBody.code).toBe('PARSE_ERROR');
+    });
+
+    it('should short-circuit when circuit breaker is open', async () => {
+      const mockBreaker = {
+        shouldAttemptCall: vi.fn(() => false),
+      };
+
+      global.fetch = vi.fn();
+
+      const result = await fetchWithEtag('/api/v1/public-menu', { circuitBreaker: mockBreaker });
+
+      expect(global.fetch).not.toHaveBeenCalled();
+      expect(result.data).toBeNull();
+      expect(result.errorBody.code).toBe('CIRCUIT_OPEN');
     });
   });
 });

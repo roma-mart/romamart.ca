@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [2.7.2] - 2026-04-12
+## [2.8.0] - 2026-04-12
 
 ### Added
 - Centralized API utility (`src/utils/api.js`) with `apiUrl()`, `apiHeaders()`, and `fetchWithEtag()`
