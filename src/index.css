@@ -571,10 +571,10 @@ h3 {
   left: 1rem !important;
 }
 
-/* Bubble button: brand surface + accent shadow to mirror OrderCTA */
+/* Bubble button: accent bg + primary icon to mirror OrderCTA */
 #tcd-widget-container button {
-  background: var(--color-surface) !important;
-  box-shadow: 0 4px 16px var(--shadow-glow-subtle) !important;
+  background: var(--color-accent) !important;
+  box-shadow: 0 4px 16px var(--color-accent-shadow, rgb(228 179 64 / 15%)) !important;
 }
 
 #tcd-widget-container button svg path {
