@@ -58,5 +58,12 @@
     <script type="module" src="/src/main.jsx"></script>
     <!-- Aria AI Agent Widget -->
     <script src="https://tcdigital.vip/aria.js" data-widget="wgt_roma" defer></script>
+    <script>
+      // Accessibility: inject aria-label on 3rd-party widget button
+      new MutationObserver(function(_, obs) {
+        var btn = document.querySelector('#tcd-widget-container button');
+        if (btn) { btn.setAttribute('aria-label', 'Chat with Aria AI assistant'); obs.disconnect(); }
+      }).observe(document.body, { childList: true, subtree: true });
+    </script>
   </body>
 </html>
