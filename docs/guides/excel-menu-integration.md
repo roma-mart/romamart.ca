@@ -39,7 +39,7 @@ The RoCafé menu system supports dynamic menu updates via Excel spreadsheet. Thi
 ### Data Flow
 
 ```
-External API (https://romamart.netlify.app/api/public-menu)
+External API (https://romamart.netlify.app/api/v1/public-menu)
   ↓
 MenuContext (src/contexts/MenuContext.jsx)
   ├─ Single API call on app mount

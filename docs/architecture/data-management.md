@@ -382,7 +382,7 @@ const {
 } = useMenu();
 ```
 
-**API Endpoint:** `https://romamart.netlify.app/api/public-menu`
+**API Endpoint:** `https://romamart.netlify.app/api/v1/public-menu`
 
 **Architecture:**
 - MenuProvider wraps app at root level (`main.jsx`)

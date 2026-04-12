@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import COMPANY_DATA from '../config/company_data';
 import { circuitBreakers } from '../utils/apiCircuitBreaker';
+import { fetchWithEtag } from '../utils/api';
 
 /**
  * CompanyDataContext - Single source of truth for company data
@@ -11,10 +12,7 @@ import { circuitBreakers } from '../utils/apiCircuitBreaker';
  */
 const CompanyDataContext = createContext();
 
-// In dev, use relative URL so Vite's proxy handles the request (avoids CORS issues)
-const API_URL = import.meta.env.DEV
-  ? '/api/public-company-data'
-  : 'https://romamart.netlify.app/api/public-company-data';
+const API_PATH = '/api/v1/public-company-data';
 
 /**
  * CompanyDataProvider - Wraps app to provide shared company data state
@@ -44,21 +42,29 @@ export function CompanyDataProvider({ children }) {
           return;
         }
 
-        const res = await fetch(API_URL);
+        const { data, status, errorBody } = await fetchWithEtag(API_PATH, {
+          circuitBreaker: circuitBreakers.companyData,
+        });
 
-        if (!res.ok) {
-          circuitBreakers.companyData.recordFailure(res.status);
-          // API failed, use static fallback
-          if (import.meta.env.DEV) console.warn('Company data API unavailable, using static data');
-          if (!cancelled) {
-            setCompanyData(COMPANY_DATA);
-            setSource('static');
-            setError('API unavailable, using static data');
-          }
+        if (status === 304) {
+          if (import.meta.env.DEV) console.warn('[CompanyDataContext] 304 Not Modified, using cached data');
           return;
         }
 
-        const data = await res.json();
+        if (!data) {
+          circuitBreakers.companyData.recordFailure(status);
+          if (import.meta.env.DEV) {
+            console.warn('Company data API unavailable, using static data');
+            if (errorBody?.code === 'RATE_LIMITED') console.warn('[CompanyDataContext] Rate limited by API');
+            if (errorBody?.code === 'INVALID_API_KEY') console.error('[CompanyDataContext] Invalid API key configured');
+          }
+          if (!cancelled) {
+            setCompanyData(COMPANY_DATA);
+            setSource('static');
+            setError(errorBody?.error || 'API unavailable, using static data');
+          }
+          return;
+        }
 
         // Validate API response structure
         if (!data.companyData || typeof data.companyData !== 'object') {

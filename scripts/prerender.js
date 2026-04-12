@@ -11,9 +11,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // API endpoints - same as Context providers
-const MENU_API_URL = 'https://romamart.netlify.app/api/public-menu';
-const SERVICES_API_URL = 'https://romamart.netlify.app/api/public-services';
-const LOCATIONS_API_URL = 'https://romamart.netlify.app/api/public-locations';
+const MENU_API_URL = 'https://romamart.netlify.app/api/v1/public-menu';
+const SERVICES_API_URL = 'https://romamart.netlify.app/api/v1/public-services';
+const LOCATIONS_API_URL = 'https://romamart.netlify.app/api/v1/public-locations';
 
 // Routes to prerender
 const BASE_URL = 'https://romamart.ca';

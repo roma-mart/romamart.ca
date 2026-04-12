@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import React from 'react';
 import { renderHook, waitFor } from '@testing-library/react';
 import { ServicesProvider, useServices } from '../ServicesContext';
+import { mockResponse } from './helpers';
 
 // Mock the static services data to avoid importing JSX icon components
 vi.mock('../../data/services', () => ({
@@ -41,10 +42,12 @@ describe('ServicesContext', () => {
       { id: 'api-2', name: 'API Service Y' },
     ];
     global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({ success: true, services: apiServices }),
-      })
+      Promise.resolve(
+        mockResponse({
+          ok: true,
+          json: () => Promise.resolve({ success: true, services: apiServices }),
+        })
+      )
     );
 
     const { result } = renderHook(() => useServices(), { wrapper });
@@ -68,10 +71,12 @@ describe('ServicesContext', () => {
       { id: 'api-2', name: 'API Service Y' },
     ];
     global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({ data: { services: apiServices } }),
-      })
+      Promise.resolve(
+        mockResponse({
+          ok: true,
+          json: () => Promise.resolve({ data: { services: apiServices } }),
+        })
+      )
     );
 
     const { result } = renderHook(() => useServices(), { wrapper });
@@ -99,10 +104,12 @@ describe('ServicesContext', () => {
       },
     ];
     global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({ success: true, services: apiServices }),
-      })
+      Promise.resolve(
+        mockResponse({
+          ok: true,
+          json: () => Promise.resolve({ success: true, services: apiServices }),
+        })
+      )
     );
 
     const { result } = renderHook(() => useServices(), { wrapper });
@@ -117,7 +124,15 @@ describe('ServicesContext', () => {
   });
 
   it('should fall back to static data on non-ok response', async () => {
-    global.fetch = vi.fn(() => Promise.resolve({ ok: false, status: 500 }));
+    global.fetch = vi.fn(() =>
+      Promise.resolve(
+        mockResponse({
+          ok: false,
+          status: 500,
+          json: () => Promise.resolve({ error: 'Server error', code: 'INTERNAL' }),
+        })
+      )
+    );
 
     const { result } = renderHook(() => useServices(), { wrapper });
 
@@ -134,10 +149,12 @@ describe('ServicesContext', () => {
 
   it('should fall back to static data on invalid API response structure', async () => {
     global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({ success: false }),
-      })
+      Promise.resolve(
+        mockResponse({
+          ok: true,
+          json: () => Promise.resolve({ success: false }),
+        })
+      )
     );
 
     const { result } = renderHook(() => useServices(), { wrapper });

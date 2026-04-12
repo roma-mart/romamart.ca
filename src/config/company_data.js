@@ -58,7 +58,7 @@ const COMPANY_DATA = {
     x: 'https://www.x.com/romamartca/',
   },
   // HQ info — sourced from the primary location in LOCATIONS.
-  // Live data comes from /api/public-company-data via CompanyDataContext.
+  // Live data comes from /api/v1/public-company-data via CompanyDataContext.
   address: getPrimaryLocation().address,
   hours: getPrimaryLocation().hours,
   contact: {
@@ -76,7 +76,7 @@ const COMPANY_DATA = {
     support: 'support@romamart.ca',
   },
   // HQ location — sourced from the primary location in LOCATIONS.
-  // Live location data comes from /api/public-locations via LocationsContext.
+  // Live location data comes from /api/v1/public-locations via LocationsContext.
   location: getPrimaryLocation(),
   trustpilotReviewUrl: 'https://www.trustpilot.com/review/romamart.ca',
   // PWA configuration (SSOT for WebApplication schema)

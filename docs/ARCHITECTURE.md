@@ -273,7 +273,7 @@ function Component() {
 **Hook:** `useMenu()`
 
 **Status:** Active (production, 200 OK)
-- Fetches menu from `https://romamart.netlify.app/api/public-menu`
+- Fetches menu from `https://romamart.netlify.app/api/v1/public-menu`
 - Single API call per session via React Context
 - Shared across App.jsx and RoCafePage.jsx
 - 50% reduction in API calls vs previous architecture
