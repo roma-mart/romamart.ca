@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.7.2] - 2026-04-12
+
+### Added
+- Centralized API utility (`src/utils/api.js`) with `apiUrl()`, `apiHeaders()`, and `fetchWithEtag()`
+- ETag-based conditional requests (304 Not Modified support) across all context providers
+- API key header infrastructure via `VITE_API_KEY` environment variable
+- Proactive rate-limit awareness via `X-RateLimit-Remaining` headers
+- Structured error response parsing (`{ error, code, requestId }`)
+- Test helper `mockResponse()` and `api.test.js` (9 new tests, 329 total)
+- `.env.example` vars: `VITE_API_BASE_URL`, `VITE_API_KEY`
+
+### Changed
+- Migrated all 4 context providers from `/api/public-*` to `/api/v1/public-*` endpoints
+- Updated `scripts/prerender.js` to use v1 API endpoints
+- Updated all context tests to use `mockResponse` helper and test structured errors
+- Updated active documentation with v1 API URLs and centralized utility references
+
 ## [2.7.1] - 2026-02-17
 
 ### Fixed
