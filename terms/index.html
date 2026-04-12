@@ -48,17 +48,27 @@
     <!-- DNS prefetch for APIs used at runtime -->
     <link rel="dns-prefetch" href="https://places.googleapis.com" />
     <link rel="dns-prefetch" href="https://romamart.netlify.app" />
+    <link rel="dns-prefetch" href="https://tcdigital.vip" />
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
     <title>Roma Mart - Terms | Groceries, Coffee & More in Sarnia, ON</title>
-    <script type="module" crossorigin src="/assets/index-sSQc4fO0.js"></script>
+    <script type="module" crossorigin src="/assets/index-B0EXfRUF.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/icons-0wzrNaMM.js">
     <link rel="modulepreload" crossorigin href="/assets/motion-BHI6IYGm.js">
     <link rel="modulepreload" crossorigin href="/assets/react-vendor-B0AOcBd0.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DFEXqgEv.css">
+    <link rel="stylesheet" crossorigin href="/assets/index-CfFyCs95.css">
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"LocalBusiness","@id":"https://romamart.ca/#business","name":"Roma Mart Convenience","legalName":"Roma Mart Corp.","alternateName":"Roma Mart Corp.","description":"Your daily stop & go convenience store in Sarnia, Ontario. Fresh RoCafé beverages, ATM, Bitcoin ATM, printing, and more.","url":"https://romamart.ca","telephone":"+1 (382) 342-2000","email":"contact@romamart.ca","priceRange":"$","image":"https://romamart.ca/images/store-front.jpg","logo":"https://romamart.ca/logo.png","address":{"@type":"PostalAddress","streetAddress":"3-189 Wellington Street","addressLocality":"Sarnia","addressRegion":"ON","postalCode":"N7T 1G6","addressCountry":"CA"},"geo":{"@type":"GeoCoordinates","latitude":42.970389,"longitude":-82.404589},"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"08:30","closes":"21:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":["Saturday","Sunday"],"opens":"08:30","closes":"21:00"}],"sameAs":["https://www.facebook.com/romamartca","https://www.instagram.com/romamartca/","https://www.tiktok.com/@romamartca/","https://www.snapchat.com/@romamartca/","https://www.x.com/romamartca/"],"amenityFeature":[{"@type":"LocationFeatureSpecification","name":"Free Wi-Fi","value":true},{"@type":"LocationFeatureSpecification","name":"Wheelchair-accessible entrance","value":true},{"@type":"LocationFeatureSpecification","name":"Wheelchair-accessible parking","value":true},{"@type":"LocationFeatureSpecification","name":"Restroom","value":true},{"@type":"LocationFeatureSpecification","name":"Parking","value":true}],"paymentAccepted":["Cash","Credit Card","Debit Card","Interac","Visa","Mastercard","American Express","Bitcoin"]},{"@type":"WebSite","@id":"https://romamart.ca/#website","url":"https://romamart.ca","name":"Roma Mart Convenience","description":"Your daily stop & go convenience store in Sarnia, Ontario.","publisher":{"@id":"https://romamart.ca/#business"}}]}</script>
   </head>
   <body>
     <div id="root"><header><h1>Terms of Service</h1></header><main><p>Welcome to Roma Mart. By accessing or using our website and services, you agree to be bound by these terms and conditions. Please read them carefully before using our services.</p></main></div>
+    <!-- Aria AI Agent Widget -->
+    <script src="https://tcdigital.vip/aria.js" data-widget="wgt_roma" defer></script>
+    <script>
+      // Accessibility: inject aria-label on 3rd-party widget button
+      new MutationObserver(function(_, obs) {
+        var btn = document.querySelector('#tcd-widget-container button');
+        if (btn) { btn.setAttribute('aria-label', 'Chat with Aria AI assistant'); obs.disconnect(); }
+      }).observe(document.body, { childList: true, subtree: true });
+    </script>
   </body>
 </html>
