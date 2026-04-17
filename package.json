@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@hcaptcha/react-hcaptcha": "^1.17.1",
-    "framer-motion": "^12.34.3",
+    "framer-motion": "^12.38.0",
     "lucide-react": "^0.576.0",
     "prop-types": "^15.8.1",
     "react": "^18.3.1",
