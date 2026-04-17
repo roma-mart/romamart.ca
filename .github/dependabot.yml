@@ -6,20 +6,46 @@ updates:
     schedule:
       interval: "weekly"
       day: "monday"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 15
     labels:
       - "dependencies"
       - "chore"
     commit-message:
       prefix: "chore(deps)"
+    groups:
+      dev-tooling:
+        dependency-type: "development"
+        update-types:
+          - "minor"
+          - "patch"
+      commitlint:
+        patterns:
+          - "@commitlint/*"
     ignore:
+      # React 18 — intentional; no major upgrade planned
       - dependency-name: "react"
         update-types: ["version-update:semver-major"]
       - dependency-name: "react-dom"
         update-types: ["version-update:semver-major"]
+      # Tailwind v4 — full rewrite, defer indefinitely
       - dependency-name: "tailwindcss"
         update-types: ["version-update:semver-major"]
+      # hCaptcha v2 — evaluate later
       - dependency-name: "@hcaptcha/react-hcaptcha"
+        update-types: ["version-update:semver-major"]
+      # plugin-react v6 requires Vite 8 — incompatible with Vite 7
+      - dependency-name: "@vitejs/plugin-react"
+        update-types: ["version-update:semver-major"]
+      # lucide-react v1 — planned migration branch needed (icon renames)
+      - dependency-name: "lucide-react"
+        update-types: ["version-update:semver-major"]
+      # Vitest 4 + jsdom 29 — planned test toolchain upgrade branch
+      - dependency-name: "vitest"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "jsdom"
+        update-types: ["version-update:semver-major"]
+      # Vite 8 — planned major migration
+      - dependency-name: "vite"
         update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "github-actions"

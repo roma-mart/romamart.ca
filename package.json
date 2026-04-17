@@ -60,10 +60,6 @@
     "vitest": "^3.2.4"
   },
   "overrides": {
-    "react-helmet-async": {
-      "react": "^19.2.0",
-      "react-dom": "^19.2.0"
-    },
     "esbuild": "0.27.0"
   },
   "legacy-peer-deps": true,
