@@ -68,11 +68,13 @@ export default function Navbar({ currentPage = 'home' }) {
     typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [isHomePage, setIsHomePage] = useState(currentPage === 'home');
+  const isHomePage = currentPage === 'home';
   const [colorScheme, setColorScheme] = useState('light');
   const [highContrast, setHighContrast] = useState(false);
   const [wcoOverflowOpen, setWcoOverflowOpen] = useState(false);
-  const [isStandalone, setIsStandalone] = useState(false);
+  const [isStandalone] = useState(
+    () => window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true
+  );
 
   useEffect(() => {
     const mqDark = window.matchMedia('(prefers-color-scheme: dark)');
@@ -106,17 +108,6 @@ export default function Navbar({ currentPage = 'home' }) {
       window.removeEventListener('scroll', handleScroll);
       if (rafId) cancelAnimationFrame(rafId);
     };
-  }, []);
-
-  useEffect(() => {
-    // Update isHomePage when currentPage changes
-    setIsHomePage(currentPage === 'home');
-  }, [currentPage]);
-
-  // Detect standalone PWA mode (iOS + Android/desktop without WCO)
-  useEffect(() => {
-    const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-    setIsStandalone(standalone);
   }, []);
 
   const scrollToSection = (sectionId) => {
@@ -180,8 +171,10 @@ export default function Navbar({ currentPage = 'home' }) {
   });
 
   // Close WCO overflow dropdown on outside click or Escape
+  // When WCO deactivates, effectiveWcoOverflowOpen becomes false — no sync effect needed
+  const effectiveWcoOverflowOpen = wcoActive && wcoOverflowOpen;
   useEffect(() => {
-    if (!wcoOverflowOpen) return;
+    if (!effectiveWcoOverflowOpen) return;
     const handleClickOutside = (e) => {
       const overflowEl = overflowRef.current;
       const buttonEl = overflowButtonRef.current;
@@ -207,12 +200,7 @@ export default function Navbar({ currentPage = 'home' }) {
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('keydown', handleEscape);
     };
-  }, [wcoOverflowOpen]);
-
-  // Close overflow if WCO deactivates while dropdown is open
-  useEffect(() => {
-    if (!wcoActive && wcoOverflowOpen) setWcoOverflowOpen(false);
-  }, [wcoActive, wcoOverflowOpen]);
+  }, [effectiveWcoOverflowOpen]);
 
   return (
     <nav
@@ -391,13 +379,13 @@ export default function Navbar({ currentPage = 'home' }) {
                         justifyContent: 'center',
                       }}
                       aria-label="More navigation options"
-                      aria-expanded={wcoOverflowOpen}
+                      aria-expanded={effectiveWcoOverflowOpen}
                       aria-controls="wco-overflow-nav"
                     >
                       <EllipsisVertical size={16} />
                     </button>
                     <AnimatePresence>
-                      {wcoOverflowOpen && (
+                      {effectiveWcoOverflowOpen && (
                         <motion.div
                           ref={overflowRef}
                           initial={{ opacity: 0, y: -4, scale: 0.95 }}

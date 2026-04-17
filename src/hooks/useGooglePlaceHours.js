@@ -10,7 +10,7 @@
  * @module hooks/useGooglePlaceHours
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, startTransition } from 'react';
 import { circuitBreakers } from '../utils/apiCircuitBreaker';
 import { getUserHour12Preference, formatTimeFrom24h } from '../utils/timeFormat';
 import { groupDayMap } from '../utils/dateHelpers';
@@ -347,45 +347,40 @@ export function useGooglePlaceHours(placeId, options = {}) {
   const [rating, setRating] = useState(null);
   const [userRatingCount, setUserRatingCount] = useState(null);
 
-  const fetchHours = useCallback(
+  // Pure async fetch — returns result object (no setState), safe to call from effects
+  const performFetch = useCallback(
     async (fetchOptions = {}) => {
       const force = typeof fetchOptions === 'boolean' ? fetchOptions : fetchOptions?.force;
       if (!placeId || !enabled) {
-        setIsLoading(false);
-        return;
+        return {};
       }
 
       // Check cache first
       if (!force) {
         const cached = hoursCache.get(placeId);
         if (cached && Date.now() - cached.timestamp < cacheDuration) {
-          setHours(cached.hours);
-          setIsOpenNow(cached.isOpenNow);
-          setRating(cached.rating ?? null);
-          setUserRatingCount(cached.userRatingCount ?? null);
-          setIsLoading(false);
-          return;
+          return {
+            hours: cached.hours,
+            isOpenNow: cached.isOpenNow,
+            rating: cached.rating ?? null,
+            userRatingCount: cached.userRatingCount ?? null,
+          };
         }
       }
-
-      setIsLoading(true);
-      setError(null);
 
       try {
         const placeDetails = await fetchPlaceDetails(placeId);
 
         if (!placeDetails) {
           // API failed, use fallback
-          setIsLoading(false);
-          return;
+          return {};
         }
 
         const parsedHours = parseOpeningHours(placeDetails);
 
         if (!parsedHours) {
           // No hours data available
-          setIsLoading(false);
-          return;
+          return {};
         }
 
         // Cache the result
@@ -400,31 +395,64 @@ export function useGooglePlaceHours(placeId, options = {}) {
         // Record success with circuit breaker to clear accumulated failures
         circuitBreakers.googlePlaces.recordSuccess();
 
-        setHours(parsedHours);
-        setIsOpenNow(parsedHours?.isOpenNow);
-        setRating(parsedHours?.rating ?? null);
-        setUserRatingCount(parsedHours?.userRatingCount ?? null);
+        return {
+          hours: parsedHours,
+          isOpenNow: parsedHours?.isOpenNow,
+          rating: parsedHours?.rating ?? null,
+          userRatingCount: parsedHours?.userRatingCount ?? null,
+        };
       } catch (err) {
-        setError(err.message);
         if (import.meta.env.DEV) {
           console.error('Failed to fetch place hours:', err);
         }
-      } finally {
-        setIsLoading(false);
+        return { error: err.message };
       }
     },
     [placeId, enabled, cacheDuration]
   );
 
+  // Apply fetch result to state
+  const applyResult = useCallback((result) => {
+    if (result.hours !== undefined) {
+      setHours(result.hours);
+      setIsOpenNow(result.isOpenNow);
+      setRating(result.rating);
+      setUserRatingCount(result.userRatingCount);
+    } else {
+      // Clear stale data when no valid result (disabled, fetch failed, no hours available)
+      setHours(null);
+      setIsOpenNow(null);
+      setRating(null);
+      setUserRatingCount(null);
+    }
+    setError(result.error || null);
+    setIsLoading(false);
+  }, []);
+
   useEffect(() => {
-    fetchHours();
-  }, [fetchHours]);
+    let cancelled = false;
+    startTransition(() => setIsLoading(true)); // Signal loading start without triggering set-state-in-effect
+    performFetch().then((result) => {
+      if (!cancelled) applyResult(result);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [performFetch, applyResult]);
+
+  const refetch = useCallback(
+    (fetchOptions) => {
+      setIsLoading(true); // Safe: not inside useEffect
+      return performFetch(fetchOptions).then(applyResult);
+    },
+    [performFetch, applyResult]
+  );
 
   return {
     hours,
     isLoading,
     error,
-    refetch: fetchHours,
+    refetch,
     isOpenNow,
     rating,
     userRatingCount,

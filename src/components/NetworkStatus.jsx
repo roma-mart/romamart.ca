@@ -9,23 +9,25 @@ import { useServiceWorker } from '../hooks/useServiceWorker';
 
 const NetworkStatus = () => {
   const { isOnline } = useServiceWorker();
-  const [showOfflineMessage, setShowOfflineMessage] = React.useState(false);
-  const [wasOffline, setWasOffline] = React.useState(false);
+  const [showReconnected, setShowReconnected] = React.useState(false);
+  const prevIsOnlineRef = React.useRef(isOnline);
 
+  // Detect offline→online transition and trigger reconnected message
   React.useEffect(() => {
-    if (!isOnline) {
-      setShowOfflineMessage(true);
-      setWasOffline(true);
-    } else if (wasOffline) {
-      // Show "back online" message briefly
-      setShowOfflineMessage(true);
-      const timer = setTimeout(() => {
-        setShowOfflineMessage(false);
-        setWasOffline(false);
-      }, 3000);
-      return () => clearTimeout(timer);
+    if (!prevIsOnlineRef.current && isOnline) {
+      setShowReconnected(true);
     }
-  }, [isOnline, wasOffline]);
+    prevIsOnlineRef.current = isOnline;
+  }, [isOnline]);
+
+  // Auto-dismiss reconnection message after 3 seconds
+  React.useEffect(() => {
+    if (!showReconnected) return;
+    const timer = setTimeout(() => setShowReconnected(false), 3000);
+    return () => clearTimeout(timer);
+  }, [showReconnected]);
+
+  const showOfflineMessage = !isOnline || showReconnected;
 
   if (!showOfflineMessage) return null;
 
@@ -37,9 +39,7 @@ const NetworkStatus = () => {
     >
       <div
         className={`px-6 py-3 rounded-full shadow-lg flex items-center gap-3 font-inter font-semibold ${
-          isOnline
-            ? 'bg-green-500 text-white'
-            : 'bg-gray-800 text-white'
+          isOnline ? 'bg-green-500 text-white' : 'bg-gray-800 text-white'
         }`}
       >
         {isOnline ? (
