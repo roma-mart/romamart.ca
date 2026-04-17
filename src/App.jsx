@@ -454,10 +454,14 @@ const Locations = () => {
                       </p>
                       <LiveHoursDisplay
                         placeId={loc.placeId}
-                        fallbackHours={{
-                          daily: loc.hours.daily,
-                          exceptions: loc.hours.exceptions,
-                        }}
+                        fallbackHours={
+                          loc.hours
+                            ? {
+                                daily: loc.hours.daily,
+                                exceptions: loc.hours.exceptions,
+                              }
+                            : undefined
+                        }
                         showStatus={true}
                         compact={true}
                         showIcon={false}
