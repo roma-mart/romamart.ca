@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **Vite 7 → 8:** Migrated build toolchain to Vite 8.0.8 (Rolldown bundler replaces Rollup/esbuild, Oxc replaces Babel, Lightning CSS for minification)
+- **@vitejs/plugin-react 5 → 6:** Oxc-based React Fast Refresh (Babel removed)
+- **vitest 3 → 4:** Upgraded for Vite 8 peer dependency compatibility
+- **jsdom 28 → 29:** CSSOM overhaul (cssstyle replaced with internal impl)
+- Migrated `build.rollupOptions` → `build.rolldownOptions` and object-form `manualChunks` → `codeSplitting.groups` with regex test patterns
+- Removed `overrides.esbuild` from package.json (no longer needed)
+- Updated `dependabot.yml`: removed major-version ignores for vite, @vitejs/plugin-react, vitest, jsdom (now on latest majors)
+
 ## [2.8.0] - 2026-04-12
 
 ### Added

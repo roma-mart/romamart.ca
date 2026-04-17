@@ -35,19 +35,8 @@ updates:
       # hCaptcha v2 — evaluate later
       - dependency-name: "@hcaptcha/react-hcaptcha"
         update-types: ["version-update:semver-major"]
-      # plugin-react v6 requires Vite 8 — incompatible with Vite 7
-      - dependency-name: "@vitejs/plugin-react"
-        update-types: ["version-update:semver-major"]
       # lucide-react v1 — planned migration branch needed (icon renames)
       - dependency-name: "lucide-react"
-        update-types: ["version-update:semver-major"]
-      # Vitest 4 + jsdom 29 — planned test toolchain upgrade branch
-      - dependency-name: "vitest"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "jsdom"
-        update-types: ["version-update:semver-major"]
-      # Vite 8 — planned major migration
-      - dependency-name: "vite"
         update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "github-actions"
