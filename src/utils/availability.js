@@ -90,7 +90,13 @@ export function getMenuItemStatusAtLocation(menuItemId, location, menuData, menu
 
 /**
  * Checks if a location is open based on live data (preferred) or static status (fallback).
- * Uses live Google Places API data when available, falls back to hardcoded location.status.
+ * Uses live Google Places API data when available, falls back to location.status.
+ *
+ * Google is the authority for open/closed status. Components should use
+ * LiveHoursDisplay or useGooglePlaceHours to get isOpenNow from Google,
+ * then pass it here. Without live data, this falls back to the static
+ * location.status field (which only reflects operational status, not hours).
+ *
  * @param {object} location - The location object.
  * @param {boolean} [isOpenNow] - Live open/closed status from Google Places API (optional).
  * @returns {boolean} True if location is open (live) or marked as open (fallback).
