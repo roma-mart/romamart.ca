@@ -1,0 +1,1 @@
+function e(e){return e?e.replace(/[\s()-]/g,``):``}export{e as t};
