@@ -23,12 +23,23 @@ export default defineConfig({
   },
   build: {
     sourcemap: false, // Disable source maps to avoid lucide-react corruption issues
-    rollupOptions: {
+    rolldownOptions: {
       output: {
-        manualChunks: {
-          'react-vendor': ['react', 'react-dom'],
-          icons: ['lucide-react'],
-          motion: ['framer-motion'],
+        codeSplitting: {
+          groups: [
+            {
+              name: 'react-vendor',
+              test: /node_modules[\\/](react|react-dom)\//,
+            },
+            {
+              name: 'icons',
+              test: /node_modules[\\/]lucide-react\//,
+            },
+            {
+              name: 'motion',
+              test: /node_modules[\\/]framer-motion\//,
+            },
+          ],
         },
       },
     },
