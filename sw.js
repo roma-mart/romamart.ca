@@ -3,7 +3,7 @@
  * PWA implementation with smart caching strategies
  */
 
-const CACHE_VERSION = /* __CACHE_VERSION__ */ 'roma-mart-1d57fcc3';
+const CACHE_VERSION = /* __CACHE_VERSION__ */ 'roma-mart-06b1516f';
 const BASE_URL = '/';
 
 // Assets to cache immediately on install
@@ -19,23 +19,23 @@ const PRECACHE_ASSETS = [
   `${BASE_URL}android/android-launchericon-512-512.png`,
   `${BASE_URL}ios/180.png`,
   `${BASE_URL}windows11/Square150x150Logo.scale-100.png`,
-    `${BASE_URL}assets/AboutPage-WqmE_97Q.js`,
-  `${BASE_URL}assets/AccessibilityPage-C1oGCBah.js`,
-  `${BASE_URL}assets/ContactPage-BlGCrXEI.js`,
-  `${BASE_URL}assets/CookiesPage-DvrRlzzW.js`,
-  `${BASE_URL}assets/ImageCarousel-B_MPyz9B.js`,
-  `${BASE_URL}assets/LocationsPage-DJmtldML.js`,
-  `${BASE_URL}assets/NotFoundPage-BYL5WqZD.js`,
-  `${BASE_URL}assets/PrivacyPage-CXCPudvF.js`,
-  `${BASE_URL}assets/ReturnPolicyPage-CeqXeYy8.js`,
-  `${BASE_URL}assets/RoCafePage-naP1KSks.js`,
-  `${BASE_URL}assets/ServicesPage-2qv-by_F.js`,
-  `${BASE_URL}assets/TermsPage-CqqLYShO.js`,
-  `${BASE_URL}assets/icons-TAMSi5w-.js`,
-  `${BASE_URL}assets/index-4DVM3Fhl.js`,
+    `${BASE_URL}assets/AboutPage-CXuOaNZG.js`,
+  `${BASE_URL}assets/AccessibilityPage-CasRD69i.js`,
+  `${BASE_URL}assets/ContactPage-BlDtQck6.js`,
+  `${BASE_URL}assets/CookiesPage-CnlgtXly.js`,
+  `${BASE_URL}assets/ImageCarousel-6ETW3nxx.js`,
+  `${BASE_URL}assets/LocationsPage-Cy39B4Oy.js`,
+  `${BASE_URL}assets/NotFoundPage-WmFdevEt.js`,
+  `${BASE_URL}assets/PrivacyPage-1Dwv4B-z.js`,
+  `${BASE_URL}assets/ReturnPolicyPage-C0CsX9Gr.js`,
+  `${BASE_URL}assets/RoCafePage-BYk5Jb-A.js`,
+  `${BASE_URL}assets/ServicesPage-rLdP0fak.js`,
+  `${BASE_URL}assets/TermsPage-BeitPrfG.js`,
+  `${BASE_URL}assets/icons-CmzVck9n.js`,
+  `${BASE_URL}assets/index-B1-1NnRb.js`,
   `${BASE_URL}assets/index-CfFyCs95.css`,
-  `${BASE_URL}assets/motion-rM_6vBcD.js`,
-  `${BASE_URL}assets/react-vendor-D-awAuVc.js`
+  `${BASE_URL}assets/motion-ClsIDGVL.js`,
+  `${BASE_URL}assets/react-vendor-uUGO-jRO.js`
 ];
 
 // Pages to cache on first visit (runtime caching)
