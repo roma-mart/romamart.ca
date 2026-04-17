@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { LOCATIONS } from '../data/locations';
 import { normalizeLocation } from '../utils/normalize';
 import { circuitBreakers } from '../utils/apiCircuitBreaker';
@@ -29,7 +29,6 @@ export function LocationsProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [source, setSource] = useState('static'); // Track data source: 'api' or 'static'
-  const cancelledRef = useRef(false);
 
   // Selected location state (persisted in localStorage)
   const [selectedLocationId, setSelectedLocationId] = useState(() => {
@@ -53,19 +52,12 @@ export function LocationsProvider({ children }) {
     }
   }, []);
 
-  const fetchLocationsData = useCallback(async (showSpinner = true) => {
+  // Pure async fetch — returns result object (no setState), safe to call from effects
+  const performFetch = useCallback(async () => {
     try {
-      if (showSpinner) setLoading(true);
-      setError('');
-
       if (!circuitBreakers.locations.shouldAttemptCall()) {
         if (import.meta.env.DEV) console.warn('Locations circuit breaker open, using static data');
-        if (!cancelledRef.current) {
-          setLocations(LOCATIONS);
-          setSource('static');
-          setError('API circuit breaker open, using static data');
-        }
-        return;
+        return { items: LOCATIONS, source: 'static', error: 'API circuit breaker open, using static data' };
       }
 
       const { data, status, errorBody } = await fetchWithEtag(API_PATH, {
@@ -74,7 +66,8 @@ export function LocationsProvider({ children }) {
 
       if (status === 304) {
         if (import.meta.env.DEV) console.warn('[LocationsContext] 304 Not Modified, using cached data');
-        return;
+        circuitBreakers.locations.recordSuccess();
+        return { items: null, source: null, error: '' }; // API healthy; clear error but keep existing data
       }
 
       if (!data) {
@@ -84,12 +77,7 @@ export function LocationsProvider({ children }) {
           if (errorBody?.code === 'RATE_LIMITED') console.warn('[LocationsContext] Rate limited by API');
           if (errorBody?.code === 'INVALID_API_KEY') console.error('[LocationsContext] Invalid API key configured');
         }
-        if (!cancelledRef.current) {
-          setLocations(LOCATIONS);
-          setSource('static');
-          setError(errorBody?.error || 'API unavailable, using static data');
-        }
-        return;
+        return { items: LOCATIONS, source: 'static', error: errorBody?.error || 'API unavailable, using static data' };
       }
 
       // Accept both shapes: { locations: [...] } or { data: { locations: [...] } } or top-level array
@@ -98,55 +86,68 @@ export function LocationsProvider({ children }) {
       // Validate API response structure
       if (!Array.isArray(locationsPayload)) {
         if (import.meta.env.DEV) console.warn('Invalid locations API response, using static data');
-        if (!cancelledRef.current) {
-          setLocations(LOCATIONS);
-          setSource('static');
-          setError('Invalid API response, using static data');
-        }
-        return;
+        return { items: LOCATIONS, source: 'static', error: 'Invalid API response, using static data' };
       }
 
       // API success - use API data (normalized)
       circuitBreakers.locations.recordSuccess();
-      if (!cancelledRef.current) {
-        setLocations(locationsPayload.map((loc) => normalizeLocation(loc, 'api')));
-        setSource('api');
-        setError('');
-      }
+      return { items: locationsPayload.map((loc) => normalizeLocation(loc, 'api')), source: 'api', error: '' };
     } catch (err) {
       // Network error or other exception - use static fallback
       if (import.meta.env.DEV) console.warn('Locations API error, using static data:', err.message);
       circuitBreakers.locations.recordFailure(err);
-      if (!cancelledRef.current) {
-        setLocations(LOCATIONS);
-        setSource('static');
-        setError(err.message || 'Failed to load locations, using static data');
-      }
-    } finally {
-      if (!cancelledRef.current) setLoading(false);
+      return {
+        items: LOCATIONS,
+        source: 'static',
+        error: err.message || 'Failed to load locations, using static data',
+      };
     }
   }, []);
 
-  useEffect(() => {
-    cancelledRef.current = false;
-    fetchLocationsData(); // Initial load: spinner hides stale static data
+  // Apply fetch result to state
+  const applyResult = useCallback((result) => {
+    if (result) {
+      if (result.items !== null) {
+        // null items = 304 Not Modified: keep existing data, only clear error
+        setLocations(result.items);
+        setSource(result.source);
+      }
+      setError(result.error);
+    }
+    setLoading(false);
+  }, []);
 
+  useEffect(() => {
+    let cancelled = false;
+    performFetch().then((result) => {
+      if (!cancelled) applyResult(result);
+    });
     return () => {
-      cancelledRef.current = true;
+      cancelled = true;
     };
-  }, [fetchLocationsData]);
+  }, [performFetch, applyResult]);
 
   // Reset selection if saved ID no longer exists in locations (e.g. API returned different set)
+  // State-only update during render is safe; localStorage side-effect handled by effect below
+  const selectionValid =
+    loading || selectedLocationId === 'auto' || locations.some((loc) => loc.id === selectedLocationId);
+  if (!selectionValid) {
+    setSelectedLocationId('auto');
+  }
+
+  // Sync localStorage when selection resets to 'auto' (including the render-phase reset above)
   useEffect(() => {
-    if (loading || selectedLocationId === 'auto') return;
-    const exists = locations.some((loc) => loc.id === selectedLocationId);
-    if (!exists) {
-      selectLocation('auto');
+    if (selectedLocationId === 'auto') {
+      try {
+        localStorage.removeItem(STORAGE_KEY);
+      } catch {
+        /* Safari private mode */
+      }
     }
-  }, [locations, loading, selectedLocationId, selectLocation]);
+  }, [selectedLocationId]);
 
   // refetch exposed to consumers is always silent (no spinner) — content stays visible during retry
-  const refetch = useCallback(() => fetchLocationsData(false), [fetchLocationsData]);
+  const refetch = useCallback(() => performFetch().then(applyResult), [performFetch, applyResult]);
 
   const value = { locations, loading, error, source, selectedLocationId, selectLocation, refetch };
 

@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { normalizeMenuItem } from '../utils/normalize';
 import { ROCAFE_FULL_MENU } from '../data/rocafe-menu';
 import { circuitBreakers } from '../utils/apiCircuitBreaker';
@@ -27,21 +27,13 @@ export function MenuProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [source, setSource] = useState('static');
-  const cancelledRef = useRef(false);
 
-  const fetchMenuData = useCallback(async (showSpinner = true) => {
+  // Pure async fetch — returns result object (no setState), safe to call from effects
+  const performFetch = useCallback(async () => {
     try {
-      if (showSpinner) setLoading(true);
-      setError('');
-
       if (!circuitBreakers.menu.shouldAttemptCall()) {
         if (import.meta.env.DEV) console.warn('[MenuContext] Circuit breaker open, using static data');
-        if (!cancelledRef.current) {
-          setMenuItems(STATIC_FALLBACK);
-          setSource('static');
-          setError('API circuit breaker open, using static data');
-        }
-        return;
+        return { items: STATIC_FALLBACK, source: 'static', error: 'API circuit breaker open, using static data' };
       }
 
       if (import.meta.env.DEV) {
@@ -54,9 +46,9 @@ export function MenuProvider({ children }) {
       });
 
       if (status === 304) {
-        // ETag match — data unchanged, keep existing state
         if (import.meta.env.DEV) console.warn('[MenuContext] 304 Not Modified, using cached data');
-        return;
+        circuitBreakers.menu.recordSuccess();
+        return { items: null, source: null, error: '' }; // API healthy; clear error but keep existing data
       }
 
       if (!data) {
@@ -66,12 +58,11 @@ export function MenuProvider({ children }) {
           if (errorBody?.code === 'RATE_LIMITED') console.warn('[MenuContext] Rate limited by API');
           if (errorBody?.code === 'INVALID_API_KEY') console.error('[MenuContext] Invalid API key configured');
         }
-        if (!cancelledRef.current) {
-          setMenuItems(STATIC_FALLBACK);
-          setSource('static');
-          setError(errorBody?.error || 'API unavailable, using static data');
-        }
-        return;
+        return {
+          items: STATIC_FALLBACK,
+          source: 'static',
+          error: errorBody?.error || 'API unavailable, using static data',
+        };
       }
 
       // Resolve menu array from either data.menu or data.data.menu (envelope)
@@ -80,23 +71,21 @@ export function MenuProvider({ children }) {
       // Validate API response structure
       if (!Array.isArray(menuArray) || menuArray.length === 0) {
         if (import.meta.env.DEV) console.warn('[MenuContext] Invalid or empty menu API response, using static data');
-        if (!cancelledRef.current) {
-          setMenuItems(STATIC_FALLBACK);
-          setSource('static');
-          setError(
+        return {
+          items: STATIC_FALLBACK,
+          source: 'static',
+          error:
             Array.isArray(menuArray) && menuArray.length === 0
               ? 'Empty menu from API, using static data'
-              : 'Invalid API response, using static data'
-          );
-        }
-        return;
+              : 'Invalid API response, using static data',
+        };
       }
 
       circuitBreakers.menu.recordSuccess();
       const menu = menuArray.map((item) => normalizeMenuItem(item, 'api'));
-      const featuredCount = menu.filter((item) => item.featured).length;
 
       if (import.meta.env.DEV) {
+        const featuredCount = menu.filter((item) => item.featured).length;
         // eslint-disable-next-line no-console
         console.log('[MenuContext] Menu data received:', {
           totalItems: menu.length,
@@ -105,36 +94,40 @@ export function MenuProvider({ children }) {
         });
       }
 
-      if (!cancelledRef.current) {
-        setMenuItems(menu);
-        setSource('api');
-        setError('');
-      }
+      return { items: menu, source: 'api', error: '' };
     } catch (err) {
       // Network error or other exception - use static fallback
       console.error('[MenuContext] Failed to fetch menu data:', err);
       circuitBreakers.menu.recordFailure(err);
-      if (!cancelledRef.current) {
-        setMenuItems(STATIC_FALLBACK);
-        setSource('static');
-        setError(err.message || 'Failed to load menu data');
-      }
-    } finally {
-      if (!cancelledRef.current) setLoading(false);
+      return { items: STATIC_FALLBACK, source: 'static', error: err.message || 'Failed to load menu data' };
     }
   }, []);
 
-  useEffect(() => {
-    cancelledRef.current = false;
-    fetchMenuData(); // Initial load: spinner hides stale static data
+  // Apply fetch result to state
+  const applyResult = useCallback((result) => {
+    if (result) {
+      if (result.items !== null) {
+        // null items = 304 Not Modified: keep existing data, only clear error
+        setMenuItems(result.items);
+        setSource(result.source);
+      }
+      setError(result.error);
+    }
+    setLoading(false);
+  }, []);
 
+  useEffect(() => {
+    let cancelled = false;
+    performFetch().then((result) => {
+      if (!cancelled) applyResult(result);
+    });
     return () => {
-      cancelledRef.current = true;
+      cancelled = true;
     };
-  }, [fetchMenuData]);
+  }, [performFetch, applyResult]);
 
   // refetch exposed to consumers is always silent (no spinner) — content stays visible during retry
-  const refetch = useCallback(() => fetchMenuData(false), [fetchMenuData]);
+  const refetch = useCallback(() => performFetch().then(applyResult), [performFetch, applyResult]);
 
   const value = { menuItems, loading, error, source, refetch };
 
