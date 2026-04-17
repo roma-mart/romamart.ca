@@ -80,7 +80,6 @@ const LocationsPage = () => {
     address: loc.address.formatted,
     phone: loc.contact.phone,
     hours: loc.hours,
-    isOpen: loc.status === 'open',
     mapUrl: loc.google.embedUrl,
     features: loc.services.map((serviceId) => {
       const svc = allServices.find((s) => s.id === serviceId);
@@ -238,15 +237,6 @@ const LocationsPage = () => {
                       <h2 className="text-3xl" style={{ color: 'var(--color-heading)' }}>
                         {location.name}
                       </h2>
-                      <div
-                        className="px-3 py-1 rounded-full text-sm font-bold"
-                        style={{
-                          backgroundColor: location.isOpen ? 'var(--color-success-bg)' : 'var(--color-error-bg)',
-                          color: location.isOpen ? 'var(--color-success)' : 'var(--color-error)',
-                        }}
-                      >
-                        {location.isOpen ? 'Open Now' : 'Closed'}
-                      </div>
                     </div>
 
                     <div className="space-y-6">

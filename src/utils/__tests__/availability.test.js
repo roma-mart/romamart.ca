@@ -238,31 +238,39 @@ describe('availability utilities', () => {
   });
 
   describe('isLocationOpen', () => {
-    it('should return true when location status is open', () => {
-      const location = {
-        id: 'loc-wellington-001',
-        status: 'open',
-      };
+    it('should prefer live Google data when provided (true)', () => {
+      const location = { id: 'loc-wellington-001', status: 'open' };
+      expect(isLocationOpen(location, true)).toBe(true);
+    });
 
+    it('should prefer live Google data when provided (false)', () => {
+      const location = { id: 'loc-wellington-001', status: 'open' };
+      expect(isLocationOpen(location, false)).toBe(false);
+    });
+
+    it('should return true when location status is open and no live data', () => {
+      const location = { id: 'loc-wellington-001', status: 'open' };
       expect(isLocationOpen(location)).toBe(true);
     });
 
     it('should return false when location status is closed', () => {
-      const location = {
-        id: 'loc-wellington-001',
-        status: 'closed',
-      };
-
+      const location = { id: 'loc-wellington-001', status: 'closed' };
       expect(isLocationOpen(location)).toBe(false);
     });
 
     it('should return false when location status is coming_soon', () => {
-      const location = {
-        id: 'loc-lakeshore-002',
-        status: 'coming_soon',
-      };
-
+      const location = { id: 'loc-lakeshore-002', status: 'coming_soon' };
       expect(isLocationOpen(location)).toBe(false);
+    });
+
+    it('should ignore null isOpenNow and fall back to status', () => {
+      const location = { id: 'loc-wellington-001', status: 'open' };
+      expect(isLocationOpen(location, null)).toBe(true);
+    });
+
+    it('should ignore undefined isOpenNow and fall back to status', () => {
+      const location = { id: 'loc-wellington-001', status: 'open' };
+      expect(isLocationOpen(location, undefined)).toBe(true);
     });
   });
 });

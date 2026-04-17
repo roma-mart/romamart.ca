@@ -5,7 +5,6 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, ExternalLink, MapPin } from 'lucide-react';
 // ...existing code...
 import { getPreferredLocation } from './utils/locationMath';
-import { isLocationOpen } from './utils/availability';
 import { useCompanyData } from './contexts/CompanyDataContext';
 import { Logo } from './components/Logo';
 import Navbar from './components/Navbar';
@@ -375,7 +374,8 @@ const Locations = () => {
       address: preferredLocation.address.formatted,
       mapLink: preferredLocation.google.mapLink,
       embedUrl: preferredLocation.google.embedUrl,
-      isOpen: isLocationOpen(preferredLocation),
+      placeId: preferredLocation.google.placeId,
+      hours: preferredLocation.hours,
     }),
     [preferredLocation]
   );
@@ -452,16 +452,16 @@ const Locations = () => {
                       <p className="text-sm font-inter mb-4" style={{ color: 'var(--color-text)', opacity: 0.7 }}>
                         {loc.address}
                       </p>
-                      <div
-                        className="flex items-center gap-2 text-sm font-semibold"
-                        style={{ color: 'var(--color-accent)' }}
-                      >
-                        <div
-                          className="w-2 h-2 rounded-full"
-                          style={{ backgroundColor: loc.isOpen ? 'var(--color-success)' : 'var(--color-error)' }}
-                        ></div>
-                        {loc.isOpen ? 'Open Now' : 'Closed'}
-                      </div>
+                      <LiveHoursDisplay
+                        placeId={loc.placeId}
+                        fallbackHours={{
+                          daily: loc.hours.daily,
+                          exceptions: loc.hours.exceptions,
+                        }}
+                        showStatus={true}
+                        compact={true}
+                        showIcon={false}
+                      />
                     </div>
                   </div>
                 ))}
