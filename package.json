@@ -28,7 +28,7 @@
     "prop-types": "^15.8.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-helmet-async": "^2.0.5"
+    "react-helmet-async": "^3.0.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.5.0",
