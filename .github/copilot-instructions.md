@@ -2,18 +2,19 @@
 
 ## Project Overview
 
-Roma Mart 2.0 is a **React 18.3.1 + Vite 7** progressive web app for a multi-location convenience store chain. Built with accessibility-first, dark-mode-native, and quality-enforced architecture.
+Roma Mart 2.0 is a **React 18.3.1 + Vite 8** progressive web app for a multi-location convenience store chain. Built with accessibility-first, dark-mode-native, and quality-enforced architecture.
 
-**Stack:** React 18.3.1, Vite 7, Tailwind CSS, Framer Motion, ESM modules
+**Stack:** React 18.3.1, Vite 8, Tailwind CSS, Framer Motion, ESM modules
 **Deployment:** GitHub Pages (staging), custom domain (production)
+**Version:** 2.8.0
 
-### Current Status (Feb 2026)
+### Current Status (Apr 2026)
 
-An expert-consolidated audit identified 56 problems and produced 55 recommendations organized into 8 sprints (all complete). See planning documents for details:
-- **[docs/archive/ROADMAP.md](../docs/archive/ROADMAP.md)** -- Sprint plan, phase breakdown, domain scorecard (archived)
-- **[docs/archive/EXPERT_AUDIT_FEB_2026.md](../docs/archive/EXPERT_AUDIT_FEB_2026.md)** -- Full audit findings and recommendations (R1-R55) (archived)
-- **[docs/API_MIGRATION_READINESS.md](../docs/API_MIGRATION_READINESS.md)** -- Backend API spec for @Fern-Ali
-- **GitHub Issues:** #98-#106 (sprint issues), #107 (backend API), tracked on [RomaMart UI Roadmap](https://github.com/orgs/roma-mart/projects/4) project board
+8-sprint audit roadmap complete. Codebase is post-audit stable. Key references:
+- **[docs/archive/ROADMAP.md](../docs/archive/ROADMAP.md)** -- Sprint plan, R1-R55 (archived)
+- **[docs/archive/EXPERT_AUDIT_FEB_2026.md](../docs/archive/EXPERT_AUDIT_FEB_2026.md)** -- Full audit findings (archived)
+- **[docs/API_MIGRATION_READINESS.md](../docs/API_MIGRATION_READINESS.md)** -- Backend API spec
+- **GitHub Issue #107** -- Services & Locations APIs pending backend; tracked on [RomaMart UI Roadmap](https://github.com/orgs/roma-mart/projects/4)
 
 ## Critical Architecture Principles
 
@@ -156,7 +157,9 @@ npm run preview                # Preview production build
 - Cache bounded by `MAX_CACHE_ENTRIES = 100` with `trimCache()` eviction
 - `CACHE_VERSION` in `sw.js` controls cache invalidation — bump when changing caching behavior
 - `self.skipWaiting()` is user-controlled via message handler only (not auto-called on install)
-- **Hooks:** `useServiceWorker()` from `src/hooks/useServiceWorker.js` — returns `{ registration, updateAvailable, skipWaiting, isOnline }`
+- **Hooks:**
+  - `useServiceWorker()` (`src/hooks/useServiceWorker.js`) — returns `{ registration, updateAvailable, skipWaiting }`. Used in `App.jsx` only. Runs full SW lifecycle: registration, hourly update polling, controllerchange reload.
+  - `useIsOnline()` (`src/hooks/useIsOnline.js`) — returns a boolean. Used in `NetworkStatus.jsx` only. Thin online/offline listener. **Never use `useServiceWorker` in a component that only needs `isOnline`** — each call registers its own SW lifecycle, causing duplicate registrations.
 - **Components:**
   - `PWAInstallPrompt` — engagement-based install prompt with focus trap, persists install state to localStorage
   - `PWAUpdatePrompt` — persistent update notification card, wired in App.jsx with `updateAvailable`/`skipWaiting` from useServiceWorker
@@ -419,13 +422,14 @@ import { SERVICES } from '../data/services';
 ## Development Tooling & Code Style
 
 ### Code Formatting
-- **No Prettier configured** - Manual formatting following ESLint rules
+- **Prettier** configured — `npm run format` / `npm run format:check`. Runs automatically on staged files via lint-staged.
 - **EditorConfig:** `.editorconfig` configured (2-space indent, LF line endings, UTF-8, trailing whitespace trimming)
 - **ESLint:** Strict rules enforced via `npm run lint`
   - React Hooks compliance required
   - JSX accessibility (a11y) required
-  - No unused variables, no console.log in production code
-- **lint-staged:** Runs ESLint on `*.{js,jsx}` and Stylelint on `*.css` for staged files only (faster pre-commit)
+  - No unused variables
+  - **Only `console.warn` and `console.error` are allowed** — `console.log` is banned. All diagnostic calls must be wrapped: `if (import.meta.env.DEV) console.warn(...)`. Production builds must be silent.
+- **lint-staged:** Runs Prettier then ESLint on `*.{js,jsx}`, Prettier then Stylelint on `*.css`, Prettier on `*.json`
 - **commitlint:** Enforces [Conventional Commits](https://www.conventionalcommits.org/) format via `.husky/commit-msg` hook
 
 ### Git Workflow
@@ -453,7 +457,7 @@ import { SERVICES } from '../data/services';
 - **Maintenance** (`.github/ISSUE_TEMPLATE/maintenance.yml`) - Chore tasks, dependency updates, tooling improvements
 
 ### Testing Strategy
-- **Vitest test suite:** 12 test files, 154 tests (schema validation, utilities, hooks)
+- **Vitest test suite:** 21 test files, 339 tests (schema validation, utilities, hooks, contexts)
 - Quality also enforced via:
   1. ESLint + Stylelint (syntax & patterns)
   2. Universal quality checker (`check-quality.js` - 1000+ rules)
@@ -529,11 +533,11 @@ This file is the Copilot-specific project context. A parallel `CLAUDE.md` exists
 - When updating project conventions, architecture, or workflows, update BOTH files
 - Each file is optimized for its respective AI's context format
 - If you notice drift between the files, flag it and propose corrections
-- Last synced: February 12, 2026
+- Last synced: April 20, 2026
 
 ---
 
-**Last Updated:** February 12, 2026
+**Last Updated:** April 20, 2026
 **Maintained by:** GitHub Copilot & Claude Code (keep in sync with `CLAUDE.md`)
-**Codebase Version:** React 18.3.1 + Vite 7 (ESM)
-**API Status:** Menu API live (200 OK); Services & Locations APIs pending (#107) -- frontend uses static fallback
+**Codebase Version:** React 18.3.1 + Vite 8 (ESM)
+**API Status:** Menu API live (200 OK); Services & Locations APIs pending (#107) — frontend uses static fallback

@@ -47,6 +47,18 @@ if (GTM_ID) {
   document.body.insertBefore(noscript, document.body.firstChild);
 }
 
+window.addEventListener('unhandledrejection', (event) => {
+  if (import.meta.env.DEV) {
+    console.error('[App] Unhandled promise rejection:', event.reason);
+  } else {
+    window.dataLayer?.push({
+      event: 'error',
+      error_message: event.reason?.message || String(event.reason),
+      error_source: 'unhandledrejection',
+    });
+  }
+});
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <HelmetProvider>

@@ -29,7 +29,7 @@ export const initDB = () => {
       if (!db.objectStoreNames.contains(STORE_NAME)) {
         const objectStore = db.createObjectStore(STORE_NAME, {
           keyPath: 'id',
-          autoIncrement: true
+          autoIncrement: true,
         });
 
         // Create indexes
@@ -53,7 +53,7 @@ export const queueFormSubmission = async (formData) => {
     const submission = {
       ...formData,
       timestamp: Date.now(),
-      synced: false
+      synced: false,
     };
 
     const request = store.add(submission);
@@ -95,6 +95,10 @@ export const markAsSynced = async (id) => {
 
     getRequest.onsuccess = () => {
       const data = getRequest.result;
+      if (!data) {
+        reject(new Error(`markAsSynced: record not found for id=${id}`));
+        return;
+      }
       data.synced = true;
       data.syncedAt = Date.now();
 
@@ -112,7 +116,7 @@ export const markAsSynced = async (id) => {
  */
 export const cleanupOldSubmissions = async () => {
   const db = await initDB();
-  const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+  const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
 
   return new Promise((resolve, reject) => {
     const transaction = db.transaction([STORE_NAME], 'readwrite');
@@ -125,12 +129,12 @@ export const cleanupOldSubmissions = async () => {
       const cursor = event.target.result;
       if (cursor) {
         const item = cursor.value;
-        
+
         // Delete if synced and older than 7 days
         if (item.synced && item.timestamp < sevenDaysAgo) {
           cursor.delete();
         }
-        
+
         cursor.continue();
       } else {
         resolve();
@@ -155,5 +159,5 @@ export default {
   getPendingSubmissions,
   markAsSynced,
   cleanupOldSubmissions,
-  getPendingCount
+  getPendingCount,
 };

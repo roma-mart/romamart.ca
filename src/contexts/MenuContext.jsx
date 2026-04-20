@@ -97,7 +97,7 @@ export function MenuProvider({ children }) {
       return { items: menu, source: 'api', error: '' };
     } catch (err) {
       // Network error or other exception - use static fallback
-      console.error('[MenuContext] Failed to fetch menu data:', err);
+      if (import.meta.env.DEV) console.warn('[MenuContext] Failed to fetch menu data:', err.message);
       circuitBreakers.menu.recordFailure(err);
       return { items: STATIC_FALLBACK, source: 'static', error: err.message || 'Failed to load menu data' };
     }

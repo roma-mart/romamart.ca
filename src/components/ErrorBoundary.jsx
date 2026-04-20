@@ -20,14 +20,14 @@ class ErrorBoundary extends React.Component {
 
   componentDidCatch(error, errorInfo) {
     this.setState({ errorInfo });
-    console.error('ErrorBoundary caught:', error);
+    console.error('[ErrorBoundary] Caught unhandled error:', error?.message || error);
     if (import.meta.env.DEV) {
       console.error('Component stack:', errorInfo.componentStack);
     }
     window.dataLayer?.push({
       event: 'error',
       error_message: error?.toString(),
-      error_source: 'ErrorBoundary'
+      error_source: 'ErrorBoundary',
     });
   }
 
@@ -50,7 +50,9 @@ class ErrorBoundary extends React.Component {
               className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6"
               style={{ backgroundColor: 'var(--color-error-bg, var(--color-surface))' }}
             >
-              <span className="text-3xl" aria-hidden="true">!</span>
+              <span className="text-3xl" aria-hidden="true">
+                !
+              </span>
             </div>
             <h2
               className="text-xl font-bold mb-2"
@@ -71,16 +73,10 @@ class ErrorBoundary extends React.Component {
               Try refreshing the page or go back to the home page.
             </p>
             <div className="flex gap-3 justify-center">
-              <Button
-                variant="inverted"
-                onClick={this.handleReload}
-              >
+              <Button variant="inverted" onClick={this.handleReload}>
                 Refresh Page
               </Button>
-              <Button
-                variant="secondary"
-                href={import.meta.env.BASE_URL || "/"}
-              >
+              <Button variant="secondary" href={import.meta.env.BASE_URL || '/'}>
                 Go Home
               </Button>
             </div>

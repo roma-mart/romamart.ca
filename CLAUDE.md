@@ -6,18 +6,18 @@
 ## Project Overview
 
 **App:** Roma Mart 2.0 -- React PWA for a multi-location convenience store chain (Sarnia, ON)
-**Stack:** React 18.3.1, Vite 7, Tailwind CSS 3.4, Framer Motion, ESM modules
+**Stack:** React 18.3.1, Vite 8, Tailwind CSS 3.4, Framer Motion, ESM modules
 **Deployment:** GitHub Pages (staging at `https://roma-mart.github.io/romamart.ca/`), custom domain (production)
-**Version:** 2.7.1 (see Versioning Convention below)
+**Version:** 2.8.0 (see Versioning Convention below)
 **Repo:** `roma-mart/romamart.ca`
 
-### Current Status (Feb 2026)
+### Current Status (Apr 2026)
 
-An expert-consolidated audit (9 domain experts, 56 findings, 55 recommendations) drove an 8-sprint roadmap (all complete). Key docs:
-- `docs/archive/ROADMAP.md` -- Sprint plan, recommendations R1-R55, domain scorecard (archived)
+8-sprint audit roadmap complete. Codebase is post-audit stable. Key references:
+- `docs/archive/ROADMAP.md` -- Sprint plan, R1-R55 (archived)
 - `docs/archive/EXPERT_AUDIT_FEB_2026.md` -- Full audit findings (archived)
 - `docs/API_MIGRATION_READINESS.md` -- Backend API spec
-- GitHub Issues #98-#106 (sprint issues), #107 (backend API)
+- GitHub Issue #107 -- Services & Locations APIs (pending backend)
 - Project board: RomaMart UI Roadmap (GitHub Projects)
 
 ---
@@ -32,6 +32,7 @@ An expert-consolidated audit (9 domain experts, 56 findings, 55 recommendations)
 6. **All changes must pass `npm run check:all`** before commit (lint + quality + integrity).
 7. **No suppressed warnings.** Fix root causes. Systems over spot fixes.
 8. **Read before modifying.** Always read existing code and relevant docs before proposing changes.
+9. **Console logging pattern.** ESLint only permits `console.warn` and `console.error`. All diagnostic calls must be wrapped: `if (import.meta.env.DEV) console.warn(...)`. Production builds must be silent. `ErrorBoundary.jsx` is the only intentional production `console.error` (last-resort observability).
 
 ---
 
@@ -175,7 +176,7 @@ Accessibility, dark mode, performance, security, SEO, code quality, responsive d
 ## Testing
 
 **Framework:** Vitest
-**Tests:** 260 passing (as of v2.6.7)
+**Tests:** 339 passing (as of v2.8.0)
 **Coverage thresholds:** statements 60%, branches 50%, functions 60%, lines 60%
 
 ### Test Locations
@@ -285,7 +286,8 @@ Sprint templates are defined in `docs/archive/ROADMAP.md` under Sprint Plan.
 - **Caching:** Network-first for HTML/API, cache-first for static assets
 - **Cache bounded:** `MAX_CACHE_ENTRIES = 100` with `trimCache()` eviction
 - **`CACHE_VERSION`** controls cache invalidation
-- **Hook:** `useServiceWorker()` returns `{ registration, updateAvailable, skipWaiting, isOnline }`
+- **Hook:** `useServiceWorker()` returns `{ registration, updateAvailable, skipWaiting }` — used in `App.jsx` only
+- **Hook:** `useIsOnline()` (`src/hooks/useIsOnline.js`) returns a boolean — used in `NetworkStatus.jsx` only. Keep these separate: `useServiceWorker` runs the full SW lifecycle (registration, update polling, controllerchange); `useIsOnline` is a thin online/offline listener. Never call `useServiceWorker` from a component that only needs `isOnline`.
 - **Components:** `PWAInstallPrompt` (engagement-based), `PWAUpdatePrompt` (update notification)
 
 ---
@@ -305,6 +307,7 @@ Sprint templates are defined in `docs/archive/ROADMAP.md` under Sprint Plan.
 | `src/config/company_data.js` | Company info SSOT |
 | `src/config/navigation.js` | Navigation links SSOT |
 | `src/utils/theme.js` | Theme utilities, CSS variable helpers |
+| `src/hooks/useIsOnline.js` | Online/offline boolean hook (used by NetworkStatus only) |
 | `src/utils/api.js` | Centralized API utility (apiUrl, fetchWithEtag, ETag caching) |
 | `src/utils/apiCircuitBreaker.js` | API protection pattern |
 | `scripts/check-quality.js` | Universal quality checker |
@@ -323,10 +326,10 @@ This file (`CLAUDE.md`) is the Claude Code project context. A parallel `.github/
 - When updating project conventions, architecture, or workflows, update BOTH files
 - Each file is optimized for its respective AI's context format
 - If you notice drift between the files, flag it and propose corrections
-- Last synced: February 9, 2026
+- Last synced: April 20, 2026
 
 ---
 
-**Last Updated:** February 12, 2026
+**Last Updated:** April 20, 2026
 **Maintained by:** Claude Code (keep in sync with `.github/copilot-instructions.md`)
-**Codebase Version:** React 18.3.1 + Vite 7 (ESM)
+**Codebase Version:** React 18.3.1 + Vite 8 (ESM)

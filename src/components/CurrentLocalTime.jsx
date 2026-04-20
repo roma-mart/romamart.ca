@@ -1,9 +1,9 @@
 /**
  * CurrentLocalTime Component
- * 
+ *
  * Displays the current local time for a given location.
  * Updates every second to show real-time clock.
- * 
+ *
  * @param {Object} props
  * @param {Object} props.location - Location object with timezone info
  * @returns {JSX.Element}
@@ -30,19 +30,19 @@ function CurrentLocalTime({ location }) {
         // Create formatter for location's timezone
         // Default to 'America/Toronto' if no timezone specified
         const timezone = location?.timezone || 'America/Toronto';
-        
+
         const formatter = new Intl.DateTimeFormat('en-CA', {
           timeZone: timezone,
           hour: '2-digit',
           minute: '2-digit',
           second: '2-digit',
-          hour12: true
+          hour12: true,
         });
 
         const formatted = formatter.format(new Date());
         setCurrentTime(formatted);
       } catch (error) {
-        console.error('Error formatting local time:', error);
+        if (import.meta.env.DEV) console.warn('[CurrentLocalTime] Invalid timezone or date format:', error.message);
         setCurrentTime('');
       }
     };
@@ -73,8 +73,8 @@ function CurrentLocalTime({ location }) {
 CurrentLocalTime.propTypes = {
   location: PropTypes.shape({
     timezone: PropTypes.string,
-    name: PropTypes.string
-  })
+    name: PropTypes.string,
+  }),
 };
 
 export default CurrentLocalTime;
