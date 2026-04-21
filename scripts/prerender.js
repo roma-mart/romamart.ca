@@ -1223,7 +1223,7 @@ async function prerender() {
         const mainSchema = `<script type="application/ld+json">${escapeJsonLd(buildStructuredData(route.path, { menuItems, services, locations, aggregateRating }))}</script>`;
         const faqSchema =
           route.path === '/'
-            ? `\n  <script type="application/ld+json">${escapeJsonLd(JSON.stringify(buildFAQSchema()))}</script>`
+            ? `\n  <script type="application/ld+json">${escapeJsonLd(JSON.stringify(buildFAQSchema(COMPANY_DATA)))}</script>`
             : '';
         const placesScript =
           route.path === '/' && aggregateRating?.ratingValue
