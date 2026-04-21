@@ -1,15 +1,19 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { LOCATIONS } from '../src/data/locations.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const CACHE_DIR = path.resolve(__dirname, '../.cache');
+// node_modules/.cache is already gitignored; avoids dirty working trees in CI
+const CACHE_DIR = path.resolve(__dirname, '../node_modules/.cache/roma-mart');
 const CACHE_FILE = path.join(CACHE_DIR, 'places.json');
 const CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6 hours
 
-const PLACE_ID = 'ChIJCfo3t6SdJYgRIQVbpCppKmY';
+// Source PLACE_ID from the primary location (SSOT: src/data/locations.js)
+const primaryLocation = LOCATIONS.find((l) => l.status === 'open') || LOCATIONS[0];
+const PLACE_ID = primaryLocation?.google?.placeId;
 
 function readCache() {
   try {
@@ -31,8 +35,9 @@ export async function getAggregateRating() {
   const cached = readCache();
   if (cached) return cached;
 
-  const apiKey = process.env.VITE_GOOGLE_PLACES_API_KEY;
-  if (!apiKey) return null;
+  // Accept both CI-friendly name and Vite-prefixed name
+  const apiKey = process.env.GOOGLE_PLACES_API_KEY || process.env.VITE_GOOGLE_PLACES_API_KEY;
+  if (!apiKey || !PLACE_ID) return null;
 
   try {
     const url = `https://places.googleapis.com/v1/places/${PLACE_ID}` + `?fields=rating,userRatingCount&key=${apiKey}`;

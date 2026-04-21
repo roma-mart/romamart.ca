@@ -43,7 +43,7 @@
     <meta property="twitter:image" content="https://romamart.ca/twitter-card.jpg" />
     <meta property="twitter:image:alt" content="Roma Mart storefront and branding" />
     <!-- Hero image preload for desktop (LCP optimization) -->
-    <link rel="preload" as="image" href="/images/comeinwereopensign.png" fetchpriority="high" media="(min-width: 768px)" />
+    <link rel="preload" as="image" href="%BASE_URL%images/comeinwereopensign.png" fetchpriority="high" media="(min-width: 768px)" />
     <!-- DNS prefetch for APIs used at runtime -->
     <link rel="dns-prefetch" href="https://places.googleapis.com" />
     <link rel="dns-prefetch" href="https://romamart.netlify.app" />
@@ -61,18 +61,12 @@
           var s = document.createElement('script');
           s.src = 'https://tcdigital.vip/aria.js';
           s.dataset.widget = 'wgt_roma';
-          s.defer = true;
           s.onload = function () {
-            var tries = 0,
-              iv = setInterval(function () {
-                var btn = document.querySelector('#tcd-widget-container button');
-                if (btn) {
-                  btn.setAttribute('aria-label', 'Chat with Aria AI assistant');
-                  clearInterval(iv);
-                } else if (++tries > 20) {
-                  clearInterval(iv);
-                }
-              }, 250);
+            var obs = new MutationObserver(function (_, o) {
+              var btn = document.querySelector('#tcd-widget-container button');
+              if (btn) { btn.setAttribute('aria-label', 'Chat with Aria AI assistant'); o.disconnect(); }
+            });
+            obs.observe(document.body, { childList: true, subtree: true });
           };
           document.body.appendChild(s);
         };

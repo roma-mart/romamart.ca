@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { REDIRECTS } from './generate-redirects.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -67,13 +68,50 @@ function checkRouteHtml() {
     assert(html.includes(`property="twitter:url" content="${canonical}"`), `Missing twitter:url for ${route}`);
     assert(html.includes('application/ld+json'), `Missing JSON-LD for ${route}`);
     assert(/<h1[^>]*>/.test(html), `Missing <h1> in prerendered HTML for ${route}`);
+
+    // Validate all JSON-LD blocks are parseable
+    const jsonLdRegex = /<script type="application\/ld\+json">([\s\S]*?)<\/script>/g;
+    let jsonLdMatch;
+    while ((jsonLdMatch = jsonLdRegex.exec(html)) !== null) {
+      try {
+        JSON.parse(jsonLdMatch[1]);
+      } catch (e) {
+        throw new Error(`Invalid JSON-LD in ${route}: ${e.message}`);
+      }
+    }
   });
+}
+
+function checkRedirectStubs() {
+  for (const { from, to } of REDIRECTS) {
+    const isHtml = from.endsWith('.html');
+    const outPath = isHtml
+      ? path.join(distPath, from.replace(/^\//, ''))
+      : path.join(distPath, from.replace(/^\//, ''), 'index.html');
+
+    assert(fs.existsSync(outPath), `Missing redirect output for ${from} -> ${to}: ${outPath}`);
+
+    const content = fs.readFileSync(outPath, 'utf-8');
+
+    // If this path is a real prerendered page, writeRedirects intentionally skipped it — no stub to validate
+    if (!content.includes('noindex,follow')) continue;
+
+    assert(
+      content.includes('<meta name="robots" content="noindex,follow">'),
+      `Redirect stub for ${from} missing <meta name="robots" content="noindex,follow">`
+    );
+    assert(
+      content.includes(`url=${to}`),
+      `Redirect stub for ${from} has wrong meta refresh target (expected url=${to})`
+    );
+  }
 }
 
 try {
   checkRobots();
   checkSitemap();
   checkRouteHtml();
+  checkRedirectStubs();
   console.log('✅ SEO assets check passed');
 } catch (error) {
   console.error(`❌ SEO assets check failed: ${error.message}`);

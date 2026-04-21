@@ -59,7 +59,7 @@ if (GTM_ID) {
 const reportWebVital = (m) =>
   trackEvent('web_vital', {
     metric_name: m.name,
-    metric_value: Math.round(m.value * 1000) / 1000,
+    metric_value: m.name === 'CLS' ? Math.round(m.value * 1000) / 1000 : Math.round(m.value),
     metric_rating: m.rating,
     metric_id: m.id,
   });

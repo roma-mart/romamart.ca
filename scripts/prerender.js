@@ -587,27 +587,16 @@ const buildStructuredData = (routePath = '/', apiData = {}) => {
   const coords = location?.google?.coordinates || {};
   const hours = location?.hours || {};
 
-  const weekday = parseHoursRange(hours.weekdays);
-  const weekend = parseHoursRange(hours.weekends);
-
-  const openingHoursSpecification = [
-    weekday.opens && weekday.closes
-      ? {
-          '@type': 'OpeningHoursSpecification',
-          dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-          opens: weekday.opens,
-          closes: weekday.closes,
-        }
-      : null,
-    weekend.opens && weekend.closes
-      ? {
-          '@type': 'OpeningHoursSpecification',
-          dayOfWeek: ['Saturday', 'Sunday'],
-          opens: weekend.opens,
-          closes: weekend.closes,
-        }
-      : null,
-  ].filter(Boolean);
+  const openingHoursSpecification = hours.daily
+    ? Object.entries(hours.daily)
+        .map(([day, timeRange]) => {
+          if (!timeRange || timeRange === 'Closed' || !timeRange.includes('-')) return null;
+          const { opens, closes } = parseHoursRange(timeRange);
+          if (!opens || !closes) return null;
+          return { '@type': 'OpeningHoursSpecification', dayOfWeek: [day], opens, closes };
+        })
+        .filter(Boolean)
+    : [];
 
   // Build base @graph with LocalBusiness and WebSite
   const graph = [
@@ -622,7 +611,7 @@ const buildStructuredData = (routePath = '/', apiData = {}) => {
       url: BASE_URL,
       telephone: contact.phone || '+1-382-342-2000',
       email: contact.email || 'contact@romamart.ca',
-      priceRange: '$$',
+      priceRange: COMPANY_DATA.defaults.priceRange,
       image: 'https://romamart.ca/images/store-front.jpg',
       logo: 'https://romamart.ca/logo.png',
       address: {
@@ -638,6 +627,7 @@ const buildStructuredData = (routePath = '/', apiData = {}) => {
         latitude: coords.lat || 42.970389,
         longitude: coords.lng || -82.404589,
       },
+      ...(location?.google?.mapLink ? { hasMap: location.google.mapLink } : {}),
       openingHoursSpecification,
       sameAs: Object.values(COMPANY_DATA.socialLinks || {}),
       amenityFeature: (location?.amenities || []).map((amenity) => ({
@@ -655,7 +645,7 @@ const buildStructuredData = (routePath = '/', apiData = {}) => {
         'American Express',
         'Bitcoin',
       ],
-      currenciesAccepted: 'CAD, BTC',
+      currenciesAccepted: [COMPANY_DATA.defaults.currency, 'BTC'].join(', '),
       areaServed: [
         { '@type': 'City', name: 'Sarnia' },
         { '@type': 'City', name: 'Point Edward' },
@@ -1229,7 +1219,11 @@ async function prerender() {
           route.path === '/'
             ? `\n  <script type="application/ld+json">${JSON.stringify(buildFAQSchema())}</script>`
             : '';
-        return `${mainSchema}${faqSchema}\n  </head>`;
+        const placesScript =
+          route.path === '/' && aggregateRating?.ratingValue
+            ? `\n  <script>window.__PLACES__=${JSON.stringify(aggregateRating)}</script>`
+            : '';
+        return `${mainSchema}${faqSchema}${placesScript}\n  </head>`;
       })
       .replace(
         '<div id="root"></div>',

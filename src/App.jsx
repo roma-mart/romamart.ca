@@ -167,6 +167,8 @@ function Hero({ onTrackOrder }) {
                 src={getAssetUrl('/images/comeinwereopensign.png')}
                 alt="Come in! We're Open Sign"
                 className="w-full h-[500px] object-cover"
+                width="1440"
+                height="1080"
                 fetchpriority="high"
               />
             </div>

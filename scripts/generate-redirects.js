@@ -6,16 +6,6 @@ export const REDIRECTS = [
   { from: '/blogpage.html', to: '/' },
   { from: '/blogposts/post1.html', to: '/' },
   { from: '/blogposts/post2.html', to: '/' },
-  { from: '/privacy', to: '/privacy/' },
-  { from: '/cookies', to: '/cookies/' },
-  { from: '/services', to: '/services/' },
-  { from: '/rocafe', to: '/rocafe/' },
-  { from: '/terms', to: '/terms/' },
-  { from: '/contact', to: '/contact/' },
-  { from: '/about', to: '/about/' },
-  { from: '/accessibility', to: '/accessibility/' },
-  { from: '/return-policy', to: '/return-policy/' },
-  { from: '/locations', to: '/locations/' },
 ];
 
 const buildStub = (to) =>

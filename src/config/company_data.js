@@ -34,7 +34,7 @@ const COMPANY_DATA = {
   // Default values for schemas
   defaults: {
     productCategory: 'Food & Beverage',
-    priceRange: '$$',
+    priceRange: '$',
     country: 'CA',
     currency: 'CAD',
     timezone: 'America/Toronto',

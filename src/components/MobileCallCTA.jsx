@@ -4,6 +4,7 @@ import { useReducedMotion } from 'framer-motion';
 import { useCompanyData } from '../contexts/CompanyDataContext';
 import { normalizePhoneForTel } from '../utils/phone';
 import { trackEvent } from '../utils/analytics.js';
+import { shadows } from '../design/tokens.js';
 
 const BASE_URL =
   typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
@@ -25,13 +26,13 @@ export default function MobileCallCTA() {
     <a
       href={href}
       aria-label="Call Roma Mart"
-      onClick={() => trackEvent('phone_click', { source: 'mobile_sticky' })}
+      onClick={() => trackEvent('phone_click', { location_id: companyData?.location?.id, source: 'mobile_sticky' })}
       className="md:hidden fixed bottom-5 right-4 z-50 flex items-center gap-2 px-4 py-3 rounded-full shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
       style={{
         backgroundColor: 'var(--color-accent)',
         color: 'var(--color-primary)',
         transition: shouldReduceMotion ? 'none' : 'transform 0.2s ease, box-shadow 0.2s ease',
-        boxShadow: '0 4px 16px rgba(0,0,0,0.25)',
+        boxShadow: shadows.lg,
       }}
       onMouseEnter={(e) => {
         if (!shouldReduceMotion) e.currentTarget.style.transform = 'scale(1.05)';
