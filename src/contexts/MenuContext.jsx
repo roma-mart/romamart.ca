@@ -97,9 +97,10 @@ export function MenuProvider({ children }) {
       return { items: menu, source: 'api', error: '' };
     } catch (err) {
       // Network error or other exception - use static fallback
-      if (import.meta.env.DEV) console.warn('[MenuContext] Failed to fetch menu data:', err.message);
+      const errorMessage = err?.message || String(err || '') || 'Failed to load menu data';
+      if (import.meta.env.DEV) console.warn('[MenuContext] Failed to fetch menu data:', errorMessage);
       circuitBreakers.menu.recordFailure(err);
-      return { items: STATIC_FALLBACK, source: 'static', error: err.message || 'Failed to load menu data' };
+      return { items: STATIC_FALLBACK, source: 'static', error: errorMessage };
     }
   }, []);
 

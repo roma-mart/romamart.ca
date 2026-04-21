@@ -20,7 +20,7 @@ class ErrorBoundary extends React.Component {
 
   componentDidCatch(error, errorInfo) {
     this.setState({ errorInfo });
-    console.error('[ErrorBoundary] Caught unhandled error:', error?.message || error);
+    console.error('[ErrorBoundary] Caught unhandled error:', error);
     if (import.meta.env.DEV) {
       console.error('Component stack:', errorInfo.componentStack);
     }

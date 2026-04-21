@@ -50,7 +50,9 @@ export const useServiceWorker = () => {
           60 * 60 * 1000
         );
       } catch (error) {
-        if (import.meta.env.DEV) console.error('[SW] Registration failed:', error);
+        if (import.meta.env.DEV) {
+          console.error('[SW] Registration failed:', error);
+        }
       }
     };
 

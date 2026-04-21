@@ -161,7 +161,7 @@ npm run build              # Production build + prerender
 Accessibility, dark mode, performance, security, SEO, code quality, responsive design, browser compatibility, brand consistency.
 
 ### Git Hooks (Husky v9)
-- **pre-commit:** lint-staged (ESLint on `*.{js,jsx}`, Stylelint on `*.css`) + check:quality + check:integrity
+- **pre-commit:** lint-staged (Prettier on `*.{js,jsx,css,json}`, ESLint on `*.{js,jsx}`, Stylelint on `*.css`) + check:quality + check:integrity
 - **commit-msg:** commitlint (Conventional Commits)
 
 ### Pre-Commit Checklist
