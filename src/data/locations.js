@@ -81,18 +81,18 @@ export const LOCATIONS = [
       timezone: 'America/Toronto',
       // Per-day hours (source of truth for display grouping)
       daily: {
-        Monday: '8:30 AM - 9:00 PM',
-        Tuesday: '8:30 AM - 9:00 PM',
-        Wednesday: '8:30 AM - 9:00 PM',
-        Thursday: '8:30 AM - 9:00 PM',
+        Monday: '9:00 AM - 9:00 PM',
+        Tuesday: '9:00 AM - 9:00 PM',
+        Wednesday: '9:00 AM - 9:00 PM',
+        Thursday: '9:00 AM - 9:00 PM',
         Friday: '3:00 PM - 9:00 PM',
-        Saturday: '8:30 AM - 9:00 PM',
-        Sunday: '8:30 AM - 9:00 PM',
+        Saturday: '9:00 AM - 9:00 PM',
+        Sunday: '9:00 AM - 9:00 PM',
       },
       // Backward-compatible fields for helpers still using legacy schema
-      weekdays: '8:30 AM - 9:00 PM',
-      weekends: '8:30 AM - 9:00 PM',
-      display: 'Mon-Thu, Sat-Sun: 8:30 AM - 9:00 PM | Fri: 3:00 PM - 9:00 PM',
+      weekdays: '9:00 AM - 9:00 PM',
+      weekends: '9:00 AM - 9:00 PM',
+      display: 'Mon-Thu, Sat-Sun: 9:00 AM - 9:00 PM | Fri: 3:00 PM - 9:00 PM',
       is24Hours: false,
       isSeasonal: false,
       // Special hours/exceptions (optional)

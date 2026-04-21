@@ -45,10 +45,8 @@ const buildOpeningHours = (hours) => {
         });
       }
     });
-  }
-
-  // Handle weekdays/weekends format
-  if (hours.weekdays && hours.weekends) {
+  } else if (hours.weekdays && hours.weekends) {
+    // Fallback: only runs when hours.daily is not available
     const weekdaysParts = hours.weekdays.split('-').map((t) => t.trim());
     const weekendsParts = hours.weekends.split('-').map((t) => t.trim());
 

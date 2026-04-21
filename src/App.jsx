@@ -614,6 +614,7 @@ const ContactSection = () => {
                       href={`tel:${normalizePhoneForTel(companyData?.location?.contact?.phone)}`}
                       className="hover:underline"
                       style={{ color: 'var(--color-accent)' }}
+                      onClick={() => trackEvent('phone_click', { source: 'home_contact' })}
                     >
                       {companyData?.location?.contact?.phone}
                     </a>

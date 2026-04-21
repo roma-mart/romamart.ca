@@ -1148,6 +1148,11 @@ async function prerender() {
 
   const indexTemplate = fs.readFileSync(indexPath, 'utf-8');
 
+  // Extract Vite base path from the built module script src so the hero preload
+  // uses the correct path for both GitHub Pages (/romamart.ca/) and production (/).
+  const scriptBaseMatch = indexTemplate.match(/<script[^>]+src="([^"]+\/assets\/[^"]+)"/);
+  const viteBase = scriptBaseMatch ? scriptBaseMatch[1].replace(/\/assets\/.*/, '/') : '/';
+
   for (const route of routes) {
     console.log(`Prerendering ${route.path}...`);
 
@@ -1210,6 +1215,11 @@ async function prerender() {
         `<meta property="twitter:image:alt" content="${route.imageAlt || DEFAULT_IMAGE_ALT}" />`
       )
       .replace(/<\/head>/, () => {
+        // Hero image preload: injected only for the homepage to avoid "preloaded but not used" warnings on other pages.
+        const heroPreload =
+          route.path === '/'
+            ? `\n  <link rel="preload" as="image" href="${viteBase}images/comeinwereopensign.png" fetchpriority="high" media="(min-width: 768px)" />`
+            : '';
         const mainSchema = `<script type="application/ld+json">${buildStructuredData(route.path, { menuItems, services, locations, aggregateRating })}</script>`;
         const faqSchema =
           route.path === '/'
@@ -1219,7 +1229,7 @@ async function prerender() {
           route.path === '/' && aggregateRating?.ratingValue
             ? `\n  <script>window[${JSON.stringify(PLACES_GLOBAL_KEY)}]=${JSON.stringify(aggregateRating)}</script>`
             : '';
-        return `${mainSchema}${faqSchema}${placesScript}\n  </head>`;
+        return `${heroPreload}${mainSchema}${faqSchema}${placesScript}\n  </head>`;
       })
       .replace(
         '<div id="root"></div>',
