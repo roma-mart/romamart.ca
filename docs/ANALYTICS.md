@@ -24,6 +24,7 @@ All events are dispatched via `trackEvent(name, params)` from `src/utils/analyti
 - `contact` — Contact page phone link
 - `locations` — Locations page card phone link
 - `mobile_sticky` — Floating MobileCallCTA button
+- `home_contact` — Homepage contact section phone link
 
 ### `source` for `directions_click`
 - `contact` — Contact page directions link

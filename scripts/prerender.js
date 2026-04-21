@@ -645,13 +645,15 @@ const buildStructuredData = (routePath = '/', apiData = {}) => {
         'American Express',
         'Bitcoin',
       ],
-      currenciesAccepted: [COMPANY_DATA.defaults.currency, 'BTC'].join(', '),
+      currenciesAccepted: [COMPANY_DATA.defaults.currency, ...(COMPANY_DATA.defaults.cryptoCurrencies || [])].join(
+        ', '
+      ),
       areaServed: (() => {
         const cities =
           locations.length > 0 ? [...new Set(locations.map((loc) => loc.address?.city).filter(Boolean))] : null;
         return cities?.length > 0 ? cities.map((name) => ({ '@type': 'City', name })) : COMPANY_DATA.serviceArea;
       })(),
-      ...(aggregateRating?.ratingValue && aggregateRating?.reviewCount
+      ...(aggregateRating?.ratingValue != null && aggregateRating?.reviewCount != null
         ? {
             aggregateRating: {
               '@type': 'AggregateRating',

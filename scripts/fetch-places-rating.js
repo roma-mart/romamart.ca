@@ -52,7 +52,7 @@ export async function getAggregateRating() {
       reviewCount: json.userRatingCount ?? null,
       placeId: PLACE_ID,
     };
-    if (result.ratingValue !== null) {
+    if (result.ratingValue !== null && result.reviewCount !== null) {
       writeCache(result);
       return result;
     }

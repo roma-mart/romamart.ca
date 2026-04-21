@@ -37,18 +37,6 @@ const VARIANT_VIBRATION = {
   custom: 35,
 };
 
-// Per-variant analytics event (default, can be overridden)
-const VARIANT_ANALYTICS = {
-  order: 'order_cta',
-  nav: 'nav_click',
-  action: 'action_cta',
-  navlink: 'navlink_click',
-  icon: 'icon_click',
-  secondary: 'secondary_cta',
-  inverted: 'inverted_cta',
-  custom: 'custom_cta',
-};
-
 // Shared spring config — snappy with minimal overshoot (damping ratio ~0.875)
 const SPRING = { type: 'spring', stiffness: 400, damping: 35 };
 
@@ -345,14 +333,14 @@ const Button = React.forwardRef(
       if (typeof window !== 'undefined' && window.navigator && window.navigator.vibrate && vibrateStrength) {
         window.navigator.vibrate(vibrateStrength);
       }
-      // Analytics per variant
-      const eventToFire = analyticsEvent || VARIANT_ANALYTICS[variant];
-      if (eventToFire && typeof window !== 'undefined') {
-        if (typeof eventToFire === 'string') {
-          trackEvent(eventToFire);
+      // Analytics are opt-in: only fire when analyticsEvent is explicitly provided.
+      // Avoids undocumented default events and double-counting with caller trackEvent() calls.
+      if (analyticsEvent && typeof window !== 'undefined') {
+        if (typeof analyticsEvent === 'string') {
+          trackEvent(analyticsEvent);
         } else {
-          const { event, ...rest } = eventToFire;
-          trackEvent(event, rest);
+          const { event, ...rest } = analyticsEvent;
+          if (event) trackEvent(event, rest);
         }
       }
       if (onClick) onClick(e);
