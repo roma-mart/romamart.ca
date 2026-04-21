@@ -5,8 +5,9 @@ import { useCompanyData } from '../contexts/CompanyDataContext';
 import { normalizePhoneForTel } from '../utils/phone';
 import { trackEvent } from '../utils/analytics.js';
 import { shadows } from '../design/tokens.js';
+import { getBaseUrl } from '../utils/getAssetUrl';
 
-const BASE_URL = import.meta.env.BASE_URL;
+const BASE_URL = getBaseUrl();
 
 export default function MobileCallCTA() {
   const { companyData } = useCompanyData();

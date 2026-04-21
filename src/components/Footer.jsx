@@ -10,6 +10,7 @@ import TrustpilotWidget from './TrustpilotWidget';
 import { useLocationContext } from '../hooks/useLocationContext';
 import { useLocations } from '../contexts/LocationsContext';
 import { findNearestLocation } from '../utils/locationMath';
+import { getBaseUrl } from '../utils/getAssetUrl';
 import OrderCTA from './OrderCTA';
 import Button from './Button';
 import FooterReviews from './FooterReviews';
@@ -53,8 +54,7 @@ const SOCIAL_LINKS = [
 ];
 
 export default function Footer() {
-  const BASE_URL =
-    typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
+  const BASE_URL = getBaseUrl();
   const { userLocation } = useLocationContext();
   const { locations, selectedLocationId, selectLocation } = useLocations();
   const { companyData } = useCompanyData();

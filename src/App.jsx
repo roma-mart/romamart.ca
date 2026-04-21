@@ -7,6 +7,7 @@ import { ArrowRight, ExternalLink, MapPin } from 'lucide-react';
 // ...existing code...
 import { getPreferredLocation } from './utils/locationMath';
 import { useCompanyData } from './contexts/CompanyDataContext';
+import { PWA_UPDATE_DISMISSED_KEY } from './config/storageKeys';
 import { Logo } from './components/Logo';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -32,7 +33,7 @@ import PWAInstallPrompt from './components/PWAInstallPrompt';
 import PWAUpdatePrompt from './components/PWAUpdatePrompt';
 
 // dynamically resolve domain for assets
-import { getAssetUrl } from './utils/getAssetUrl';
+import { getAssetUrl, getBaseUrl } from './utils/getAssetUrl';
 
 // Code splitting: Lazy load page components
 const AccessibilityPage = lazy(() => import('./pages/AccessibilityPage'));
@@ -54,8 +55,7 @@ import TrustSignal from './components/TrustSignal';
 import CopyButton from './components/CopyButton';
 import { normalizePhoneForTel } from './utils/phone';
 
-const BASE_URL =
-  typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
+const BASE_URL = getBaseUrl();
 
 // --- CUSTOM COMPONENTS ---
 
@@ -674,7 +674,7 @@ function App() {
   const pathname = typeof window !== 'undefined' ? window.location.pathname.replace(BASE_URL, '/') : '/';
   const { companyData } = useCompanyData();
   const { updateAvailable, skipWaiting } = useServiceWorker();
-  const [updateDismissed, setUpdateDismissed] = useState(sessionStorage.getItem('pwa-update-dismissed') === 'true');
+  const [updateDismissed, setUpdateDismissed] = useState(sessionStorage.getItem(PWA_UPDATE_DISMISSED_KEY) === 'true');
   const isVisible = usePageVisibility();
 
   // Fetch menu data from API for homepage featured schemas + RoCafe section
@@ -764,10 +764,10 @@ function App() {
             data={{
               ...companyData.pwa?.webApplication,
               name: companyData.pwa?.webApplication?.name || companyData.dba || 'Roma Mart Convenience',
-              url: companyData.pwa?.webApplication?.url || 'https://romamart.ca',
+              url: companyData.pwa?.webApplication?.url || companyData.baseUrl,
               author: {
                 name: companyData.legalName || 'Roma Mart Corp.',
-                url: 'https://romamart.ca',
+                url: companyData.baseUrl,
               },
             }}
           />
@@ -779,7 +779,7 @@ function App() {
             data={{
               products: featuredSchemaItems.map((item) => ({
                 menuItem: item,
-                itemUrl: 'https://romamart.ca/rocafe/',
+                itemUrl: `${companyData.baseUrl}/rocafe/`,
                 priceInCents: schemaPriceInCents,
               })),
             }}
@@ -792,8 +792,8 @@ function App() {
             data={{
               services: featuredServices,
               options: {
-                serviceUrl: 'https://romamart.ca/services/',
-                providerUrl: 'https://romamart.ca',
+                serviceUrl: `${companyData.baseUrl}/services/`,
+                providerUrl: companyData.baseUrl,
               },
             }}
           />
@@ -909,7 +909,7 @@ function App() {
         updateAvailable={updateAvailable && !updateDismissed}
         onUpdate={skipWaiting}
         onDismiss={() => {
-          sessionStorage.setItem('pwa-update-dismissed', 'true');
+          sessionStorage.setItem(PWA_UPDATE_DISMISSED_KEY, 'true');
           setUpdateDismissed(true);
         }}
       />

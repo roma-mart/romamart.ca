@@ -6,12 +6,11 @@
 
 import { useEffect } from 'react';
 import { useGeolocation } from './useBrowserFeatures';
-
-const SESSION_REQUESTED_KEY = 'roma_mart_location_requested';
+import { SESSION_LOCATION_REQUESTED_KEY } from '../config/storageKeys';
 
 export const useAutoLocation = (onLocationFound, options = {}) => {
   const {
-    autoRequest = true,  // Whether to auto-request on mount
+    autoRequest = true, // Whether to auto-request on mount
   } = options;
 
   const { getCurrentLocation, location, loading, error, canUseGeolocation } = useGeolocation();
@@ -21,12 +20,12 @@ export const useAutoLocation = (onLocationFound, options = {}) => {
     if (!autoRequest || !canUseGeolocation) return;
 
     // Check if we already requested this session
-    const alreadyRequested = sessionStorage.getItem(SESSION_REQUESTED_KEY);
+    const alreadyRequested = sessionStorage.getItem(SESSION_LOCATION_REQUESTED_KEY);
     if (alreadyRequested) return;
 
     // Request fresh location (browser caches the permission)
     getCurrentLocation();
-    sessionStorage.setItem(SESSION_REQUESTED_KEY, 'true');
+    sessionStorage.setItem(SESSION_LOCATION_REQUESTED_KEY, 'true');
   }, [autoRequest, canUseGeolocation, getCurrentLocation]);
 
   // Notify parent when location is received (in-memory only)
@@ -35,8 +34,8 @@ export const useAutoLocation = (onLocationFound, options = {}) => {
       onLocationFound({
         coords: {
           latitude: location.latitude,
-          longitude: location.longitude
-        }
+          longitude: location.longitude,
+        },
       });
     }
   }, [location, onLocationFound]);

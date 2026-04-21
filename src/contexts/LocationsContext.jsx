@@ -3,6 +3,7 @@ import { LOCATIONS } from '../data/locations';
 import { normalizeLocation } from '../utils/normalize';
 import { circuitBreakers } from '../utils/apiCircuitBreaker';
 import { fetchWithEtag } from '../utils/api';
+import { SELECTED_LOCATION_KEY } from '../config/storageKeys';
 
 /**
  * LocationsContext - Single source of truth for locations data and selection
@@ -16,7 +17,6 @@ import { fetchWithEtag } from '../utils/api';
 const LocationsContext = createContext();
 
 const API_PATH = '/api/v1/public-locations';
-const STORAGE_KEY = 'roma_mart_selected_location';
 
 /**
  * LocationsProvider - Wraps app to provide shared locations state
@@ -33,7 +33,7 @@ export function LocationsProvider({ children }) {
   // Selected location state (persisted in localStorage)
   const [selectedLocationId, setSelectedLocationId] = useState(() => {
     try {
-      return localStorage.getItem(STORAGE_KEY) || 'auto';
+      return localStorage.getItem(SELECTED_LOCATION_KEY) || 'auto';
     } catch {
       return 'auto';
     }
@@ -43,9 +43,9 @@ export function LocationsProvider({ children }) {
     setSelectedLocationId(locationId);
     try {
       if (locationId === 'auto') {
-        localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem(SELECTED_LOCATION_KEY);
       } else {
-        localStorage.setItem(STORAGE_KEY, locationId);
+        localStorage.setItem(SELECTED_LOCATION_KEY, locationId);
       }
     } catch {
       /* Safari private mode */
@@ -139,7 +139,7 @@ export function LocationsProvider({ children }) {
   useEffect(() => {
     if (selectedLocationId === 'auto') {
       try {
-        localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem(SELECTED_LOCATION_KEY);
       } catch {
         /* Safari private mode */
       }

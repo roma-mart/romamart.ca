@@ -5,15 +5,16 @@ import ShareButton from '../components/ShareButton';
 import Button from '../components/Button';
 import ImageCarousel from '../components/ImageCarousel';
 import StructuredData from '../components/StructuredData';
-import { getAssetUrl } from '../utils/getAssetUrl';
+import { getAssetUrl, getBaseUrl } from '../utils/getAssetUrl';
 import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
+import { useCompanyData } from '../contexts/CompanyDataContext';
 
 const AboutPage = () => {
+  const { companyData } = useCompanyData();
   const textColor = { color: 'var(--color-text)' };
   const mutedTextColor = { color: 'var(--color-text-muted)' };
 
-  const BASE_URL =
-    typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
+  const BASE_URL = getBaseUrl();
 
   // Hero images for carousel
   const heroImages = useMemo(
@@ -128,13 +129,13 @@ const AboutPage = () => {
           name="description"
           content="Learn about Roma Mart's story, mission, and the team dedicated to serving the Sarnia community with quality products and exceptional service."
         />
-        <link rel="canonical" href="https://romamart.ca/about/" />
+        <link rel="canonical" href={`${companyData.baseUrl}/about/`} />
       </Helmet>
 
       {/* Breadcrumb Schema */}
       <StructuredData
         type="BreadcrumbList"
-        data={{ breadcrumbs: buildBreadcrumbArray('About', 'https://romamart.ca/about/') }}
+        data={{ breadcrumbs: buildBreadcrumbArray('About', `${companyData.baseUrl}/about/`) }}
       />
 
       {/* Breadcrumb Navigation */}

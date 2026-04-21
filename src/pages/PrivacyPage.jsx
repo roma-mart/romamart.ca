@@ -4,6 +4,7 @@ import { ChevronRight } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
 import StructuredData from '../components/StructuredData';
 import { useCompanyData } from '../contexts/CompanyDataContext';
+import { getBaseUrl } from '../utils/getAssetUrl';
 import { normalizePhoneForTel } from '../utils/phone';
 import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 
@@ -12,8 +13,7 @@ const PrivacyPage = () => {
   const textColor = { color: 'var(--color-text)' };
   const mutedTextColor = { color: 'var(--color-text-muted)' };
 
-  const BASE_URL =
-    typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
+  const BASE_URL = getBaseUrl();
 
   return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>
@@ -23,13 +23,13 @@ const PrivacyPage = () => {
           name="description"
           content="Learn how Roma Mart Convenience collects, uses, and protects your personal information. PIPEDA compliant privacy policy."
         />
-        <link rel="canonical" href="https://romamart.ca/privacy/" />
+        <link rel="canonical" href={`${companyData.baseUrl}/privacy/`} />
       </Helmet>
 
       {/* Breadcrumb Schema */}
       <StructuredData
         type="BreadcrumbList"
-        data={{ breadcrumbs: buildBreadcrumbArray('Privacy', 'https://romamart.ca/privacy/') }}
+        data={{ breadcrumbs: buildBreadcrumbArray('Privacy', `${companyData.baseUrl}/privacy/`) }}
       />
 
       {/* Breadcrumb */}

@@ -8,12 +8,14 @@ import Button from '../components/Button';
 import { formatDistance, getPreferredLocations } from '../utils/locationMath';
 import { useLocations } from '../contexts/LocationsContext';
 import { useServices } from '../contexts/ServicesContext';
+import { useCompanyData } from '../contexts/CompanyDataContext';
 import ImageCarousel from '../components/ImageCarousel';
 import LiveHoursDisplay from '../components/LiveHoursDisplay';
 import { useAutoLocation } from '../hooks/useAutoLocation';
 import StructuredData from '../components/StructuredData';
-import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
+import { getBaseUrl } from '../utils/getAssetUrl';
 import { normalizePhoneForTel } from '../utils/phone';
+import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 
 /** Build a flat image list from a location's photos object */
 const getLocationImages = (photos, locationName) => {
@@ -37,8 +39,8 @@ const getLocationImages = (photos, locationName) => {
 const LocationsPage = () => {
   // Fetch locations from API with fallback to static data
   const { locations: allLocations, loading, error, refetch } = useLocations();
-  // Fetch services for cross-referencing service names
   const { services: allServices } = useServices();
+  const { companyData } = useCompanyData();
 
   // Filter to only active locations (status === 'open')
   const activeLocations = allLocations.filter((loc) => loc.status === 'open');
@@ -49,8 +51,7 @@ const LocationsPage = () => {
   const textColor = { color: 'var(--color-text)' };
   const mutedTextColor = { color: 'var(--color-text-muted)' };
 
-  const BASE_URL =
-    typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
+  const BASE_URL = getBaseUrl();
 
   const handleAutoLocation = useCallback((pos) => {
     const coords = pos?.coords;
@@ -108,13 +109,13 @@ const LocationsPage = () => {
           name="description"
           content="Find Roma Mart convenience store locations in Sarnia, Ontario. Get directions, hours, and contact information."
         />
-        <link rel="canonical" href="https://romamart.ca/locations/" />
+        <link rel="canonical" href={`${companyData.baseUrl}/locations/`} />
       </Helmet>
 
       {/* Breadcrumb Schema */}
       <StructuredData
         type="BreadcrumbList"
-        data={{ breadcrumbs: buildBreadcrumbArray('Locations', 'https://romamart.ca/locations/') }}
+        data={{ breadcrumbs: buildBreadcrumbArray('Locations', `${companyData.baseUrl}/locations/`) }}
       />
 
       {/* Location List Schema */}

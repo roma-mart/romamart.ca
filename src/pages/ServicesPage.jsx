@@ -4,12 +4,15 @@ import { ChevronRight } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
 import StandardizedItem from '../components/StandardizedItem';
 import { useServices } from '../contexts/ServicesContext';
+import { useCompanyData } from '../contexts/CompanyDataContext';
 import StructuredData from '../components/StructuredData';
+import { getBaseUrl } from '../utils/getAssetUrl';
 import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 
 const ServicesPage = () => {
   // Fetch services from API with fallback to static data
   const { services, loading, error, refetch } = useServices();
+  const { companyData } = useCompanyData();
 
   const COLORS = {
     navy: 'var(--color-primary)',
@@ -19,8 +22,7 @@ const ServicesPage = () => {
   const textColor = { color: 'var(--color-text)' };
   const mutedTextColor = { color: 'var(--color-text-muted)' };
 
-  const BASE_URL =
-    typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
+  const BASE_URL = getBaseUrl();
 
   // Sort services by availability, then alphabetically
   const availabilityOrder = {
@@ -44,13 +46,13 @@ const ServicesPage = () => {
           name="description"
           content="Roma Mart offers ATM, Bitcoin ATM, printing, package services, halal meat, money transfer, gift cards, perfumes, tobacco products, and more in Sarnia, Ontario."
         />
-        <link rel="canonical" href="https://romamart.ca/services/" />
+        <link rel="canonical" href={`${companyData.baseUrl}/services/`} />
       </Helmet>
 
       {/* Breadcrumb Schema */}
       <StructuredData
         type="BreadcrumbList"
-        data={{ breadcrumbs: buildBreadcrumbArray('Services', 'https://romamart.ca/services/') }}
+        data={{ breadcrumbs: buildBreadcrumbArray('Services', `${companyData.baseUrl}/services/`) }}
       />
 
       {/* Service List Schema */}
@@ -60,8 +62,8 @@ const ServicesPage = () => {
           data={{
             services: services,
             options: {
-              serviceUrl: 'https://romamart.ca/services/',
-              providerUrl: 'https://romamart.ca',
+              serviceUrl: `${companyData.baseUrl}/services/`,
+              providerUrl: companyData.baseUrl,
             },
           }}
         />

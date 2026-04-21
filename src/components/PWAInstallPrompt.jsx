@@ -10,15 +10,16 @@ import { Download } from 'lucide-react';
 import { useLocalStorage, useVibration } from '../hooks/useBrowserFeatures';
 import Button from './Button';
 import PWAPromptShell from './PWAPromptShell';
+import { PWA_INSTALL_DISMISSED_KEY, PWA_INSTALLED_KEY, PWA_DISMISSED_SESSION_KEY } from '../config/storageKeys';
 
 const PWAInstallPrompt = () => {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showPrompt, setShowPrompt] = useState(false);
   const [engagementScore, setEngagementScore] = useState(0);
-  const [lastDismissed, setLastDismissed] = useLocalStorage('pwa-install-dismissed', null);
-  const [isInstalled, setIsInstalled] = useLocalStorage('pwa-installed', false);
+  const [lastDismissed, setLastDismissed] = useLocalStorage(PWA_INSTALL_DISMISSED_KEY, null);
+  const [isInstalled, setIsInstalled] = useLocalStorage(PWA_INSTALLED_KEY, false);
   const [dismissedThisSession, setDismissedThisSession] = useState(
-    sessionStorage.getItem('pwa-dismissed-session') === 'true'
+    sessionStorage.getItem(PWA_DISMISSED_SESSION_KEY) === 'true'
   );
   const { vibrate, canVibrate } = useVibration();
 
@@ -167,7 +168,7 @@ const PWAInstallPrompt = () => {
   const handleDismiss = useCallback(() => {
     setShowPrompt(false);
     setDismissedThisSession(true);
-    sessionStorage.setItem('pwa-dismissed-session', 'true');
+    sessionStorage.setItem(PWA_DISMISSED_SESSION_KEY, 'true');
     setLastDismissed(Date.now());
 
     trackEvent('pwa_install_dismissed', { engagement_score: engagementScore });

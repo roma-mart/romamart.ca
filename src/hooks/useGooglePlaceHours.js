@@ -13,6 +13,7 @@
 import { useState, useEffect, useCallback, startTransition } from 'react';
 import { circuitBreakers } from '../utils/apiCircuitBreaker';
 import { getUserHour12Preference, formatTimeFrom24h } from '../utils/timeFormat';
+import { getEnvVar } from '../utils/getAssetUrl';
 import { groupDayMap } from '../utils/dateHelpers';
 
 const pad2 = (value) => value.toString().padStart(2, '0');
@@ -105,7 +106,7 @@ const extractSpecialHours = (placeData) => {
 // Extract API key from environment variable
 // This key powers: Places API (New), Google Maps Embed API, Maps JavaScript API
 // SECURITY: In Google Cloud Console, restrict key to only these APIs
-const GOOGLE_API_KEY = import.meta.env.VITE_GOOGLE_PLACES_API_KEY;
+const GOOGLE_API_KEY = getEnvVar('VITE_GOOGLE_PLACES_API_KEY');
 
 if (!GOOGLE_API_KEY || GOOGLE_API_KEY === 'YOUR_API_KEY_HERE') {
   if (import.meta.env.DEV) {

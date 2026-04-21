@@ -9,13 +9,14 @@ import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 import LiveHoursDisplay from '../components/LiveHoursDisplay';
 import ContactForm from '../components/ContactForm';
 import { useCompanyData } from '../contexts/CompanyDataContext';
+import { getBaseUrl } from '../utils/getAssetUrl';
 import { normalizePhoneForTel } from '../utils/phone';
 
 const ContactPage = () => {
   const { companyData } = useCompanyData();
   const textColor = { color: 'var(--color-text)' };
   const mutedTextColor = { color: 'var(--color-text-muted)' };
-  const BASE_URL = import.meta.env.BASE_URL || '/';
+  const BASE_URL = getBaseUrl();
 
   return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>
@@ -25,13 +26,13 @@ const ContactPage = () => {
           name="description"
           content="Get in touch with Roma Mart. Visit us, call, or send a message. We're here to help!"
         />
-        <link rel="canonical" href="https://romamart.ca/contact/" />
+        <link rel="canonical" href={`${companyData.baseUrl}/contact/`} />
       </Helmet>
 
       {/* Breadcrumb Schema */}
       <StructuredData
         type="BreadcrumbList"
-        data={{ breadcrumbs: buildBreadcrumbArray('Contact', 'https://romamart.ca/contact/') }}
+        data={{ breadcrumbs: buildBreadcrumbArray('Contact', `${companyData.baseUrl}/contact/`) }}
       />
 
       <nav aria-label="Breadcrumb" className="max-w-7xl mx-auto px-4 mb-8">

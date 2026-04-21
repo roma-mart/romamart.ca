@@ -4,13 +4,13 @@
  */
 import { NAVIGATION_LINKS } from '../config/navigation';
 import { useCompanyData } from '../contexts/CompanyDataContext';
+import { getBaseUrl } from '../utils/getAssetUrl';
 
 const LEGAL_SLUGS = ['privacy', 'terms', 'cookies', 'accessibility', 'return-policy'];
 
 export default function FooterLinks() {
   const { companyData } = useCompanyData();
-  const BASE_URL =
-    typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
+  const BASE_URL = getBaseUrl();
 
   const pageLinks = NAVIGATION_LINKS.filter((link) => {
     if (!link.showIn.footer) return false;
