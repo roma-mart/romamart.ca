@@ -3,6 +3,7 @@
  * Main footer component — orchestrates sub-components and renders brand/social/copyright sections.
  */
 import React, { useCallback, useMemo } from 'react';
+import { trackEvent } from '../utils/analytics.js';
 import { useCompanyData } from '../contexts/CompanyDataContext';
 import { Logo } from './Logo';
 import TrustpilotWidget from './TrustpilotWidget';
@@ -88,8 +89,7 @@ export default function Footer() {
   const socialHandlers = useMemo(() => {
     const handlers = {};
     SOCIAL_LINKS.forEach((link) => {
-      handlers[link.label.toLowerCase()] = () =>
-        window.dataLayer?.push({ event: 'social_click', platform: link.label.toLowerCase() });
+      handlers[link.label.toLowerCase()] = () => trackEvent('social_click', { platform: link.label.toLowerCase() });
     });
     return handlers;
   }, []);

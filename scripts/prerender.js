@@ -1,11 +1,15 @@
 import fs from 'fs';
 import path from 'path';
 import { createHash } from 'crypto';
+import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import COMPANY_DATA from '../src/config/company_data.js';
 import { buildMenuItemSchema } from '../src/schemas/menuItemSchema.js';
 import { buildServiceListSchema } from '../src/schemas/serviceSchema.js';
 import { buildLocationListSchema } from '../src/schemas/locationSchema.js';
+import { buildFAQSchema } from '../src/schemas/faq.js';
+import { writeRedirects } from './generate-redirects.js';
+import { getAggregateRating } from './fetch-places-rating.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -28,92 +32,123 @@ const routes = [
   {
     path: '/',
     title: 'Home',
+    fullTitle: 'Roma Mart \u2014 Sarnia Convenience Store | Halal Meat, Bitcoin ATM, Coffee',
     description:
-      'Roma Mart Convenience - Groceries, Global Snacks, Halal Meat, Coffee & More in Sarnia, ON. ATM, Bitcoin, Lottery, and Tobacco services available.',
+      "Sarnia's convenience store on Wellington St. Halal meat, Bitcoin ATM, global snacks, RoCaf\u00e9 coffee, lottery & tobacco. Open 7 days.",
     ogImage: DEFAULT_OG_IMAGE,
     twitterImage: DEFAULT_TW_IMAGE,
     imageAlt: DEFAULT_IMAGE_ALT,
+    sourceFile: 'src/App.jsx',
   },
   {
     path: '/services',
     title: 'Services',
+    fullTitle: 'Services at Roma Mart Sarnia \u2014 ATM, Bitcoin, Lottery, Printing, Halal',
     description:
-      'Explore Roma Mart services: ATM, Bitcoin ATM, printing, money transfer, lottery, and more in Sarnia, ON.',
+      '15 services in one stop in Sarnia: ATM, Bitcoin ATM, lottery, halal meat counter, printing, photocopying, and more. Open daily on Wellington St.',
     ogImage: `${BASE_URL}/images/romamart-interior1.png`,
     twitterImage: `${BASE_URL}/images/romamart-interior1.png`,
     imageAlt: 'Roma Mart interior showcasing products and services',
+    sourceFile: 'src/pages/ServicesPage.jsx',
   },
   {
     path: '/rocafe',
-    title: 'RoCafé Menu',
-    description: 'Discover RoCafé coffee, bubble tea, matcha lattes, and signature drinks at Roma Mart in Sarnia, ON.',
+    title: 'RoCaf\u00e9 Menu',
+    fullTitle: 'RoCaf\u00e9 \u2014 Coffee, Matcha & Smoothies in Sarnia | Roma Mart',
+    description:
+      'Fresh espresso, matcha lattes, fruit smoothies and pastries at RoCaf\u00e9 inside Roma Mart Sarnia. Open daily on Wellington St.',
     ogImage: `${BASE_URL}/rocafe-logo.png`,
     twitterImage: `${BASE_URL}/rocafe-logo.png`,
-    imageAlt: 'RoCafé logo and beverage branding',
+    imageAlt: 'RoCaf\u00e9 logo and beverage branding',
+    sourceFile: 'src/pages/RoCafePage.jsx',
   },
   {
     path: '/return-policy',
     title: 'Return Policy',
-    description: 'Roma Mart Return Policy - All sales final except for faulty products reported within 24 hours.',
+    fullTitle: 'Return Policy | Roma Mart Sarnia',
+    description:
+      'Roma Mart return policy: all sales final except faulty products reported within 24 hours of purchase.',
     ogImage: DEFAULT_OG_IMAGE,
     twitterImage: DEFAULT_TW_IMAGE,
     imageAlt: DEFAULT_IMAGE_ALT,
+    sourceFile: 'src/pages/ReturnPolicyPage.jsx',
   },
   {
     path: '/locations',
     title: 'Locations',
-    description: 'Find Roma Mart locations, hours, and directions in Sarnia, Ontario.',
+    fullTitle: 'Roma Mart Locations \u2014 189 Wellington St, Sarnia ON',
+    description:
+      'Find Roma Mart in Sarnia at 189 Wellington Street. Hours, parking, amenities, directions and photos. Wheelchair accessible with free Wi-Fi.',
     ogImage: `${BASE_URL}/images/romamart-opening1.png`,
     twitterImage: `${BASE_URL}/images/romamart-opening1.png`,
     imageAlt: 'Roma Mart storefront exterior',
+    sourceFile: 'src/pages/LocationsPage.jsx',
   },
   {
     path: '/contact',
     title: 'Contact',
-    description: 'Get in touch with Roma Mart Convenience in Sarnia, ON. Phone, email, and directions.',
+    fullTitle: 'Contact Roma Mart Sarnia \u2014 Phone, Email, Hours',
+    description:
+      'Call (382) 342-2000 or email contact@romamart.ca. Visit us at 189 Wellington Street, Sarnia ON. Open 7 days.',
     ogImage: `${BASE_URL}/images/romamart-interior2.png`,
     twitterImage: `${BASE_URL}/images/romamart-interior2.png`,
     imageAlt: 'Roma Mart interior with shelves and signage',
+    sourceFile: 'src/pages/ContactPage.jsx',
   },
   {
     path: '/about',
     title: 'About Us',
-    description: 'Learn about Roma Mart Convenience, our community focus, and services in Sarnia, ON.',
+    fullTitle: 'About Roma Mart \u2014 Sarnia\u2019s Community Convenience Store',
+    description:
+      'Family-owned convenience store serving Sarnia since 2025. Halal meat, Bitcoin ATM, RoCaf\u00e9 coffee, global snacks from South Asia and beyond.',
     ogImage: `${BASE_URL}/images/romamart-opening2.png`,
     twitterImage: `${BASE_URL}/images/romamart-opening2.png`,
     imageAlt: 'Roma Mart grand opening event',
+    sourceFile: 'src/pages/AboutPage.jsx',
   },
   {
     path: '/accessibility',
     title: 'Accessibility',
-    description: 'Roma Mart Accessibility Statement - WCAG 2.2 Level AA compliance and accessibility commitments.',
+    fullTitle: 'Accessibility Statement | Roma Mart Sarnia',
+    description:
+      'Roma Mart is committed to WCAG 2.2 Level AA compliance. Learn about our accessibility features and how to contact us with accommodation requests.',
     ogImage: DEFAULT_OG_IMAGE,
     twitterImage: DEFAULT_TW_IMAGE,
     imageAlt: DEFAULT_IMAGE_ALT,
+    sourceFile: 'src/pages/AccessibilityPage.jsx',
   },
   {
     path: '/privacy',
     title: 'Privacy',
-    description: 'Roma Mart Privacy Policy - How we collect, use, and protect your information.',
+    fullTitle: 'Privacy Policy | Roma Mart Sarnia',
+    description:
+      'Roma Mart Privacy Policy \u2014 how we collect, use, and protect your personal information when you visit our website or use our services.',
     ogImage: DEFAULT_OG_IMAGE,
     twitterImage: DEFAULT_TW_IMAGE,
     imageAlt: DEFAULT_IMAGE_ALT,
+    sourceFile: 'src/pages/PrivacyPage.jsx',
   },
   {
     path: '/terms',
     title: 'Terms',
-    description: 'Roma Mart Terms of Service and usage policies.',
+    fullTitle: 'Terms of Service | Roma Mart Sarnia',
+    description:
+      'Roma Mart Terms of Service \u2014 the rules governing use of our website and in-store services at our Sarnia, ON location.',
     ogImage: DEFAULT_OG_IMAGE,
     twitterImage: DEFAULT_TW_IMAGE,
     imageAlt: DEFAULT_IMAGE_ALT,
+    sourceFile: 'src/pages/TermsPage.jsx',
   },
   {
     path: '/cookies',
     title: 'Cookies',
-    description: 'Roma Mart Cookie Policy and preferences.',
+    fullTitle: 'Cookie Policy | Roma Mart Sarnia',
+    description:
+      'Roma Mart uses cookies to improve your experience and analyze traffic. Learn what we collect and how to manage your preferences.',
     ogImage: DEFAULT_OG_IMAGE,
     twitterImage: DEFAULT_TW_IMAGE,
     imageAlt: DEFAULT_IMAGE_ALT,
+    sourceFile: 'src/pages/CookiesPage.jsx',
   },
 ];
 
@@ -545,7 +580,7 @@ function buildProductListSchema(menuItems, featuredOnly = false) {
 }
 
 const buildStructuredData = (routePath = '/', apiData = {}) => {
-  const { menuItems = [], services = [], locations = [] } = apiData;
+  const { menuItems = [], services = [], locations = [], aggregateRating = null } = apiData;
   const location = COMPANY_DATA.location;
   const address = location?.address || {};
   const contact = location?.contact || {};
@@ -620,6 +655,24 @@ const buildStructuredData = (routePath = '/', apiData = {}) => {
         'American Express',
         'Bitcoin',
       ],
+      currenciesAccepted: 'CAD, BTC',
+      areaServed: [
+        { '@type': 'City', name: 'Sarnia' },
+        { '@type': 'City', name: 'Point Edward' },
+        { '@type': 'City', name: 'Corunna' },
+        { '@type': 'City', name: "Bright's Grove" },
+      ],
+      ...(aggregateRating?.ratingValue && aggregateRating?.reviewCount
+        ? {
+            aggregateRating: {
+              '@type': 'AggregateRating',
+              ratingValue: aggregateRating.ratingValue,
+              reviewCount: aggregateRating.reviewCount,
+              bestRating: 5,
+              worstRating: 1,
+            },
+          }
+        : {}),
     },
     {
       '@type': 'WebSite',
@@ -698,21 +751,22 @@ const buildStructuredData = (routePath = '/', apiData = {}) => {
   return JSON.stringify(schema);
 };
 
-const buildSitemapXml = (routeList, lastModDate) => {
+const getGitLastMod = (sourceFile, fallback) => {
+  try {
+    const result = execSync(`git log -1 --format=%cI -- ${sourceFile}`, { encoding: 'utf-8' }).trim();
+    return result ? result.slice(0, 10) : fallback;
+  } catch {
+    return fallback;
+  }
+};
+
+const buildSitemapXml = (routeList, buildDate) => {
   const urls = routeList
     .map((route) => {
-      const priority = route.path === '/' ? '1.0' : '0.8';
-      const changefreq = route.path === '/' || route.path === '/rocafe' ? 'weekly' : 'monthly';
+      const lastmod = route.sourceFile ? getGitLastMod(route.sourceFile, buildDate) : buildDate;
       // Trailing slash on all URLs to match canonical links and served dir/index.html structure
       const loc = route.path === '/' ? `${BASE_URL}/` : `${BASE_URL}${route.path}/`;
-      return (
-        `  <url>\n` +
-        `    <loc>${loc}</loc>\n` +
-        `    <lastmod>${lastModDate}</lastmod>\n` +
-        `    <changefreq>${changefreq}</changefreq>\n` +
-        `    <priority>${priority}</priority>\n` +
-        `  </url>`
-      );
+      return `  <url>\n` + `    <loc>${loc}</loc>\n` + `    <lastmod>${lastmod}</lastmod>\n` + `  </url>`;
     })
     .join('\n');
 
@@ -907,8 +961,8 @@ function buildStaticContent(routePath, apiData = {}) {
               .join('');
       return (
         `<header>` +
-        `<h1>Your Daily Stop &amp; Go</h1>` +
-        `<p>Experience Sarnia's newest convenience destination. From daily essentials to premium coffee, we have what you need.</p>` +
+        `<h1>Sarnia Convenience Store \u2014 Roma Mart on Wellington St</h1>` +
+        `<p>Your Sarnia convenience store for halal meat, Bitcoin ATM, RoCaf\u00e9 coffee, global snacks, lottery and tobacco. Open 7 days on Wellington Street.</p>` +
         `</header>` +
         `<main>` +
         `<section><h2>Our Services</h2><ul>${serviceList}</ul></section>` +
@@ -936,8 +990,8 @@ function buildStaticContent(routePath, apiData = {}) {
       }
       return (
         `<header>` +
-        `<h1>Our Services</h1>` +
-        `<p>Roma Mart is your one-stop convenience store offering a wide range of services to make your life easier. From financial services to everyday essentials, we've got you covered.</p>` +
+        `<h1>Services at Roma Mart \u2014 Sarnia Convenience Store</h1>` +
+        `<p>15 services in one stop at our Sarnia convenience store: ATM, Bitcoin ATM, halal meat counter, lottery, printing, photocopying, money transfer, and more.</p>` +
         `</header>` +
         `<main>${serviceContent}</main>`
       );
@@ -994,8 +1048,8 @@ function buildStaticContent(routePath, apiData = {}) {
       }
       return (
         `<header>` +
-        `<h1>Our Locations</h1>` +
-        `<p>Visit us at any of our convenient locations. We're here to serve you with quality products and exceptional service.</p>` +
+        `<h1>Roma Mart Location \u2014 189 Wellington Street, Sarnia ON</h1>` +
+        `<p>Find Roma Mart at 3-189 Wellington Street, Sarnia ON. Free parking, wheelchair accessible, open 7 days a week.</p>` +
         `</header>` +
         `<main>${locationContent}</main>`
       );
@@ -1098,10 +1152,11 @@ async function prerender() {
 
   // Fetch all API data in parallel for maximum efficiency
   console.log('\n📡 Fetching API data for prerendering...\n');
-  const [menuItems, services, locations] = await Promise.all([
+  const [menuItems, services, locations, aggregateRating] = await Promise.all([
     fetchMenuData(),
     fetchServicesData(),
     fetchLocationsData(),
+    getAggregateRating(),
   ]);
   console.log('\n✓ API data fetching complete\n');
 
@@ -1126,18 +1181,13 @@ async function prerender() {
     // Non-root routes are served as dir/index.html so canonical URL needs trailing slash
     // Root route: BASE_URL + '/' to match <link rel="canonical" href="https://romamart.ca/" />
     const absoluteUrl = route.path === '/' ? `${BASE_URL}/` : `${BASE_URL}${route.path}/`;
+    const pageTitle = route.fullTitle || `Roma Mart - ${route.title} | Groceries, Coffee & More in Sarnia, ON`;
     const html = indexTemplate
-      .replace(
-        /<title>[^<]*<\/title>/,
-        `<title>Roma Mart - ${route.title} | Groceries, Coffee & More in Sarnia, ON</title>`
-      )
-      .replace(
-        /<meta property="og:title" content="[^"]*" \/>/,
-        `<meta property="og:title" content="Roma Mart - ${route.title} | Groceries, Coffee & More in Sarnia, ON" />`
-      )
+      .replace(/<title>[^<]*<\/title>/, `<title>${pageTitle}</title>`)
+      .replace(/<meta property="og:title" content="[^"]*" \/>/, `<meta property="og:title" content="${pageTitle}" />`)
       .replace(
         /<meta property="twitter:title" content="[^"]*" \/>/,
-        `<meta property="twitter:title" content="Roma Mart - ${route.title} | Groceries, Coffee & More in Sarnia, ON" />`
+        `<meta property="twitter:title" content="${pageTitle}" />`
       )
       .replace(
         /<meta name="description" content="[^"]*" \/>/,
@@ -1173,10 +1223,14 @@ async function prerender() {
         /<meta property="twitter:image:alt" content="[^"]*" \/>/,
         `<meta property="twitter:image:alt" content="${route.imageAlt || DEFAULT_IMAGE_ALT}" />`
       )
-      .replace(
-        /<\/head>/,
-        `<script type="application/ld+json">${buildStructuredData(route.path, { menuItems, services, locations })}</script>\n  </head>`
-      )
+      .replace(/<\/head>/, () => {
+        const mainSchema = `<script type="application/ld+json">${buildStructuredData(route.path, { menuItems, services, locations, aggregateRating })}</script>`;
+        const faqSchema =
+          route.path === '/'
+            ? `\n  <script type="application/ld+json">${JSON.stringify(buildFAQSchema())}</script>`
+            : '';
+        return `${mainSchema}${faqSchema}\n  </head>`;
+      })
       .replace(
         '<div id="root"></div>',
         `<div id="root">${buildStaticContent(route.path, { menuItems, services, locations })}</div>`
@@ -1190,6 +1244,8 @@ async function prerender() {
   const sitemapXml = buildSitemapXml(routes, today);
   const sitemapPath = path.join(distPath, 'sitemap.xml');
   fs.writeFileSync(sitemapPath, sitemapXml);
+
+  writeRedirects(distPath);
 
   console.log('\n✓ Prerendering complete!');
 }

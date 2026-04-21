@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { trackEvent } from '../utils/analytics.js';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Menu,
@@ -145,13 +146,7 @@ export default function Navbar({ currentPage = 'home' }) {
   };
 
   const trackOrderClick = useCallback((location) => {
-    if (window.dataLayer) {
-      window.dataLayer.push({
-        event: 'order_cta_click',
-        cta_location: location,
-        cta_text: 'Order Online',
-      });
-    }
+    trackEvent('order_cta_click', { cta_location: location, cta_text: 'Order Online' });
   }, []);
 
   const toggleMenu = useCallback(() => setIsOpen((prev) => !prev), []);

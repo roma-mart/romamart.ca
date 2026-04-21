@@ -1,4 +1,5 @@
 import React from 'react';
+import { trackEvent } from '../utils/analytics.js';
 import { Helmet } from 'react-helmet-async';
 import { ChevronRight, MapPin, Phone, Clock, Mail } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
@@ -95,6 +96,9 @@ const ContactPage = () => {
                     aria-label="Get directions to Roma Mart"
                     className="inline-block mt-2 font-inter text-sm font-semibold hover:underline"
                     style={{ color: 'var(--color-accent)' }}
+                    onClick={() =>
+                      trackEvent('directions_click', { location_id: companyData.location?.id, source: 'contact' })
+                    }
                   >
                     Get Directions →
                   </a>
@@ -117,6 +121,9 @@ const ContactPage = () => {
                       href={`tel:${normalizePhoneForTel(companyData.location?.contact?.phone)}`}
                       className="hover:underline"
                       style={{ color: 'var(--color-accent)' }}
+                      onClick={() =>
+                        trackEvent('phone_click', { location_id: companyData.location?.id, source: 'contact' })
+                      }
                     >
                       {companyData.location?.contact?.phone}
                     </a>

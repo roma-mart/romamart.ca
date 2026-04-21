@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { trackEvent } from '../utils/analytics.js';
 import { Helmet } from 'react-helmet-async';
 import { ChevronRight, MapPin, Phone, ExternalLink, Building2 } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
@@ -261,6 +262,12 @@ const LocationsPage = () => {
                               rel="noopener noreferrer"
                               className="inline-flex items-center gap-1 font-inter text-sm font-semibold hover:underline"
                               style={{ color: 'var(--color-accent)' }}
+                              onClick={() =>
+                                trackEvent('directions_click', {
+                                  location_id: location.id,
+                                  source: 'locations_address',
+                                })
+                              }
                             >
                               Get Directions <ExternalLink size={14} />
                             </a>
@@ -300,6 +307,9 @@ const LocationsPage = () => {
                               href={`tel:${normalizePhoneForTel(location.phone)}`}
                               className="font-inter hover:underline"
                               style={{ color: 'var(--color-accent)' }}
+                              onClick={() =>
+                                trackEvent('phone_click', { location_id: location.id, source: 'locations' })
+                              }
                             >
                               {location.phone}
                             </a>
@@ -395,6 +405,12 @@ const LocationsPage = () => {
                               className="text-xs font-semibold hover:underline focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:rounded"
                               style={{ color: 'var(--color-accent)' }}
                               aria-label={`Open ${location.name} in Google Maps`}
+                              onClick={() =>
+                                trackEvent('directions_click', {
+                                  location_id: location.id,
+                                  source: 'locations_map_inline',
+                                })
+                              }
                             >
                               Open in Google Maps
                             </a>
@@ -414,6 +430,12 @@ const LocationsPage = () => {
                             rel="noopener noreferrer"
                             className="px-4 py-2 rounded-full text-sm font-semibold focus-visible:ring-2 focus-visible:ring-offset-2"
                             style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)' }}
+                            onClick={() =>
+                              trackEvent('directions_click', {
+                                location_id: location.id,
+                                source: 'locations_map_button',
+                              })
+                            }
                           >
                             Open Map
                           </a>

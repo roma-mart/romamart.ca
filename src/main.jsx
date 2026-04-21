@@ -1,4 +1,6 @@
 import { StrictMode } from 'react';
+import { trackEvent } from './utils/analytics.js';
+import { onCLS, onINP, onLCP, onTTFB, onFCP } from 'web-vitals';
 import { createRoot } from 'react-dom/client';
 import { HelmetProvider } from 'react-helmet-async';
 import { ToastProvider } from './components/ToastContainer';
@@ -7,6 +9,13 @@ import { ServicesProvider } from './contexts/ServicesContext.jsx';
 import { LocationsProvider } from './contexts/LocationsContext.jsx';
 import { CompanyDataProvider } from './contexts/CompanyDataContext.jsx';
 import { LocationProvider } from './components/LocationProvider.jsx';
+import '@fontsource/inter/400.css';
+import '@fontsource/inter/500.css';
+import '@fontsource/inter/600.css';
+import '@fontsource/inter/700.css';
+import '@fontsource/outfit/400.css';
+import '@fontsource/outfit/600.css';
+import '@fontsource/outfit/700.css';
 import './index.css';
 import App from './App.jsx';
 
@@ -47,12 +56,24 @@ if (GTM_ID) {
   document.body.insertBefore(noscript, document.body.firstChild);
 }
 
+const reportWebVital = (m) =>
+  trackEvent('web_vital', {
+    metric_name: m.name,
+    metric_value: Math.round(m.value * 1000) / 1000,
+    metric_rating: m.rating,
+    metric_id: m.id,
+  });
+onCLS(reportWebVital);
+onINP(reportWebVital);
+onLCP(reportWebVital);
+onTTFB(reportWebVital);
+onFCP(reportWebVital);
+
 window.addEventListener('unhandledrejection', (event) => {
   if (import.meta.env.DEV) {
     console.error('[App] Unhandled promise rejection:', event.reason);
   } else {
-    window.dataLayer?.push({
-      event: 'error',
+    trackEvent('error', {
       error_message: event.reason?.message || String(event.reason),
       error_source: 'unhandledrejection',
     });

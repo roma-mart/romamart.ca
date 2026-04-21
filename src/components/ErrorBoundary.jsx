@@ -6,6 +6,7 @@
  */
 import React from 'react';
 import Button from './Button';
+import { trackEvent } from '../utils/analytics.js';
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -24,11 +25,7 @@ class ErrorBoundary extends React.Component {
     if (import.meta.env.DEV) {
       console.error('Component stack:', errorInfo.componentStack);
     }
-    window.dataLayer?.push({
-      event: 'error',
-      error_message: error?.toString(),
-      error_source: 'ErrorBoundary',
-    });
+    trackEvent('error', { error_message: error?.toString(), error_source: 'ErrorBoundary' });
   }
 
   render() {

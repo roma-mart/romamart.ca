@@ -4,6 +4,7 @@
  * Handles Web3Forms submission, hCaptcha, and field validation.
  */
 import React, { useState, useCallback, useRef } from 'react';
+import { trackEvent } from '../utils/analytics.js';
 import { Send } from 'lucide-react';
 import Button from './Button';
 import HCaptchaWidget from './HCaptchaWidget';
@@ -86,10 +87,7 @@ const ContactForm = ({
           showSuccess('Message sent successfully!');
           setFieldErrors({});
           form.reset();
-          window.dataLayer?.push({
-            event: 'contact_form_submit',
-            form_location: idPrefix,
-          });
+          trackEvent('contact_form_submit', { form_location: idPrefix });
         } else {
           showError(data.message || 'Failed to send message. Please try again.');
         }

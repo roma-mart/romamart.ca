@@ -5,6 +5,46 @@ All notable changes to the Roma Mart 2.0 project will be documented in this file
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.9.0] - 2026-04-21
+
+### Added
+- `src/utils/analytics.js` — centralized `trackEvent()` utility replacing all inline `window.dataLayer.push()` calls
+- `phone_click` events on all `tel:` links (ContactPage, LocationsPage, MobileCallCTA)
+- `directions_click` events on all Google Maps links (ContactPage, LocationsPage)
+- `visit_in_store_click` event on hero secondary CTA
+- `web_vital` reporting (CLS, INP, LCP, TTFB, FCP) via `web-vitals` package
+- `src/components/MobileCallCTA.jsx` — floating phone button on mobile (md:hidden), hidden on /contact/
+- `src/components/TrustSignal.jsx` — live star rating in hero via `useGooglePlaceHours`
+- `src/schemas/faq.js` — FAQPage schema (6 Q&A pairs) injected into homepage prerender
+- `scripts/generate-redirects.js` — redirect stub generator for legacy HTML URLs and bare paths
+- `scripts/fetch-places-rating.js` — build-time Google Places rating fetcher (6h cache)
+- `docs/ANALYTICS.md` — event schema contract for GTM/GA4 configuration
+- Hero image preload `<link rel="preload" as="image">` for desktop LCP
+- `aggregateRating`, expanded `areaServed` (Sarnia, Point Edward, Corunna, Bright's Grove), and `currenciesAccepted: "CAD, BTC"` to `buildLocationSchema()`
+- AggregateRating and areaServed fields to the main `buildStructuredData()` LocalBusiness block
+- FAQPage schema injected alongside main schema on homepage only
+- Redirect stubs written to `dist/` at build time via `writeRedirects()`
+- Per-route `<lastmod>` from `git log` in sitemap (fallback to build date)
+
+### Changed
+- All `window.dataLayer.push()` calls replaced with `trackEvent()` in: Button, ContactForm, Footer, Navbar, PWAInstallPrompt, StandardizedItem, App, ErrorBoundary, main
+- Self-hosted Inter and Outfit via `@fontsource/inter` and `@fontsource/outfit` (imports in main.jsx)
+- Removed Google Fonts `<link>` and preconnects from index.html
+- Aria widget loader replaced: `requestIdleCallback` (2s timeout fallback) + `defer` attr, removes blocking render
+- MutationObserver for Aria accessibility label moved into `onload` callback with 20-attempt setInterval
+- Route titles rewritten for SERP CTR: unique `fullTitle` per route used in `<title>` and OG tags
+- Static content H1s updated to include primary keywords per route
+- Sitemap generator removes `<priority>` and `<changefreq>` (Google ignores both)
+- `buildStructuredData()` accepts `aggregateRating` param from build-time Places API fetch
+
+### Fixed
+- `Crawl-delay: 1` removed from `public/robots.txt`
+- Aria widget script no longer blocks page render (moved to idle callback)
+
+### Removed
+- Google Fonts external stylesheet and preconnect links
+- `<priority>` and `<changefreq>` from sitemap XML
+
 ## [Unreleased]
 
 ### Changed

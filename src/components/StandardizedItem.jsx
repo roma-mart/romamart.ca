@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { trackEvent } from '../utils/analytics.js';
 import { ShoppingCart } from 'lucide-react';
 import { getRoleColors } from '../design/tokens';
 import { formatPrice, calculateItemPrice, getDefaultSelections, getCaloriesForSize } from '../utils/menuHelpers';
@@ -283,14 +284,11 @@ const StandardizedItem = ({ item, itemType, defaultExpanded = false }) => {
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
-                if (window.dataLayer) {
-                  window.dataLayer.push({
-                    event: 'order_cta_click',
-                    cta_location: 'menu_item_button',
-                    cta_text: 'Order Now',
-                    item_price: currentPrice,
-                  });
-                }
+                trackEvent('order_cta_click', {
+                  cta_location: 'menu_item_button',
+                  cta_text: 'Order Now',
+                  item_price: currentPrice,
+                });
                 window.open(getOrderingUrl(), '_blank', 'noopener,noreferrer');
               }}
               className="w-full py-3 px-4 rounded-lg font-bold font-inter text-center transition-transform duration-200 mb-2 flex items-center justify-center gap-2 transform hover:scale-105"

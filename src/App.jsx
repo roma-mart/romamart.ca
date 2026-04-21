@@ -1,4 +1,5 @@
 import React, { useState, useEffect, Suspense, lazy, useCallback, useMemo } from 'react';
+import { trackEvent } from './utils/analytics.js';
 import ErrorBoundary from './components/ErrorBoundary';
 import LoadingFallback from './components/LoadingFallback';
 import { motion, useReducedMotion } from 'framer-motion';
@@ -48,6 +49,8 @@ const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 
 // component imports
 import NetworkStatus from './components/NetworkStatus';
+import MobileCallCTA from './components/MobileCallCTA';
+import TrustSignal from './components/TrustSignal';
 import CopyButton from './components/CopyButton';
 import { normalizePhoneForTel } from './utils/phone';
 
@@ -134,15 +137,24 @@ function Hero({ onTrackOrder }) {
                 ORDER ONLINE
               </Button>
               <Button
-                href={`${BASE_URL}locations`}
+                href={`${BASE_URL}locations/`}
                 variant="navlink"
                 size="lg"
                 icon={<ArrowRight size={20} />}
                 aria-label="Visit In Store Location"
+                onClick={() => trackEvent('visit_in_store_click', { source: 'hero' })}
               >
                 Visit In Store
               </Button>
             </div>
+            {companyData.location?.google?.placeId && (
+              <div className="mt-4">
+                <TrustSignal
+                  placeId={companyData.location.google.placeId}
+                  mapLink={companyData.location.google.mapLink}
+                />
+              </div>
+            )}
           </motion.div>
           <motion.div
             initial={shouldReduceMotion ? false : { opacity: 0 }}
@@ -737,9 +749,7 @@ function App() {
     } catch (e) {
       if (import.meta.env.DEV) console.warn('trackOrderClick failed:', e);
     }
-    if (window.dataLayer) {
-      window.dataLayer.push({ event: 'order_cta_click', cta_location: location, cta_text: 'Order Online' });
-    }
+    trackEvent('order_cta_click', { cta_location: location, cta_text: 'Order Online' });
   }, []);
 
   return (
@@ -902,6 +912,7 @@ function App() {
         }}
       />
       <NetworkStatus />
+      <MobileCallCTA />
     </>
   );
 }

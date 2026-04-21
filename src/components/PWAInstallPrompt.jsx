@@ -5,6 +5,7 @@
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { trackEvent } from '../utils/analytics.js';
 import { Download } from 'lucide-react';
 import { useLocalStorage, useVibration } from '../hooks/useBrowserFeatures';
 import Button from './Button';
@@ -28,9 +29,10 @@ const PWAInstallPrompt = () => {
     if (lastDismissed && Date.now() - lastDismissed < 7 * 24 * 60 * 60 * 1000) return; // 7 days
 
     // Don't show if already running as installed PWA (standalone or WCO mode)
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches
-      || window.matchMedia('(display-mode: window-controls-overlay)').matches
-      || window.navigator.standalone === true; // iOS Safari
+    const isStandalone =
+      window.matchMedia('(display-mode: standalone)').matches ||
+      window.matchMedia('(display-mode: window-controls-overlay)').matches ||
+      window.navigator.standalone === true; // iOS Safari
     if (isStandalone) return;
 
     // Listen for beforeinstallprompt event
@@ -154,13 +156,7 @@ const PWAInstallPrompt = () => {
         console.warn('[PWA] User accepted install');
       }
 
-      // Track installation
-      if (window.dataLayer) {
-        window.dataLayer.push({
-          event: 'pwa_install',
-          engagement_score: engagementScore
-        });
-      }
+      trackEvent('pwa_install', { engagement_score: engagementScore });
     }
 
     // Clear the deferredPrompt
@@ -174,13 +170,7 @@ const PWAInstallPrompt = () => {
     sessionStorage.setItem('pwa-dismissed-session', 'true');
     setLastDismissed(Date.now());
 
-    // Track dismissal
-    if (window.dataLayer) {
-      window.dataLayer.push({
-        event: 'pwa_install_dismissed',
-        engagement_score: engagementScore
-      });
-    }
+    trackEvent('pwa_install_dismissed', { engagement_score: engagementScore });
   }, [engagementScore, setLastDismissed]);
 
   if (!showPrompt || !deferredPrompt) return null;
@@ -227,27 +217,81 @@ const PWAInstallPrompt = () => {
             className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
             style={{ backgroundColor: 'var(--color-success-bg)' }}
           >
-            <span className="text-lg" style={{ color: 'var(--color-success)', fontFamily: 'var(--font-body)', fontWeight: 'var(--font-weight-bold)' }}>&#x26A1;</span>
+            <span
+              className="text-lg"
+              style={{
+                color: 'var(--color-success)',
+                fontFamily: 'var(--font-body)',
+                fontWeight: 'var(--font-weight-bold)',
+              }}
+            >
+              &#x26A1;
+            </span>
           </div>
-          <span className="text-sm" style={{ color: 'var(--color-text)', fontFamily: 'var(--font-body)', fontWeight: 'var(--font-weight-normal)' }}>Faster loading times</span>
+          <span
+            className="text-sm"
+            style={{
+              color: 'var(--color-text)',
+              fontFamily: 'var(--font-body)',
+              fontWeight: 'var(--font-weight-normal)',
+            }}
+          >
+            Faster loading times
+          </span>
         </div>
         <div className="flex items-center gap-3">
           <div
             className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
             style={{ backgroundColor: 'var(--color-warning-bg)' }}
           >
-            <span className="text-lg" style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-body)', fontWeight: 'var(--font-weight-bold)' }}>&#x1F4F1;</span>
+            <span
+              className="text-lg"
+              style={{
+                color: 'var(--color-accent)',
+                fontFamily: 'var(--font-body)',
+                fontWeight: 'var(--font-weight-bold)',
+              }}
+            >
+              &#x1F4F1;
+            </span>
           </div>
-          <span className="text-sm" style={{ color: 'var(--color-text)', fontFamily: 'var(--font-body)', fontWeight: 'var(--font-weight-normal)' }}>Works offline</span>
+          <span
+            className="text-sm"
+            style={{
+              color: 'var(--color-text)',
+              fontFamily: 'var(--font-body)',
+              fontWeight: 'var(--font-weight-normal)',
+            }}
+          >
+            Works offline
+          </span>
         </div>
         <div className="flex items-center gap-3">
           <div
             className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
             style={{ backgroundColor: 'var(--color-surface)' }}
           >
-            <span className="text-lg" style={{ color: 'var(--color-heading)', fontFamily: 'var(--font-body)', fontWeight: 'var(--font-weight-bold)' }}>&#x1F3E0;</span>
+            <span
+              className="text-lg"
+              style={{
+                color: 'var(--color-heading)',
+                fontFamily: 'var(--font-body)',
+                fontWeight: 'var(--font-weight-bold)',
+              }}
+            >
+              &#x1F3E0;
+            </span>
           </div>
-          <span className="text-sm" style={{ color: 'var(--color-text)', fontFamily: 'var(--font-body)', fontWeight: 'var(--font-weight-normal)' }}>Add to home screen</span>
+          <span
+            className="text-sm"
+            style={{
+              color: 'var(--color-text)',
+              fontFamily: 'var(--font-body)',
+              fontWeight: 'var(--font-weight-normal)',
+            }}
+          >
+            Add to home screen
+          </span>
         </div>
       </div>
 
@@ -263,12 +307,7 @@ const PWAInstallPrompt = () => {
         >
           Install App
         </Button>
-        <Button
-          type="button"
-          variant="secondary"
-          onClick={handleDismiss}
-          aria-label="Not Now"
-        >
+        <Button type="button" variant="secondary" onClick={handleDismiss} aria-label="Not Now">
           Not Now
         </Button>
       </div>
