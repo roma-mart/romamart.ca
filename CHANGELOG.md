@@ -30,8 +30,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - All `window.dataLayer.push()` calls replaced with `trackEvent()` in: Button, ContactForm, Footer, Navbar, PWAInstallPrompt, StandardizedItem, App, ErrorBoundary, main
 - Self-hosted Inter and Outfit via `@fontsource/inter` and `@fontsource/outfit` (imports in main.jsx)
 - Removed Google Fonts `<link>` and preconnects from index.html
-- Aria widget loader replaced: `requestIdleCallback` (2s timeout fallback) + `defer` attr, removes blocking render
-- MutationObserver for Aria accessibility label moved into `onload` callback with 20-attempt setInterval
+- Aria widget loader replaced: `requestIdleCallback` (2s timeout fallback), removes blocking render
+- Aria accessibility label injection uses `MutationObserver` (with `disconnect()` after label is applied and 15s safety timeout), replacing prior `setInterval` polling
 - Route titles rewritten for SERP CTR: unique `fullTitle` per route used in `<title>` and OG tags
 - Static content H1s updated to include primary keywords per route
 - Sitemap generator removes `<priority>` and `<changefreq>` (Google ignores both)

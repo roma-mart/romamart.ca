@@ -39,8 +39,8 @@ export function getEnvVar(key, defaultValue = '') {
  * @returns {string} Full asset URL with correct base path
  */
 export function getAssetUrl(path) {
-  // Get the base URL from Vite's configuration
-  const baseUrl = typeof import.meta !== 'undefined' && import.meta.env?.BASE_URL ? import.meta.env.BASE_URL : '/';
+  // Get the base URL from Vite's configuration (SSOT: getBaseUrl)
+  const baseUrl = getBaseUrl();
 
   // Normalize the path to ensure it starts with a slash
   const normalizedPath = path.startsWith('/') ? path : `/${path}`;

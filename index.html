@@ -65,6 +65,7 @@
               if (btn) { btn.setAttribute('aria-label', 'Chat with Aria AI assistant'); o.disconnect(); }
             });
             obs.observe(document.body, { childList: true, subtree: true });
+            setTimeout(function () { obs.disconnect(); }, 15000);
           };
           document.body.appendChild(s);
         };

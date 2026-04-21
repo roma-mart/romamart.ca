@@ -41,8 +41,9 @@ describe('writeRedirects', () => {
     expect(fs.writeFileSync).not.toHaveBeenCalled();
   });
 
-  it('overwrites an existing stub (file exists with noindex,follow)', () => {
-    const existingStub = '<meta name="robots" content="noindex,follow">';
+  it('overwrites an existing stub (file exists with stub marker)', () => {
+    // Simulate a previously written stub that contains the unique marker
+    const existingStub = '<!-- roma-mart-redirect-stub --><meta name="robots" content="noindex,follow">';
     vi.mocked(fs.existsSync).mockReturnValue(true);
     vi.mocked(fs.readFileSync).mockReturnValue(existingStub);
 

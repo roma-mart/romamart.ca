@@ -13,8 +13,32 @@ export const PLACES_GLOBAL_KEY = '__PLACES__';
 // All overrides and fallbacks for HQ data must be handled here for maintainability and resilience.
 
 // import { getOrderingUrl } from './ordering';
-import { getPrimaryLocation } from '../data/locations.js';
+import { getPrimaryLocation, LOCATIONS } from '../data/locations.js';
 import { getEnvVar } from '../utils/getAssetUrl.js';
+
+// Derive service area from active/coming-soon locations in the SSOT.
+// Falls back to hardcoded list for resilience if LOCATIONS is empty (e.g. build-time edge case).
+const getServiceArea = () => {
+  const openCities =
+    Array.isArray(LOCATIONS) && LOCATIONS.length > 0
+      ? [
+          ...new Set(
+            LOCATIONS.filter((loc) => loc.status === 'open' || loc.status === 'coming_soon')
+              .map((loc) => loc.address?.city)
+              .filter(Boolean)
+          ),
+        ]
+      : [];
+  if (openCities.length > 0) {
+    return openCities.map((name) => ({ '@type': 'City', name }));
+  }
+  return [
+    { '@type': 'City', name: 'Sarnia' },
+    { '@type': 'City', name: 'Point Edward' },
+    { '@type': 'City', name: 'Corunna' },
+    { '@type': 'City', name: "Bright's Grove" },
+  ];
+};
 
 const COMPANY_DATA = {
   legalName: 'Roma Mart Corp.',
@@ -48,12 +72,8 @@ const COMPANY_DATA = {
   // Accepted payment methods (business-wide, for LocalBusiness schema)
   paymentMethods: ['Cash', 'Credit Card', 'Debit Card', 'Interac', 'Visa', 'Mastercard', 'American Express', 'Bitcoin'],
   // Service area (primary city + surrounding communities — shared by schema builders)
-  serviceArea: [
-    { '@type': 'City', name: 'Sarnia' },
-    { '@type': 'City', name: 'Point Edward' },
-    { '@type': 'City', name: 'Corunna' },
-    { '@type': 'City', name: "Bright's Grove" },
-  ],
+  // Derived from active locations in SSOT; falls back to hardcoded list if SSOT is empty.
+  serviceArea: getServiceArea(),
   // Return policy defaults (business-wide, for MerchantReturnPolicy schema)
   returnPolicy: {
     merchantReturnDays: 1,

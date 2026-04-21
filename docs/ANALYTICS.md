@@ -36,6 +36,8 @@ CLS, INP, LCP, TTFB, FCP
 
 ## GTM Setup (container GTM-XXXXXXXX)
 
+> **TODO (production cutover):** Replace `GTM-XXXXXXXX` above with the real GTM container ID before going live on the custom domain.
+
 Each event above requires:
 1. A **Custom Event trigger** matching `event equals <name>`
 2. A **GA4 Event tag** with `eventName` set to the literal name

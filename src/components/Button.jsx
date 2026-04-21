@@ -368,6 +368,9 @@ const Button = React.forwardRef(
           style={mergedStyle}
           onClick={handleClick}
           onKeyDown={(e) => {
+            // For type="submit", the browser fires a native click + form submission on Enter;
+            // intercepting it here would either duplicate the click or suppress form submit.
+            if (type === 'submit') return;
             if ((e.key === 'Enter' || e.key === ' ') && !disabled && !loadingProp) {
               e.preventDefault();
               handleClick(e);
@@ -396,6 +399,9 @@ const Button = React.forwardRef(
         style={mergedStyle}
         onClick={handleClick}
         onKeyDown={(e) => {
+          // For type="submit", the browser fires a native click + form submission on Enter;
+          // intercepting it here would either duplicate the click or suppress form submit.
+          if (type === 'submit') return;
           if ((e.key === 'Enter' || e.key === ' ') && !disabled && !loadingProp) {
             e.preventDefault();
             handleClick(e);

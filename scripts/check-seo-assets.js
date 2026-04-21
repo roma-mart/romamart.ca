@@ -93,8 +93,8 @@ function checkRedirectStubs() {
 
     const content = fs.readFileSync(outPath, 'utf-8');
 
-    // If this path is a real prerendered page, writeRedirects intentionally skipped it — no stub to validate
-    if (!content.includes('noindex,follow')) continue;
+    // If the file has no redirect stub marker it's a real prerendered page — writeRedirects intentionally skipped it
+    if (!content.includes('<!-- roma-mart-redirect-stub -->')) continue;
 
     assert(
       content.includes('<meta name="robots" content="noindex,follow">'),

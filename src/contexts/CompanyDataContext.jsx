@@ -170,7 +170,7 @@ export function CompanyDataProvider({ children }) {
       companyData.contextualEmails?.[context] ||
       companyData.contextualEmails?.general ||
       COMPANY_DATA.contextualEmails?.general ||
-      ''
+      'contact@romamart.ca'
     );
   };
 

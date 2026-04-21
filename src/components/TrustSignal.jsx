@@ -8,14 +8,7 @@ export default function TrustSignal({ placeId, mapLink }) {
   const rating = injected?.ratingValue ?? hookRating;
   const userRatingCount = injected?.reviewCount ?? hookCount;
 
-  if (
-    rating === null ||
-    rating === undefined ||
-    userRatingCount === null ||
-    (userRatingCount === undefined) | (userRatingCount === null) ||
-    userRatingCount === undefined ||
-    !mapLink
-  )
+  if (rating === null || rating === undefined || userRatingCount === null || userRatingCount === undefined || !mapLink)
     return null;
 
   const ratingDisplay = Number(rating).toFixed(1);

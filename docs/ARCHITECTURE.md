@@ -326,7 +326,7 @@ function Component() {
 
 **Response shape:**
 ```js
-{ success: boolean, menuItems: MenuItem[] }
+{ menu: MenuItem[] }  // API response field is `menu` (not `menuItems`)
 ```
 
 **`MenuItem` shape:**
@@ -342,9 +342,9 @@ function Component() {
 }
 ```
 
-**Fallback:** Empty array on error (no static fallback for menu)
+**Fallback:** Static `ROCAFE_FULL_MENU` from `src/data/rocafe-menu.js` (populated on initial load, never empty)
 
-**Hook return value:** `{ menuItems: MenuItem[], loading: boolean, error: Error|null }`
+**Hook return value:** `{ menuItems: MenuItem[], loading: boolean, error: string, source: 'api'|'static', refetch: Function }`
 
 **Consumers:** `App.jsx` (passes to homepage sections), `RoCafePage.jsx`
 

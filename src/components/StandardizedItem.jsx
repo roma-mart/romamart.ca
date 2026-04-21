@@ -287,6 +287,8 @@ const StandardizedItem = ({ item, itemType, defaultExpanded = false }) => {
                 trackEvent('order_cta_click', {
                   cta_location: 'menu_item_button',
                   cta_text: 'Order Now',
+                  item_id: item?.id,
+                  item_name: item?.name,
                   item_price: currentPrice,
                 });
                 window.open(getOrderingUrl(), '_blank', 'noopener,noreferrer');

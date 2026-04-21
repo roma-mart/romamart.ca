@@ -10,6 +10,7 @@ export const REDIRECTS = [
 
 const buildStub = (to) =>
   `<!doctype html><html><head>` +
+  `<!-- roma-mart-redirect-stub -->` +
   `<meta charset="utf-8"><title>Redirecting\u2026</title>` +
   `<link rel="canonical" href="https://romamart.ca${to}">` +
   `<meta http-equiv="refresh" content="0; url=${to}">` +
@@ -33,7 +34,7 @@ export function writeRedirects(distDir) {
     // Don't overwrite a real prerendered page (e.g. /services/index.html already exists)
     if (fs.existsSync(outPath)) {
       const existing = fs.readFileSync(outPath, 'utf-8');
-      if (!existing.includes('noindex,follow')) {
+      if (!existing.includes('<!-- roma-mart-redirect-stub -->')) {
         continue;
       }
     }

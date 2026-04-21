@@ -41,12 +41,13 @@ export async function getAggregateRating() {
 
   try {
     const url = `https://places.googleapis.com/v1/places/${PLACE_ID}` + `?fields=rating,userRatingCount&key=${apiKey}`;
-    const res = await fetch(url);
+    const res = await fetch(url, { signal: AbortSignal.timeout(5000) });
     if (!res.ok) return null;
     const json = await res.json();
     const result = {
       ratingValue: json.rating ?? null,
       reviewCount: json.userRatingCount ?? null,
+      placeId: PLACE_ID,
     };
     if (result.ratingValue !== null) {
       writeCache(result);

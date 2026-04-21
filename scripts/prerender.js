@@ -1,9 +1,9 @@
 import fs from 'fs';
 import path from 'path';
 import { createHash } from 'crypto';
-import { spawnSync } from 'child_process';
+import { execFileSync } from 'child_process';
 import { fileURLToPath } from 'url';
-import COMPANY_DATA, { PLACES_GLOBAL_KEY } from '../src/config/company_data.js';
+import COMPANY_DATA from '../src/config/company_data.js';
 import { buildMenuItemSchema } from '../src/schemas/menuItemSchema.js';
 import { buildServiceListSchema } from '../src/schemas/serviceSchema.js';
 import { buildLocationListSchema } from '../src/schemas/locationSchema.js';
@@ -38,7 +38,7 @@ const routes = [
     ogImage: DEFAULT_OG_IMAGE,
     twitterImage: DEFAULT_TW_IMAGE,
     imageAlt: DEFAULT_IMAGE_ALT,
-    sourceFile: 'src/App.jsx',
+    sourceFile: 'src/pages/HomePage.jsx',
   },
   {
     path: '/services',
@@ -645,8 +645,12 @@ const buildStructuredData = (routePath = '/', apiData = {}) => {
         'American Express',
         'Bitcoin',
       ],
-      currenciesAccepted: [COMPANY_DATA.defaults.currency, ...COMPANY_DATA.defaults.cryptoCurrencies].join(', '),
-      areaServed: COMPANY_DATA.serviceArea,
+      currenciesAccepted: [COMPANY_DATA.defaults.currency, 'BTC'].join(', '),
+      areaServed: (() => {
+        const cities =
+          locations.length > 0 ? [...new Set(locations.map((loc) => loc.address?.city).filter(Boolean))] : null;
+        return cities?.length > 0 ? cities.map((name) => ({ '@type': 'City', name })) : COMPANY_DATA.serviceArea;
+      })(),
       ...(aggregateRating?.ratingValue && aggregateRating?.reviewCount
         ? {
             aggregateRating: {
@@ -738,9 +742,13 @@ const buildStructuredData = (routePath = '/', apiData = {}) => {
 
 const getGitLastMod = (sourceFile, fallback) => {
   try {
-    const result = spawnSync('git', ['log', '-1', '--format=%cI', '--', sourceFile], { encoding: 'utf-8' });
-    const out = result.stdout?.trim();
-    return out ? out.slice(0, 10) : fallback;
+    const result = execFileSync('git', ['log', '-1', '--format=%cI', '--', sourceFile], { encoding: 'utf-8' }).trim();
+    if (!result) {
+      // Empty result usually means a shallow clone; fall back to build date
+      console.warn(`[sitemap] git log returned empty for ${sourceFile} — shallow clone? Using build date fallback.`);
+      return fallback;
+    }
+    return result.slice(0, 10);
   } catch {
     return fallback;
   }
@@ -1148,11 +1156,6 @@ async function prerender() {
 
   const indexTemplate = fs.readFileSync(indexPath, 'utf-8');
 
-  // Extract Vite base path from the built module script src so the hero preload
-  // uses the correct path for both GitHub Pages (/romamart.ca/) and production (/).
-  const scriptBaseMatch = indexTemplate.match(/<script[^>]+src="([^"]+\/assets\/[^"]+)"/);
-  const viteBase = scriptBaseMatch ? scriptBaseMatch[1].replace(/\/assets\/.*/, '/') : '/';
-
   for (const route of routes) {
     console.log(`Prerendering ${route.path}...`);
 
@@ -1215,21 +1218,18 @@ async function prerender() {
         `<meta property="twitter:image:alt" content="${route.imageAlt || DEFAULT_IMAGE_ALT}" />`
       )
       .replace(/<\/head>/, () => {
-        // Hero image preload: injected only for the homepage to avoid "preloaded but not used" warnings on other pages.
-        const heroPreload =
-          route.path === '/'
-            ? `\n  <link rel="preload" as="image" href="${viteBase}images/comeinwereopensign.png" fetchpriority="high" media="(min-width: 768px)" />`
-            : '';
-        const mainSchema = `<script type="application/ld+json">${buildStructuredData(route.path, { menuItems, services, locations, aggregateRating })}</script>`;
+        // Escape </script> within JSON strings to prevent premature script tag termination (XSS).
+        const escapeJsonLd = (json) => json.replace(/<\/script>/gi, '<\\/script>');
+        const mainSchema = `<script type="application/ld+json">${escapeJsonLd(buildStructuredData(route.path, { menuItems, services, locations, aggregateRating }))}</script>`;
         const faqSchema =
           route.path === '/'
-            ? `\n  <script type="application/ld+json">${JSON.stringify(buildFAQSchema())}</script>`
+            ? `\n  <script type="application/ld+json">${escapeJsonLd(JSON.stringify(buildFAQSchema()))}</script>`
             : '';
         const placesScript =
           route.path === '/' && aggregateRating?.ratingValue
-            ? `\n  <script>window[${JSON.stringify(PLACES_GLOBAL_KEY)}]=${JSON.stringify(aggregateRating)}</script>`
+            ? `\n  <script>window.__PLACES__=${escapeJsonLd(JSON.stringify(aggregateRating))}</script>`
             : '';
-        return `${heroPreload}${mainSchema}${faqSchema}${placesScript}\n  </head>`;
+        return `${mainSchema}${faqSchema}${placesScript}\n  </head>`;
       })
       .replace(
         '<div id="root"></div>',

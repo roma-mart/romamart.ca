@@ -25,7 +25,7 @@ class ErrorBoundary extends React.Component {
     if (import.meta.env.DEV) {
       console.error('Component stack:', errorInfo.componentStack);
     }
-    trackEvent('error', { error_message: error?.toString(), error_source: 'ErrorBoundary' });
+    trackEvent('error', { error_message: error?.name || 'Error', error_source: 'ErrorBoundary' });
   }
 
   render() {
