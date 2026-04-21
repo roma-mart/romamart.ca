@@ -157,11 +157,15 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
             longitude: data.geo?.longitude || companyData.location.google.coordinates.lng,
           },
           hasMap: companyData.location?.google?.mapLink || undefined,
-          currenciesAccepted: [companyData.defaults.currency, 'BTC'].join(', '),
-          areaServed: {
-            '@type': 'City',
-            name: data.address?.city || companyData.address?.city || companyData.location.address.city,
-          },
+          currenciesAccepted: [companyData.defaults.currency, ...(companyData.defaults.cryptoCurrencies || [])].join(
+            ', '
+          ),
+          areaServed: companyData.serviceArea || [
+            {
+              '@type': 'City',
+              name: data.address?.city || companyData.address?.city || companyData.location.address.city,
+            },
+          ],
           openingHoursSpecification:
             data.hours ||
             (companyData.location?.hours?.daily
@@ -282,10 +286,9 @@ const StructuredData = ({ type = 'LocalBusiness', data = {} }) => {
           },
           sameAs: Object.values(companyData.socialLinks || {}),
           taxID: companyData.gstNumber || undefined,
-          areaServed: {
-            '@type': 'City',
-            name: companyData.address?.city || companyData.location.address.city,
-          },
+          areaServed: companyData.serviceArea || [
+            { '@type': 'City', name: companyData.address?.city || companyData.location.address.city },
+          ],
           numberOfEmployees: companyData.location?.metadata?.employeeCount
             ? {
                 '@type': 'QuantitativeValue',

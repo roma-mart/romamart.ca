@@ -3,6 +3,10 @@
 // Centralized company data for Roma Mart 2.0
 // Single source of truth for brand info, social links, order platform, etc.
 
+// Shared key for the prerendered Google Places data injected into the HTML
+// by scripts/prerender.js and read at runtime by TrustSignal.jsx.
+export const PLACES_GLOBAL_KEY = '__PLACES__';
+
 // IMPORTANT:
 // All headquarters (HQ) info (address, hours, contact, GST, etc.) sourced from this file (COMPANY_DATA).
 // No hardcoded or duplicated HQ info is allowed in any page or component.
@@ -39,9 +43,17 @@ const COMPANY_DATA = {
     currency: 'CAD',
     timezone: 'America/Toronto',
     ageRestriction: '19-', // Minimum age for age-restricted products/services (Ontario law)
+    cryptoCurrencies: ['BTC'], // Crypto currencies accepted via in-store Bitcoin ATM
   },
   // Accepted payment methods (business-wide, for LocalBusiness schema)
   paymentMethods: ['Cash', 'Credit Card', 'Debit Card', 'Interac', 'Visa', 'Mastercard', 'American Express', 'Bitcoin'],
+  // Service area (primary city + surrounding communities — shared by schema builders)
+  serviceArea: [
+    { '@type': 'City', name: 'Sarnia' },
+    { '@type': 'City', name: 'Point Edward' },
+    { '@type': 'City', name: 'Corunna' },
+    { '@type': 'City', name: "Bright's Grove" },
+  ],
   // Return policy defaults (business-wide, for MerchantReturnPolicy schema)
   returnPolicy: {
     merchantReturnDays: 1,

@@ -1,9 +1,9 @@
 import fs from 'fs';
 import path from 'path';
 import { createHash } from 'crypto';
-import { execSync } from 'child_process';
+import { spawnSync } from 'child_process';
 import { fileURLToPath } from 'url';
-import COMPANY_DATA from '../src/config/company_data.js';
+import COMPANY_DATA, { PLACES_GLOBAL_KEY } from '../src/config/company_data.js';
 import { buildMenuItemSchema } from '../src/schemas/menuItemSchema.js';
 import { buildServiceListSchema } from '../src/schemas/serviceSchema.js';
 import { buildLocationListSchema } from '../src/schemas/locationSchema.js';
@@ -645,13 +645,8 @@ const buildStructuredData = (routePath = '/', apiData = {}) => {
         'American Express',
         'Bitcoin',
       ],
-      currenciesAccepted: [COMPANY_DATA.defaults.currency, 'BTC'].join(', '),
-      areaServed: [
-        { '@type': 'City', name: 'Sarnia' },
-        { '@type': 'City', name: 'Point Edward' },
-        { '@type': 'City', name: 'Corunna' },
-        { '@type': 'City', name: "Bright's Grove" },
-      ],
+      currenciesAccepted: [COMPANY_DATA.defaults.currency, ...COMPANY_DATA.defaults.cryptoCurrencies].join(', '),
+      areaServed: COMPANY_DATA.serviceArea,
       ...(aggregateRating?.ratingValue && aggregateRating?.reviewCount
         ? {
             aggregateRating: {
@@ -743,8 +738,9 @@ const buildStructuredData = (routePath = '/', apiData = {}) => {
 
 const getGitLastMod = (sourceFile, fallback) => {
   try {
-    const result = execSync(`git log -1 --format=%cI -- ${sourceFile}`, { encoding: 'utf-8' }).trim();
-    return result ? result.slice(0, 10) : fallback;
+    const result = spawnSync('git', ['log', '-1', '--format=%cI', '--', sourceFile], { encoding: 'utf-8' });
+    const out = result.stdout?.trim();
+    return out ? out.slice(0, 10) : fallback;
   } catch {
     return fallback;
   }
@@ -1221,7 +1217,7 @@ async function prerender() {
             : '';
         const placesScript =
           route.path === '/' && aggregateRating?.ratingValue
-            ? `\n  <script>window.__PLACES__=${JSON.stringify(aggregateRating)}</script>`
+            ? `\n  <script>window[${JSON.stringify(PLACES_GLOBAL_KEY)}]=${JSON.stringify(aggregateRating)}</script>`
             : '';
         return `${mainSchema}${faqSchema}${placesScript}\n  </head>`;
       })

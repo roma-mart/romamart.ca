@@ -186,16 +186,11 @@ export const buildLocationSchema = (location, _options = {}) => {
     schema.priceRange = cd.defaults.priceRange;
   }
 
-  // Add currencies accepted (CAD + BTC, reflecting the in-store Bitcoin ATM/payment)
-  schema.currenciesAccepted = [cd.defaults.currency, 'BTC'].join(', ');
+  // Add currencies accepted (CAD + crypto, reflecting the in-store Bitcoin ATM/payment)
+  schema.currenciesAccepted = [cd.defaults.currency, ...cd.defaults.cryptoCurrencies].join(', ');
 
   // Add area served (primary city + surrounding communities)
-  schema.areaServed = [
-    { '@type': 'City', name: 'Sarnia' },
-    { '@type': 'City', name: 'Point Edward' },
-    { '@type': 'City', name: 'Corunna' },
-    { '@type': 'City', name: "Bright's Grove" },
-  ];
+  schema.areaServed = cd.serviceArea;
 
   // Add aggregate rating if provided via options (fetched from Places API at build time)
   if (_options.aggregateRating?.ratingValue && _options.aggregateRating?.reviewCount) {

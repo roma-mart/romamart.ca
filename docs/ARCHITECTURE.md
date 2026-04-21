@@ -1,7 +1,7 @@
 # Roma Mart 2.0 - System Architecture
 
-> **Last Updated:** February 9, 2026
-> **Version:** 2.0 (React 18.3.1 + Vite 7)
+> **Last Updated:** April 21, 2026
+> **Version:** 2.9.0 (React 18.3.1 + Vite 8)
 
 ## Table of Contents
 
@@ -245,47 +245,211 @@ function Component() {
 ### API Integrations
 
 #### 1. **Google Places API**
-**Hook:** `useGooglePlaceHours.js`
+**Hook:** `src/hooks/useGooglePlaceHours.js`
 
-**Features:**
-- Fetches live hours, rating, review count
-- Circuit breaker protection
-- 1-hour cache (IndexedDB)
-- Graceful fallback to static data
+**Purpose:** Fetch live opening hours, star rating, and review count for a location.
 
-**Circuit Breaker:**
-- Monitors 429/403/402 errors
-- Stops after 5 failures
-- Auto-resets after 1 hour
-- Fail-fast pattern
+**Request:**
+- Uses the Google Places Details endpoint via the hook (Place ID from `src/data/locations.js`)
+- Only called when `window[PLACES_GLOBAL_KEY]` is absent (i.e., non-homepage routes or uncached builds)
+
+**Response shape consumed by the hook:**
+```js
+{
+  rating: number,          // e.g. 4.8
+  userRatingCount: number, // e.g. 123
+  currentOpeningHours: { ... }
+}
+```
+
+**Caching:** 1-hour IndexedDB cache keyed by Place ID — subsequent renders within the hour skip the network call.
+
+**Circuit breaker (`src/utils/apiCircuitBreaker.js`):**
+- Monitors HTTP 402 / 403 / 429 responses
+- Opens after 5 consecutive failures; auto-resets after 1 hour
+- `shouldAttemptCall()` / `recordFailure()` / `recordSuccess()` / `getStatus()`
+
+**Fallback:** Static hours from `src/data/locations.js`
+
+**Build-time optimisation (`window[PLACES_GLOBAL_KEY]`):**
+- `scripts/prerender.js` calls `scripts/fetch-places-rating.js` at build time and embeds the result
+- `TrustSignal.jsx` reads the injected value on the homepage, skipping the runtime hook call entirely
+- See [window[PLACES_GLOBAL_KEY] contract](#windowplaces_global_key-contract) below
+
+---
 
 #### 2. **Web3Forms API**
-**Integration:** `ContactPage.jsx`
+**Integration:** `src/pages/ContactPage.jsx`
 
-**Features:**
-- Contact form submission
-- Email notifications
-- Offline queue (IndexedDB)
-- hCaptcha verification
+**Endpoint:** `https://api.web3forms.com/submit`
+
+**Request:**
+```js
+// POST, Content-Type: application/json
+{
+  access_key: COMPANY_DATA.contact.web3FormsAccessKey, // from env VITE_WEB3FORMS_KEY
+  name: string,
+  email: string,
+  message: string,
+  "h-captcha-response": string  // hCaptcha token (single-use — reset after submit)
+}
+```
+
+**Response:**
+```js
+{ success: boolean, message: string }
+// Check data.success, NOT response.ok
+```
+
+**Error handling:**
+- Network failure → message queued in IndexedDB for retry on next online event
+- `success: false` → user-visible error message shown
+- hCaptcha token is reset after every attempt (success or failure)
+
+**Rate limiting:** Handled server-side by Web3Forms; no client-side throttle.
+
+---
 
 #### 3. **Menu API**
-**Context:** `MenuContext.jsx`
+**Context:** `src/contexts/MenuContext.jsx`
 **Hook:** `useMenu()`
 
 **Status:** Active (production, 200 OK)
-- Fetches menu from `https://romamart.netlify.app/api/v1/public-menu`
-- Single API call per session via React Context
-- Shared across App.jsx and RoCafePage.jsx
-- 50% reduction in API calls vs previous architecture
 
-#### 4. **Services & Locations APIs**
-**Contexts:** `ServicesContext.jsx`, `LocationsContext.jsx`
-**Hooks:** `useServices()`, `useLocations()`
+**Endpoint:** `https://romamart.netlify.app/api/v1/public-menu`
 
-**Status:** Pending (#107) -- frontend uses static fallback
-- Endpoints defined but return 404
-- Context providers fall back to static data from `data/services.jsx` and `data/locations.js`
-- Each returns `{ data, loading, error, source }` where `source` is `'api'` or `'static'`
+**Request:**
+```js
+// GET, optional headers from apiHeaders()
+// Uses fetchWithEtag() — sends If-None-Match on repeat calls; handles 304 Not Modified
+```
+
+**Response shape:**
+```js
+{ success: boolean, menuItems: MenuItem[] }
+```
+
+**`MenuItem` shape:**
+```js
+{
+  id: string,
+  name: string,
+  description: string,
+  priceInCents: number,
+  category: string,
+  available: boolean,
+  // ... (see src/data/rocafe-menu.js for full static shape)
+}
+```
+
+**Fallback:** Empty array on error (no static fallback for menu)
+
+**Hook return value:** `{ menuItems: MenuItem[], loading: boolean, error: Error|null }`
+
+**Consumers:** `App.jsx` (passes to homepage sections), `RoCafePage.jsx`
+
+---
+
+#### 4. **Services API**
+**Context:** `src/contexts/ServicesContext.jsx`
+**Hook:** `useServices()`
+
+**Status:** Pending (GitHub Issue #107) — frontend uses static fallback
+
+**Endpoint:** `https://romamart.netlify.app/api/v1/public-services`
+
+**Request:**
+```js
+// GET, optional headers from apiHeaders()
+// Uses fetchWithEtag() for conditional requests
+```
+
+**Response shape (expected):**
+```js
+{ success: boolean, services: Service[] }
+```
+
+**`Service` shape (see `src/data/services.jsx` for full structure):**
+```js
+{
+  id: string,
+  name: string,
+  featured: boolean,    // used to filter homepage display
+  status: 'available' | 'unavailable',
+  category: string,
+  features: string[],
+  // ...
+}
+```
+
+**Fallback:** Static `SERVICES` from `src/data/services.jsx`
+
+**Hook return value:** `{ services: Service[], loading: boolean, error: Error|null, source: 'api'|'static' }`
+
+---
+
+#### 5. **Locations API**
+**Context:** `src/contexts/LocationsContext.jsx`
+**Hook:** `useLocations()`
+
+**Status:** Pending (GitHub Issue #107) — frontend uses static fallback
+
+**Endpoint:** `https://romamart.netlify.app/api/v1/public-locations`
+
+**Request:**
+```js
+// GET, optional headers from apiHeaders()
+// Uses fetchWithEtag() for conditional requests
+```
+
+**Response shape (expected):**
+```js
+{ success: boolean, locations: Location[] }
+```
+
+**`Location` shape (see `src/data/locations.js` for full structure):**
+```js
+{
+  id: string,
+  name: string,
+  isPrimary: boolean,
+  status: 'open' | 'closed' | 'coming_soon',
+  address: { street, city, province, postalCode, country },
+  contact: { phone, email },
+  hours: { daily: { [DayName]: string }, exceptions: [] },
+  google: { placeId, mapLink, coordinates: { lat, lng } },
+  services: string[],   // service IDs available at this location
+  amenities: { name, value }[],
+  // ...
+}
+```
+
+**Fallback:** Static `LOCATIONS` from `src/data/locations.js`
+
+**Hook return value:** `{ locations: Location[], loading: boolean, error: Error|null, source: 'api'|'static' }`
+
+**Consumers:** `App.jsx`, `Footer.jsx`, `LocationsPage.jsx`
+
+---
+
+#### Shared API Utilities (`src/utils/api.js`)
+
+All context providers use these helpers — never call `fetch()` for API endpoints directly.
+
+| Utility | Purpose |
+|---------|---------|
+| `apiUrl(path)` | Builds URL from `VITE_API_BASE_URL` env var (dev-relative or prod-absolute) |
+| `apiHeaders()` | Returns `{ 'X-API-Key': ... }` when `VITE_API_KEY` is set |
+| `fetchWithEtag(path, options)` | GET with ETag/`If-None-Match` support, 304 handling, structured error parsing, rate-limit header checking |
+
+**SSOT fields used by schema builders and prerender:**
+
+| Field | Location | Consumers |
+|-------|----------|-----------|
+| `defaults.currency` | `company_data.js` | `locationSchema.js`, `StructuredData.jsx`, `prerender.js` |
+| `defaults.cryptoCurrencies` | `company_data.js` | `locationSchema.js`, `StructuredData.jsx`, `prerender.js` |
+| `serviceArea` | `company_data.js` | `locationSchema.js`, `StructuredData.jsx`, `prerender.js` |
+| `PLACES_GLOBAL_KEY` | `company_data.js` (named export) | `prerender.js` (write), `TrustSignal.jsx` (read) |
 
 ### Data Flow Pattern
 
@@ -346,6 +510,20 @@ export default defineConfig({
 - `/rocafe` → `dist/rocafe/index.html`
 - `/services` → `dist/services/index.html`
 - etc.
+
+#### `window[PLACES_GLOBAL_KEY]` contract
+
+The prerender script injects Google Places rating data into the homepage HTML at build time:
+
+```html
+<script>window['__PLACES__'] = { ratingValue: 4.8, reviewCount: 123 }</script>
+```
+
+- **Key constant:** `PLACES_GLOBAL_KEY` exported from `src/config/company_data.js`
+- **Injected by:** `scripts/prerender.js` (homepage only, only when Places data is available)
+- **Read by:** `src/components/TrustSignal.jsx` — if the key is present, it uses the injected value instead of making a live API call, eliminating a network request on first paint
+
+Changing the key string in one place (the constant) automatically updates both sides.
 
 ---
 

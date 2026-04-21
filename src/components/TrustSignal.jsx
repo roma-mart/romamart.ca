@@ -1,13 +1,21 @@
 import React from 'react';
 import useGooglePlaceHours from '../hooks/useGooglePlaceHours';
+import { PLACES_GLOBAL_KEY } from '../config/company_data';
 
 export default function TrustSignal({ placeId, mapLink }) {
-  const injected = typeof window !== 'undefined' ? window.__PLACES__ : null;
+  const injected = typeof window !== 'undefined' ? window[PLACES_GLOBAL_KEY] : null;
   const { rating: hookRating, userRatingCount: hookCount } = useGooglePlaceHours(injected ? null : placeId);
   const rating = injected?.ratingValue ?? hookRating;
   const userRatingCount = injected?.reviewCount ?? hookCount;
 
-  if (rating === null || rating === undefined || userRatingCount === null || userRatingCount === undefined || !mapLink)
+  if (
+    rating === null ||
+    rating === undefined ||
+    userRatingCount === null ||
+    (userRatingCount === undefined) | (userRatingCount === null) ||
+    userRatingCount === undefined ||
+    !mapLink
+  )
     return null;
 
   const ratingDisplay = Number(rating).toFixed(1);
