@@ -28,8 +28,9 @@ All events are dispatched via `trackEvent(name, params)` from `src/utils/analyti
 ### `source` for `directions_click`
 - `contact` — Contact page directions link
 - `locations_address` — Locations page address "Get Directions"
-- `locations_map_inline` — Locations page map panel "Open in Google Maps"
-- `locations_map_button` — Locations page map panel "Open Map" button
+- `locations_map_inline` — Locations page map panel "Open in Google Maps" text link (pre-load)
+- `locations_map_button` — Locations page map panel "Open Map" button (non-preferred location)
+- `locations_map_overlay` — Locations page "Open in Google Maps" button overlaid on loaded iframe
 
 ### `metric_name` for `web_vital`
 CLS, INP, LCP, TTFB, FCP

@@ -1,7 +1,7 @@
-export const getFaqItems = (cd) => {
+export const buildFAQSchema = (cd) => {
   const addr = cd.address;
   const dba = cd.dba;
-  return [
+  const items = [
     {
       question: `Where is ${dba} located in ${addr.city}?`,
       answer: `${dba} is at ${addr.street}, ${addr.city}, ${addr.province} ${addr.postalCode}. Free parking, wheelchair accessible, open 7 days a week.`,
@@ -27,17 +27,16 @@ export const getFaqItems = (cd) => {
       answer: `Yes. ${dba} accepts cash, Interac, Visa, Mastercard, American Express and Bitcoin. Lottery, ATM withdrawals and printing are also available.`,
     },
   ];
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: items.map(({ question, answer }) => ({
+      '@type': 'Question',
+      name: question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: answer,
+      },
+    })),
+  };
 };
-
-export const buildFAQSchema = (cd) => ({
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: getFaqItems(cd).map(({ question, answer }) => ({
-    '@type': 'Question',
-    name: question,
-    acceptedAnswer: {
-      '@type': 'Answer',
-      text: answer,
-    },
-  })),
-});

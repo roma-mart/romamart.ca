@@ -7,6 +7,7 @@ import { trackEvent } from '../../utils/analytics.js';
 vi.mock('../../contexts/CompanyDataContext', () => ({
   useCompanyData: () => ({
     companyData: {
+      dba: 'Roma Mart Convenience',
       location: { contact: { phone: '+1 (382) 342-2000' } },
     },
   }),
@@ -29,7 +30,7 @@ describe('MobileCallCTA', () => {
 
   it('renders a tel: link with the correct phone number', () => {
     render(<MobileCallCTA />);
-    const link = screen.getByRole('link', { name: /call roma mart/i });
+    const link = screen.getByRole('link', { name: /call roma mart convenience/i });
     expect(link).toBeTruthy();
     expect(link.getAttribute('href')).toContain('tel:');
   });
@@ -42,7 +43,7 @@ describe('MobileCallCTA', () => {
 
   it('fires phone_click trackEvent on click', () => {
     render(<MobileCallCTA />);
-    const link = screen.getByRole('link', { name: /call roma mart/i });
+    const link = screen.getByRole('link', { name: /call roma mart convenience/i });
     fireEvent.click(link);
     expect(trackEvent).toHaveBeenCalledWith('phone_click', {
       location_id: undefined,

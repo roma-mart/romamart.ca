@@ -40,8 +40,11 @@ export async function getAggregateRating() {
   if (!apiKey || !PLACE_ID) return null;
 
   try {
-    const url = `https://places.googleapis.com/v1/places/${PLACE_ID}` + `?fields=rating,userRatingCount&key=${apiKey}`;
-    const res = await fetch(url, { signal: AbortSignal.timeout(5000) });
+    const url = `https://places.googleapis.com/v1/places/${PLACE_ID}?fields=rating,userRatingCount`;
+    const res = await fetch(url, {
+      signal: AbortSignal.timeout(5000),
+      headers: { 'X-Goog-Api-Key': apiKey },
+    });
     if (!res.ok) return null;
     const json = await res.json();
     const result = {

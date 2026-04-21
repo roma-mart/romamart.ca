@@ -373,6 +373,12 @@ const LocationsPage = () => {
                               className="absolute bottom-4 right-4 px-4 py-2 rounded-full text-xs font-semibold shadow-lg focus-visible:ring-2 focus-visible:ring-offset-2"
                               style={{ backgroundColor: 'var(--color-primary)', color: 'var(--color-text-on-primary)' }}
                               aria-label={`Open ${location.name} in Google Maps`}
+                              onClick={() =>
+                                trackEvent('directions_click', {
+                                  location_id: location.id,
+                                  source: 'locations_map_overlay',
+                                })
+                              }
                             >
                               Open in Google Maps
                             </a>

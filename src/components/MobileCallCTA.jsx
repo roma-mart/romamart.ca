@@ -25,9 +25,9 @@ export default function MobileCallCTA() {
   return (
     <motion.a
       href={href}
-      aria-label={`Call ${companyData?.dba || 'Roma Mart'}`}
+      aria-label={`Call ${companyData.dba}`}
       onClick={() => trackEvent('phone_click', { location_id: companyData?.location?.id, source: 'mobile_sticky' })}
-      className="md:hidden fixed bottom-5 right-4 z-50 flex items-center gap-2 px-4 py-3 rounded-full shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+      className="md:hidden fixed bottom-[calc(56px+env(safe-area-inset-bottom,0px)+2rem)] right-4 z-50 flex items-center gap-2 px-4 py-3 rounded-full shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
       whileHover={shouldReduceMotion ? undefined : { scale: 1.05 }}
       style={{
         backgroundColor: 'var(--color-accent)',
@@ -37,7 +37,7 @@ export default function MobileCallCTA() {
     >
       <Phone size={18} aria-hidden="true" />
       <span className="text-sm font-bold" style={{ fontFamily: 'var(--font-body)' }}>
-        Call {companyData?.dba || 'Roma Mart'}
+        Call {companyData.dba}
       </span>
     </motion.a>
   );

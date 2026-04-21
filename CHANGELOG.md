@@ -19,7 +19,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `scripts/generate-redirects.js` — redirect stub generator for legacy HTML URLs and bare paths
 - `scripts/fetch-places-rating.js` — build-time Google Places rating fetcher (6h cache)
 - `docs/ANALYTICS.md` — event schema contract for GTM/GA4 configuration
-- Hero image preload `<link rel="preload" as="image">` for desktop LCP
 - `aggregateRating`, expanded `areaServed` (Sarnia, Point Edward, Corunna, Bright's Grove), and `currenciesAccepted: "CAD, BTC"` to `buildLocationSchema()`
 - AggregateRating and areaServed fields to the main `buildStructuredData()` LocalBusiness block
 - FAQPage schema injected alongside main schema on homepage only
