@@ -8,7 +8,6 @@ import { useEffect, useState } from 'react';
 export const useServiceWorker = () => {
   const [registration, setRegistration] = useState(null);
   const [updateAvailable, setUpdateAvailable] = useState(false);
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
 
   useEffect(() => {
     let updateInterval;
@@ -18,7 +17,7 @@ export const useServiceWorker = () => {
     const registerServiceWorker = async () => {
       try {
         const reg = await navigator.serviceWorker.register('/sw.js', {
-          scope: '/'
+          scope: '/',
         });
 
         setRegistration(reg);
@@ -44,12 +43,16 @@ export const useServiceWorker = () => {
         });
 
         // Check for updates periodically (every hour)
-        updateInterval = setInterval(() => {
-          reg.update();
-        }, 60 * 60 * 1000);
-
+        updateInterval = setInterval(
+          () => {
+            reg.update();
+          },
+          60 * 60 * 1000
+        );
       } catch (error) {
-        console.error('[SW] Registration failed:', error);
+        if (import.meta.env.DEV) {
+          console.error('[SW] Registration failed:', error);
+        }
       }
     };
 
@@ -81,18 +84,9 @@ export const useServiceWorker = () => {
       };
     }
 
-    // Online/offline status
-    const handleOnline = () => setIsOnline(true);
-    const handleOffline = () => setIsOnline(false);
-
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-
     return () => {
       if (updateInterval) clearInterval(updateInterval);
       if (cleanupControllerChange) cleanupControllerChange();
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
     };
   }, []);
 
@@ -106,6 +100,5 @@ export const useServiceWorker = () => {
     registration,
     updateAvailable,
     skipWaiting,
-    isOnline
   };
 };

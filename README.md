@@ -3,7 +3,7 @@
 > Modern PWA for Sarnia's premier convenience store chain
 
 [![React](https://img.shields.io/badge/React-18.3.1-61dafb)](https://react.dev/)
-[![Vite](https://img.shields.io/badge/Vite-7-646cff)](https://vitejs.dev/)
+[![Vite](https://img.shields.io/badge/Vite-8-646cff)](https://vitejs.dev/)
 [![WCAG 2.2 AA](https://img.shields.io/badge/WCAG-2.2%20AA-green)](https://www.w3.org/TR/WCAG22/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
@@ -61,7 +61,7 @@ See [Architecture](./docs/ARCHITECTURE.md) and [Quality System](./docs/QUALITY_S
 | Technology | Purpose |
 |------------|---------|
 | React 18.3.1 | UI framework |
-| Vite 7 | Build tool |
+| Vite 8 | Build tool |
 | Tailwind CSS | Styling |
 | Framer Motion | Animations |
 | ESM Modules | JavaScript modules |

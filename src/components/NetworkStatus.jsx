@@ -5,10 +5,10 @@
 
 import React from 'react';
 import { WifiOff, Wifi } from 'lucide-react';
-import { useServiceWorker } from '../hooks/useServiceWorker';
+import { useIsOnline } from '../hooks/useIsOnline';
 
 const NetworkStatus = () => {
-  const { isOnline } = useServiceWorker();
+  const isOnline = useIsOnline();
   const [showReconnected, setShowReconnected] = React.useState(false);
   const prevIsOnlineRef = React.useRef(isOnline);
 
