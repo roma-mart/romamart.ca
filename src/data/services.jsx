@@ -64,6 +64,10 @@ export const SERVICES = SERVICES_PLAIN.map((svc) => ({
   icon: ICON_MAP[svc.iconKey] ?? null,
 }));
 
+// SERVICES_PLAIN is intentionally NOT re-exported from here.
+// Import it directly from './services-plain.js' to keep the dependency explicit
+// and avoid triggering react-refresh/only-export-components on re-exports.
+
 // === HELPER FUNCTIONS ===
 
 export const getServiceById = (id) => SERVICES.find((s) => s.id === id) ?? null;
