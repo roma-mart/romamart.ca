@@ -112,6 +112,7 @@ const RoCafePage = () => {
             <ShareButton
               title="RoCafé Menu"
               text="Check out the delicious RoCafé menu at Roma Mart!"
+              source="rocafe"
               className="bg-[var(--color-accent)] text-[var(--color-primary)] hover:bg-[color-mix(in srgb, var(--color-accent) 85%, transparent)]"
             />
           </div>
@@ -287,11 +288,11 @@ const RoCafePage = () => {
               href={`${BASE_URL}locations`}
               variant="navlink"
               style={{ minWidth: 180 }}
-              analyticsEvent="rocafe_get_directions"
+              analyticsEvent={{ event: 'directions_click', location_id: 'loc-wellington-001', source: 'rocafe_page' }}
             >
               Get Directions
             </Button>
-            <Button href={`${BASE_URL}`} variant="navlink" style={{ minWidth: 180 }} analyticsEvent="rocafe_back_home">
+            <Button href={`${BASE_URL}`} variant="navlink" style={{ minWidth: 180 }}>
               Back to Home
             </Button>
           </div>

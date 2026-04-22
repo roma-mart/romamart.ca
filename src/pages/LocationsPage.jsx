@@ -160,6 +160,7 @@ const LocationsPage = () => {
             <ShareButton
               title="Roma Mart Locations"
               text="Find Roma Mart convenience stores near you in Sarnia!"
+              source="locations"
               className="bg-[var(--color-accent)] text-[var(--color-primary)] hover:bg-[color-mix(in srgb, var(--color-accent) 85%, transparent)]"
             />
           </div>
@@ -472,7 +473,7 @@ const LocationsPage = () => {
             href={`${BASE_URL}contact`}
             variant="navlink"
             style={{ minWidth: 180 }}
-            analyticsEvent="locations_contact_us"
+            analyticsEvent={{ event: 'order_cta_click', cta_location: 'locations_contact', cta_text: 'Contact Us' }}
           >
             Contact Us
           </Button>

@@ -17,6 +17,9 @@ All events are dispatched via `trackEvent(name, params)` from `src/utils/analyti
 | `pwa_install_dismissed` | User dismisses PWA install prompt | `engagement_score` | No |
 | `web_vital` | Core Web Vital measured | `metric_name`, `metric_value`, `metric_rating`, `metric_id` | No |
 | `error` | Unhandled JS error or ErrorBoundary catch | `error_message`, `error_source` | No |
+| `share_click` | User shares page via Web Share API or clipboard fallback | `method`, `source` | No |
+| `copy_click` | User copies text via CopyButton | `label`, `source` | No |
+| `email_click` | Any `mailto:` link is clicked | `source` | No |
 
 ## Param Values
 
@@ -32,6 +35,33 @@ All events are dispatched via `trackEvent(name, params)` from `src/utils/analyti
 - `locations_map_inline` — Locations page map panel "Open in Google Maps" text link (pre-load)
 - `locations_map_button` — Locations page map panel "Open Map" button (non-preferred location)
 - `locations_map_overlay` — Locations page "Open in Google Maps" button overlaid on loaded iframe
+- `rocafe_page` — RoCafé page "Get Directions" CTA
+
+### `method` for `share_click`
+- `native` — Web Share API succeeded
+- `clipboard` — Clipboard fallback (Web Share API unavailable or failed)
+
+### `source` for `share_click`
+- `homepage` — Hero section on Home page
+- `about` — About page
+- `accessibility` — Accessibility Statement page
+- `contact` — Contact page
+- `cookies` — Cookie Policy page
+- `locations` — Locations page
+- `privacy` — Privacy Policy page
+- `return_policy` — Return Policy page
+- `rocafe` — RoCafé Menu page
+- `services` — Services page
+- `terms` — Terms of Service page
+
+### `source` for `email_click`
+- `contact` — Contact page email link
+- `accessibility` — Accessibility Statement page email link
+- `cookies` — Cookie Policy page email link
+- `privacy` — Privacy Policy page email link
+- `terms` — Terms of Service page email link
+- `return_policy` — Return Policy page email link
+- `standardized_item` — Service item action button (mailto)
 
 ### `metric_name` for `web_vital`
 CLS, INP, LCP, TTFB, FCP
