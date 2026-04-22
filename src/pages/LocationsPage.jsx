@@ -13,6 +13,7 @@ import ImageCarousel from '../components/ImageCarousel';
 import LiveHoursDisplay from '../components/LiveHoursDisplay';
 import { useAutoLocation } from '../hooks/useAutoLocation';
 import StructuredData from '../components/StructuredData';
+import { ROUTE_TITLES } from '../config/routeTitles';
 import { getBaseUrl } from '../utils/getAssetUrl';
 import { normalizePhoneForTel } from '../utils/phone';
 import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
@@ -98,7 +99,7 @@ const LocationsPage = () => {
   return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>
       <Helmet>
-        <title>Our Locations | Roma Mart Convenience</title>
+        <title>{ROUTE_TITLES.locations}</title>
         <meta
           name="description"
           content="Find Roma Mart convenience store locations in Sarnia, Ontario. Get directions, hours, and contact information."

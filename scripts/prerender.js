@@ -4,6 +4,7 @@ import { createHash } from 'crypto';
 import { execFileSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import COMPANY_DATA, { PLACES_GLOBAL_KEY } from '../src/config/company_data.js';
+import { ROUTE_TITLES } from '../src/config/routeTitles.js';
 import { buildMenuItemSchema } from '../src/schemas/menuItemSchema.js';
 import { buildServiceListSchema } from '../src/schemas/serviceSchema.js';
 import { buildLocationListSchema } from '../src/schemas/locationSchema.js';
@@ -59,7 +60,7 @@ const routes = [
   {
     path: '/services',
     title: 'Services',
-    fullTitle: 'Services at Roma Mart Sarnia \u2014 ATM, Bitcoin, Lottery, Printing, Halal',
+    fullTitle: ROUTE_TITLES.services,
     description:
       '15 services in one stop in Sarnia: ATM, Bitcoin ATM, lottery, halal meat counter, printing, photocopying, and more. Open daily on Wellington St.',
     ogImage: `${BASE_URL}/images/romamart-interior1.png`,
@@ -92,7 +93,7 @@ const routes = [
   {
     path: '/locations',
     title: 'Locations',
-    fullTitle: 'Roma Mart Locations \u2014 189 Wellington St, Sarnia ON',
+    fullTitle: ROUTE_TITLES.locations,
     description:
       'Find Roma Mart in Sarnia at 189 Wellington Street. Hours, parking, amenities, directions and photos. Wheelchair accessible with free Wi-Fi.',
     ogImage: `${BASE_URL}/images/romamart-opening1.png`,

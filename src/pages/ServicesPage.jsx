@@ -6,6 +6,7 @@ import StandardizedItem from '../components/StandardizedItem';
 import { useServices } from '../contexts/ServicesContext';
 import { useCompanyData } from '../contexts/CompanyDataContext';
 import StructuredData from '../components/StructuredData';
+import { ROUTE_TITLES } from '../config/routeTitles';
 import { getBaseUrl } from '../utils/getAssetUrl';
 import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 
@@ -41,7 +42,7 @@ const ServicesPage = () => {
   return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-surface)' }}>
       <Helmet>
-        <title>Our Services | Roma Mart Convenience</title>
+        <title>{ROUTE_TITLES.services}</title>
         <meta
           name="description"
           content="Roma Mart offers ATM, Bitcoin ATM, printing, package services, halal meat, money transfer, gift cards, perfumes, tobacco products, and more in Sarnia, Ontario."

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense, lazy, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, Suspense, lazy, useCallback, useMemo, useRef } from 'react';
 import { trackEvent } from './utils/analytics.js';
 import ErrorBoundary from './components/ErrorBoundary';
 import LoadingFallback from './components/LoadingFallback';
@@ -348,8 +348,10 @@ const RoCafeSection = ({ menuItems, loading, error, refetch }) => {
 const Locations = () => {
   const [userCoords, setUserCoords] = useState(null);
   const { locations, loading: locLoading, error: locError, refetch: locRefetch } = useLocations();
+  const locationsSectionRef = useRef(null);
 
   const primaryLocation = useMemo(() => locations.find((loc) => loc.isPrimary) || locations[0], [locations]);
+  const [shouldLoadMap, setShouldLoadMap] = useState(() => !primaryLocation?.google?.embedUrl);
 
   const preferredLocation = useMemo(
     () => getPreferredLocation({ userCoords, locations }) || primaryLocation,
@@ -380,12 +382,40 @@ const Locations = () => {
     [preferredLocation]
   );
 
+  useEffect(() => {
+    if (!displayLocation.embedUrl || shouldLoadMap) return;
+    const locationsSection = locationsSectionRef.current;
+    if (!locationsSection) return;
+    if (typeof window === 'undefined' || typeof window.IntersectionObserver !== 'function') {
+      setShouldLoadMap(true);
+      return;
+    }
+
+    const observer = new window.IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        setShouldLoadMap(true);
+        observer.disconnect();
+      },
+      {
+        rootMargin: '500px 0px',
+        threshold: 0.01,
+      }
+    );
+
+    observer.observe(locationsSection);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [displayLocation.embedUrl, shouldLoadMap]);
+
   // Note: Homepage only displays one location (the preferred/closest one)
   // so we don't need user selection logic here. Use displayLocation directly.
   const activeLoc = displayLocation;
 
   return (
-    <section id="locations" className="py-24" style={{ backgroundColor: 'var(--color-bg)' }}>
+    <section id="locations" ref={locationsSectionRef} className="py-24" style={{ backgroundColor: 'var(--color-bg)' }}>
       <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
           <span className="font-bold uppercase tracking-widest text-sm" style={{ color: 'var(--color-accent)' }}>
@@ -474,7 +504,7 @@ const Locations = () => {
                 className="lg:col-span-2 rounded-3xl overflow-hidden min-h-[400px] relative shadow-inner"
                 style={{ backgroundColor: 'var(--color-surface)' }}
               >
-                {displayLocation.embedUrl ? (
+                {displayLocation.embedUrl && shouldLoadMap ? (
                   <iframe
                     title={`Google Maps - ${displayLocation.name}`}
                     src={displayLocation.embedUrl}
@@ -491,7 +521,9 @@ const Locations = () => {
                     style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)' }}
                   >
                     <p className="font-inter text-sm" style={{ color: 'var(--color-text-muted)' }}>
-                      Open this location in Google Maps for directions.
+                      {displayLocation.embedUrl
+                        ? 'The interactive map loads automatically as this section comes into view.'
+                        : 'Open this location in Google Maps for directions.'}
                     </p>
                     <a
                       href={displayLocation.mapLink}
