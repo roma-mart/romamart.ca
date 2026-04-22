@@ -67,13 +67,7 @@ const LocationsPage = () => {
     locations: activeLocations,
   });
   const preferredLocationId = sortedLocations[0]?.id;
-  const loadedMaps = (() => {
-    const combined = new Set(userLoadedMaps);
-    if (preferredLocationId) {
-      combined.add(preferredLocationId);
-    }
-    return combined;
-  })();
+  const loadedMaps = new Set(userLoadedMaps);
 
   const locations = sortedLocations.map((loc) => ({
     ...loc,
