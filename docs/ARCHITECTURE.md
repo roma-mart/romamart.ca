@@ -708,6 +708,21 @@ npm run check:all  # Lint + quality + integrity
 **Optional:**
 - `VITE_ENABLE_NEW_FEATURE` - Feature flags
 
+### Client-Exposed Environment Variables
+
+All `VITE_*` variables are bundled into the client at build time. The table below classifies each by intent and any required restrictions.
+
+| Variable | Public by design | Restriction required |
+|---|---|---|
+| `VITE_GTM_ID` | Yes | — |
+| `VITE_WEB3FORMS_KEY` | Yes (per Web3Forms docs) | — |
+| `VITE_TRUSTPILOT_BUSINESSUNIT_ID` / `TEMPLATE_ID` / `TOKEN` | Yes (per Trustpilot widget docs) | — |
+| `VITE_GOOGLE_PLACES_API_KEY` | Yes (browser key) | **Google Cloud Console: restrict to `*.romamart.ca` referrers + enable only Places and Maps APIs** |
+| `VITE_API_KEY` | Yes, but rate-limit/routing only — **never use for server-side auth** | Backend must treat this as a public identifier |
+| `VITE_API_BASE_URL` | Yes | — |
+
+> **Action required:** Verify `VITE_GOOGLE_PLACES_API_KEY` has the referrer restriction set in Google Cloud Console (this is a console action, not a code change — track as a backlog item).
+
 ---
 
 ## Quality System
