@@ -7,6 +7,7 @@ import { useCompanyData } from '../contexts/CompanyDataContext';
 import { getBaseUrl } from '../utils/getAssetUrl';
 import { normalizePhoneForTel } from '../utils/phone';
 import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
+import { trackEvent } from '../utils/analytics.js';
 
 const PrivacyPage = () => {
   const { companyData, getContextualEmail } = useCompanyData();
@@ -57,6 +58,7 @@ const PrivacyPage = () => {
           <ShareButton
             title="Roma Mart Privacy Policy"
             text="Read Roma Mart's privacy policy"
+            source="privacy"
             style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-on-accent)' }}
           />
         </div>
@@ -190,7 +192,11 @@ const PrivacyPage = () => {
               </p>
               <p style={textColor}>
                 Email:{' '}
-                <a href={`mailto:${getContextualEmail('privacy')}`} style={{ color: 'var(--color-accent)' }}>
+                <a
+                  href={`mailto:${getContextualEmail('privacy')}`}
+                  style={{ color: 'var(--color-accent)' }}
+                  onClick={() => trackEvent('email_click', { source: 'privacy' })}
+                >
                   {getContextualEmail('privacy')}
                 </a>
               </p>

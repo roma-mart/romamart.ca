@@ -64,6 +64,7 @@ const ContactPage = () => {
           <ShareButton
             title="Contact Roma Mart"
             text="Get in touch with Roma Mart - Sarnia's premier convenience store!"
+            source="contact"
             style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-on-accent)' }}
           />
         </div>
@@ -153,6 +154,7 @@ const ContactPage = () => {
                       href={`mailto:${companyData.location?.contact?.email}`}
                       className="hover:underline"
                       style={{ color: 'var(--color-accent)' }}
+                      onClick={() => trackEvent('email_click', { source: 'contact' })}
                     >
                       {companyData.location?.contact?.email}
                     </a>

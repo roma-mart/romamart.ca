@@ -7,6 +7,7 @@ import { useCompanyData } from '../contexts/CompanyDataContext';
 import { getBaseUrl } from '../utils/getAssetUrl';
 import { normalizePhoneForTel } from '../utils/phone';
 import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
+import { trackEvent } from '../utils/analytics.js';
 
 const ReturnPolicyPage = () => {
   const { companyData, getContextualEmail } = useCompanyData();
@@ -63,6 +64,7 @@ const ReturnPolicyPage = () => {
           <ShareButton
             title="Roma Mart Return Policy"
             text="Read Roma Mart's returns and refund policy"
+            source="return_policy"
             style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-on-accent)' }}
           />
         </div>
@@ -148,7 +150,11 @@ const ReturnPolicyPage = () => {
               </p>
               <p style={textColor}>
                 Email:{' '}
-                <a href={`mailto:${getContextualEmail('support')}`} style={{ color: 'var(--color-accent)' }}>
+                <a
+                  href={`mailto:${getContextualEmail('support')}`}
+                  style={{ color: 'var(--color-accent)' }}
+                  onClick={() => trackEvent('email_click', { source: 'return_policy' })}
+                >
                   {getContextualEmail('support')}
                 </a>
               </p>

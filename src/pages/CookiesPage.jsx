@@ -7,6 +7,7 @@ import { getBaseUrl } from '../utils/getAssetUrl';
 import { normalizePhoneForTel } from '../utils/phone';
 import StructuredData from '../components/StructuredData';
 import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
+import { trackEvent } from '../utils/analytics.js';
 
 const CookiesPage = () => {
   const { companyData, getContextualEmail } = useCompanyData();
@@ -57,6 +58,7 @@ const CookiesPage = () => {
           <ShareButton
             title="Roma Mart Cookie Policy"
             text="Learn about Roma Mart's cookie policy"
+            source="cookies"
             style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-on-accent)' }}
           />
         </div>
@@ -208,7 +210,11 @@ const CookiesPage = () => {
               </p>
               <p style={textColor}>
                 Email:{' '}
-                <a href={`mailto:${getContextualEmail('privacy')}`} style={{ color: 'var(--color-accent)' }}>
+                <a
+                  href={`mailto:${getContextualEmail('privacy')}`}
+                  style={{ color: 'var(--color-accent)' }}
+                  onClick={() => trackEvent('email_click', { source: 'cookies' })}
+                >
                   {getContextualEmail('privacy')}
                 </a>
               </p>

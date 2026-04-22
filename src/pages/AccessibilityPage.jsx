@@ -6,6 +6,7 @@ import { useCompanyData } from '../contexts/CompanyDataContext';
 import { getBaseUrl } from '../utils/getAssetUrl';
 import StructuredData from '../components/StructuredData';
 import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
+import { trackEvent } from '../utils/analytics.js';
 
 import { normalizePhoneForTel } from '../utils/phone';
 
@@ -58,6 +59,7 @@ const AccessibilityPage = () => {
           <ShareButton
             title="Roma Mart Accessibility"
             text="Learn about Roma Mart's accessibility commitment"
+            source="accessibility"
             style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)' }}
             className="hover:opacity-90"
           />
@@ -219,6 +221,7 @@ const AccessibilityPage = () => {
               href={`mailto:${getContextualEmail('accessibility')}`}
               className="hover:underline break-all"
               style={{ color: 'var(--color-accent)' }}
+              onClick={() => trackEvent('email_click', { source: 'accessibility' })}
             >
               {getContextualEmail('accessibility')}
             </a>

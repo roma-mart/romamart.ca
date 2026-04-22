@@ -316,7 +316,10 @@ const StandardizedItem = ({ item, itemType, defaultExpanded = false }) => {
               }
               target={action.url ? '_blank' : undefined}
               rel={action.url ? 'noopener noreferrer' : undefined}
-              onClick={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (action.email) trackEvent('email_click', { source: 'standardized_item' });
+              }}
               className="block w-full py-3 px-4 rounded-lg font-bold font-inter text-center transition-transform duration-200 transform hover:scale-105"
               style={{
                 WebkitTapHighlightColor: 'transparent',

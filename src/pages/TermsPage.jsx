@@ -7,6 +7,7 @@ import { getBaseUrl } from '../utils/getAssetUrl';
 import { normalizePhoneForTel } from '../utils/phone';
 import StructuredData from '../components/StructuredData';
 import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
+import { trackEvent } from '../utils/analytics.js';
 
 const TermsPage = () => {
   const { companyData, getContextualEmail } = useCompanyData();
@@ -57,6 +58,7 @@ const TermsPage = () => {
           <ShareButton
             title="Roma Mart Terms of Service"
             text="Read Roma Mart's terms of service"
+            source="terms"
             style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-on-accent)' }}
           />
         </div>
@@ -159,7 +161,11 @@ const TermsPage = () => {
               </p>
               <p style={textColor}>
                 Email:{' '}
-                <a href={`mailto:${getContextualEmail('legal')}`} style={{ color: 'var(--color-accent)' }}>
+                <a
+                  href={`mailto:${getContextualEmail('legal')}`}
+                  style={{ color: 'var(--color-accent)' }}
+                  onClick={() => trackEvent('email_click', { source: 'terms' })}
+                >
                   {getContextualEmail('legal')}
                 </a>
               </p>

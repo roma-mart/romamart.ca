@@ -173,6 +173,7 @@ const AboutPage = () => {
             <ShareButton
               title="About Roma Mart"
               text="Learn about Roma Mart - your trusted convenience store in Sarnia!"
+              source="about"
               style={{
                 backgroundColor: 'var(--color-accent)',
                 color: 'var(--color-text)',
