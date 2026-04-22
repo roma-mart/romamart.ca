@@ -52,7 +52,13 @@ if (GTM_ID) {
 
   // Also create noscript fallback iframe for no-JS environments
   const noscript = document.createElement('noscript');
-  noscript.innerHTML = `<iframe src="https://www.googletagmanager.com/ns.html?id=${GTM_ID}" height="0" width="0" style="display:none;visibility:hidden"></iframe>`;
+  const gtmIframe = document.createElement('iframe');
+  gtmIframe.src = `https://www.googletagmanager.com/ns.html?id=${GTM_ID}`;
+  gtmIframe.height = '0';
+  gtmIframe.width = '0';
+  gtmIframe.style.display = 'none';
+  gtmIframe.style.visibility = 'hidden';
+  noscript.appendChild(gtmIframe);
   document.body.insertBefore(noscript, document.body.firstChild);
 }
 
