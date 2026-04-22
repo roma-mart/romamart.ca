@@ -190,8 +190,15 @@ export const buildLocationSchema = (location, _options = {}) => {
   // Add area served: prefer caller-supplied derivation (API locations set), fall back to SSOT
   schema.areaServed = _options.areaServed || cd.serviceArea;
 
-  // Add aggregate rating if provided via options (fetched from Places API at build time)
-  if (_options.aggregateRating?.ratingValue && _options.aggregateRating?.reviewCount) {
+  // Add aggregate rating if provided via options (fetched from Places API at build time).
+  // Explicit null/undefined check (not truthy) so a legitimate reviewCount of 0 (new listings) emits.
+  const ar = _options.aggregateRating;
+  if (
+    ar?.ratingValue !== null &&
+    ar?.ratingValue !== undefined &&
+    ar?.reviewCount !== null &&
+    ar?.reviewCount !== undefined
+  ) {
     schema.aggregateRating = {
       '@type': 'AggregateRating',
       ratingValue: _options.aggregateRating.ratingValue,

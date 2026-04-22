@@ -110,7 +110,8 @@ function checkRouteHtml() {
     assert(/<h1[^>]*>/.test(html), `Missing <h1> in prerendered HTML for ${route}`);
 
     // Collect all @type values from every JSON-LD block on the page
-    const jsonLdRegex = /<script type="application\/ld\+json">([\s\S]*?)<\/script>/g;
+    // Match <script ...> tags containing type="application/ld+json" regardless of attribute order/extras.
+    const jsonLdRegex = /<script\b[^>]*\btype=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
     const schemaTypes = new Set();
     let jsonLdMatch;
     while ((jsonLdMatch = jsonLdRegex.exec(html)) !== null) {

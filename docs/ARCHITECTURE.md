@@ -1,7 +1,7 @@
 # Roma Mart 2.0 - System Architecture
 
-> **Last Updated:** April 21, 2026
-> **Version:** 2.9.0 (React 18.3.1 + Vite 8)
+> **Last Updated:** April 22, 2026
+> **Version:** 2.10.0 (React 18.3.1 + Vite 8)
 
 ## Table of Contents
 
@@ -25,7 +25,7 @@
 | Technology | Version | Purpose |
 |------------|---------|---------|
 | **React** | 18.3.1 | UI framework with modern hooks |
-| **Vite** | 7.0 | Lightning-fast build tool & dev server |
+| **Vite** | 8.x | Lightning-fast build tool & dev server |
 | **Tailwind CSS** | 3.4 | Utility-first CSS framework |
 | **Framer Motion** | 11.x | Animation library |
 | **react-helmet-async** | 2.x | SEO meta tag management |
@@ -817,6 +817,6 @@ All `VITE_*` variables are bundled into the client at build time. The table belo
 
 ---
 
-**Last Updated:** February 9, 2026
+**Last Updated:** April 22, 2026
 **Maintained By:** Roma Mart Development Team  
 **Status:** Living Document

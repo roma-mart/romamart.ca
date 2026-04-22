@@ -92,7 +92,7 @@ const ContactPage = () => {
                   </h3>
                   <p style={textColor}>{companyData.location?.address?.formatted}</p>
                   <a
-                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(companyData.location?.address?.formatted)}${companyData.location?.google?.placeId ? `&query_place_id=${companyData.location.google.placeId}` : ''}`}
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(companyData.location?.address?.formatted || companyData.dba || 'Roma Mart')}${companyData.location?.google?.placeId ? `&query_place_id=${companyData.location.google.placeId}` : ''}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Get directions to Roma Mart"

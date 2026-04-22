@@ -16,9 +16,13 @@ export default function MobileCallCTA() {
   const phone = companyData?.location?.contact?.phone;
   if (!phone) return null;
 
-  // Hide on /contact/ route — user is already on the contact page
-  const pathname = typeof window !== 'undefined' ? window.location.pathname.replace(BASE_URL, '/') : '/';
-  if (pathname === '/contact/' || pathname === '/contact') return null;
+  // Hide on /contact/ route — user is already on the contact page.
+  // Strip a non-root BASE_URL prefix (e.g. '/romamart.ca/') so route matching works on GH Pages.
+  const rawPathname = typeof window !== 'undefined' ? window.location.pathname : '/';
+  const basePath = BASE_URL === '/' ? '' : BASE_URL.replace(/\/$/, '');
+  const pathname =
+    basePath && rawPathname.startsWith(basePath) ? rawPathname.slice(basePath.length) || '/' : rawPathname;
+  if (pathname.replace(/\/$/, '') === '/contact') return null;
 
   const href = `tel:${normalizePhoneForTel(phone)}`;
 
@@ -27,18 +31,19 @@ export default function MobileCallCTA() {
       href={href}
       aria-label={`Call ${companyData.dba}`}
       onClick={() => trackEvent('phone_click', { location_id: companyData?.location?.id, source: 'mobile_sticky' })}
-      className="md:hidden fixed bottom-[calc(56px+env(safe-area-inset-bottom,0px)+2rem)] right-4 z-50 flex items-center gap-2 px-4 py-3 rounded-full shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+      className="md:hidden fixed bottom-[calc(env(safe-area-inset-bottom,0px)+1.5rem)] right-4 z-50 flex items-center justify-center rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
       whileHover={shouldReduceMotion ? undefined : { scale: 1.05 }}
       style={{
         backgroundColor: 'var(--color-accent)',
         color: 'var(--color-primary)',
         boxShadow: shadows.lg,
+        minWidth: 56,
+        minHeight: 56,
+        padding: 0,
+        WebkitTapHighlightColor: 'transparent',
       }}
     >
       <Phone size={18} aria-hidden="true" />
-      <span className="text-sm font-bold" style={{ fontFamily: 'var(--font-body)' }}>
-        Call {companyData.dba}
-      </span>
     </motion.a>
   );
 }

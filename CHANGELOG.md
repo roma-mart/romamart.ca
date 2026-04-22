@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `src/components/MobileCallCTA.jsx` — floating phone button on mobile (md:hidden), hidden on /contact/
 - `src/components/TrustSignal.jsx` — live star rating in hero via `useGooglePlaceHours`
 - `src/schemas/faq.js` — FAQPage schema (6 Q&A pairs) injected into homepage prerender
-- `scripts/generate-redirects.js` — redirect stub generator for legacy HTML URLs and bare paths
+- `scripts/generate-redirects.js` — redirect stub generator for legacy `.html` URLs
 - `scripts/fetch-places-rating.js` — build-time Google Places rating fetcher (6h cache)
 - `docs/ANALYTICS.md` — event schema contract for GTM/GA4 configuration
 - `aggregateRating`, expanded `areaServed` (Sarnia, Point Edward, Corunna, Bright's Grove), and `currenciesAccepted: "CAD, BTC"` to `buildLocationSchema()`
@@ -399,7 +399,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Google Tag Manager, GA4, Consent Mode, Trustpilot, Snap Pixel
 - LocalBusiness structured data, meta tags, sitemap, robots.txt
 
-[Unreleased]: https://github.com/roma-mart/romamart.ca/compare/v2.7.1...HEAD
+[Unreleased]: https://github.com/roma-mart/romamart.ca/compare/v2.9.0...HEAD
+[2.9.0]: https://github.com/roma-mart/romamart.ca/compare/v2.8.0...v2.9.0
+[2.8.0]: https://github.com/roma-mart/romamart.ca/compare/v2.7.1...v2.8.0
 [2.7.1]: https://github.com/roma-mart/romamart.ca/compare/v2.7.0...v2.7.1
 [2.7.0]: https://github.com/roma-mart/romamart.ca/compare/v2.6.7...v2.7.0
 [2.6.7]: https://github.com/roma-mart/romamart.ca/compare/v2.6.6...v2.6.7

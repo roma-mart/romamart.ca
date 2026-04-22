@@ -16,7 +16,7 @@ const buildStub = (to) =>
   `<meta http-equiv="refresh" content="0; url=${to}">` +
   `<meta name="robots" content="noindex,follow">` +
   `</head><body><p>Redirecting to <a href="${to}">${to}</a>\u2026</p>` +
-  `<script>location.replace('${to}')<\/script></body></html>\n`;
+  `<script>location.replace(${JSON.stringify(to)})<\/script></body></html>\n`;
 
 export function writeRedirects(distDir) {
   let written = 0;

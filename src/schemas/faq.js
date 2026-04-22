@@ -20,7 +20,7 @@ export const buildFAQSchema = (cd) => {
     },
     {
       question: 'What is RoCafé?',
-      answer: `RoCafé is the in-store coffee bar at ${dba} serving espresso, matcha lattes, smoothies and pastries — all made to order on Wellington Street in ${addr.city}.`,
+      answer: `RoCafé is the in-store coffee bar at ${dba} serving espresso, matcha lattes, smoothies and pastries — all made to order at ${addr.street}, ${addr.city}.`,
     },
     {
       question: `Does ${dba} accept cash, debit and credit?`,

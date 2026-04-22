@@ -80,7 +80,8 @@ window.addEventListener('unhandledrejection', (event) => {
     console.error('[App] Unhandled promise rejection:', event.reason);
   } else {
     trackEvent('error', {
-      error_message: event.reason?.name || 'UnhandledRejection',
+      error_message: event.reason?.message || String(event.reason) || 'UnhandledRejection',
+      error_name: event.reason?.name || 'UnhandledRejection',
       error_source: 'unhandledrejection',
     });
   }

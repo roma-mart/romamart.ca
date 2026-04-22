@@ -15,11 +15,13 @@ const CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6 hours
 const primaryLocation = LOCATIONS.find((l) => l.status === 'open') || LOCATIONS[0];
 const PLACE_ID = primaryLocation?.google?.placeId;
 
-function readCache() {
+function readCache(placeId) {
   try {
     if (!fs.existsSync(CACHE_FILE)) return null;
     const { ts, data } = JSON.parse(fs.readFileSync(CACHE_FILE, 'utf-8'));
-    if (Date.now() - ts < CACHE_TTL_MS) return data;
+    // Reject cache entries whose placeId no longer matches the current primary location
+    // — prevents stale ratings from a previous SSOT being applied to a new business.
+    if (Date.now() - ts < CACHE_TTL_MS && data?.placeId === placeId) return data;
   } catch {
     // stale or corrupt cache
   }
@@ -32,7 +34,7 @@ function writeCache(data) {
 }
 
 export async function getAggregateRating() {
-  const cached = readCache();
+  const cached = readCache(PLACE_ID);
   if (cached) return cached;
 
   // Accept both CI-friendly name and Vite-prefixed name

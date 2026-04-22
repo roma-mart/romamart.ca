@@ -51,4 +51,9 @@ describe('trackEvent', () => {
     trackEvent('email_click', { source: 'contact' });
     expect(window.dataLayer[0]).toEqual({ event: 'email_click', source: 'contact' });
   });
+
+  it('ignores a caller-supplied `event` key in params (cannot be hijacked)', () => {
+    trackEvent('phone_click', { event: 'hijacked', source: 'footer' });
+    expect(window.dataLayer[0]).toEqual({ event: 'phone_click', source: 'footer' });
+  });
 });

@@ -3,7 +3,7 @@ import path from 'path';
 import { createHash } from 'crypto';
 import { execFileSync } from 'child_process';
 import { fileURLToPath } from 'url';
-import COMPANY_DATA from '../src/config/company_data.js';
+import COMPANY_DATA, { PLACES_GLOBAL_KEY } from '../src/config/company_data.js';
 import { buildMenuItemSchema } from '../src/schemas/menuItemSchema.js';
 import { buildServiceListSchema } from '../src/schemas/serviceSchema.js';
 import { buildLocationListSchema } from '../src/schemas/locationSchema.js';
@@ -32,6 +32,12 @@ const MENU_API_URL = `${API_BASE}/api/v1/public-menu`;
 const SERVICES_API_URL = `${API_BASE}/api/v1/public-services`;
 const LOCATIONS_API_URL = `${API_BASE}/api/v1/public-locations`;
 
+// Hard cap on every build-time API fetch so a stalled endpoint can't hang the build indefinitely.
+// Aborts trigger the existing useFallback/STRICT_PRERENDER paths instead of the build silently hanging.
+const API_FETCH_TIMEOUT_MS = 10000;
+const fetchWithTimeout = (url, options = {}) =>
+  fetch(url, { ...options, signal: AbortSignal.timeout(API_FETCH_TIMEOUT_MS) });
+
 // Routes to prerender
 const BASE_URL = 'https://romamart.ca';
 const DEFAULT_OG_IMAGE = `${BASE_URL}/og-image.jpg`;
@@ -48,7 +54,7 @@ const routes = [
     ogImage: DEFAULT_OG_IMAGE,
     twitterImage: DEFAULT_TW_IMAGE,
     imageAlt: DEFAULT_IMAGE_ALT,
-    sourceFile: 'src/pages/HomePage.jsx',
+    sourceFile: 'src/App.jsx',
   },
   {
     path: '/services',
@@ -475,7 +481,7 @@ async function fetchMenuData() {
 
   try {
     console.log('Fetching menu data from API for prerendering...');
-    const response = await fetch(MENU_API_URL, { headers: API_HEADERS });
+    const response = await fetchWithTimeout(MENU_API_URL, { headers: API_HEADERS });
 
     if (!response.ok) {
       return useFallback(`HTTP ${response.status}`);
@@ -513,7 +519,7 @@ async function fetchServicesData() {
 
   try {
     console.log('Fetching services data from API for prerendering...');
-    const response = await fetch(SERVICES_API_URL, { headers: API_HEADERS });
+    const response = await fetchWithTimeout(SERVICES_API_URL, { headers: API_HEADERS });
 
     if (!response.ok) {
       return useFallback(`HTTP ${response.status}`);
@@ -557,7 +563,7 @@ async function fetchLocationsData() {
 
   try {
     console.log('Fetching locations data from API for prerendering...');
-    const response = await fetch(LOCATIONS_API_URL, { headers: API_HEADERS });
+    const response = await fetchWithTimeout(LOCATIONS_API_URL, { headers: API_HEADERS });
 
     if (!response.ok) {
       return useFallback(`HTTP ${response.status}`);
@@ -598,7 +604,7 @@ function buildProductListSchema(menuItems, featuredOnly = false, priceInCents = 
   // Build Product schemas using same logic as StructuredData component
   const productSchemas = items
     .map((menuItem) =>
-      buildMenuItemSchema(menuItem, 'https://romamart.ca/rocafe', {
+      buildMenuItemSchema(menuItem, 'https://romamart.ca/rocafe/', {
         currency: 'CAD',
         priceInCents, // API uses cents; static fallback uses dollars
       })
@@ -1271,8 +1277,8 @@ async function prerender() {
             ? `\n  <script type="application/ld+json">${escapeJsonLd(JSON.stringify(buildFAQSchema(COMPANY_DATA)))}</script>`
             : '';
         const placesScript =
-          route.path === '/' && aggregateRating?.ratingValue
-            ? `\n  <script>window.__PLACES__=${escapeJsonLd(JSON.stringify(aggregateRating))}</script>`
+          route.path === '/' && aggregateRating?.ratingValue != null
+            ? `\n  <script>window[${JSON.stringify(PLACES_GLOBAL_KEY)}]=${escapeJsonLd(JSON.stringify(aggregateRating))}</script>`
             : '';
         return `${mainSchema}${faqSchema}${placesScript}\n  </head>`;
       })

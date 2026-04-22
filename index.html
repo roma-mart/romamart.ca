@@ -60,9 +60,15 @@
           s.src = 'https://tcdigital.vip/aria.js';
           s.dataset.widget = 'wgt_roma';
           s.onload = function () {
-            var obs = new MutationObserver(function (_, o) {
+            var applyLabel = function () {
               var btn = document.querySelector('#tcd-widget-container button');
-              if (btn) { btn.setAttribute('aria-label', 'Chat with Aria AI assistant'); o.disconnect(); }
+              if (btn) { btn.setAttribute('aria-label', 'Chat with Aria AI assistant'); return true; }
+              return false;
+            };
+            // Apply immediately if the button already exists; the MutationObserver may otherwise miss it.
+            if (applyLabel()) return;
+            var obs = new MutationObserver(function (_, o) {
+              if (applyLabel()) o.disconnect();
             });
             obs.observe(document.body, { childList: true, subtree: true });
             setTimeout(function () { obs.disconnect(); }, 15000);

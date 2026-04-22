@@ -60,6 +60,7 @@ describe('writeRedirects', () => {
     expect(calls.length).toBeGreaterThan(0);
 
     for (const [, content] of calls) {
+      expect(content).toContain('<!-- roma-mart-redirect-stub -->');
       expect(content).toContain('<meta name="robots" content="noindex,follow">');
       expect(content).toMatch(/content="0; url=/);
     }
