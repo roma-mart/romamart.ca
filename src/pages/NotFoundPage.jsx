@@ -3,14 +3,14 @@ import { Helmet } from 'react-helmet-async';
 import { NAVIGATION_LINKS } from '../config/navigation';
 import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 import { useCompanyData } from '../contexts/CompanyDataContext';
+import { getBaseUrl } from '../utils/getAssetUrl';
 import Button from '../components/Button';
 import StructuredData from '../components/StructuredData';
 import { Home } from 'lucide-react';
 
 const NotFoundPage = () => {
   const { companyData } = useCompanyData();
-  const BASE_URL =
-    typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
+  const BASE_URL = getBaseUrl();
 
   const currentPath = typeof window !== 'undefined' && window.location ? window.location.pathname : '/404';
 

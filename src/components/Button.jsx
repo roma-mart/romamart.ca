@@ -21,6 +21,7 @@
  */
 
 import React from 'react';
+import { trackEvent } from '../utils/analytics.js';
 import { motion } from 'framer-motion';
 import PropTypes from 'prop-types';
 
@@ -34,18 +35,6 @@ const VARIANT_VIBRATION = {
   secondary: 20,
   inverted: 40,
   custom: 35,
-};
-
-// Per-variant analytics event (default, can be overridden)
-const VARIANT_ANALYTICS = {
-  order: 'order_cta',
-  nav: 'nav_click',
-  action: 'action_cta',
-  navlink: 'navlink_click',
-  icon: 'icon_click',
-  secondary: 'secondary_cta',
-  inverted: 'inverted_cta',
-  custom: 'custom_cta',
 };
 
 // Shared spring config — snappy with minimal overshoot (damping ratio ~0.875)
@@ -182,151 +171,225 @@ const SIZE_STYLES = {
 
 // fireAnalytics removed (unused)
 
-const Button = React.forwardRef(({
-  variant = 'order',
-  size = 'md',
-  children,
-  icon,
-  iconPosition = 'left',
-  onClick,
-  href,
-  type = 'button',
-  ariaLabel,
-  disabled = false,
-  loading: loadingProp = false,
-  analyticsEvent,
-  vibrationPattern,
-  className = '',
-  style = {},
-  tabIndex,
-  ...props
-}, ref) => {
-  // useVibration removed (unused)
-  const isNavlink = variant === 'navlink';
+const Button = React.forwardRef(
+  (
+    {
+      variant = 'order',
+      size = 'md',
+      children,
+      icon,
+      iconPosition = 'left',
+      onClick,
+      href,
+      type = 'button',
+      ariaLabel,
+      disabled = false,
+      loading: loadingProp = false,
+      analyticsEvent,
+      vibrationPattern,
+      className = '',
+      style = {},
+      tabIndex,
+      ...props
+    },
+    ref
+  ) => {
+    // useVibration removed (unused)
+    const isNavlink = variant === 'navlink';
 
-  const sizeStyle = (size && variant !== 'icon') ? (SIZE_STYLES[size] || {}) : {};
-  const mergedStyle = {
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    minHeight: 44,
-    minWidth: 44,
-    transition: 'background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s',
-    borderRadius: 'var(--radius-xl)',
-    padding: variant === 'icon' ? 8 : '12px 28px',
-    cursor: disabled ? 'not-allowed' : 'pointer',
-    opacity: disabled ? 0.6 : 1,
-    WebkitTapHighlightColor: 'transparent',
-    ...VARIANT_STYLES[variant],
-    ...sizeStyle,
-    ...style,
-  };
+    const sizeStyle = size && variant !== 'icon' ? SIZE_STYLES[size] || {} : {};
+    const mergedStyle = {
+      display: 'inline-flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 8,
+      minHeight: 44,
+      minWidth: 44,
+      transition: 'background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s',
+      borderRadius: 'var(--radius-xl)',
+      padding: variant === 'icon' ? 8 : '12px 28px',
+      cursor: disabled ? 'not-allowed' : 'pointer',
+      opacity: disabled ? 0.6 : 1,
+      WebkitTapHighlightColor: 'transparent',
+      ...VARIANT_STYLES[variant],
+      ...sizeStyle,
+      ...style,
+    };
 
-  // Add default hover and active effect for 'order' and 'navlink' variants
-  // Only retain manual handlers for variants that require custom logic (e.g., location)
-  const handleMouseEnter = (e) => {
-    if (props.onMouseEnter) props.onMouseEnter(e);
-  };
-  const handleMouseLeave = (e) => {
-    if (props.onMouseLeave) props.onMouseLeave(e);
-  };
-  const handleMouseDown = (e) => {
-    if (props.onMouseDown) props.onMouseDown(e);
-  };
-  const handleMouseUp = (e) => {
-    if (props.onMouseUp) props.onMouseUp(e);
-  };
+    // Add default hover and active effect for 'order' and 'navlink' variants
+    // Only retain manual handlers for variants that require custom logic (e.g., location)
+    const handleMouseEnter = (e) => {
+      if (props.onMouseEnter) props.onMouseEnter(e);
+    };
+    const handleMouseLeave = (e) => {
+      if (props.onMouseLeave) props.onMouseLeave(e);
+    };
+    const handleMouseDown = (e) => {
+      if (props.onMouseDown) props.onMouseDown(e);
+    };
+    const handleMouseUp = (e) => {
+      if (props.onMouseUp) props.onMouseUp(e);
+    };
 
-  // Helper to render button content
-  function renderContent() {
-    // If icon only (no children), center icon with no margin
-    if (icon && !children) {
+    // Helper to render button content
+    function renderContent() {
+      // If icon only (no children), center icon with no margin
+      if (icon && !children) {
+        return (
+          <span
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '100%',
+              height: '100%',
+            }}
+          >
+            {icon}
+          </span>
+        );
+      }
       return (
-        <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>{icon}</span>
+        <>
+          {icon && iconPosition === 'left' && !isNavlink && (
+            <span style={{ display: 'inline-flex', alignItems: 'center' }}>{icon}</span>
+          )}
+          {icon && iconPosition === 'left' && isNavlink && (
+            <span style={{ display: 'inline-flex', alignItems: 'center' }}>{icon}</span>
+          )}
+          {children && <span>{children}</span>}
+          {icon && iconPosition === 'right' && (
+            <span style={{ display: 'inline-flex', alignItems: 'center' }}>{icon}</span>
+          )}
+          {loadingProp && (
+            <span
+              className="inline-block ml-2 animate-spin"
+              style={{
+                width: 18,
+                height: 18,
+                border: '2px solid var(--color-accent)',
+                borderTop: '2px solid transparent',
+                borderRadius: 'var(--radius-full)',
+              }}
+              aria-hidden="true"
+            ></span>
+          )}
+        </>
       );
     }
-    return (
-      <>
-        {icon && iconPosition === 'left' && !isNavlink && <span style={{ display: 'inline-flex', alignItems: 'center' }}>{icon}</span>}
-        {icon && iconPosition === 'left' && isNavlink && <span style={{ display: 'inline-flex', alignItems: 'center' }}>{icon}</span>}
-        {children && <span>{children}</span>}
-        {icon && iconPosition === 'right' && <span style={{ display: 'inline-flex', alignItems: 'center' }}>{icon}</span>}
-        {loadingProp && <span className="inline-block ml-2 animate-spin" style={{ width: 18, height: 18, border: '2px solid var(--color-accent)', borderTop: '2px solid transparent', borderRadius: 'var(--radius-full)' }} aria-hidden="true"></span>}
-      </>
-    );
-  }
 
-  // Icon-only buttons must have aria-label
-  const ariaProps = {};
-  if (variant === 'icon' && !children && ariaLabel) {
-    ariaProps['aria-label'] = ariaLabel;
-  }
+    // Icon-only buttons must have aria-label
+    const ariaProps = {};
+    if (variant === 'icon' && !children && ariaLabel) {
+      ariaProps['aria-label'] = ariaLabel;
+    }
 
-  const variantClass = variant ? variant : '';
-  const allClasses = `button ${variantClass} ${className}`.trim();
+    const variantClass = variant ? variant : '';
+    const allClasses = `button ${variantClass} ${className}`.trim();
 
+    // Framer Motion animation props per variant
+    const motionProps = VARIANT_ANIMATION[variant] || {};
+    const hasAnimation = motionProps && Object.keys(motionProps).length > 0;
 
-  // Framer Motion animation props per variant
-  const motionProps = VARIANT_ANIMATION[variant] || {};
-  const hasAnimation = motionProps && Object.keys(motionProps).length > 0;
-
-  // Accessibility: If rendering as <a>, keep native link semantics
-  if (href) {
-    const handleLinkClick = (e) => {
-      if (disabled || loadingProp) {
-        e.preventDefault();
-        return;
+    // Accessibility: If rendering as <a>, keep native link semantics
+    if (href) {
+      const handleLinkClick = (e) => {
+        if (disabled || loadingProp) {
+          e.preventDefault();
+          return;
+        }
+        handleClick(e);
+      };
+      const linkProps = {
+        ref,
+        href: disabled ? undefined : href,
+        tabIndex: disabled ? -1 : tabIndex,
+        className: allClasses,
+        style: mergedStyle,
+        onClick: handleLinkClick,
+        onMouseEnter: handleMouseEnter,
+        onMouseLeave: handleMouseLeave,
+        onMouseDown: handleMouseDown,
+        onMouseUp: handleMouseUp,
+        'aria-disabled': disabled || loadingProp || undefined,
+        ...ariaProps,
+        ...props,
+      };
+      if (hasAnimation) {
+        return (
+          <motion.a {...linkProps} {...motionProps}>
+            {renderContent()}
+          </motion.a>
+        );
       }
-      handleClick(e);
-    };
-    const linkProps = {
-      ref,
-      href: disabled ? undefined : href,
-      tabIndex: disabled ? -1 : tabIndex,
-      className: allClasses,
-      style: mergedStyle,
-      onClick: handleLinkClick,
-      onMouseEnter: handleMouseEnter,
-      onMouseLeave: handleMouseLeave,
-      onMouseDown: handleMouseDown,
-      onMouseUp: handleMouseUp,
-      'aria-disabled': disabled || loadingProp || undefined,
-      ...ariaProps,
-      ...props,
-    };
+      return <a {...linkProps}>{renderContent()}</a>;
+    }
+
+    // Unified click handler for all variants
+    function handleClick(e) {
+      if (disabled) return;
+      // Vibration per variant
+      const vibrateStrength = vibrationPattern ?? VARIANT_VIBRATION[variant];
+      if (typeof window !== 'undefined' && window.navigator && window.navigator.vibrate && vibrateStrength) {
+        window.navigator.vibrate(vibrateStrength);
+      }
+      // Analytics are opt-in: only fire when analyticsEvent is explicitly provided.
+      // Avoids undocumented default events and double-counting with caller trackEvent() calls.
+      if (analyticsEvent && typeof window !== 'undefined') {
+        if (typeof analyticsEvent === 'string') {
+          trackEvent(analyticsEvent);
+        } else {
+          const { event, ...rest } = analyticsEvent;
+          if (event) trackEvent(event, rest);
+        }
+      }
+      if (onClick) onClick(e);
+    }
+
     if (hasAnimation) {
-      return (<motion.a {...linkProps} {...motionProps}>{renderContent()}</motion.a>);
+      return (
+        <motion.button
+          ref={ref}
+          type={type}
+          tabIndex={tabIndex}
+          className={allClasses}
+          style={mergedStyle}
+          onClick={handleClick}
+          onKeyDown={(e) => {
+            // For type="submit", the browser fires a native click + form submission on Enter;
+            // intercepting it here would either duplicate the click or suppress form submit.
+            if (type === 'submit') return;
+            if ((e.key === 'Enter' || e.key === ' ') && !disabled && !loadingProp) {
+              e.preventDefault();
+              handleClick(e);
+            }
+          }}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          onMouseDown={handleMouseDown}
+          onMouseUp={handleMouseUp}
+          disabled={disabled || loadingProp}
+          {...ariaProps}
+          {...props}
+          {...motionProps}
+        >
+          {renderContent()}
+        </motion.button>
+      );
     }
-    return (<a {...linkProps}>{renderContent()}</a>);
-  }
 
-  // Unified click handler for all variants
-  function handleClick(e) {
-    if (disabled) return;
-    // Vibration per variant
-    const vibrateStrength = vibrationPattern ?? VARIANT_VIBRATION[variant];
-    if (typeof window !== 'undefined' && window.navigator && window.navigator.vibrate && vibrateStrength) {
-      window.navigator.vibrate(vibrateStrength);
-    }
-    // Analytics per variant
-    const eventToFire = analyticsEvent || VARIANT_ANALYTICS[variant];
-    if (eventToFire && typeof window !== 'undefined' && window.dataLayer) {
-      window.dataLayer.push(typeof eventToFire === 'string' ? { event: eventToFire } : eventToFire);
-    }
-    if (onClick) onClick(e);
-  }
-
-  if (hasAnimation) {
     return (
-      <motion.button
+      <button
         ref={ref}
         type={type}
         tabIndex={tabIndex}
         className={allClasses}
         style={mergedStyle}
         onClick={handleClick}
-        onKeyDown={e => {
+        onKeyDown={(e) => {
+          // For type="submit", the browser fires a native click + form submission on Enter;
+          // intercepting it here would either duplicate the click or suppress form submit.
+          if (type === 'submit') return;
           if ((e.key === 'Enter' || e.key === ' ') && !disabled && !loadingProp) {
             e.preventDefault();
             handleClick(e);
@@ -339,39 +402,12 @@ const Button = React.forwardRef(({
         disabled={disabled || loadingProp}
         {...ariaProps}
         {...props}
-        {...motionProps}
       >
         {renderContent()}
-      </motion.button>
+      </button>
     );
   }
-
-  return (
-    <button
-      ref={ref}
-      type={type}
-      tabIndex={tabIndex}
-      className={allClasses}
-      style={mergedStyle}
-      onClick={handleClick}
-      onKeyDown={e => {
-        if ((e.key === 'Enter' || e.key === ' ') && !disabled && !loadingProp) {
-          e.preventDefault();
-          handleClick(e);
-        }
-      }}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      onMouseDown={handleMouseDown}
-      onMouseUp={handleMouseUp}
-      disabled={disabled || loadingProp}
-      {...ariaProps}
-      {...props}
-    >
-      {renderContent()}
-    </button>
-  );
-});
+);
 
 Button.propTypes = {
   variant: PropTypes.oneOf(['order', 'nav', 'navlink', 'action', 'secondary', 'inverted', 'icon', 'custom']),

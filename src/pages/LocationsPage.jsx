@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { trackEvent } from '../utils/analytics.js';
 import { Helmet } from 'react-helmet-async';
 import { ChevronRight, MapPin, Phone, ExternalLink, Building2 } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
@@ -7,12 +8,15 @@ import Button from '../components/Button';
 import { formatDistance, getPreferredLocations } from '../utils/locationMath';
 import { useLocations } from '../contexts/LocationsContext';
 import { useServices } from '../contexts/ServicesContext';
+import { useCompanyData } from '../contexts/CompanyDataContext';
 import ImageCarousel from '../components/ImageCarousel';
 import LiveHoursDisplay from '../components/LiveHoursDisplay';
 import { useAutoLocation } from '../hooks/useAutoLocation';
 import StructuredData from '../components/StructuredData';
-import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
+import { ROUTE_TITLES } from '../config/routeTitles';
+import { getBaseUrl } from '../utils/getAssetUrl';
 import { normalizePhoneForTel } from '../utils/phone';
+import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 
 /** Build a flat image list from a location's photos object */
 const getLocationImages = (photos, locationName) => {
@@ -36,8 +40,8 @@ const getLocationImages = (photos, locationName) => {
 const LocationsPage = () => {
   // Fetch locations from API with fallback to static data
   const { locations: allLocations, loading, error, refetch } = useLocations();
-  // Fetch services for cross-referencing service names
   const { services: allServices } = useServices();
+  const { companyData } = useCompanyData();
 
   // Filter to only active locations (status === 'open')
   const activeLocations = allLocations.filter((loc) => loc.status === 'open');
@@ -48,8 +52,7 @@ const LocationsPage = () => {
   const textColor = { color: 'var(--color-text)' };
   const mutedTextColor = { color: 'var(--color-text-muted)' };
 
-  const BASE_URL =
-    typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
+  const BASE_URL = getBaseUrl();
 
   const handleAutoLocation = useCallback((pos) => {
     const coords = pos?.coords;
@@ -65,13 +68,7 @@ const LocationsPage = () => {
     locations: activeLocations,
   });
   const preferredLocationId = sortedLocations[0]?.id;
-  const loadedMaps = (() => {
-    const combined = new Set(userLoadedMaps);
-    if (preferredLocationId) {
-      combined.add(preferredLocationId);
-    }
-    return combined;
-  })();
+  const loadedMaps = new Set(userLoadedMaps);
 
   const locations = sortedLocations.map((loc) => ({
     ...loc,
@@ -102,18 +99,18 @@ const LocationsPage = () => {
   return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>
       <Helmet>
-        <title>Our Locations | Roma Mart Convenience</title>
+        <title>{ROUTE_TITLES.locations}</title>
         <meta
           name="description"
           content="Find Roma Mart convenience store locations in Sarnia, Ontario. Get directions, hours, and contact information."
         />
-        <link rel="canonical" href="https://romamart.ca/locations/" />
+        <link rel="canonical" href={`${companyData.baseUrl}/locations/`} />
       </Helmet>
 
       {/* Breadcrumb Schema */}
       <StructuredData
         type="BreadcrumbList"
-        data={{ breadcrumbs: buildBreadcrumbArray('Locations', 'https://romamart.ca/locations/') }}
+        data={{ breadcrumbs: buildBreadcrumbArray('Locations', `${companyData.baseUrl}/locations/`) }}
       />
 
       {/* Location List Schema */}
@@ -158,6 +155,7 @@ const LocationsPage = () => {
             <ShareButton
               title="Roma Mart Locations"
               text="Find Roma Mart convenience stores near you in Sarnia!"
+              source="locations"
               className="bg-[var(--color-accent)] text-[var(--color-primary)] hover:bg-[color-mix(in srgb, var(--color-accent) 85%, transparent)]"
             />
           </div>
@@ -261,6 +259,12 @@ const LocationsPage = () => {
                               rel="noopener noreferrer"
                               className="inline-flex items-center gap-1 font-inter text-sm font-semibold hover:underline"
                               style={{ color: 'var(--color-accent)' }}
+                              onClick={() =>
+                                trackEvent('directions_click', {
+                                  location_id: location.id,
+                                  source: 'locations_address',
+                                })
+                              }
                             >
                               Get Directions <ExternalLink size={14} />
                             </a>
@@ -300,6 +304,9 @@ const LocationsPage = () => {
                               href={`tel:${normalizePhoneForTel(location.phone)}`}
                               className="font-inter hover:underline"
                               style={{ color: 'var(--color-accent)' }}
+                              onClick={() =>
+                                trackEvent('phone_click', { location_id: location.id, source: 'locations' })
+                              }
                             >
                               {location.phone}
                             </a>
@@ -362,6 +369,12 @@ const LocationsPage = () => {
                               className="absolute bottom-4 right-4 px-4 py-2 rounded-full text-xs font-semibold shadow-lg focus-visible:ring-2 focus-visible:ring-offset-2"
                               style={{ backgroundColor: 'var(--color-primary)', color: 'var(--color-text-on-primary)' }}
                               aria-label={`Open ${location.name} in Google Maps`}
+                              onClick={() =>
+                                trackEvent('directions_click', {
+                                  location_id: location.id,
+                                  source: 'locations_map_overlay',
+                                })
+                              }
                             >
                               Open in Google Maps
                             </a>
@@ -395,6 +408,12 @@ const LocationsPage = () => {
                               className="text-xs font-semibold hover:underline focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:rounded"
                               style={{ color: 'var(--color-accent)' }}
                               aria-label={`Open ${location.name} in Google Maps`}
+                              onClick={() =>
+                                trackEvent('directions_click', {
+                                  location_id: location.id,
+                                  source: 'locations_map_inline',
+                                })
+                              }
                             >
                               Open in Google Maps
                             </a>
@@ -414,6 +433,12 @@ const LocationsPage = () => {
                             rel="noopener noreferrer"
                             className="px-4 py-2 rounded-full text-sm font-semibold focus-visible:ring-2 focus-visible:ring-offset-2"
                             style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)' }}
+                            onClick={() =>
+                              trackEvent('directions_click', {
+                                location_id: location.id,
+                                source: 'locations_map_button',
+                              })
+                            }
                           >
                             Open Map
                           </a>
@@ -443,7 +468,7 @@ const LocationsPage = () => {
             href={`${BASE_URL}contact`}
             variant="navlink"
             style={{ minWidth: 180 }}
-            analyticsEvent="locations_contact_us"
+            analyticsEvent={{ event: 'order_cta_click', cta_location: 'locations_contact', cta_text: 'Contact Us' }}
           >
             Contact Us
           </Button>

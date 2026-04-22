@@ -1,4 +1,5 @@
 import React from 'react';
+import { trackEvent } from '../utils/analytics.js';
 import { Helmet } from 'react-helmet-async';
 import { ChevronRight, MapPin, Phone, Clock, Mail } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
@@ -8,13 +9,14 @@ import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
 import LiveHoursDisplay from '../components/LiveHoursDisplay';
 import ContactForm from '../components/ContactForm';
 import { useCompanyData } from '../contexts/CompanyDataContext';
+import { getBaseUrl } from '../utils/getAssetUrl';
 import { normalizePhoneForTel } from '../utils/phone';
 
 const ContactPage = () => {
   const { companyData } = useCompanyData();
   const textColor = { color: 'var(--color-text)' };
   const mutedTextColor = { color: 'var(--color-text-muted)' };
-  const BASE_URL = import.meta.env.BASE_URL || '/';
+  const BASE_URL = getBaseUrl();
 
   return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>
@@ -24,13 +26,13 @@ const ContactPage = () => {
           name="description"
           content="Get in touch with Roma Mart. Visit us, call, or send a message. We're here to help!"
         />
-        <link rel="canonical" href="https://romamart.ca/contact/" />
+        <link rel="canonical" href={`${companyData.baseUrl}/contact/`} />
       </Helmet>
 
       {/* Breadcrumb Schema */}
       <StructuredData
         type="BreadcrumbList"
-        data={{ breadcrumbs: buildBreadcrumbArray('Contact', 'https://romamart.ca/contact/') }}
+        data={{ breadcrumbs: buildBreadcrumbArray('Contact', `${companyData.baseUrl}/contact/`) }}
       />
 
       <nav aria-label="Breadcrumb" className="max-w-7xl mx-auto px-4 mb-8">
@@ -62,6 +64,7 @@ const ContactPage = () => {
           <ShareButton
             title="Contact Roma Mart"
             text="Get in touch with Roma Mart - Sarnia's premier convenience store!"
+            source="contact"
             style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-on-accent)' }}
           />
         </div>
@@ -89,12 +92,15 @@ const ContactPage = () => {
                   </h3>
                   <p style={textColor}>{companyData.location?.address?.formatted}</p>
                   <a
-                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(companyData.location?.address?.formatted)}`}
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(companyData.location?.address?.formatted || companyData.dba || '')}${companyData.location?.google?.placeId ? `&query_place_id=${companyData.location.google.placeId}` : ''}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Get directions to Roma Mart"
                     className="inline-block mt-2 font-inter text-sm font-semibold hover:underline"
                     style={{ color: 'var(--color-accent)' }}
+                    onClick={() =>
+                      trackEvent('directions_click', { location_id: companyData.location?.id, source: 'contact' })
+                    }
                   >
                     Get Directions →
                   </a>
@@ -117,6 +123,9 @@ const ContactPage = () => {
                       href={`tel:${normalizePhoneForTel(companyData.location?.contact?.phone)}`}
                       className="hover:underline"
                       style={{ color: 'var(--color-accent)' }}
+                      onClick={() =>
+                        trackEvent('phone_click', { location_id: companyData.location?.id, source: 'contact' })
+                      }
                     >
                       {companyData.location?.contact?.phone}
                     </a>
@@ -145,6 +154,7 @@ const ContactPage = () => {
                       href={`mailto:${companyData.location?.contact?.email}`}
                       className="hover:underline"
                       style={{ color: 'var(--color-accent)' }}
+                      onClick={() => trackEvent('email_click', { source: 'contact' })}
                     >
                       {companyData.location?.contact?.email}
                     </a>

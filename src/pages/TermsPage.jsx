@@ -3,17 +3,18 @@ import { Helmet } from 'react-helmet-async';
 import { ChevronRight } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
 import { useCompanyData } from '../contexts/CompanyDataContext';
+import { getBaseUrl } from '../utils/getAssetUrl';
 import { normalizePhoneForTel } from '../utils/phone';
 import StructuredData from '../components/StructuredData';
 import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
+import { trackEvent } from '../utils/analytics.js';
 
 const TermsPage = () => {
   const { companyData, getContextualEmail } = useCompanyData();
   const textColor = { color: 'var(--color-text)' };
   const mutedTextColor = { color: 'var(--color-text-muted)' };
 
-  const BASE_URL =
-    typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
+  const BASE_URL = getBaseUrl();
 
   return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>
@@ -23,13 +24,13 @@ const TermsPage = () => {
           name="description"
           content="Terms and conditions for using Roma Mart Convenience services. Understand your rights and obligations."
         />
-        <link rel="canonical" href="https://romamart.ca/terms/" />
+        <link rel="canonical" href={`${companyData.baseUrl}/terms/`} />
       </Helmet>
 
       {/* Breadcrumb Schema */}
       <StructuredData
         type="BreadcrumbList"
-        data={{ breadcrumbs: buildBreadcrumbArray('Terms', 'https://romamart.ca/terms/') }}
+        data={{ breadcrumbs: buildBreadcrumbArray('Terms', `${companyData.baseUrl}/terms/`) }}
       />
 
       {/* Breadcrumb */}
@@ -57,6 +58,7 @@ const TermsPage = () => {
           <ShareButton
             title="Roma Mart Terms of Service"
             text="Read Roma Mart's terms of service"
+            source="terms"
             style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-on-accent)' }}
           />
         </div>
@@ -159,7 +161,11 @@ const TermsPage = () => {
               </p>
               <p style={textColor}>
                 Email:{' '}
-                <a href={`mailto:${getContextualEmail('legal')}`} style={{ color: 'var(--color-accent)' }}>
+                <a
+                  href={`mailto:${getContextualEmail('legal')}`}
+                  style={{ color: 'var(--color-accent)' }}
+                  onClick={() => trackEvent('email_click', { source: 'terms' })}
+                >
                   {getContextualEmail('legal')}
                 </a>
               </p>

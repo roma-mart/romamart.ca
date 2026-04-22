@@ -1,7 +1,7 @@
 {
   "name": "roma-mart-site",
   "private": true,
-  "version": "2.8.0",
+  "version": "2.10.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -14,7 +14,8 @@
     "lint:css": "stylelint \"src/**/*.css\"",
     "check:quality": "node scripts/check-quality.js",
     "check:integrity": "node scripts/check-checker-integrity.js",
-    "check:all": "npm run lint && npm run lint:css && npm run check:quality && npm run check:integrity",
+    "check:analytics": "node scripts/check-analytics-catalog.js",
+    "check:all": "npm run lint && npm run lint:css && npm run check:quality && npm run check:integrity && npm run check:analytics",
     "prepare": "husky",
     "preview": "vite preview",
     "deploy": "node scripts/ensure-main-branch.js && npm run build && gh-pages -d dist",
@@ -22,13 +23,16 @@
     "format:check": "prettier --check \"src/**/*.{js,jsx,css,json}\""
   },
   "dependencies": {
+    "@fontsource/inter": "^5.2.8",
+    "@fontsource/outfit": "^5.2.8",
     "@hcaptcha/react-hcaptcha": "^1.17.1",
     "framer-motion": "^12.38.0",
     "lucide-react": "^1.8.0",
     "prop-types": "^15.8.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-helmet-async": "^3.0.0"
+    "react-helmet-async": "^3.0.0",
+    "web-vitals": "^5.2.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.5.0",

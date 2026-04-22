@@ -8,8 +8,9 @@ import React from 'react';
 import { Share2 } from 'lucide-react';
 import { useShare, useClipboard, useVibration } from '../hooks/useBrowserFeatures';
 import { useToast } from './ToastContainer';
+import { trackEvent } from '../utils/analytics.js';
 
-const ShareButton = ({ title, text, url, className = '', style: customStyle = {} }) => {
+const ShareButton = ({ title, text, url, source = 'unknown', className = '', style: customStyle = {} }) => {
   const { share, canShare } = useShare();
   const { copyToClipboard } = useClipboard();
   const { showSuccess, showError } = useToast();
@@ -23,17 +24,19 @@ const ShareButton = ({ title, text, url, className = '', style: customStyle = {}
     const shareData = {
       title: title || 'Roma Mart',
       text: text || 'Check out Roma Mart!',
-      url: url || window.location.href
+      url: url || window.location.href,
     };
 
     if (canShare) {
       const result = await share(shareData);
       if (result.success) {
+        trackEvent('share_click', { method: 'native', source });
         showSuccess('Shared successfully!');
       } else if (result.error !== 'Share cancelled') {
         // Fallback to copy link
         const copyResult = await copyToClipboard(shareData.url);
         if (copyResult.success) {
+          trackEvent('share_click', { method: 'clipboard', source });
           showSuccess('Link copied to clipboard!');
         } else {
           showError('Failed to share');
@@ -43,6 +46,7 @@ const ShareButton = ({ title, text, url, className = '', style: customStyle = {}
       // No Web Share API - copy to clipboard
       const copyResult = await copyToClipboard(shareData.url);
       if (copyResult.success) {
+        trackEvent('share_click', { method: 'clipboard', source });
         showSuccess('Link copied to clipboard!');
       } else {
         showError('Failed to copy link');

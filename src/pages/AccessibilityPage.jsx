@@ -3,15 +3,16 @@ import { Helmet } from 'react-helmet-async';
 import { ExternalLink, Mail, Phone, MapPin, CheckCircle, ChevronRight } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
 import { useCompanyData } from '../contexts/CompanyDataContext';
+import { getBaseUrl } from '../utils/getAssetUrl';
 import StructuredData from '../components/StructuredData';
 import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
+import { trackEvent } from '../utils/analytics.js';
 
 import { normalizePhoneForTel } from '../utils/phone';
 
 const AccessibilityPage = () => {
   const { companyData, getContextualEmail } = useCompanyData();
-  const BASE_URL =
-    typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
+  const BASE_URL = getBaseUrl();
   const textColor = { color: 'var(--color-text)' };
   const mutedTextColor = { color: 'var(--color-text-muted)' };
 
@@ -23,13 +24,13 @@ const AccessibilityPage = () => {
           name="description"
           content="Roma Mart Convenience is committed to digital accessibility. WCAG 2.2 Level AA compliant. Learn about our accessibility features and report issues."
         />
-        <link rel="canonical" href="https://romamart.ca/accessibility/" />
+        <link rel="canonical" href={`${companyData.baseUrl}/accessibility/`} />
       </Helmet>
 
       {/* Breadcrumb Schema */}
       <StructuredData
         type="BreadcrumbList"
-        data={{ breadcrumbs: buildBreadcrumbArray('Accessibility', 'https://romamart.ca/accessibility/') }}
+        data={{ breadcrumbs: buildBreadcrumbArray('Accessibility', `${companyData.baseUrl}/accessibility/`) }}
       />
 
       {/* Breadcrumb */}
@@ -58,6 +59,7 @@ const AccessibilityPage = () => {
           <ShareButton
             title="Roma Mart Accessibility"
             text="Learn about Roma Mart's accessibility commitment"
+            source="accessibility"
             style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-primary)' }}
             className="hover:opacity-90"
           />
@@ -219,6 +221,7 @@ const AccessibilityPage = () => {
               href={`mailto:${getContextualEmail('accessibility')}`}
               className="hover:underline break-all"
               style={{ color: 'var(--color-accent)' }}
+              onClick={() => trackEvent('email_click', { source: 'accessibility' })}
             >
               {getContextualEmail('accessibility')}
             </a>

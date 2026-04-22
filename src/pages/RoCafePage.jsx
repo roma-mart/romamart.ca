@@ -10,16 +10,18 @@ import { ALLERGEN_WARNING } from '../data/rocafe-menu';
 import { useMenu } from '../contexts/MenuContext';
 import { groupMenuItemsByCategory } from '../utils/menuCategoryMap';
 import StructuredData from '../components/StructuredData';
+import { getBaseUrl } from '../utils/getAssetUrl';
 import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
+import { useCompanyData } from '../contexts/CompanyDataContext';
 
 const RoCafePage = () => {
   const { menuItems, loading, error, refetch } = useMenu();
+  const { companyData } = useCompanyData();
 
   const textColor = { color: 'var(--color-text)' };
   const mutedTextColor = { color: 'var(--color-text-muted)' };
 
-  const BASE_URL =
-    typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
+  const BASE_URL = getBaseUrl();
 
   const [expandedCategory, setExpandedCategory] = useState(null);
 
@@ -58,7 +60,7 @@ const RoCafePage = () => {
           data={{
             products: schemaMenuItems.map((item) => ({
               menuItem: item,
-              itemUrl: 'https://romamart.ca/rocafe/',
+              itemUrl: `${companyData.baseUrl}/rocafe/`,
               priceInCents: schemaPriceInCents,
             })),
           }}
@@ -70,13 +72,13 @@ const RoCafePage = () => {
           name="description"
           content="Explore the RoCafé menu featuring hot coffee, iced coffee, tea, fresh juice, smoothies, frappés, specialty drinks, food, and seasonal items."
         />
-        <link rel="canonical" href="https://romamart.ca/rocafe/" />
+        <link rel="canonical" href={`${companyData.baseUrl}/rocafe/`} />
       </Helmet>
 
       {/* Breadcrumb Schema */}
       <StructuredData
         type="BreadcrumbList"
-        data={{ breadcrumbs: buildBreadcrumbArray('RoCafé', 'https://romamart.ca/rocafe/') }}
+        data={{ breadcrumbs: buildBreadcrumbArray('RoCafé', `${companyData.baseUrl}/rocafe/`) }}
       />
 
       {/* Breadcrumb Navigation */}
@@ -110,6 +112,7 @@ const RoCafePage = () => {
             <ShareButton
               title="RoCafé Menu"
               text="Check out the delicious RoCafé menu at Roma Mart!"
+              source="rocafe"
               className="bg-[var(--color-accent)] text-[var(--color-primary)] hover:bg-[color-mix(in srgb, var(--color-accent) 85%, transparent)]"
             />
           </div>
@@ -285,11 +288,11 @@ const RoCafePage = () => {
               href={`${BASE_URL}locations`}
               variant="navlink"
               style={{ minWidth: 180 }}
-              analyticsEvent="rocafe_get_directions"
+              analyticsEvent={{ event: 'directions_click', location_id: 'loc-wellington-001', source: 'rocafe_page' }}
             >
               Get Directions
             </Button>
-            <Button href={`${BASE_URL}`} variant="navlink" style={{ minWidth: 180 }} analyticsEvent="rocafe_back_home">
+            <Button href={`${BASE_URL}`} variant="navlink" style={{ minWidth: 180 }}>
               Back to Home
             </Button>
           </div>

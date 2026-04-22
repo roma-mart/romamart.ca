@@ -120,7 +120,10 @@ const buildOffers = (sizes = [], options) => {
  * @param {Object} menuItem - Menu item object
  * @param {string} itemUrl - Canonical URL for the menu item or page
  * @param {Object} options - Optional overrides
- * @param {boolean} options.priceInCents - Whether size prices are in cents
+ * @param {boolean} options.priceInCents - Whether size prices are in cents.
+ *   MUST be explicitly passed when the data source is known (true for API, false for static data).
+ *   Omitting it falls back to inferPriceInCents(), which is heuristic — do not rely on it for
+ *   production data paths.
  * @param {string} options.currency - ISO currency code (default CAD)
  * @returns {Object|null} Product schema object
  */

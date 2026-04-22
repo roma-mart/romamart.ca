@@ -12,6 +12,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { Clock } from 'lucide-react';
+import COMPANY_DATA from '../config/company_data';
 
 function CurrentLocalTime({ location }) {
   const [currentTime, setCurrentTime] = useState('');
@@ -28,8 +29,8 @@ function CurrentLocalTime({ location }) {
     const updateTime = () => {
       try {
         // Create formatter for location's timezone
-        // Default to 'America/Toronto' if no timezone specified
-        const timezone = location?.timezone || 'America/Toronto';
+        // Default to company timezone if no timezone specified
+        const timezone = location?.timezone || COMPANY_DATA.defaults.timezone;
 
         const formatter = new Intl.DateTimeFormat('en-CA', {
           timeZone: timezone,

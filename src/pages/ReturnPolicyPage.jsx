@@ -4,23 +4,24 @@ import { ChevronRight } from 'lucide-react';
 import ShareButton from '../components/ShareButton';
 import StructuredData from '../components/StructuredData';
 import { useCompanyData } from '../contexts/CompanyDataContext';
+import { getBaseUrl } from '../utils/getAssetUrl';
 import { normalizePhoneForTel } from '../utils/phone';
 import { buildBreadcrumbArray } from '../schemas/breadcrumbSchema';
+import { trackEvent } from '../utils/analytics.js';
 
 const ReturnPolicyPage = () => {
   const { companyData, getContextualEmail } = useCompanyData();
   const textColor = { color: 'var(--color-text)' };
   const mutedTextColor = { color: 'var(--color-text-muted)' };
 
-  const BASE_URL =
-    typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
+  const BASE_URL = getBaseUrl();
 
   return (
     <div className="min-h-screen pt-32 pb-16" style={{ backgroundColor: 'var(--color-bg)' }}>
       <StructuredData
         type="ReturnPolicy"
         data={{
-          url: 'https://romamart.ca/return-policy/',
+          url: `${companyData.baseUrl}/return-policy/`,
         }}
       />
       <Helmet>
@@ -29,13 +30,13 @@ const ReturnPolicyPage = () => {
           name="description"
           content="Review Roma Mart's returns and refund policy. All sales are final except for faulty products reported within 24 hours."
         />
-        <link rel="canonical" href="https://romamart.ca/return-policy/" />
+        <link rel="canonical" href={`${companyData.baseUrl}/return-policy/`} />
       </Helmet>
 
       {/* Breadcrumb Schema */}
       <StructuredData
         type="BreadcrumbList"
-        data={{ breadcrumbs: buildBreadcrumbArray('Return Policy', 'https://romamart.ca/return-policy/') }}
+        data={{ breadcrumbs: buildBreadcrumbArray('Return Policy', `${companyData.baseUrl}/return-policy/`) }}
       />
 
       {/* Breadcrumb */}
@@ -63,6 +64,7 @@ const ReturnPolicyPage = () => {
           <ShareButton
             title="Roma Mart Return Policy"
             text="Read Roma Mart's returns and refund policy"
+            source="return_policy"
             style={{ backgroundColor: 'var(--color-accent)', color: 'var(--color-on-accent)' }}
           />
         </div>
@@ -148,7 +150,11 @@ const ReturnPolicyPage = () => {
               </p>
               <p style={textColor}>
                 Email:{' '}
-                <a href={`mailto:${getContextualEmail('support')}`} style={{ color: 'var(--color-accent)' }}>
+                <a
+                  href={`mailto:${getContextualEmail('support')}`}
+                  style={{ color: 'var(--color-accent)' }}
+                  onClick={() => trackEvent('email_click', { source: 'return_policy' })}
+                >
                   {getContextualEmail('support')}
                 </a>
               </p>

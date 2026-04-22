@@ -1,4 +1,6 @@
 import { StrictMode } from 'react';
+import { trackEvent } from './utils/analytics.js';
+import { onCLS, onINP, onLCP, onTTFB, onFCP } from 'web-vitals';
 import { createRoot } from 'react-dom/client';
 import { HelmetProvider } from 'react-helmet-async';
 import { ToastProvider } from './components/ToastContainer';
@@ -7,6 +9,13 @@ import { ServicesProvider } from './contexts/ServicesContext.jsx';
 import { LocationsProvider } from './contexts/LocationsContext.jsx';
 import { CompanyDataProvider } from './contexts/CompanyDataContext.jsx';
 import { LocationProvider } from './components/LocationProvider.jsx';
+import '@fontsource/inter/400.css';
+import '@fontsource/inter/500.css';
+import '@fontsource/inter/600.css';
+import '@fontsource/inter/700.css';
+import '@fontsource/outfit/400.css';
+import '@fontsource/outfit/600.css';
+import '@fontsource/outfit/700.css';
 import './index.css';
 import App from './App.jsx';
 
@@ -43,17 +52,42 @@ if (GTM_ID) {
 
   // Also create noscript fallback iframe for no-JS environments
   const noscript = document.createElement('noscript');
-  noscript.innerHTML = `<iframe src="https://www.googletagmanager.com/ns.html?id=${GTM_ID}" height="0" width="0" style="display:none;visibility:hidden"></iframe>`;
+  const gtmIframe = document.createElement('iframe');
+  gtmIframe.src = `https://www.googletagmanager.com/ns.html?id=${GTM_ID}`;
+  gtmIframe.height = '0';
+  gtmIframe.width = '0';
+  gtmIframe.style.display = 'none';
+  gtmIframe.style.visibility = 'hidden';
+  noscript.appendChild(gtmIframe);
   document.body.insertBefore(noscript, document.body.firstChild);
 }
+
+const reportWebVital = (m) =>
+  trackEvent('web_vital', {
+    metric_name: m.name,
+    metric_value: m.name === 'CLS' ? Math.round(m.value * 1000) / 1000 : Math.round(m.value),
+    metric_rating: m.rating,
+    metric_id: m.id,
+  });
+onCLS(reportWebVital);
+onINP(reportWebVital);
+onLCP(reportWebVital);
+onTTFB(reportWebVital);
+onFCP(reportWebVital);
+
+const sanitizeErrorMessage = (value) =>
+  String(value || 'UnhandledRejection')
+    .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, '[redacted-email]')
+    .replace(/\b(?:\d[ -]*?){13,16}\b/g, '[redacted-number]')
+    .slice(0, 200);
 
 window.addEventListener('unhandledrejection', (event) => {
   if (import.meta.env.DEV) {
     console.error('[App] Unhandled promise rejection:', event.reason);
   } else {
-    window.dataLayer?.push({
-      event: 'error',
-      error_message: event.reason?.message || String(event.reason),
+    trackEvent('error', {
+      error_message: sanitizeErrorMessage(event.reason?.message || event.reason),
+      error_name: event.reason?.name || 'UnhandledRejection',
       error_source: 'unhandledrejection',
     });
   }

@@ -1,6 +1,16 @@
 // src/utils/getAssetUrl.js
 
 /**
+ * Returns Vite's BASE_URL with Node.js / prerender safety guard.
+ * This is the SSOT for reading BASE_URL; avoids repeating the ternary across all pages.
+ *
+ * @returns {string} e.g. '/romamart.ca/' in staging, '/' in production
+ */
+export function getBaseUrl() {
+  return typeof import.meta !== 'undefined' && import.meta.env?.BASE_URL ? import.meta.env.BASE_URL : '/';
+}
+
+/**
  * Safely access environment variables with Node.js compatibility
  * Guards against import.meta.env being undefined in Node contexts
  *
@@ -29,10 +39,8 @@ export function getEnvVar(key, defaultValue = '') {
  * @returns {string} Full asset URL with correct base path
  */
 export function getAssetUrl(path) {
-  // Get the base URL from Vite's configuration
-  const baseUrl = typeof import.meta !== 'undefined' && import.meta.env?.BASE_URL
-    ? import.meta.env.BASE_URL
-    : '/';
+  // Get the base URL from Vite's configuration (SSOT: getBaseUrl)
+  const baseUrl = getBaseUrl();
 
   // Normalize the path to ensure it starts with a slash
   const normalizedPath = path.startsWith('/') ? path : `/${path}`;

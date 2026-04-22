@@ -10,9 +10,8 @@ import { useGeolocation } from '../hooks/useBrowserFeatures';
 import { useLocations } from '../contexts/LocationsContext';
 import { LocationContext } from '../contexts/LocationContext';
 import { findNearestLocation } from '../utils/locationMath';
+import { NEAREST_LOCATION_KEY, SESSION_LOCATION_REQUESTED_KEY } from '../config/storageKeys';
 
-const NEAREST_LOCATION_KEY = 'roma_mart_nearest_location';
-const SESSION_REQUESTED_KEY = 'roma_mart_location_requested';
 const CACHE_DURATION = 3600000; // 1 hour
 
 /**
@@ -51,7 +50,7 @@ export const LocationProvider = ({ children }) => {
   const primaryLocation = useMemo(() => locations.find((loc) => loc.isPrimary) || locations[0] || null, [locations]);
 
   const [locationRequested, setLocationRequested] = useState(() => {
-    return !!sessionStorage.getItem(SESSION_REQUESTED_KEY);
+    return !!sessionStorage.getItem(SESSION_LOCATION_REQUESTED_KEY);
   });
 
   const { getCurrentLocation, location, loading, error, canUseGeolocation } = useGeolocation();
@@ -94,7 +93,7 @@ export const LocationProvider = ({ children }) => {
     } catch {
       /* Safari private mode */
     }
-    sessionStorage.setItem(SESSION_REQUESTED_KEY, 'true');
+    sessionStorage.setItem(SESSION_LOCATION_REQUESTED_KEY, 'true');
   }, [nearestLocation]);
 
   // Request location (can be called by any component)
@@ -102,7 +101,7 @@ export const LocationProvider = ({ children }) => {
     if (!canUseGeolocation || locationRequested) return;
 
     // Check if already requested this session
-    const alreadyRequested = sessionStorage.getItem(SESSION_REQUESTED_KEY);
+    const alreadyRequested = sessionStorage.getItem(SESSION_LOCATION_REQUESTED_KEY);
     if (!alreadyRequested) {
       getCurrentLocation();
       setLocationRequested(true);

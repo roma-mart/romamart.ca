@@ -3,14 +3,42 @@
 // Centralized company data for Roma Mart 2.0
 // Single source of truth for brand info, social links, order platform, etc.
 
+// Shared key for the prerendered Google Places data injected into the HTML
+// by scripts/prerender.js and read at runtime by TrustSignal.jsx.
+export const PLACES_GLOBAL_KEY = '__PLACES__';
+
 // IMPORTANT:
 // All headquarters (HQ) info (address, hours, contact, GST, etc.) sourced from this file (COMPANY_DATA).
 // No hardcoded or duplicated HQ info is allowed in any page or component.
 // All overrides and fallbacks for HQ data must be handled here for maintainability and resilience.
 
 // import { getOrderingUrl } from './ordering';
-import { getPrimaryLocation } from '../data/locations.js';
+import { getPrimaryLocation, LOCATIONS } from '../data/locations.js';
 import { getEnvVar } from '../utils/getAssetUrl.js';
+
+// Derive service area from active/coming-soon locations in the SSOT.
+// Falls back to hardcoded list for resilience if LOCATIONS is empty (e.g. build-time edge case).
+const getServiceArea = () => {
+  const openCities =
+    Array.isArray(LOCATIONS) && LOCATIONS.length > 0
+      ? [
+          ...new Set(
+            LOCATIONS.filter((loc) => loc.status === 'open' || loc.status === 'coming_soon')
+              .map((loc) => loc.address?.city)
+              .filter(Boolean)
+          ),
+        ]
+      : [];
+  if (openCities.length > 0) {
+    return openCities.map((name) => ({ '@type': 'City', name }));
+  }
+  return [
+    { '@type': 'City', name: 'Sarnia' },
+    { '@type': 'City', name: 'Point Edward' },
+    { '@type': 'City', name: 'Corunna' },
+    { '@type': 'City', name: "Bright's Grove" },
+  ];
+};
 
 const COMPANY_DATA = {
   legalName: 'Roma Mart Corp.',
@@ -34,14 +62,18 @@ const COMPANY_DATA = {
   // Default values for schemas
   defaults: {
     productCategory: 'Food & Beverage',
-    priceRange: '$$',
+    priceRange: '$',
     country: 'CA',
     currency: 'CAD',
     timezone: 'America/Toronto',
     ageRestriction: '19-', // Minimum age for age-restricted products/services (Ontario law)
+    cryptoCurrencies: ['BTC'], // Crypto currencies accepted via in-store Bitcoin ATM
   },
   // Accepted payment methods (business-wide, for LocalBusiness schema)
   paymentMethods: ['Cash', 'Credit Card', 'Debit Card', 'Interac', 'Visa', 'Mastercard', 'American Express', 'Bitcoin'],
+  // Service area (primary city + surrounding communities — shared by schema builders)
+  // Derived from active locations in SSOT; falls back to hardcoded list if SSOT is empty.
+  serviceArea: getServiceArea(),
   // Return policy defaults (business-wide, for MerchantReturnPolicy schema)
   returnPolicy: {
     merchantReturnDays: 1,

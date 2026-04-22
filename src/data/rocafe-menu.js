@@ -1,7 +1,9 @@
 /**
  * RoCafe Menu Data
  * Static fallback for menu items — used when the API is unavailable.
- * Prices are in dollars (the API sends cents; the normalizer converts for API source).
+ * Prices are in dollars (e.g., 3.99). The API returns prices in cents (e.g., 399).
+ * Pass priceInCents:false when building schemas from this file; priceInCents:true for API data.
+ * See: src/schemas/menuItemSchema.js — normalizePrice() and inferPriceInCents()
  *
  * Last updated from API: February 16, 2026 (75 items)
  *

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { trackEvent } from '../utils/analytics.js';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Menu,
@@ -16,6 +17,7 @@ import {
 import Button from './Button';
 import { useCompanyData } from '../contexts/CompanyDataContext';
 import { Logo } from './Logo';
+import { getBaseUrl } from '../utils/getAssetUrl';
 import { NAVIGATION_LINKS } from '../config/navigation';
 import { useFocusTrap } from '../hooks/useFocusTrap';
 
@@ -64,8 +66,7 @@ export default function Navbar({ currentPage = 'home' }) {
   const wcoShowIcons = wcoActive && wcoWidth >= 450; // Medium: priority icons only
   // Narrow (<450px): all nav links collapse into overflow dropdown
   const wcoOrderText = !wcoActive || wcoWidth >= 450;
-  const BASE_URL =
-    typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
+  const BASE_URL = getBaseUrl();
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const isHomePage = currentPage === 'home';
@@ -145,13 +146,7 @@ export default function Navbar({ currentPage = 'home' }) {
   };
 
   const trackOrderClick = useCallback((location) => {
-    if (window.dataLayer) {
-      window.dataLayer.push({
-        event: 'order_cta_click',
-        cta_location: location,
-        cta_text: 'Order Online',
-      });
-    }
+    trackEvent('order_cta_click', { cta_location: location, cta_text: 'Order Online' });
   }, []);
 
   const toggleMenu = useCallback(() => setIsOpen((prev) => !prev), []);

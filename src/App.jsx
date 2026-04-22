@@ -1,11 +1,12 @@
-import React, { useState, useEffect, Suspense, lazy, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, Suspense, lazy, useCallback, useMemo, useRef } from 'react';
+import { trackEvent } from './utils/analytics.js';
 import ErrorBoundary from './components/ErrorBoundary';
 import LoadingFallback from './components/LoadingFallback';
-import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, ExternalLink, MapPin } from 'lucide-react';
 // ...existing code...
 import { getPreferredLocation } from './utils/locationMath';
 import { useCompanyData } from './contexts/CompanyDataContext';
+import { PWA_UPDATE_DISMISSED_KEY } from './config/storageKeys';
 import { Logo } from './components/Logo';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -31,7 +32,7 @@ import PWAInstallPrompt from './components/PWAInstallPrompt';
 import PWAUpdatePrompt from './components/PWAUpdatePrompt';
 
 // dynamically resolve domain for assets
-import { getAssetUrl } from './utils/getAssetUrl';
+import { getAssetUrl, getBaseUrl } from './utils/getAssetUrl';
 
 // Code splitting: Lazy load page components
 const AccessibilityPage = lazy(() => import('./pages/AccessibilityPage'));
@@ -48,20 +49,17 @@ const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 
 // component imports
 import NetworkStatus from './components/NetworkStatus';
+import MobileCallCTA from './components/MobileCallCTA';
+import TrustSignal from './components/TrustSignal';
 import CopyButton from './components/CopyButton';
 import { normalizePhoneForTel } from './utils/phone';
 
-const BASE_URL =
-  typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
+const BASE_URL = getBaseUrl();
 
 // --- CUSTOM COMPONENTS ---
 
-function Hero({ onTrackOrder }) {
+function Hero() {
   const { companyData } = useCompanyData();
-  const shouldReduceMotion = useReducedMotion();
-  const handleOrderClick = useCallback(() => {
-    if (onTrackOrder) onTrackOrder('hero_section');
-  }, [onTrackOrder]);
 
   return (
     <div
@@ -78,11 +76,7 @@ function Hero({ onTrackOrder }) {
       <div className="absolute inset-0 bg-gradient-to-r from-blue-950 via-blue-900 to-transparent opacity-90 z-0" />
       <div className="relative z-10 max-w-7xl mx-auto px-4 w-full pt-20">
         <div className="grid md:grid-cols-2 gap-12 items-center">
-          <motion.div
-            initial={shouldReduceMotion ? false : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: shouldReduceMotion ? 0 : 0.6 }}
-          >
+          <div>
             <div
               className="inline-block px-4 py-1 mb-6 rounded-full border"
               style={{
@@ -116,6 +110,7 @@ function Hero({ onTrackOrder }) {
               <ShareButton
                 title="Roma Mart"
                 text="Check out Roma Mart - Sarnia's newest convenience store!"
+                source="homepage"
                 className="bg-white/10 text-white hover:bg-white/20 border border-white/30"
               />
             </div>
@@ -127,38 +122,43 @@ function Hero({ onTrackOrder }) {
                 variant="order"
                 size="lg"
                 icon={<ExternalLink size={20} />}
-                analyticsEvent="order_cta_hero"
+                analyticsEvent={{ event: 'order_cta_click', cta_location: 'hero_section', cta_text: 'Order Online' }}
                 aria-label="Order online from Roma Mart"
-                onClick={handleOrderClick}
               >
                 ORDER ONLINE
               </Button>
               <Button
-                href={`${BASE_URL}locations`}
+                href={`${BASE_URL}locations/`}
                 variant="navlink"
                 size="lg"
                 icon={<ArrowRight size={20} />}
                 aria-label="Visit In Store Location"
+                onClick={() => trackEvent('visit_in_store_click', { source: 'hero' })}
               >
                 Visit In Store
               </Button>
             </div>
-          </motion.div>
-          <motion.div
-            initial={shouldReduceMotion ? false : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.8, delay: 0.2 }}
-            className="relative hidden md:block"
-          >
+            {companyData.location?.google?.placeId && (
+              <div className="mt-4">
+                <TrustSignal
+                  placeId={companyData.location.google.placeId}
+                  mapLink={companyData.location.google.mapLink}
+                />
+              </div>
+            )}
+          </div>
+          <div className="relative hidden md:block">
             <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl border-4 border-white/10 rotate-3 hover:rotate-0 transition-transform duration-500">
               <img
                 src={getAssetUrl('/images/comeinwereopensign.png')}
                 alt="Come in! We're Open Sign"
                 className="w-full h-[500px] object-cover"
+                width="1440"
+                height="1080"
                 fetchpriority="high"
               />
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </div>
@@ -348,8 +348,10 @@ const RoCafeSection = ({ menuItems, loading, error, refetch }) => {
 const Locations = () => {
   const [userCoords, setUserCoords] = useState(null);
   const { locations, loading: locLoading, error: locError, refetch: locRefetch } = useLocations();
+  const locationsSectionRef = useRef(null);
 
   const primaryLocation = useMemo(() => locations.find((loc) => loc.isPrimary) || locations[0], [locations]);
+  const [shouldLoadMap, setShouldLoadMap] = useState(false);
 
   const preferredLocation = useMemo(
     () => getPreferredLocation({ userCoords, locations }) || primaryLocation,
@@ -379,13 +381,40 @@ const Locations = () => {
     }),
     [preferredLocation]
   );
+  const supportsIntersectionObserver =
+    typeof window !== 'undefined' && typeof window.IntersectionObserver === 'function';
+  const shouldRenderMap = displayLocation.embedUrl && (!supportsIntersectionObserver || shouldLoadMap);
+
+  useEffect(() => {
+    if (!displayLocation.embedUrl || shouldLoadMap || !supportsIntersectionObserver) return;
+    const locationsSection = locationsSectionRef.current;
+    if (!locationsSection) return;
+
+    const observer = new window.IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        setShouldLoadMap(true);
+        observer.disconnect();
+      },
+      {
+        rootMargin: '500px 0px',
+        threshold: 0.01,
+      }
+    );
+
+    observer.observe(locationsSection);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [displayLocation.embedUrl, shouldLoadMap, supportsIntersectionObserver]);
 
   // Note: Homepage only displays one location (the preferred/closest one)
   // so we don't need user selection logic here. Use displayLocation directly.
   const activeLoc = displayLocation;
 
   return (
-    <section id="locations" className="py-24" style={{ backgroundColor: 'var(--color-bg)' }}>
+    <section id="locations" ref={locationsSectionRef} className="py-24" style={{ backgroundColor: 'var(--color-bg)' }}>
       <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
           <span className="font-bold uppercase tracking-widest text-sm" style={{ color: 'var(--color-accent)' }}>
@@ -474,7 +503,7 @@ const Locations = () => {
                 className="lg:col-span-2 rounded-3xl overflow-hidden min-h-[400px] relative shadow-inner"
                 style={{ backgroundColor: 'var(--color-surface)' }}
               >
-                {displayLocation.embedUrl ? (
+                {shouldRenderMap ? (
                   <iframe
                     title={`Google Maps - ${displayLocation.name}`}
                     src={displayLocation.embedUrl}
@@ -491,7 +520,9 @@ const Locations = () => {
                     style={{ backgroundColor: 'var(--color-surface)', color: 'var(--color-text)' }}
                   >
                     <p className="font-inter text-sm" style={{ color: 'var(--color-text-muted)' }}>
-                      Open this location in Google Maps for directions.
+                      {displayLocation.embedUrl
+                        ? 'The interactive map loads automatically as this section comes into view.'
+                        : 'Open this location in Google Maps for directions.'}
                     </p>
                     <a
                       href={displayLocation.mapLink}
@@ -600,6 +631,7 @@ const ContactSection = () => {
                       href={`tel:${normalizePhoneForTel(companyData?.location?.contact?.phone)}`}
                       className="hover:underline"
                       style={{ color: 'var(--color-accent)' }}
+                      onClick={() => trackEvent('phone_click', { source: 'home_contact' })}
                     >
                       {companyData?.location?.contact?.phone}
                     </a>
@@ -660,7 +692,7 @@ function App() {
   const pathname = typeof window !== 'undefined' ? window.location.pathname.replace(BASE_URL, '/') : '/';
   const { companyData } = useCompanyData();
   const { updateAvailable, skipWaiting } = useServiceWorker();
-  const [updateDismissed, setUpdateDismissed] = useState(sessionStorage.getItem('pwa-update-dismissed') === 'true');
+  const [updateDismissed, setUpdateDismissed] = useState(sessionStorage.getItem(PWA_UPDATE_DISMISSED_KEY) === 'true');
   const isVisible = usePageVisibility();
 
   // Fetch menu data from API for homepage featured schemas + RoCafe section
@@ -729,18 +761,6 @@ function App() {
     }
   }, [pathname]);
   const currentPage = getPage();
-  const handleTrackOrderClick = useCallback((location = 'hero_section') => {
-    try {
-      if (typeof window.trackOrderClick === 'function') {
-        window.trackOrderClick(location);
-      }
-    } catch (e) {
-      if (import.meta.env.DEV) console.warn('trackOrderClick failed:', e);
-    }
-    if (window.dataLayer) {
-      window.dataLayer.push({ event: 'order_cta_click', cta_location: location, cta_text: 'Order Online' });
-    }
-  }, []);
 
   return (
     <>
@@ -752,10 +772,10 @@ function App() {
             data={{
               ...companyData.pwa?.webApplication,
               name: companyData.pwa?.webApplication?.name || companyData.dba || 'Roma Mart Convenience',
-              url: companyData.pwa?.webApplication?.url || 'https://romamart.ca',
+              url: companyData.pwa?.webApplication?.url || companyData.baseUrl,
               author: {
                 name: companyData.legalName || 'Roma Mart Corp.',
-                url: 'https://romamart.ca',
+                url: companyData.baseUrl,
               },
             }}
           />
@@ -767,7 +787,7 @@ function App() {
             data={{
               products: featuredSchemaItems.map((item) => ({
                 menuItem: item,
-                itemUrl: 'https://romamart.ca/rocafe/',
+                itemUrl: `${companyData.baseUrl}/rocafe/`,
                 priceInCents: schemaPriceInCents,
               })),
             }}
@@ -780,8 +800,8 @@ function App() {
             data={{
               services: featuredServices,
               options: {
-                serviceUrl: 'https://romamart.ca/services/',
-                providerUrl: 'https://romamart.ca',
+                serviceUrl: `${companyData.baseUrl}/services/`,
+                providerUrl: companyData.baseUrl,
               },
             }}
           />
@@ -865,7 +885,7 @@ function App() {
               <a href="#main-content" className="skip-link">
                 Skip to main content
               </a>
-              <Hero onTrackOrder={handleTrackOrderClick} />
+              <Hero />
               <div id="main-content">
                 <ErrorBoundary>
                   <ServicesSection
@@ -897,11 +917,12 @@ function App() {
         updateAvailable={updateAvailable && !updateDismissed}
         onUpdate={skipWaiting}
         onDismiss={() => {
-          sessionStorage.setItem('pwa-update-dismissed', 'true');
+          sessionStorage.setItem(PWA_UPDATE_DISMISSED_KEY, 'true');
           setUpdateDismissed(true);
         }}
       />
       <NetworkStatus />
+      <MobileCallCTA />
     </>
   );
 }

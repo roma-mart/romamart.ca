@@ -166,7 +166,12 @@ export function CompanyDataProvider({ children }) {
    * @returns {string}
    */
   const getContextualEmail = (context = 'general') => {
-    return companyData.contextualEmails?.[context] || companyData.contextualEmails?.general || 'contact@romamart.ca';
+    return (
+      companyData.contextualEmails?.[context] ||
+      companyData.contextualEmails?.general ||
+      COMPANY_DATA.contextualEmails?.general ||
+      'contact@romamart.ca'
+    );
   };
 
   const value = { companyData, loading, error, source, getContextualEmail };

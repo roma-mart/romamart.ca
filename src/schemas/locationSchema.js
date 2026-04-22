@@ -45,10 +45,8 @@ const buildOpeningHours = (hours) => {
         });
       }
     });
-  }
-
-  // Handle weekdays/weekends format
-  if (hours.weekdays && hours.weekends) {
+  } else if (hours.weekdays && hours.weekends) {
+    // Fallback: only runs when hours.daily is not available
     const weekdaysParts = hours.weekdays.split('-').map((t) => t.trim());
     const weekendsParts = hours.weekends.split('-').map((t) => t.trim());
 
@@ -186,14 +184,27 @@ export const buildLocationSchema = (location, _options = {}) => {
     schema.priceRange = cd.defaults.priceRange;
   }
 
-  // Add currencies accepted
-  schema.currenciesAccepted = cd.defaults.currency;
+  // Add currencies accepted (CAD + crypto, reflecting the in-store Bitcoin ATM/payment)
+  schema.currenciesAccepted = [cd.defaults.currency, ...(cd.defaults.cryptoCurrencies || [])].join(', ');
 
-  // Add area served (city/region where location operates)
-  if (address.city) {
-    schema.areaServed = {
-      '@type': 'City',
-      name: safeString(address.city),
+  // Add area served: prefer caller-supplied derivation (API locations set), fall back to SSOT
+  schema.areaServed = _options.areaServed || cd.serviceArea;
+
+  // Add aggregate rating if provided via options (fetched from Places API at build time).
+  // Explicit null/undefined check (not truthy) so a legitimate reviewCount of 0 (new listings) emits.
+  const ar = _options.aggregateRating;
+  if (
+    ar?.ratingValue !== null &&
+    ar?.ratingValue !== undefined &&
+    ar?.reviewCount !== null &&
+    ar?.reviewCount !== undefined
+  ) {
+    schema.aggregateRating = {
+      '@type': 'AggregateRating',
+      ratingValue: _options.aggregateRating.ratingValue,
+      reviewCount: _options.aggregateRating.reviewCount,
+      bestRating: 5,
+      worstRating: 1,
     };
   }
 
@@ -222,7 +233,28 @@ export const buildLocationListSchema = (locations, _options = {}) => {
     return null;
   }
 
-  const locationSchemas = locations.map((location) => buildLocationSchema(location, _options)).filter(Boolean);
+  // Derive areaServed from the passed locations set (API-first).
+  // Falls back to COMPANY_DATA.serviceArea (SSOT) if no cities can be extracted.
+  const cd = _options.companyData || COMPANY_DATA;
+  const derivedCities = [...new Set(locations.map((loc) => loc.address?.city).filter(Boolean))];
+  const derivedAreaServed =
+    derivedCities.length > 0 ? derivedCities.map((name) => ({ '@type': 'City', name })) : cd.serviceArea;
+
+  const locationSchemas = locations
+    .map((location) => {
+      // Gate the fetched rating to only the location whose placeId was used to fetch it.
+      // Prevents one location's rating from being applied to every location in a multi-location list.
+      const ratingForLocation =
+        _options.aggregateRating?.placeId && _options.aggregateRating.placeId === location.google?.placeId
+          ? _options.aggregateRating
+          : null;
+      return buildLocationSchema(location, {
+        ..._options,
+        areaServed: derivedAreaServed,
+        aggregateRating: ratingForLocation,
+      });
+    })
+    .filter(Boolean);
 
   if (locationSchemas.length === 0) {
     return null;

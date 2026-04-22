@@ -8,6 +8,7 @@ import React from 'react';
 import { Copy, Check } from 'lucide-react';
 import { useClipboard, useVibration } from '../hooks/useBrowserFeatures';
 import { useToast } from './ToastContainer';
+import { trackEvent } from '../utils/analytics.js';
 
 const CopyButton = ({ text, label, className = '', showIcon = true }) => {
   const { copyToClipboard } = useClipboard();
@@ -20,13 +21,14 @@ const CopyButton = ({ text, label, className = '', showIcon = true }) => {
     if (canVibrate) {
       vibrate(10);
     }
-    
+
     const result = await copyToClipboard(text);
-    
+
     if (result.success) {
+      trackEvent('copy_click', { label: label || 'unknown', source: 'unknown' });
       setCopied(true);
       showSuccess(`${label || 'Text'} copied!`);
-      
+
       setTimeout(() => {
         setCopied(false);
       }, 2000);

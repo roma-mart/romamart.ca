@@ -3,12 +3,14 @@
  * Main footer component — orchestrates sub-components and renders brand/social/copyright sections.
  */
 import React, { useCallback, useMemo } from 'react';
+import { trackEvent } from '../utils/analytics.js';
 import { useCompanyData } from '../contexts/CompanyDataContext';
 import { Logo } from './Logo';
 import TrustpilotWidget from './TrustpilotWidget';
 import { useLocationContext } from '../hooks/useLocationContext';
 import { useLocations } from '../contexts/LocationsContext';
 import { findNearestLocation } from '../utils/locationMath';
+import { getBaseUrl } from '../utils/getAssetUrl';
 import OrderCTA from './OrderCTA';
 import Button from './Button';
 import FooterReviews from './FooterReviews';
@@ -52,8 +54,7 @@ const SOCIAL_LINKS = [
 ];
 
 export default function Footer() {
-  const BASE_URL =
-    typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.BASE_URL ? import.meta.env.BASE_URL : '/';
+  const BASE_URL = getBaseUrl();
   const { userLocation } = useLocationContext();
   const { locations, selectedLocationId, selectLocation } = useLocations();
   const { companyData } = useCompanyData();
@@ -88,8 +89,7 @@ export default function Footer() {
   const socialHandlers = useMemo(() => {
     const handlers = {};
     SOCIAL_LINKS.forEach((link) => {
-      handlers[link.label.toLowerCase()] = () =>
-        window.dataLayer?.push({ event: 'social_click', platform: link.label.toLowerCase() });
+      handlers[link.label.toLowerCase()] = () => trackEvent('social_click', { platform: link.label.toLowerCase() });
     });
     return handlers;
   }, []);
