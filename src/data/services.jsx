@@ -1,29 +1,55 @@
 /**
- * Centralized Services Management System
+ * Services UI Layer
  *
- * All Roma Mart services with availability, descriptions, and metadata.
- * Links to location system for availability display.
+ * Derives all service data from services-plain.js (the SSOT) and adds Lucide icon components.
+ * DO NOT add or edit service data here — edit src/data/services-plain.js instead.
+ *
+ * Adding a new service:
+ *   1. Add the entry to services-plain.js with an `iconKey`.
+ *   2. If the iconKey is new, add it to ICON_MAP below.
+ *   That is all. This file needs no other changes.
  */
 
 import {
+  AlertCircle,
   Banknote,
   Bitcoin,
+  Candy,
   Coffee,
-  Printer,
-  Package,
-  UtensilsCrossed,
-  Send,
   CreditCard,
+  Globe,
+  Package,
+  Printer,
+  Send,
+  ShoppingBag,
+  ShoppingBasket,
   Sparkles,
   Ticket,
-  AlertCircle,
-  ShoppingBag,
-  Globe,
-  ShoppingBasket,
-  Candy,
+  UtensilsCrossed,
 } from 'lucide-react';
+import { SERVICES_PLAIN } from './services-plain.js';
 
-// Service categories (match API snake_case format via toSnakeCase)
+// Maps iconKey strings (stored in services-plain.js) to rendered Lucide elements.
+// Key names use snake_case to match the Lucide component name in lowercase.
+const ICON_MAP = {
+  alert_circle: <AlertCircle size={20} />,
+  banknote: <Banknote size={20} />,
+  bitcoin: <Bitcoin size={20} />,
+  candy: <Candy size={20} />,
+  coffee: <Coffee size={20} />,
+  credit_card: <CreditCard size={20} />,
+  globe: <Globe size={20} />,
+  package: <Package size={20} />,
+  printer: <Printer size={20} />,
+  send: <Send size={20} />,
+  shopping_bag: <ShoppingBag size={20} />,
+  shopping_basket: <ShoppingBasket size={20} />,
+  sparkles: <Sparkles size={20} />,
+  ticket: <Ticket size={20} />,
+  utensils_crossed: <UtensilsCrossed size={20} />,
+};
+
+// Service categories — convenience constants that match the category strings in services-plain.js.
 export const SERVICE_CATEGORIES = {
   FINANCIAL: 'financial_services',
   FOOD: 'food',
@@ -32,435 +58,31 @@ export const SERVICE_CATEGORIES = {
   AGE_RESTRICTED: 'age_restricted',
 };
 
-// All services data
-export const SERVICES = [
-  {
-    itemType: 'service',
-    id: 'svc-atm-001',
-    slug: 'svc-atm-001',
-    name: 'ATM',
-    tagline: 'Cash when you need it',
-    description:
-      'Convenient ATM access with competitive fees. Withdraw cash safely and securely. Supports all major bank networks with secure transactions.',
-    icon: <Banknote size={20} />,
-    category: SERVICE_CATEGORIES.FINANCIAL,
-    availableAt: ['loc-wellington-001'], // Location IDs where available
-    availability: 'store_hours', // store_hours | 24_7 | custom
-    features: [
-      'Available during store hours',
-      'Low transaction fees',
-      'All major bank networks',
-      'Secure transactions',
-      'Receipt provided',
-    ],
-    badge: null,
-    ageRestricted: false,
-    status: 'available',
-    featured: true,
-  },
-
-  {
-    itemType: 'service',
-    id: 'svc-bitcoin-atm-001',
-    slug: 'svc-bitcoin-atm-001',
-    name: 'Bitcoin ATM',
-    tagline: 'Buy & sell crypto instantly',
-    description:
-      'Buy and sell cryptocurrency with ease. Our Bitcoin ATM supports multiple digital currencies with instant transactions and complete privacy. Managed by Bitcoin4U.',
-    icon: <Bitcoin size={20} />,
-    category: SERVICE_CATEGORIES.FINANCIAL,
-    availableAt: ['loc-wellington-001'],
-    availability: 'store_hours',
-    features: [
-      'Buy & sell Bitcoin',
-      'Multiple cryptocurrencies',
-      'Instant transactions',
-      'Secure & private',
-      'Managed by Bitcoin4U',
-    ],
-    badge: null,
-    ageRestricted: false,
-    status: 'available',
-    featured: true,
-    partner: {
-      name: 'Bitcoin4U',
-      url: 'https://bitcoin4u.ca/atm/sarnia/',
-      logo: '/images/b4u-logo.png', // Can add logo path later
-    },
-    action: {
-      text: 'View Rates',
-      url: 'https://bitcoin4u.ca/atm/sarnia/',
-    },
-  },
-
-  {
-    itemType: 'service',
-    id: 'svc-gift-cards-001',
-    slug: 'svc-gift-cards-001',
-    name: 'Gift Cards',
-    tagline: 'Perfect for any occasion',
-    description:
-      'Wide selection of gift cards for all occasions. Choose from major retailers, restaurants, and entertainment brands. Various denominations available with instant activation.',
-    icon: <CreditCard size={20} />,
-    category: SERVICE_CATEGORIES.RETAIL,
-    availableAt: ['loc-wellington-001'],
-    availability: 'store_hours',
-    features: [
-      'Major retailers',
-      'Restaurants & entertainment',
-      'Multiple denominations',
-      'Instant activation',
-      'Perfect for gifting',
-    ],
-    badge: null,
-    ageRestricted: false,
-    status: 'available',
-    featured: true,
-    partner: {
-      name: 'Now!prepay',
-      url: 'https://nowprepay.ca/',
-      logo: '/images/NowPrepayLogo.webp', // Can add logo path later
-    },
-  },
-
-  {
-    itemType: 'service',
-    id: 'svc-printing-services-001',
-    slug: 'svc-printing-services-001',
-    name: 'Printing Services',
-    tagline: 'Black & white printing on demand',
-    description:
-      'Professional black & white printing services. Email your document to print@romamart.ca and pay at the counter when you pick up. QR code verification prevents spam orders.',
-    icon: <Printer size={20} />,
-    category: SERVICE_CATEGORIES.CONVENIENCE,
-    availableAt: ['loc-wellington-001'],
-    availability: 'store_hours',
-    features: [
-      'Black & white printing only',
-      'Pay at counter',
-      'Prints issued after verification',
-      'Ideal for documents & last-minute needs',
-    ],
-    badge: null,
-    ageRestricted: false,
-    status: 'coming_soon',
-    featured: false,
-    action: {
-      text: 'Email Print Job',
-      email: 'print@romamart.ca',
-      subject: 'Print Request',
-      body: 'Please attach your document. Include your name and phone number.',
-    },
-  },
-
-  {
-    itemType: 'service',
-    id: 'svc-halal-meat-001',
-    slug: 'svc-halal-meat-001',
-    name: 'Halal Meat',
-    tagline: '100% certified halal',
-    description:
-      'Premium quality halal-certified meat products from local suppliers. Fresh cuts available on demand. All meat is Zabiha halal certified.',
-    icon: <UtensilsCrossed size={20} />,
-    category: SERVICE_CATEGORIES.FOOD,
-    availableAt: ['loc-wellington-001'],
-    availability: 'store_hours',
-    features: [
-      '100% Zabiha halal certified',
-      'Local suppliers',
-      'Fresh cuts on demand',
-      'Quality guaranteed',
-      'Various meat options',
-    ],
-    badge: 'halal',
-    ageRestricted: false,
-    status: 'available',
-    featured: true,
-  },
-
-  {
-    itemType: 'service',
-    id: 'svc-rocafe-001',
-    slug: 'svc-rocafe-001',
-    name: 'RoCaf\u00e9',
-    tagline: 'Fresh coffee & beverages',
-    description:
-      'In-store caf\u00e9 serving freshly brewed coffee, espresso drinks, iced beverages, and more. Crafted with care using quality ingredients.',
-    icon: <Coffee size={20} />,
-    category: SERVICE_CATEGORIES.FOOD,
-    availableAt: ['loc-wellington-001'],
-    availability: 'store_hours',
-    features: [
-      'Freshly brewed coffee',
-      'Espresso-based drinks',
-      'Iced & blended beverages',
-      'Hot chocolate & tea',
-      'Seasonal specials',
-    ],
-    badge: null,
-    ageRestricted: false,
-    status: 'available',
-    featured: false,
-  },
-
-  {
-    itemType: 'service',
-    id: 'svc-perfumes-fragrances-001',
-    slug: 'svc-perfumes-fragrances-001',
-    name: 'Perfumes & Fragrances',
-    tagline: 'Find your signature scent',
-    description:
-      'Curated collection of premium perfumes and fragrances. Designer brands with unisex options and gift sets available.',
-    icon: <Sparkles size={20} />,
-    category: SERVICE_CATEGORIES.RETAIL,
-    availableAt: ['loc-wellington-001'],
-    availability: 'store_hours',
-    features: ['Designer brands', 'Variety of scents', 'Unisex options', 'Gift sets available'],
-    badge: null,
-    ageRestricted: false,
-    status: 'available',
-    featured: false,
-  },
-
-  {
-    itemType: 'service',
-    id: 'svc-canadian-products-001',
-    slug: 'svc-canadian-products-001',
-    name: 'Canadian Products',
-    tagline: 'Support Local 🍁',
-    description:
-      'Selection of proudly Canadian-made products. Support local brands and enjoy authentic Canadian flavors and quality.',
-    icon: <ShoppingBag size={20} />,
-    category: SERVICE_CATEGORIES.RETAIL,
-    availableAt: ['loc-wellington-001'],
-    availability: 'store_hours',
-    features: ['Canadian-made products', 'Support local brands', 'Authentic quality'],
-    badge: null,
-    ageRestricted: false,
-    status: 'available',
-    featured: false,
-  },
-
-  {
-    itemType: 'service',
-    id: 'svc-international-products-001',
-    slug: 'svc-international-products-001',
-    name: 'International Products',
-    tagline: 'Global flavors at home',
-    description:
-      'Imported products from around the world. Discover unique snacks, beverages, and specialty items from Asia, Europe, Middle East, and beyond.',
-    icon: <Globe size={20} />,
-    category: SERVICE_CATEGORIES.RETAIL,
-    availableAt: ['loc-wellington-001'],
-    availability: 'store_hours',
-    features: ['Asian imports', 'European products', 'Middle Eastern items', 'Unique snacks', 'Hard-to-find items'],
-    badge: null,
-    ageRestricted: false,
-    status: 'available',
-    featured: true,
-  },
-
-  {
-    itemType: 'service',
-    id: 'svc-pantry-essentials-groceries-001',
-    slug: 'svc-pantry-essentials-groceries-001',
-    name: 'Pantry Essentials & Groceries',
-    tagline: 'Your daily essentials',
-    description:
-      'Expansive selection of pantry staples and grocery essentials. Milk, bread, eggs, canned goods, and everyday items you need.',
-    icon: <ShoppingBasket size={20} />,
-    category: SERVICE_CATEGORIES.RETAIL,
-    availableAt: ['loc-wellington-001'],
-    availability: 'store_hours',
-    features: ['Fresh dairy products', 'Bread & bakery', 'Canned goods', 'Pantry staples', 'Household items'],
-    badge: null,
-    ageRestricted: false,
-    status: 'available',
-    featured: false,
-  },
-
-  {
-    itemType: 'service',
-    id: 'svc-snacks-confectionery-001',
-    slug: 'svc-snacks-confectionery-001',
-    name: 'Snacks & Confectionery',
-    tagline: 'Sweet & savory treats',
-    description: 'Wide variety of snacks and candy for every craving. Chips, chocolate bars, gummies, nuts, and more.',
-    icon: <Candy size={20} />,
-    category: SERVICE_CATEGORIES.RETAIL,
-    availableAt: ['loc-wellington-001'],
-    availability: 'store_hours',
-    features: ['Chips & crisps', 'Chocolate bars', 'Gummy candies', 'Nuts & seeds', 'Popcorn & pretzels'],
-    badge: null,
-    ageRestricted: false,
-    status: 'available',
-    featured: false,
-  },
-
-  {
-    itemType: 'service',
-    id: 'svc-package-pickup-dropoff-001',
-    slug: 'svc-package-pickup-dropoff-001',
-    name: 'Package Pickup & Dropoff',
-    tagline: 'Your package hub',
-    description:
-      'Convenient package handling services. Drop off your shipments or pick up deliveries at your convenience with secure storage.',
-    icon: <Package size={20} />,
-    category: SERVICE_CATEGORIES.CONVENIENCE,
-    availableAt: ['loc-wellington-001'],
-    availability: 'store_hours',
-    features: [
-      'Multiple carriers',
-      'Secure storage',
-      'Package tracking',
-      'Purolator, DHL, uniuni, and more',
-      'Signature service',
-    ],
-    badge: null,
-    ageRestricted: false,
-    status: 'available',
-    featured: true,
-    partner: {
-      name: 'Virtual Smarthub',
-      url: 'https://www.virtual.com/',
-      logo: '/images/logo-smarthub.png', // Can add logo path later
-    },
-  },
-
-  {
-    itemType: 'service',
-    id: 'svc-money-transfer-001',
-    slug: 'svc-money-transfer-001',
-    name: 'Money Transfer',
-    tagline: 'Send money anywhere',
-    description:
-      'Fast and secure money transfer services to send funds domestically and internationally with competitive rates.',
-    icon: <Send size={20} />,
-    category: SERVICE_CATEGORIES.FINANCIAL,
-    availableAt: ['loc-wellington-001'],
-    availability: 'store_hours',
-    features: [
-      'Domestic & international',
-      'Competitive rates',
-      'Fast processing',
-      'Secure transfers',
-      'Multiple currencies',
-    ],
-    badge: null,
-    ageRestricted: false,
-    status: 'coming_soon',
-    featured: false,
-    partner: {
-      name: 'Ria Money Transfer',
-      url: 'https://www.riamoneytransfer.com/',
-      logo: '/images/ria-logo.svg', // Can add logo path later
-    },
-  },
-
-  {
-    itemType: 'service',
-    id: 'svc-tobacco-vape-001',
-    slug: 'svc-tobacco-vape-001',
-    name: 'Tobacco & Vape',
-    tagline: '19+ Only - ID Required',
-    description:
-      'Age-restricted tobacco products and vaping supplies. Valid government-issued photo ID with birth date required under Ontario law (Smoke-Free Ontario Act, 2017).',
-    icon: <AlertCircle size={20} />,
-    category: SERVICE_CATEGORIES.AGE_RESTRICTED,
-    availableAt: ['loc-wellington-001'],
-    availability: 'store_hours',
-    features: ['19+ Only (Ontario law)', 'Photo ID required', 'Cigarettes & cigars', 'Vaping supplies', 'Accessories'],
-    badge: null,
-    ageRestricted: true,
-    status: 'available',
-    featured: false,
-    legalNotice: {
-      text: 'It is illegal to sell or supply tobacco or e-cigarettes to anyone under 19 years of age.',
-      law: 'Smoke-Free Ontario Act, 2017',
-      url: 'https://www.ontario.ca/laws/statute/17s26',
-    },
-  },
-
-  {
-    itemType: 'service',
-    id: 'svc-lottery-001',
-    slug: 'svc-lottery-001',
-    name: 'Lottery',
-    tagline: 'Play your favorite games!',
-    description:
-      'Provincial lottery tickets! Play your favorite OLG games including instant tickets and draw games. Must be 19 or older.',
-    icon: <Ticket size={20} />,
-    category: SERVICE_CATEGORIES.AGE_RESTRICTED,
-    availableAt: ['loc-wellington-001'], // Empty until live
-    availability: 'store_hours',
-    features: ['19+ Only (Ontario law)', 'Instant tickets', 'Draw games', 'OLG authorized'],
-    badge: null,
-    ageRestricted: true,
-    status: 'coming_soon',
-    featured: false,
-    legalNotice: {
-      text: 'Must be 19 or older to purchase lottery tickets in Ontario.',
-      law: 'Ontario Lottery and Gaming Corporation',
-      url: 'https://www.olg.ca/',
-    },
-  },
-];
+// UI-ready services: plain data + resolved icon element.
+export const SERVICES = SERVICES_PLAIN.map((svc) => ({
+  ...svc,
+  icon: ICON_MAP[svc.iconKey] ?? null,
+}));
 
 // === HELPER FUNCTIONS ===
 
-/**
- * Get service by ID
- */
-export const getServiceById = (id) => {
-  return SERVICES.find((s) => s.id === id) || null;
-};
+export const getServiceById = (id) => SERVICES.find((s) => s.id === id) ?? null;
 
-/**
- * Get services by category
- */
-export const getServicesByCategory = (category) => {
-  return SERVICES.filter((s) => s.category === category);
-};
+export const getServicesByCategory = (category) => SERVICES.filter((s) => s.category === category);
 
-/**
- * Get services available at specific location
- */
-export const getServicesAtLocation = (locationId) => {
-  return SERVICES.filter((s) => s.availableAt.includes(locationId));
-};
+export const getServicesAtLocation = (locationId) => SERVICES.filter((s) => s.availableAt.includes(locationId));
 
-/**
- * Get age-restricted services
- */
-export const getAgeRestrictedServices = () => {
-  return SERVICES.filter((s) => s.ageRestricted);
-};
+export const getAgeRestrictedServices = () => SERVICES.filter((s) => s.ageRestricted);
 
-/**
- * Get coming soon services
- */
-export const getComingSoonServices = () => {
-  return SERVICES.filter((s) => s.status === 'coming_soon');
-};
+export const getComingSoonServices = () => SERVICES.filter((s) => s.status === 'coming_soon');
 
-/**
- * Get active (available now) services
- */
-export const getActiveServices = () => {
-  return SERVICES.filter((s) => s.status !== 'coming_soon' && s.availableAt.length > 0);
-};
+export const getActiveServices = () => SERVICES.filter((s) => s.status !== 'coming_soon' && s.availableAt.length > 0);
 
-/**
- * Check if service is available at location
- */
 export const isServiceAvailableAt = (serviceId, locationId) => {
   const service = getServiceById(serviceId);
   return service ? service.availableAt.includes(locationId) : false;
 };
 
-/**
- * Get service availability status text
- */
 export const getServiceAvailabilityText = (service, locationStatus) => {
   if (service.status === 'coming_soon') return 'Coming Soon';
   if (service.availability === '24_7') return 'Available 24/7';
@@ -470,7 +92,6 @@ export const getServiceAvailabilityText = (service, locationStatus) => {
   return 'Available';
 };
 
-// Featured services for homepage (6 items displayed)
 export const SERVICES_FEATURED = SERVICES.filter((service) => service.featured);
 
 export default {

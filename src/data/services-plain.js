@@ -1,15 +1,15 @@
 /**
- * Plain-JS service data — no JSX icons, safe to import in Node.js scripts.
+ * Services Data — Single Source of Truth
  *
- * This file mirrors the SERVICES array in services.jsx but omits the icon
- * field (which contains JSX elements incompatible with Node).  It is used
- * exclusively by scripts/prerender.js as a static fallback when the
- * Services API is unavailable at build time.
+ * This is the ONLY file where service data should be edited.
+ * - Plain JS (no JSX, no Lucide imports) — safe to import in Node.js scripts.
+ * - Each entry carries an `iconKey` that maps to a Lucide component in services.jsx.
+ * - services.jsx imports this file and adds the icon field; it contains NO duplicated data.
  *
- * When adding or removing services, keep this file in sync with
- * src/data/services.jsx.
+ * TO ADD A SERVICE: edit only this file. services.jsx and prerender.js derive from it automatically.
  *
- * @since April 2026
+ * @see src/data/services.jsx  — UI version (adds Lucide icons via iconKey → ICON_MAP)
+ * @see scripts/prerender.js   — imports SERVICES_PLAIN directly as build-time fallback
  */
 
 export const SERVICES_PLAIN = [
@@ -21,6 +21,7 @@ export const SERVICES_PLAIN = [
     tagline: 'Cash when you need it',
     description:
       'Convenient ATM access with competitive fees. Withdraw cash safely and securely. Supports all major bank networks with secure transactions.',
+    iconKey: 'banknote',
     category: 'financial_services',
     availableAt: ['loc-wellington-001'],
     availability: 'store_hours',
@@ -44,6 +45,7 @@ export const SERVICES_PLAIN = [
     tagline: 'Buy & sell crypto instantly',
     description:
       'Buy and sell cryptocurrency with ease. Our Bitcoin ATM supports multiple digital currencies with instant transactions and complete privacy. Managed by Bitcoin4U.',
+    iconKey: 'bitcoin',
     category: 'financial_services',
     availableAt: ['loc-wellington-001'],
     availability: 'store_hours',
@@ -61,6 +63,7 @@ export const SERVICES_PLAIN = [
     partner: {
       name: 'Bitcoin4U',
       url: 'https://bitcoin4u.ca/atm/sarnia/',
+      logo: '/images/b4u-logo.png',
     },
     action: {
       text: 'View Rates',
@@ -75,6 +78,7 @@ export const SERVICES_PLAIN = [
     tagline: 'Perfect for any occasion',
     description:
       'Wide selection of gift cards for all occasions. Choose from major retailers, restaurants, and entertainment brands. Various denominations available with instant activation.',
+    iconKey: 'credit_card',
     category: 'retail',
     availableAt: ['loc-wellington-001'],
     availability: 'store_hours',
@@ -92,6 +96,7 @@ export const SERVICES_PLAIN = [
     partner: {
       name: 'Now!prepay',
       url: 'https://nowprepay.ca/',
+      logo: '/images/NowPrepayLogo.webp',
     },
   },
   {
@@ -102,6 +107,7 @@ export const SERVICES_PLAIN = [
     tagline: 'Black & white printing on demand',
     description:
       'Professional black & white printing services. Email your document to print@romamart.ca and pay at the counter when you pick up. QR code verification prevents spam orders.',
+    iconKey: 'printer',
     category: 'convenience',
     availableAt: ['loc-wellington-001'],
     availability: 'store_hours',
@@ -130,6 +136,7 @@ export const SERVICES_PLAIN = [
     tagline: '100% certified halal',
     description:
       'Premium quality halal-certified meat products from local suppliers. Fresh cuts available on demand. All meat is Zabiha halal certified.',
+    iconKey: 'utensils_crossed',
     category: 'food',
     availableAt: ['loc-wellington-001'],
     availability: 'store_hours',
@@ -153,6 +160,7 @@ export const SERVICES_PLAIN = [
     tagline: 'Fresh coffee & beverages',
     description:
       'In-store café serving freshly brewed coffee, espresso drinks, iced beverages, and more. Crafted with care using quality ingredients.',
+    iconKey: 'coffee',
     category: 'food',
     availableAt: ['loc-wellington-001'],
     availability: 'store_hours',
@@ -176,6 +184,7 @@ export const SERVICES_PLAIN = [
     tagline: 'Find your signature scent',
     description:
       'Curated collection of premium perfumes and fragrances. Designer brands with unisex options and gift sets available.',
+    iconKey: 'sparkles',
     category: 'retail',
     availableAt: ['loc-wellington-001'],
     availability: 'store_hours',
@@ -190,9 +199,10 @@ export const SERVICES_PLAIN = [
     id: 'svc-canadian-products-001',
     slug: 'svc-canadian-products-001',
     name: 'Canadian Products',
-    tagline: 'Support Local',
+    tagline: 'Support Local 🍁',
     description:
       'Selection of proudly Canadian-made products. Support local brands and enjoy authentic Canadian flavors and quality.',
+    iconKey: 'shopping_bag',
     category: 'retail',
     availableAt: ['loc-wellington-001'],
     availability: 'store_hours',
@@ -210,6 +220,7 @@ export const SERVICES_PLAIN = [
     tagline: 'Global flavors at home',
     description:
       'Imported products from around the world. Discover unique snacks, beverages, and specialty items from Asia, Europe, Middle East, and beyond.',
+    iconKey: 'globe',
     category: 'retail',
     availableAt: ['loc-wellington-001'],
     availability: 'store_hours',
@@ -227,6 +238,7 @@ export const SERVICES_PLAIN = [
     tagline: 'Your daily essentials',
     description:
       'Expansive selection of pantry staples and grocery essentials. Milk, bread, eggs, canned goods, and everyday items you need.',
+    iconKey: 'shopping_basket',
     category: 'retail',
     availableAt: ['loc-wellington-001'],
     availability: 'store_hours',
@@ -243,6 +255,7 @@ export const SERVICES_PLAIN = [
     name: 'Snacks & Confectionery',
     tagline: 'Sweet & savory treats',
     description: 'Wide variety of snacks and candy for every craving. Chips, chocolate bars, gummies, nuts, and more.',
+    iconKey: 'candy',
     category: 'retail',
     availableAt: ['loc-wellington-001'],
     availability: 'store_hours',
@@ -260,6 +273,7 @@ export const SERVICES_PLAIN = [
     tagline: 'Your package hub',
     description:
       'Convenient package handling services. Drop off your shipments or pick up deliveries at your convenience with secure storage.',
+    iconKey: 'package',
     category: 'convenience',
     availableAt: ['loc-wellington-001'],
     availability: 'store_hours',
@@ -277,6 +291,7 @@ export const SERVICES_PLAIN = [
     partner: {
       name: 'Virtual Smarthub',
       url: 'https://www.virtual.com/',
+      logo: '/images/logo-smarthub.png',
     },
   },
   {
@@ -287,6 +302,7 @@ export const SERVICES_PLAIN = [
     tagline: 'Send money anywhere',
     description:
       'Fast and secure money transfer services to send funds domestically and internationally with competitive rates.',
+    iconKey: 'send',
     category: 'financial_services',
     availableAt: ['loc-wellington-001'],
     availability: 'store_hours',
@@ -304,6 +320,7 @@ export const SERVICES_PLAIN = [
     partner: {
       name: 'Ria Money Transfer',
       url: 'https://www.riamoneytransfer.com/',
+      logo: '/images/ria-logo.svg',
     },
   },
   {
@@ -314,6 +331,7 @@ export const SERVICES_PLAIN = [
     tagline: '19+ Only - ID Required',
     description:
       'Age-restricted tobacco products and vaping supplies. Valid government-issued photo ID with birth date required under Ontario law (Smoke-Free Ontario Act, 2017).',
+    iconKey: 'alert_circle',
     category: 'age_restricted',
     availableAt: ['loc-wellington-001'],
     availability: 'store_hours',
@@ -336,6 +354,7 @@ export const SERVICES_PLAIN = [
     tagline: 'Play your favorite games!',
     description:
       'Provincial lottery tickets! Play your favorite OLG games including instant tickets and draw games. Must be 19 or older.',
+    iconKey: 'ticket',
     category: 'age_restricted',
     availableAt: ['loc-wellington-001'],
     availability: 'store_hours',

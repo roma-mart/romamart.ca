@@ -77,6 +77,10 @@ function stripComments(src) {
 
 // ---------------------------------------------------------------------------
 // 3. Extract event names fired in a file
+// NOTE:
+// This script does NOT detect dynamically constructed event names.
+// All analytics events must use string literals.
+// Using variables for event names will bypass this check.
 // ---------------------------------------------------------------------------
 function extractFiredEvents(fileContent) {
   const fired = [];

@@ -461,6 +461,8 @@ async function fetchMenuData() {
       categories: item.categories ?? (item.category ? [item.category] : []),
     }));
 
+  // CONTRACT: this fallback must stay aligned with MenuContext.jsx's static fallback.
+  // Both rely on STATIC_MENU (SSOT). If the data shape changes, update both paths.
   const useFallback = (reason) => {
     if (STRICT_PRERENDER) {
       throw new Error(`STRICT_PRERENDER: menu API failed — ${reason}`);
@@ -495,6 +497,8 @@ async function fetchMenuData() {
  * @returns {Promise<Array>} Services array
  */
 async function fetchServicesData() {
+  // CONTRACT: this fallback must stay aligned with ServicesContext.jsx's static fallback.
+  // Both rely on SERVICES_PLAIN (SSOT in services-plain.js). If the data shape changes, update both paths.
   const useFallback = (reason) => {
     if (STRICT_PRERENDER) {
       throw new Error(`STRICT_PRERENDER: services API failed — ${reason}`);
@@ -536,6 +540,8 @@ async function fetchServicesData() {
  * @returns {Promise<Array>} Locations array
  */
 async function fetchLocationsData() {
+  // CONTRACT: this fallback must stay aligned with LocationsContext.jsx's static fallback.
+  // Both rely on STATIC_LOCATIONS (SSOT in locations.js). If the data shape changes, update both paths.
   const useFallback = (reason) => {
     if (STRICT_PRERENDER) {
       throw new Error(`STRICT_PRERENDER: locations API failed — ${reason}`);
