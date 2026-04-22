@@ -3,7 +3,7 @@
  * PWA implementation with smart caching strategies
  */
 
-const CACHE_VERSION = /* __CACHE_VERSION__ */ 'roma-mart-c0f0ba5e';
+const CACHE_VERSION = /* __CACHE_VERSION__ */ 'roma-mart-3c3be437';
 const BASE_URL = '/';
 
 // Assets to cache immediately on install
@@ -19,28 +19,29 @@ const PRECACHE_ASSETS = [
   `${BASE_URL}android/android-launchericon-512-512.png`,
   `${BASE_URL}ios/180.png`,
   `${BASE_URL}windows11/Square150x150Logo.scale-100.png`,
-    `${BASE_URL}assets/AboutPage-Bx1fM_w1.js`,
-  `${BASE_URL}assets/AccessibilityPage-Blt8nHgm.js`,
-  `${BASE_URL}assets/ContactPage-ROpja5gg.js`,
-  `${BASE_URL}assets/CookiesPage-BVUXtAyQ.js`,
+    `${BASE_URL}assets/AboutPage-DyI3UYFL.js`,
+  `${BASE_URL}assets/AccessibilityPage-DJzlshuw.js`,
+  `${BASE_URL}assets/ContactPage-BIEBcwp8.js`,
+  `${BASE_URL}assets/CookiesPage-B8TCbPI1.js`,
   `${BASE_URL}assets/ImageCarousel-DhI5Ni-G.js`,
-  `${BASE_URL}assets/LocationsPage-STUr8b6B.js`,
-  `${BASE_URL}assets/NotFoundPage-Bb6nxs0j.js`,
-  `${BASE_URL}assets/PrivacyPage-DJpoS-f6.js`,
-  `${BASE_URL}assets/ReturnPolicyPage-CJ95Ig9v.js`,
-  `${BASE_URL}assets/RoCafePage-CGzS0KWu.js`,
-  `${BASE_URL}assets/ServicesContext-Bjxty8d3.js`,
-  `${BASE_URL}assets/ServicesPage-Cf470Zaw.js`,
-  `${BASE_URL}assets/ShareButton-Dgqle9eQ.js`,
-  `${BASE_URL}assets/StructuredData-BaH4Be1O.js`,
-  `${BASE_URL}assets/TermsPage-D-Lab53r.js`,
+  `${BASE_URL}assets/LocationsPage-DyDRSgZh.js`,
+  `${BASE_URL}assets/NotFoundPage-C-WML1wc.js`,
+  `${BASE_URL}assets/PrivacyPage-D5uzh8_U.js`,
+  `${BASE_URL}assets/ReturnPolicyPage-hFiPfEPw.js`,
+  `${BASE_URL}assets/RoCafePage-B7vA8fUG.js`,
+  `${BASE_URL}assets/ServicesContext-BxK6N-cK.js`,
+  `${BASE_URL}assets/ServicesPage-FtsbpLQJ.js`,
+  `${BASE_URL}assets/ShareButton-C2D1LnXa.js`,
+  `${BASE_URL}assets/StructuredData-BhxSPytr.js`,
+  `${BASE_URL}assets/TermsPage-CVZVHbQ4.js`,
   `${BASE_URL}assets/icons-BEp66zj6.js`,
-  `${BASE_URL}assets/index-DUxYLA1Q.js`,
-  `${BASE_URL}assets/index-EpDs9d6R.css`,
+  `${BASE_URL}assets/index-CUoaedWv.js`,
+  `${BASE_URL}assets/index-HMiwOfKL.css`,
   `${BASE_URL}assets/motion-CndMNzTL.js`,
   `${BASE_URL}assets/react-vendor-CPjnESO9.js`,
   `${BASE_URL}assets/rolldown-runtime-BYbx6iT9.js`,
-  `${BASE_URL}assets/useGooglePlaceHours-TDlKNKoM.js`
+  `${BASE_URL}assets/routeTitles-Cgj_2r1M.js`,
+  `${BASE_URL}assets/useGooglePlaceHours-CQEXHBzy.js`
 ];
 
 // Pages to cache on first visit (runtime caching)
