@@ -2,7 +2,6 @@ import React, { useState, useEffect, Suspense, lazy, useCallback, useMemo } from
 import { trackEvent } from './utils/analytics.js';
 import ErrorBoundary from './components/ErrorBoundary';
 import LoadingFallback from './components/LoadingFallback';
-import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, ExternalLink, MapPin } from 'lucide-react';
 // ...existing code...
 import { getPreferredLocation } from './utils/locationMath';
@@ -61,7 +60,6 @@ const BASE_URL = getBaseUrl();
 
 function Hero() {
   const { companyData } = useCompanyData();
-  const shouldReduceMotion = useReducedMotion();
 
   return (
     <div
@@ -78,11 +76,7 @@ function Hero() {
       <div className="absolute inset-0 bg-gradient-to-r from-blue-950 via-blue-900 to-transparent opacity-90 z-0" />
       <div className="relative z-10 max-w-7xl mx-auto px-4 w-full pt-20">
         <div className="grid md:grid-cols-2 gap-12 items-center">
-          <motion.div
-            initial={shouldReduceMotion ? false : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: shouldReduceMotion ? 0 : 0.6 }}
-          >
+          <div>
             <div
               className="inline-block px-4 py-1 mb-6 rounded-full border"
               style={{
@@ -152,13 +146,8 @@ function Hero() {
                 />
               </div>
             )}
-          </motion.div>
-          <motion.div
-            initial={shouldReduceMotion ? false : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.8, delay: 0.2 }}
-            className="relative hidden md:block"
-          >
+          </div>
+          <div className="relative hidden md:block">
             <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl border-4 border-white/10 rotate-3 hover:rotate-0 transition-transform duration-500">
               <img
                 src={getAssetUrl('/images/comeinwereopensign.png')}
@@ -169,7 +158,7 @@ function Hero() {
                 fetchpriority="high"
               />
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </div>
