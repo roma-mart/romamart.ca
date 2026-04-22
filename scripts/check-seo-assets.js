@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { JSDOM } from 'jsdom';
 import { fileURLToPath } from 'url';
 import { REDIRECTS } from './generate-redirects.js';
 
@@ -33,6 +34,22 @@ function assert(condition, message) {
 function readFileSafe(filePath) {
   assert(fs.existsSync(filePath), `Missing file: ${filePath}`);
   return fs.readFileSync(filePath, 'utf-8');
+}
+
+function getMainTextContent(html) {
+  const dom = new JSDOM(html);
+  const main = dom.window.document.querySelector('main');
+
+  if (!main) {
+    return '';
+  }
+
+  main.querySelectorAll('script, style').forEach((node) => node.remove());
+
+  return (main.textContent || '')
+    .replace(/\u00a0/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 function checkRobots() {
@@ -151,16 +168,7 @@ function checkRouteHtml() {
     });
 
     // Non-empty <main> assertion — strip tags/scripts/styles so class-heavy markup doesn't inflate the count
-    const mainMatch = html.match(/<main[^>]*>([\s\S]*?)<\/main>/);
-    const mainText = mainMatch
-      ? mainMatch[1]
-          .replace(/<script\b[\s\S]*?<\/script>/gi, ' ')
-          .replace(/<style\b[\s\S]*?<\/style>/gi, ' ')
-          .replace(/<[^>]+>/g, ' ')
-          .replace(/&nbsp;/g, ' ')
-          .replace(/\s+/g, ' ')
-          .trim()
-      : '';
+    const mainText = getMainTextContent(html);
     assert(
       mainText.length > 100,
       `Route ${route}: <main> text is too short (${mainText.length} chars) — prerender may have produced empty output`
