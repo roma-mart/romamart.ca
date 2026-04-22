@@ -59,12 +59,9 @@ const BASE_URL = getBaseUrl();
 
 // --- CUSTOM COMPONENTS ---
 
-function Hero({ onTrackOrder }) {
+function Hero() {
   const { companyData } = useCompanyData();
   const shouldReduceMotion = useReducedMotion();
-  const handleOrderClick = useCallback(() => {
-    if (onTrackOrder) onTrackOrder('hero_section');
-  }, [onTrackOrder]);
 
   return (
     <div
@@ -119,6 +116,7 @@ function Hero({ onTrackOrder }) {
               <ShareButton
                 title="Roma Mart"
                 text="Check out Roma Mart - Sarnia's newest convenience store!"
+                source="homepage"
                 className="bg-white/10 text-white hover:bg-white/20 border border-white/30"
               />
             </div>
@@ -130,9 +128,8 @@ function Hero({ onTrackOrder }) {
                 variant="order"
                 size="lg"
                 icon={<ExternalLink size={20} />}
-                analyticsEvent="order_cta_hero"
+                analyticsEvent={{ event: 'order_cta_click', cta_location: 'hero_section', cta_text: 'Order Online' }}
                 aria-label="Order online from Roma Mart"
-                onClick={handleOrderClick}
               >
                 ORDER ONLINE
               </Button>
@@ -744,16 +741,6 @@ function App() {
     }
   }, [pathname]);
   const currentPage = getPage();
-  const handleTrackOrderClick = useCallback((location = 'hero_section') => {
-    try {
-      if (typeof window.trackOrderClick === 'function') {
-        window.trackOrderClick(location);
-      }
-    } catch (e) {
-      if (import.meta.env.DEV) console.warn('trackOrderClick failed:', e);
-    }
-    trackEvent('order_cta_click', { cta_location: location, cta_text: 'Order Online' });
-  }, []);
 
   return (
     <>
@@ -878,7 +865,7 @@ function App() {
               <a href="#main-content" className="skip-link">
                 Skip to main content
               </a>
-              <Hero onTrackOrder={handleTrackOrderClick} />
+              <Hero />
               <div id="main-content">
                 <ErrorBoundary>
                   <ServicesSection
