@@ -75,12 +75,18 @@ onLCP(reportWebVital);
 onTTFB(reportWebVital);
 onFCP(reportWebVital);
 
+const sanitizeErrorMessage = (value) =>
+  String(value || 'UnhandledRejection')
+    .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, '[redacted-email]')
+    .replace(/\b(?:\d[ -]*?){13,16}\b/g, '[redacted-number]')
+    .slice(0, 200);
+
 window.addEventListener('unhandledrejection', (event) => {
   if (import.meta.env.DEV) {
     console.error('[App] Unhandled promise rejection:', event.reason);
   } else {
     trackEvent('error', {
-      error_message: event.reason?.message || String(event.reason) || 'UnhandledRejection',
+      error_message: sanitizeErrorMessage(event.reason?.message || event.reason),
       error_name: event.reason?.name || 'UnhandledRejection',
       error_source: 'unhandledrejection',
     });

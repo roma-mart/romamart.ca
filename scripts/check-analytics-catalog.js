@@ -70,8 +70,9 @@ function collectFiles(dir, results = []) {
 function stripComments(src) {
   // Remove block comments (/** ... */ and /* ... */)
   let out = src.replace(/\/\*[\s\S]*?\*\//g, '');
-  // Remove line comments (// ...)
-  out = out.replace(/\/\/.*/g, '');
+  // Remove line comments (// ...) — anchored to start-of-line or whitespace to avoid
+  // stripping trailing code after URL literals (e.g. 'https://…' followed by a call)
+  out = out.replace(/(^|\s)\/\/.*$/gm, '$1');
   return out;
 }
 

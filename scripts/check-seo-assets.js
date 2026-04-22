@@ -150,12 +150,20 @@ function checkRouteHtml() {
       }
     });
 
-    // Non-empty <main> assertion — prerendered content must be substantive
+    // Non-empty <main> assertion — strip tags/scripts/styles so class-heavy markup doesn't inflate the count
     const mainMatch = html.match(/<main[^>]*>([\s\S]*?)<\/main>/);
-    const mainContent = mainMatch ? mainMatch[1].trim() : '';
+    const mainText = mainMatch
+      ? mainMatch[1]
+          .replace(/<script\b[\s\S]*?<\/script>/gi, ' ')
+          .replace(/<style\b[\s\S]*?<\/style>/gi, ' ')
+          .replace(/<[^>]+>/g, ' ')
+          .replace(/&nbsp;/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim()
+      : '';
     assert(
-      mainContent.length > 100,
-      `Route ${route}: <main> content is too short (${mainContent.length} chars) — prerender may have produced empty output`
+      mainText.length > 100,
+      `Route ${route}: <main> text is too short (${mainText.length} chars) — prerender may have produced empty output`
     );
   });
 }

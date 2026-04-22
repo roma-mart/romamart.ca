@@ -1277,7 +1277,7 @@ async function prerender() {
             ? `\n  <script type="application/ld+json">${escapeJsonLd(JSON.stringify(buildFAQSchema(COMPANY_DATA)))}</script>`
             : '';
         const placesScript =
-          route.path === '/' && aggregateRating?.ratingValue != null
+          route.path === '/' && aggregateRating?.ratingValue != null && aggregateRating?.reviewCount != null
             ? `\n  <script>window[${JSON.stringify(PLACES_GLOBAL_KEY)}]=${escapeJsonLd(JSON.stringify(aggregateRating))}</script>`
             : '';
         return `${mainSchema}${faqSchema}${placesScript}\n  </head>`;

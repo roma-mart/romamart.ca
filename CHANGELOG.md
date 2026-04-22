@@ -5,7 +5,7 @@ All notable changes to the Roma Mart 2.0 project will be documented in this file
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.9.0] - 2026-04-21
+## [2.10.0] - 2026-04-21
 
 ### Added
 - `src/utils/analytics.js` — centralized `trackEvent()` utility replacing all inline `window.dataLayer.push()` calls
@@ -399,7 +399,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Google Tag Manager, GA4, Consent Mode, Trustpilot, Snap Pixel
 - LocalBusiness structured data, meta tags, sitemap, robots.txt
 
-[Unreleased]: https://github.com/roma-mart/romamart.ca/compare/v2.9.0...HEAD
+[Unreleased]: https://github.com/roma-mart/romamart.ca/compare/v2.10.0...HEAD
+[2.10.0]: https://github.com/roma-mart/romamart.ca/compare/v2.9.0...v2.10.0
 [2.9.0]: https://github.com/roma-mart/romamart.ca/compare/v2.8.0...v2.9.0
 [2.8.0]: https://github.com/roma-mart/romamart.ca/compare/v2.7.1...v2.8.0
 [2.7.1]: https://github.com/roma-mart/romamart.ca/compare/v2.7.0...v2.7.1
