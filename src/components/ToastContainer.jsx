@@ -38,10 +38,10 @@ export const ToastProvider = ({ children }) => {
   return (
     <ToastContext.Provider value={{ addToast, showSuccess, showError, showInfo }}>
       {children}
-      
-      {/* Toast Container - Fixed position, avoids OrderCTA overlap (56px button + safe spacing) */}
+
+      {/* Toast Container - Fixed position, clears both stacked FABs: CallCTA (56px) + OrderCTA (56px) + gaps */}
       <div
-        className="fixed bottom-[calc(56px+env(safe-area-inset-bottom,1rem))] md:bottom-[calc(56px+1.5rem)] right-4 z-[9999] flex flex-col gap-2 pointer-events-none"
+        className="fixed bottom-[calc(112px+env(safe-area-inset-bottom,0px)+2.5rem)] md:bottom-[calc(56px+1.5rem)] right-4 z-[9999] flex flex-col gap-2 pointer-events-none"
         aria-live="polite"
         aria-atomic="false"
       >

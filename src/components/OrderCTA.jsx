@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
 const OrderCTA = ({ orderUrl = getOrderingUrl() }) => {
   // Determine initial visibility based on hero section presence
   const hasHeroSection = typeof window !== 'undefined' && document.querySelector('#hero-section');
-  const [isVisible, setIsVisible] = useState(() => hasHeroSection ? false : true);
+  const [isVisible, setIsVisible] = useState(() => (hasHeroSection ? false : true));
 
   // Hide button only when hero section is visible (homepage)
   useEffect(() => {
@@ -18,7 +18,7 @@ const OrderCTA = ({ orderUrl = getOrderingUrl() }) => {
       },
       {
         threshold: 0.1,
-        rootMargin: '-100px 0px 0px 0px'
+        rootMargin: '-100px 0px 0px 0px',
       }
     );
     observer.observe(heroSection);
@@ -26,7 +26,6 @@ const OrderCTA = ({ orderUrl = getOrderingUrl() }) => {
       observer.disconnect();
     };
   }, []);
-
 
   return (
     <Button
@@ -39,19 +38,17 @@ const OrderCTA = ({ orderUrl = getOrderingUrl() }) => {
       target="_blank"
       rel="noopener noreferrer"
       tabIndex={isVisible ? 0 : -1}
-      className={`fixed bottom-[calc(env(safe-area-inset-bottom,0px)+1.5rem)] right-4 md:right-6 md:bottom-6 z-50 flex items-center justify-center rounded-full bg-surface will-change-opacity focus-visible:outline-2 focus-visible:outline-accent ${
-        isVisible
-          ? 'opacity-100 pointer-events-auto animate-fab-in'
-          : 'opacity-0 pointer-events-none animate-fab-out'
+      className={`fixed bottom-[calc(56px+env(safe-area-inset-bottom,0px)+2rem)] right-4 md:right-6 md:bottom-6 z-50 flex items-center justify-center rounded-full bg-surface will-change-opacity focus-visible:outline-2 focus-visible:outline-accent ${
+        isVisible ? 'opacity-100 pointer-events-auto animate-fab-in' : 'opacity-0 pointer-events-none animate-fab-out'
       }`}
-      style={{ 
-        boxShadow: '0 4px 16px var(--color-accent-shadow,rgba(228,179,64,0.15))', 
-        minWidth: 56, 
-        minHeight: 56, 
-        padding: 0, 
-        WebkitTapHighlightColor: 'transparent'
+      style={{
+        boxShadow: '0 4px 16px var(--color-accent-shadow,rgba(228,179,64,0.15))',
+        minWidth: 56,
+        minHeight: 56,
+        padding: 0,
+        WebkitTapHighlightColor: 'transparent',
       }}
-      {...(!isVisible ? { inert: "true" } : {})}
+      {...(!isVisible ? { inert: 'true' } : {})}
       children={null}
     />
   );
