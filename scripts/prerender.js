@@ -10,9 +10,19 @@ import { buildLocationListSchema } from '../src/schemas/locationSchema.js';
 import { buildFAQSchema } from '../src/schemas/faq.js';
 import { writeRedirects } from './generate-redirects.js';
 import { getAggregateRating } from './fetch-places-rating.js';
+// Static fallbacks — plain-JS exports compatible with Node (no JSX).
+// Used when the corresponding API is unreachable at build time so that
+// prerendered HTML always contains meaningful content and JSON-LD schemas.
+import { SERVICES_PLAIN as STATIC_SERVICES } from '../src/data/services-plain.js';
+import { LOCATIONS as STATIC_LOCATIONS } from '../src/data/locations.js';
+import { ROCAFE_FULL_MENU as STATIC_MENU } from '../src/data/rocafe-menu.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// When STRICT_PRERENDER=1 any API failure throws instead of falling back.
+// Useful in CI to catch regressions in API availability early.
+const STRICT_PRERENDER = process.env.STRICT_PRERENDER === '1';
 
 // API endpoints — reads from VITE_API_BASE_URL env var, same as runtime contexts
 const API_BASE = (process.env.VITE_API_BASE_URL || 'https://romamart.netlify.app').replace(/\/+$/, '');
@@ -438,55 +448,75 @@ const normalizeCountry = (country) => {
 };
 
 /**
- * Fetches menu data from API for prerendering ProductList schemas
- * @returns {Promise<Array>} Menu items array
+ * Fetches menu data from API for prerendering ProductList schemas.
+ * Falls back to STATIC_MENU (prices in dollars) when the API is unavailable.
+ * @returns {Promise<{ items: Array, priceInCents: boolean }>}
  */
 async function fetchMenuData() {
+  // Normalize static menu items: static data uses a singular `category` string
+  // while the API and buildStaticContent expect `categories` as an array.
+  const normalizeStaticMenu = (items) =>
+    items.map((item) => ({
+      ...item,
+      categories: item.categories ?? (item.category ? [item.category] : []),
+    }));
+
+  const useFallback = (reason) => {
+    if (STRICT_PRERENDER) {
+      throw new Error(`STRICT_PRERENDER: menu API failed — ${reason}`);
+    }
+    const normalized = normalizeStaticMenu(STATIC_MENU);
+    console.warn(`[prerender] Menu API unavailable (${reason}), using static fallback (${normalized.length} items)`);
+    return { items: normalized, priceInCents: false };
+  };
+
   try {
     console.log('Fetching menu data from API for prerendering...');
     const response = await fetch(MENU_API_URL, { headers: API_HEADERS });
 
     if (!response.ok) {
-      console.warn(
-        `Warning: Menu API returned ${response.status}. ProductList schemas will be skipped in static HTML.`
-      );
-      return [];
+      return useFallback(`HTTP ${response.status}`);
     }
 
     const data = await response.json();
     const menuItems = data.menu || [];
 
     console.log(`✓ Fetched ${menuItems.length} menu items (${menuItems.filter((i) => i.featured).length} featured)`);
-    return menuItems;
+    return { items: menuItems, priceInCents: true };
   } catch (error) {
-    console.warn('Warning: Failed to fetch menu data. ProductList schemas will be skipped in static HTML.');
-    console.warn('  Error:', error.message);
-    return [];
+    return useFallback(error.message);
   }
 }
 
 /**
- * Fetches services data from API for prerendering ServiceList schemas
- * Returns empty array if API unavailable (services schemas handled by React client-side with static fallback)
+ * Fetches services data from API for prerendering ServiceList schemas.
+ * Falls back to STATIC_SERVICES when the API is unavailable so that the
+ * /services page always has a non-empty ServiceList JSON-LD graph node.
  * @returns {Promise<Array>} Services array
  */
 async function fetchServicesData() {
+  const useFallback = (reason) => {
+    if (STRICT_PRERENDER) {
+      throw new Error(`STRICT_PRERENDER: services API failed — ${reason}`);
+    }
+    console.warn(
+      `[prerender] Services API unavailable (${reason}), using static fallback (${STATIC_SERVICES.length} services)`
+    );
+    return STATIC_SERVICES;
+  };
+
   try {
     console.log('Fetching services data from API for prerendering...');
     const response = await fetch(SERVICES_API_URL, { headers: API_HEADERS });
 
     if (!response.ok) {
-      console.warn(
-        `Warning: Services API returned ${response.status}. ServiceList schemas will use React client-side rendering.`
-      );
-      return [];
+      return useFallback(`HTTP ${response.status}`);
     }
 
     const data = await response.json();
 
     if (!data.success || !Array.isArray(data.services)) {
-      console.warn('Warning: Invalid services API response. ServiceList schemas will use React client-side rendering.');
-      return [];
+      return useFallback('invalid API response shape');
     }
 
     const services = data.services;
@@ -495,45 +525,46 @@ async function fetchServicesData() {
     );
     return services;
   } catch (error) {
-    console.warn('Warning: Failed to fetch services data. ServiceList schemas will use React client-side rendering.');
-    console.warn('  Error:', error.message);
-    return [];
+    return useFallback(error.message);
   }
 }
 
 /**
- * Fetches locations data from API for prerendering LocationList schemas
- * Returns empty array if API unavailable (locations schemas handled by React client-side with static fallback)
+ * Fetches locations data from API for prerendering LocationList schemas.
+ * Falls back to STATIC_LOCATIONS when the API is unavailable so that the
+ * /locations page always has a non-empty LocationList JSON-LD graph node.
  * @returns {Promise<Array>} Locations array
  */
 async function fetchLocationsData() {
+  const useFallback = (reason) => {
+    if (STRICT_PRERENDER) {
+      throw new Error(`STRICT_PRERENDER: locations API failed — ${reason}`);
+    }
+    console.warn(
+      `[prerender] Locations API unavailable (${reason}), using static fallback (${STATIC_LOCATIONS.length} locations)`
+    );
+    return STATIC_LOCATIONS;
+  };
+
   try {
     console.log('Fetching locations data from API for prerendering...');
     const response = await fetch(LOCATIONS_API_URL, { headers: API_HEADERS });
 
     if (!response.ok) {
-      console.warn(
-        `Warning: Locations API returned ${response.status}. LocationList schemas will use React client-side rendering.`
-      );
-      return [];
+      return useFallback(`HTTP ${response.status}`);
     }
 
     const data = await response.json();
 
     if (!data.success || !Array.isArray(data.locations)) {
-      console.warn(
-        'Warning: Invalid locations API response. LocationList schemas will use React client-side rendering.'
-      );
-      return [];
+      return useFallback('invalid API response shape');
     }
 
     const locations = data.locations;
     console.log(`✓ Fetched ${locations.length} locations from API`);
     return locations;
   } catch (error) {
-    console.warn('Warning: Failed to fetch locations data. LocationList schemas will use React client-side rendering.');
-    console.warn('  Error:', error.message);
-    return [];
+    return useFallback(error.message);
   }
 }
 
@@ -541,9 +572,10 @@ async function fetchLocationsData() {
  * Builds ProductList schema for menu items
  * @param {Array} menuItems - Menu items to include
  * @param {boolean} featuredOnly - Only include featured items
+ * @param {boolean} priceInCents - Whether size prices are in cents (API) or dollars (static)
  * @returns {Object|null} ProductList schema or null if no items
  */
-function buildProductListSchema(menuItems, featuredOnly = false) {
+function buildProductListSchema(menuItems, featuredOnly = false, priceInCents = true) {
   if (!Array.isArray(menuItems) || menuItems.length === 0) {
     return null;
   }
@@ -559,7 +591,7 @@ function buildProductListSchema(menuItems, featuredOnly = false) {
     .map((menuItem) =>
       buildMenuItemSchema(menuItem, 'https://romamart.ca/rocafe', {
         currency: 'CAD',
-        priceInCents: true, // Menu API uses cents
+        priceInCents, // API uses cents; static fallback uses dollars
       })
     )
     .filter(Boolean);
@@ -580,7 +612,7 @@ function buildProductListSchema(menuItems, featuredOnly = false) {
 }
 
 const buildStructuredData = (routePath = '/', apiData = {}) => {
-  const { menuItems = [], services = [], locations = [], aggregateRating = null } = apiData;
+  const { menuItems = [], services = [], locations = [], aggregateRating = null, menuPriceInCents = true } = apiData;
   const location = COMPANY_DATA.location;
   const address = location?.address || {};
   const contact = location?.contact || {};
@@ -677,7 +709,7 @@ const buildStructuredData = (routePath = '/', apiData = {}) => {
 
   // Add ProductList for homepage (featured items only)
   if (routePath === '/' && menuItems.length > 0) {
-    const productListSchema = buildProductListSchema(menuItems, true);
+    const productListSchema = buildProductListSchema(menuItems, true, menuPriceInCents);
     if (productListSchema) {
       graph.push(productListSchema);
     }
@@ -685,7 +717,7 @@ const buildStructuredData = (routePath = '/', apiData = {}) => {
 
   // Add ProductList for RoCafé page (all menu items)
   if (routePath === '/rocafe' && menuItems.length > 0) {
-    const productListSchema = buildProductListSchema(menuItems, false);
+    const productListSchema = buildProductListSchema(menuItems, false, menuPriceInCents);
     if (productListSchema) {
       graph.push(productListSchema);
     }
@@ -1148,12 +1180,14 @@ async function prerender() {
 
   // Fetch all API data in parallel for maximum efficiency
   console.log('\n📡 Fetching API data for prerendering...\n');
-  const [menuItems, services, locations, aggregateRating] = await Promise.all([
+  const [menuResult, services, locations, aggregateRating] = await Promise.all([
     fetchMenuData(),
     fetchServicesData(),
     fetchLocationsData(),
     getAggregateRating(),
   ]);
+  const menuItems = menuResult.items;
+  const menuPriceInCents = menuResult.priceInCents;
   console.log('\n✓ API data fetching complete\n');
 
   const indexTemplate = fs.readFileSync(indexPath, 'utf-8');
@@ -1222,7 +1256,7 @@ async function prerender() {
       .replace(/<\/head>/, () => {
         // Escape </script> within JSON strings to prevent premature script tag termination (XSS).
         const escapeJsonLd = (json) => json.replace(/<\/script>/gi, '<\\/script>');
-        const mainSchema = `<script type="application/ld+json">${escapeJsonLd(buildStructuredData(route.path, { menuItems, services, locations, aggregateRating }))}</script>`;
+        const mainSchema = `<script type="application/ld+json">${escapeJsonLd(buildStructuredData(route.path, { menuItems, services, locations, aggregateRating, menuPriceInCents }))}</script>`;
         const faqSchema =
           route.path === '/'
             ? `\n  <script type="application/ld+json">${escapeJsonLd(JSON.stringify(buildFAQSchema(COMPANY_DATA)))}</script>`
