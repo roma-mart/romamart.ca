@@ -351,7 +351,7 @@ const Locations = () => {
   const locationsSectionRef = useRef(null);
 
   const primaryLocation = useMemo(() => locations.find((loc) => loc.isPrimary) || locations[0], [locations]);
-  const [shouldLoadMap, setShouldLoadMap] = useState(() => !primaryLocation?.google?.embedUrl);
+  const [shouldLoadMap, setShouldLoadMap] = useState(false);
 
   const preferredLocation = useMemo(
     () => getPreferredLocation({ userCoords, locations }) || primaryLocation,
@@ -381,15 +381,14 @@ const Locations = () => {
     }),
     [preferredLocation]
   );
+  const supportsIntersectionObserver =
+    typeof window !== 'undefined' && typeof window.IntersectionObserver === 'function';
+  const shouldRenderMap = displayLocation.embedUrl && (!supportsIntersectionObserver || shouldLoadMap);
 
   useEffect(() => {
-    if (!displayLocation.embedUrl || shouldLoadMap) return;
+    if (!displayLocation.embedUrl || shouldLoadMap || !supportsIntersectionObserver) return;
     const locationsSection = locationsSectionRef.current;
     if (!locationsSection) return;
-    if (typeof window === 'undefined' || typeof window.IntersectionObserver !== 'function') {
-      setShouldLoadMap(true);
-      return;
-    }
 
     const observer = new window.IntersectionObserver(
       ([entry]) => {
@@ -408,7 +407,7 @@ const Locations = () => {
     return () => {
       observer.disconnect();
     };
-  }, [displayLocation.embedUrl, shouldLoadMap]);
+  }, [displayLocation.embedUrl, shouldLoadMap, supportsIntersectionObserver]);
 
   // Note: Homepage only displays one location (the preferred/closest one)
   // so we don't need user selection logic here. Use displayLocation directly.
@@ -504,7 +503,7 @@ const Locations = () => {
                 className="lg:col-span-2 rounded-3xl overflow-hidden min-h-[400px] relative shadow-inner"
                 style={{ backgroundColor: 'var(--color-surface)' }}
               >
-                {displayLocation.embedUrl && shouldLoadMap ? (
+                {shouldRenderMap ? (
                   <iframe
                     title={`Google Maps - ${displayLocation.name}`}
                     src={displayLocation.embedUrl}
