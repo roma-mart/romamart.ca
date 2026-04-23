@@ -1,7 +1,7 @@
-# API Implementation Guide for Backend Team
+# Backend API Specification
 
 **Created:** February 5, 2026
-**Updated:** February 6, 2026
+**Updated:** April 23, 2026
 **Status:** Ready for Implementation
 
 ---
@@ -12,15 +12,15 @@ This document provides complete specifications for implementing three public API
 
 **What You Need to Implement:**
 
-1. **Services API** (`/api/public-services`) - 14 convenience store services with filtering
-2. **Locations API** (`/api/public-locations`) - Multi-location store information with hours, coordinates, amenities
+1. **Services API** (`/api/v1/public-services`) - 15 convenience store services with filtering
+2. **Locations API** (`/api/v1/public-locations`) - Multi-location store information with hours, coordinates, amenities
 3. **Menu API Enhancement** - Add missing fields (calories data, dietary info, customizations, **images**)
 
 **CRITICAL for SEO:** Menu item images are required for Google Product rich results. At minimum, featured items (4-6) must have images.
 
 **What to Plan For (Future):**
 
-1. **Company Data API** (`/api/public-company-data`) - Centralized business info (hours, contact, policies)
+1. **Company Data API** (`/api/v1/public-company-data`) - Centralized business info (hours, contact, policies)
 2. **Seasonal/Quick Theming Support** - Dynamic theme configuration (holidays, promotions, events)
 
 **Webapp Architecture:**
@@ -31,9 +31,131 @@ This document provides complete specifications for implementing three public API
 
 ---
 
+## API Contract Essentials
+
+This section is the canonical cross-cutting contract. It applies to **every** public endpoint in this document. If any endpoint-specific section below conflicts with this one, this section wins.
+
+### Base URL & Versioning
+
+- **Production base:** `https://romamart.netlify.app`
+- **Version prefix:** `/api/v1/` — all public endpoints live under `v1`
+- **Overridable at build time:** frontend reads `VITE_API_BASE_URL` (see `src/utils/api.js:apiUrl`)
+- **Breaking changes:** require a new version prefix (`/api/v2/`). Non-breaking additive fields do not. Deprecated versions must be supported for at least 90 days after a successor ships.
+
+### Transport
+
+- **Method:** `GET` only for all public read endpoints
+- **Content-Type:** `application/json; charset=utf-8` on all responses (success and error)
+- **Compression:** `gzip` and `br` accepted; please set `Vary: Accept-Encoding`
+- **Redirects:** none — return terminal responses, not 301/302 chains
+
+### Authentication / API Key
+
+- **Header (optional today, required in future):** `X-API-Key: <key>`
+- **Client source:** `VITE_API_KEY` env var; frontend sends the header only when the var is set (see `src/utils/api.js:apiHeaders`)
+- **Security posture:** this key is **public** — it is bundled into client JavaScript. Treat it as a rate-limit / routing identifier only. **Never** use it for server-side authorization or to gate PII. See [ARCHITECTURE.md:721](ARCHITECTURE.md) for the client-exposed env var policy.
+- **When key is missing:** endpoint must still respond normally (optionally with stricter anonymous rate limits).
+- **When key is invalid:** return `401` with the standard error body (see below).
+
+### CORS Requirements
+
+Frontend dev bypasses CORS via Vite proxy (`/api/*` → `https://romamart.netlify.app`, see `vite.config.js`). Production runs in the browser and **requires** a correct CORS response from the backend.
+
+**Allowed origins** (maintain as an exact-match allowlist; no wildcards):
+
+| Origin | Purpose |
+|---|---|
+| `https://romamart.ca` | Production |
+| `https://www.romamart.ca` | Production (www) |
+| `https://roma-mart.github.io` | GitHub Pages staging |
+| `http://localhost:5173` | Vite dev default |
+| `http://localhost:4173` | Vite preview default |
+
+**Required response headers on every API response:**
+- `Access-Control-Allow-Origin: <echoed request origin if allowlisted>` — do NOT return `*` when `X-API-Key` may be sent
+- `Access-Control-Allow-Credentials: false` (frontend does not send cookies)
+- `Vary: Origin`
+
+**Preflight (`OPTIONS`) response — required for any request that sends `X-API-Key` or `If-None-Match`:**
+- `Access-Control-Allow-Methods: GET, OPTIONS`
+- `Access-Control-Allow-Headers: Content-Type, If-None-Match, X-API-Key`
+- `Access-Control-Max-Age: 86400`
+
+**Exposed headers** (must be listed in `Access-Control-Expose-Headers` or the browser blocks JS from reading them):
+- `ETag`
+- `X-RateLimit-Remaining`
+- `X-RateLimit-Reset`
+- `X-Request-Id` (if emitted)
+
+**Action item for backend:** the current allowlist reportedly includes only `localhost:5173`, `romamart.ca`, and `roma-mart.github.io`. Add `https://www.romamart.ca` and `http://localhost:4173`, and confirm `Access-Control-Expose-Headers` includes the four names above — the frontend rate-limit + ETag logic depends on reading them.
+
+### Caching & ETag Contract
+
+The frontend uses `fetchWithEtag()` (see `src/utils/api.js`) for every endpoint. Contract:
+
+1. **On a successful `200` response**, return an `ETag` header (strong or weak, any format; frontend treats it as opaque).
+2. **On subsequent requests**, the frontend sends `If-None-Match: <previous etag>`.
+3. **If content is unchanged**, respond `304 Not Modified` with **no body** and repeat the `ETag` header. Frontend serves cached JSON.
+4. **If content has changed**, respond `200` with the new body and a new `ETag`.
+5. **Recommended `Cache-Control`** on `200`: `public, max-age=0, must-revalidate` (forces revalidation each time but allows intermediate CDN caches to serve 304 on behalf of the origin). If the resource is CDN-cached with a longer TTL (5 min suggested), ensure the ETag is derived from the underlying data, not the cache entry.
+6. **Weak vs strong:** weak ETags (`W/"..."`) are fine — the frontend does not need byte-exact equality.
+
+### Rate Limiting
+
+Frontend actively reads rate-limit headers and opens a circuit breaker **before** hitting `429`. Contract:
+
+- **`X-RateLimit-Remaining`** — integer, requests remaining in the current window. Required on every response (success and error).
+- **`X-RateLimit-Reset`** — Unix timestamp (seconds) when the window resets. Required whenever `X-RateLimit-Remaining` is `0`.
+- **`429 Too Many Requests`** — return when exceeded, with the standard error body and the two headers above. Frontend circuit breaker opens for ≥1 min (or until `X-RateLimit-Reset`, whichever is later) and auto-resets after 1 hour.
+- **Recommended window:** 60 requests/minute per API key (or per IP when key absent). Tune based on observed traffic.
+- **Also trip the breaker:** `402 Payment Required` and `403 Forbidden` — frontend treats these the same as `429`.
+
+### Error Response Shape
+
+Every non-`2xx` / non-`304` response body **must** be JSON in this shape:
+
+```json
+{
+  "error": "Human-readable message",
+  "code": "MACHINE_READABLE_CODE",
+  "requestId": "req_abc123"
+}
+```
+
+| Field | Type | Required | Notes |
+|---|---|---|---|
+| `error` | string | Yes | Human-readable; surfaced in dev console, not to end users |
+| `code` | string | Recommended | Stable machine-readable code (e.g., `RATE_LIMITED`, `INVALID_API_KEY`, `NOT_FOUND`) |
+| `requestId` | string | Recommended | Correlates with server logs; frontend prints it in dev warnings |
+
+**Standard HTTP statuses used by frontend logic:**
+
+| Status | Meaning | Frontend behavior |
+|---|---|---|
+| `200` | Success | Parse body, cache ETag |
+| `304` | Not Modified | Serve cached JSON |
+| `401` | Invalid/missing API key | Log, fall back to static data |
+| `402` / `403` | Forbidden / quota | Open circuit breaker, fall back to static data |
+| `404` | Endpoint not implemented | Log warning, fall back to static data |
+| `429` | Rate limited | Open circuit breaker, fall back to static data |
+| `5xx` | Server error | Log error, fall back to static data |
+
+The frontend **also** tolerates success responses that wrap the payload in `{ success: true, ... }`. The `success` field is advisory — on `2xx` it is treated as `true`; on non-`2xx` the HTTP status is authoritative.
+
+### Keep in Sync
+
+Cross-reference:
+- Frontend HTTP layer: `src/utils/api.js`
+- Circuit breaker: `src/utils/apiCircuitBreaker.js`
+- Architecture overview: [ARCHITECTURE.md](ARCHITECTURE.md) → "Data Flow & API Integration"
+
+Changes to the cross-cutting contract above require updates in all three places.
+
+---
+
 ## Menu API Enhancement (Existing Endpoint)
 
-**Current:** `https://romamart.netlify.app/api/public-menu`
+**Current:** `https://romamart.netlify.app/api/v1/public-menu`
 
 **Status:** Already implemented, needs field additions
 
@@ -143,11 +265,11 @@ This document provides complete specifications for implementing three public API
 
 ## Services API (New Endpoint)
 
-**URL:** `https://romamart.netlify.app/api/public-services`
+**URL:** `https://romamart.netlify.app/api/v1/public-services`
 
 **Purpose:** Provide list of services offered (ATM, Bitcoin ATM, lottery, money orders, etc.)
 
-**Note:** Currently 14 services in production. Spec designed to scale to additional services as business grows.
+**Note:** Currently 15 services in the frontend SSOT (`src/data/services-plain.js`). Spec designed to scale to additional services as business grows.
 
 ### Complete Field Specification
 
@@ -173,7 +295,7 @@ This document provides complete specifications for implementing three public API
 ### Field Details
 
 **`availability` field (Recommended):**
-While technically optional, strongly recommended for proper schema generation. All 14 current services include this field. Used for:
+While technically optional, strongly recommended for proper schema generation. All 15 current services include this field. Used for:
 - Schema.org Service hoursAvailable property
 - Availability display logic
 - User expectations about when service can be accessed
@@ -299,7 +421,7 @@ If omitted, service will still function but SEO schemas will be incomplete.
 
 ## Locations API (New Endpoint)
 
-**URL:** `https://romamart.netlify.app/api/public-locations`
+**URL:** `https://romamart.netlify.app/api/v1/public-locations`
 
 **Purpose:** Provide multi-location store information with complete details (hours, coordinates, amenities, services)
 
@@ -531,7 +653,7 @@ If omitted, service will still function but SEO schemas will be incomplete.
 
 ### Company Data API (Not Urgent - Plan Ahead)
 
-**URL:** `https://romamart.netlify.app/api/public-company-data`
+**URL:** `https://romamart.netlify.app/api/v1/public-company-data`
 
 **Purpose:** Centralize all business-wide information (contact, hours, policies, social links, payment methods)
 
@@ -753,7 +875,7 @@ null              // No badge
 Before marking APIs production-ready, test these scenarios:
 
 ### Services API Testing
-- [ ] Returns all 14 services (current count)
+- [ ] Returns all 15 services (current count)
 - [ ] `featured: true` filters correctly (6 services for homepage)
 - [ ] Categories match expected values (see Complete Field Enumerations section)
 - [ ] `availableAt` array contains valid location IDs
@@ -870,8 +992,8 @@ This section consolidates all API implementation priorities (functionality, data
 ### Phase 1: Services API (Week 1-2)
 
 **Core Implementation:** 🚨 **URGENT**
-- Implement `/api/public-services` endpoint
-- Populate database with 14 services (all core fields)
+- Implement `/api/v1/public-services` endpoint
+- Populate database with 15 services (all core fields)
 - Set `status: "available"` for 10 active services
 - Set `status: "coming_soon"` for 4 future services (printing, package services, money transfer, lottery)
 - Test with frontend staging environment
@@ -883,7 +1005,7 @@ This section consolidates all API implementation priorities (functionality, data
 - Most services use icons (from `icon` field), not photos
 
 **Success Criteria:**
-- All 14 services return with accurate availability data
+- All 15 services return with accurate availability data
 - Coming soon badges display correctly on frontend
 - No breaking changes to existing menu API
 
@@ -892,7 +1014,7 @@ This section consolidates all API implementation priorities (functionality, data
 ### Phase 2: Locations API (Week 2-3)
 
 **Core Implementation:** 🚨 **URGENT**
-- Implement `/api/public-locations` endpoint
+- Implement `/api/v1/public-locations` endpoint
 - Populate database with location data (address, hours, contact)
 - Set `isPrimary: true` for headquarters location
 - Integrate Google Places API for ratings/coordinates
@@ -915,7 +1037,7 @@ This section consolidates all API implementation priorities (functionality, data
 ### Phase 3: Menu API Enhancement (Week 3-4)
 
 **Core Implementation:** 🔴 **High Priority**
-- Add missing fields to existing `/api/public-menu` endpoint
+- Add missing fields to existing `/api/v1/public-menu` endpoint
 - Populate `calories` data for all sizes (nutritional transparency)
 - Add `dietary` arrays (vegetarian, vegan, gluten-free, halal, kosher)
 - Add `allergens` arrays (nuts, dairy, soy, etc.)
@@ -1025,7 +1147,7 @@ This section consolidates all API implementation priorities (functionality, data
 
 **By Timeline:**
 ```
-Week 1-2:   Services API (14 services, partner logos optional)
+Week 1-2:   Services API (15 services, partner logos optional)
 Week 2-3:   Locations API (all fields, storefront photos recommended)
 Week 3-4:   Menu API enhancements + 4-6 featured item images (CRITICAL)
 Week 5-6:   Stability testing + remaining 70 menu images (high priority)
@@ -1042,19 +1164,19 @@ The frontend team has completed 100% of the work to consume your APIs. Context p
 ### What's Already Done
 
 **MenuContext** (Reference Implementation - 100% Complete):
-- Fetches from `https://romamart.netlify.app/api/public-menu`
+- Fetches from `https://romamart.netlify.app/api/v1/public-menu`
 - No static fallback (API-only, proven stable for 2+ months)
 - Used on homepage and RoCafé page
 - Build-time prerendering injects Product schemas into static HTML
 
 **ServicesContext** (100% Complete):
-- Fetches from `https://romamart.netlify.app/api/public-services`
+- Fetches from `https://romamart.netlify.app/api/v1/public-services`
 - Static SERVICES fallback if API unavailable
 - Used on homepage (featured services), services page, and StandardizedItem component
 - All components migrated to use context (App.jsx, StandardizedItem.jsx)
 
 **LocationsContext** (100% Complete):
-- Fetches from `https://romamart.netlify.app/api/public-locations`
+- Fetches from `https://romamart.netlify.app/api/v1/public-locations`
 - Static LOCATIONS fallback if API unavailable
 - Used on homepage, footer, locations page
 - All components migrated to use context (App.jsx, Footer.jsx)
@@ -1070,7 +1192,7 @@ The frontend team has completed 100% of the work to consume your APIs. Context p
 
 When ready to implement, here's the complete specification:
 
-**URL:** `https://romamart.netlify.app/api/public-company-data`
+**URL:** `https://romamart.netlify.app/api/v1/public-company-data`
 
 ```json
 {
@@ -1579,6 +1701,6 @@ Once deployed, frontend team will monitor API health for 1-2 months before remov
 
 ---
 
-**Last Updated:** February 6, 2026
+**Last Updated:** April 23, 2026
 **Document Owner:** Frontend Team
 **API Owner:** Backend Team
