@@ -8,20 +8,22 @@
 
 ## Executive Summary
 
-This document provides complete specifications for implementing three public API endpoints to power the Roma Mart 2.0 web application. The webapp currently uses static data with React Context providers that are ready to consume your APIs with automatic fallback to static data if APIs are unavailable.
+This document provides complete specifications for implementing four public API endpoints to power the Roma Mart 2.0 web application. The webapp currently uses static data with React Context providers that are ready to consume your APIs with automatic fallback to static data if APIs are unavailable.
 
 **What You Need to Implement:**
 
 1. **Services API** (`/api/v1/public-services`) - 15 convenience store services with filtering
 2. **Locations API** (`/api/v1/public-locations`) - Multi-location store information with hours, coordinates, amenities
-3. **Menu API Enhancement** - Add missing fields (calories data, dietary info, customizations, **images**)
+3. **Menu API Enhancement** (`/api/v1/public-menu`) - Add missing fields (calories data, dietary info, customizations, **images**)
+4. **Company Data API** (`/api/v1/public-company-data`) - Centralized business info (contact, social links, payment methods, return policy, GST)
 
 **CRITICAL for SEO:** Menu item images are required for Google Product rich results. At minimum, featured items (4-6) must have images.
 
+**Implementation priority:** Services and Locations first (highest impact, frontend fallback ready), then Menu enhancements, then Company Data. Full phased plan in the [Deployment Strategy](#deployment-strategy--implementation-priorities) section.
+
 **What to Plan For (Future):**
 
-1. **Company Data API** (`/api/v1/public-company-data`) - Centralized business info (hours, contact, policies)
-2. **Seasonal/Quick Theming Support** - Dynamic theme configuration (holidays, promotions, events)
+1. **Seasonal/Quick Theming Support** - Dynamic theme configuration (holidays, promotions, events)
 
 **Webapp Architecture:**
 - React Context providers fetch your APIs at app mount
