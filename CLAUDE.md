@@ -16,7 +16,7 @@
 8-sprint audit roadmap complete. Codebase is post-audit stable. Key references:
 - `docs/archive/ROADMAP.md` -- Sprint plan, R1-R55 (archived)
 - `docs/archive/EXPERT_AUDIT_FEB_2026.md` -- Full audit findings (archived)
-- `docs/API_MIGRATION_READINESS.md` -- Backend API spec
+- `docs/BACKEND_API_SPEC.md` -- Backend API spec (contracts, CORS, ETag, enumerations)
 - GitHub Issue #107 -- Services & Locations APIs (pending backend)
 - Project board: RomaMart UI Roadmap (GitHub Projects)
 
