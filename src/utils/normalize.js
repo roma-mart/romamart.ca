@@ -3,14 +3,9 @@
  * Pure functions that normalize API responses to the internal format
  * expected by components and utilities.
  *
- * Key responsibilities:
- * - Menu prices: cents (API) → dollars (internal)
- * - Size ordering: standardized S → M → L display order
- * - Location images: { storefront, interior } (API) → photos format (internal)
- * - Defense-in-depth enum normalization
- *
- * @since February 2026
  */
+
+import { resolveServiceIcon } from './serviceIconMap.jsx';
 
 import { sortSizes } from './menuHelpers';
 
@@ -180,6 +175,7 @@ export const normalizeService = (svc, _source) => {
   return {
     ...svc,
     slug: svc.slug || svc.id || null,
+    icon: resolveServiceIcon(svc.icon),
     status: normalizeEnum(svc.status) || 'available',
     availability: normalizeEnum(svc.availability) || 'store_hours',
     availableAt: Array.isArray(svc.availableAt) ? svc.availableAt : [],

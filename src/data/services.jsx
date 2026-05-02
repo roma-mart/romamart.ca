@@ -10,44 +10,8 @@
  *   That is all. This file needs no other changes.
  */
 
-import {
-  AlertCircle,
-  Banknote,
-  Bitcoin,
-  Candy,
-  Coffee,
-  CreditCard,
-  Globe,
-  Package,
-  Printer,
-  Send,
-  ShoppingBag,
-  ShoppingBasket,
-  Sparkles,
-  Ticket,
-  UtensilsCrossed,
-} from 'lucide-react';
 import { SERVICES_PLAIN } from './services-plain.js';
-
-// Maps iconKey strings (stored in services-plain.js) to rendered Lucide elements.
-// Key names use snake_case to match the Lucide component name in lowercase.
-const ICON_MAP = {
-  alert_circle: <AlertCircle size={20} />,
-  banknote: <Banknote size={20} />,
-  bitcoin: <Bitcoin size={20} />,
-  candy: <Candy size={20} />,
-  coffee: <Coffee size={20} />,
-  credit_card: <CreditCard size={20} />,
-  globe: <Globe size={20} />,
-  package: <Package size={20} />,
-  printer: <Printer size={20} />,
-  send: <Send size={20} />,
-  shopping_bag: <ShoppingBag size={20} />,
-  shopping_basket: <ShoppingBasket size={20} />,
-  sparkles: <Sparkles size={20} />,
-  ticket: <Ticket size={20} />,
-  utensils_crossed: <UtensilsCrossed size={20} />,
-};
+import { resolveServiceIcon } from '../utils/serviceIconMap.jsx';
 
 // Service categories — convenience constants that match the category strings in services-plain.js.
 export const SERVICE_CATEGORIES = {
@@ -61,7 +25,7 @@ export const SERVICE_CATEGORIES = {
 // UI-ready services: plain data + resolved icon element.
 export const SERVICES = SERVICES_PLAIN.map((svc) => ({
   ...svc,
-  icon: ICON_MAP[svc.iconKey] ?? null,
+  icon: resolveServiceIcon(svc.iconKey),
 }));
 
 // SERVICES_PLAIN is intentionally NOT re-exported from here.
