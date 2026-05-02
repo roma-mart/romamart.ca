@@ -35,7 +35,7 @@ const LOCATIONS_API_URL = `${API_BASE}/api/v1/public-locations`;
 
 // Hard cap on every build-time API fetch so a stalled endpoint can't hang the build indefinitely.
 // Aborts trigger the existing useFallback/STRICT_PRERENDER paths instead of the build silently hanging.
-const API_FETCH_TIMEOUT_MS = 10000;
+const API_FETCH_TIMEOUT_MS = 30000;
 const fetchWithTimeout = (url, options = {}) =>
   fetch(url, { ...options, signal: AbortSignal.timeout(API_FETCH_TIMEOUT_MS) });
 
