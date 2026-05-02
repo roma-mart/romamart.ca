@@ -492,7 +492,7 @@ async function fetchMenuData() {
     const menuItems = data.menu || [];
 
     console.log(`✓ Fetched ${menuItems.length} menu items (${menuItems.filter((i) => i.featured).length} featured)`);
-    return { items: menuItems, priceInCents: true };
+    return { items: normalizeStaticMenu(menuItems), priceInCents: true };
   } catch (error) {
     return useFallback(error.message);
   }
