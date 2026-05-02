@@ -59,6 +59,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Check API connectivity
+        env:
+          API_URL: ${{ secrets.VITE_API_BASE_URL || 'https://hub.romamart.ca' }}
+        run: |
+          echo "=== DNS ===" && dig +short hub.romamart.ca || nslookup hub.romamart.ca || echo "DNS lookup failed"
+          echo "=== Health ===" && curl -sS -o /dev/null -w "HTTP %{http_code} in %{time_total}s\n" "${API_URL}/api/health" || echo "Health check failed"
+          echo "=== Public API ===" && curl -sS -o /dev/null -w "HTTP %{http_code} in %{time_total}s\n" "${API_URL}/api/v1/public-services" || echo "Public API failed"
+
       - name: Build site
         env:
           VITE_WEB3FORMS_KEY: ${{ secrets.WEB3FORMS_KEY }}
