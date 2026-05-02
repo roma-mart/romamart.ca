@@ -1194,14 +1194,12 @@ async function prerender() {
   // Inject SSOT location data into offline page
   injectOfflineLocationData(distPath);
 
-  // Fetch all API data in parallel for maximum efficiency
+  // Fetch API data sequentially to avoid overwhelming the backend DB pool
+  // (DATABASE_POOL_SIZE=2 means only 2 concurrent connections per instance)
   console.log('\n📡 Fetching API data for prerendering...\n');
-  const [menuResult, services, locations, aggregateRating] = await Promise.all([
-    fetchMenuData(),
-    fetchServicesData(),
-    fetchLocationsData(),
-    getAggregateRating(),
-  ]);
+  const menuResult = await fetchMenuData();
+  const services = await fetchServicesData();
+  const [locations, aggregateRating] = await Promise.all([fetchLocationsData(), getAggregateRating()]);
   const menuItems = menuResult.items;
   const menuPriceInCents = menuResult.priceInCents;
   console.log('\n✓ API data fetching complete\n');
