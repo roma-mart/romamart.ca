@@ -40,12 +40,13 @@ export const calculateItemPrice = (item, selectedSizeIndex = 0, selectedOptions 
   // Add prices from customizations
   if (item.customizations && selectedOptions) {
     item.customizations.forEach((customization) => {
+      const opts = customization.options || [];
       const selectedValue = selectedOptions[customization.type];
 
       if (customization.multiple && Array.isArray(selectedValue)) {
         // Multiple selections: sum all selected option prices
         selectedValue.forEach((optionName) => {
-          const option = customization.options.find((opt) => opt.name === optionName);
+          const option = opts.find((opt) => opt.name === optionName);
           if (option && option.price) {
             totalPrice += option.price;
           }
@@ -58,14 +59,14 @@ export const calculateItemPrice = (item, selectedSizeIndex = 0, selectedOptions 
       ) {
         // Quantity: multiply option price by quantity
         Object.entries(selectedValue).forEach(([optionName, quantity]) => {
-          const option = customization.options.find((opt) => opt.name === optionName);
+          const option = opts.find((opt) => opt.name === optionName);
           if (option && option.price && Number.isFinite(quantity) && quantity > 0) {
             totalPrice += option.price * quantity;
           }
         });
       } else if (typeof selectedValue === 'string') {
         // Single selection
-        const option = customization.options.find((opt) => opt.name === selectedValue);
+        const option = opts.find((opt) => opt.name === selectedValue);
         if (option && option.price) {
           totalPrice += option.price;
         }
@@ -104,15 +105,18 @@ export const getDefaultSelections = (customizations) => {
   customizations.forEach((customization) => {
     if (customization.multiple) {
       // Multiple selection: array of selected option names
-      const defaultOpts = customization.options.filter((opt) => opt.default).map((opt) => opt.name);
+      const opts = customization.options || [];
+      const defaultOpts = opts.filter((opt) => opt.default).map((opt) => opt.name);
       defaults[customization.type] = defaultOpts.length > 0 ? defaultOpts : [];
     } else if (customization.quantity) {
       // Quantity support: object with option name and quantity
-      const defaultOption = customization.options.find((opt) => opt.default);
+      const opts = customization.options || [];
+      const defaultOption = opts.find((opt) => opt.default);
       defaults[customization.type] = defaultOption ? { [defaultOption.name]: 1 } : {};
     } else {
       // Single selection: string
-      const defaultOption = customization.options.find((opt) => opt.default);
+      const opts = customization.options || [];
+      const defaultOption = opts.find((opt) => opt.default);
       defaults[customization.type] = defaultOption ? defaultOption.name : '';
     }
   });
