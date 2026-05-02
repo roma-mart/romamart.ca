@@ -65,6 +65,7 @@ jobs:
           VITE_GTM_ID: ${{ secrets.GTM_ID }}
           VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
           VITE_API_KEY: ${{ secrets.VITE_API_KEY }}
+          STRICT_PRERENDER: '1'
           GOOGLE_PLACES_API_KEY: ${{ secrets.GOOGLE_PLACES_API_KEY }}
           VITE_GOOGLE_PLACES_API_KEY: ${{ secrets.VITE_GOOGLE_PLACES_API_KEY }}
           VITE_TRUSTPILOT_BUSINESSUNIT_ID: ${{ secrets.TRUSTPILOT_BUSINESSUNIT_ID }}
